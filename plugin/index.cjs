@@ -15,6 +15,7 @@ const {
 	nearestLocations,
 	normalizeCatalog,
 	normalizeLocation,
+	representativePosition,
 } = require("./location-model.cjs");
 const { createLocationStore } = require("./location-store.cjs");
 
@@ -24,6 +25,9 @@ const MAX_IMPORT_LOCATIONS = 10000;
 
 const packageJson = JSON.parse(
 	fs.readFileSync(path.join(__dirname, "..", "package.json"), "utf8"),
+);
+const bundledWestScotlandSeed = JSON.parse(
+	fs.readFileSync(path.join(__dirname, "..", "defaults", "west-scotland-locations.json"), "utf8"),
 );
 
 function normalizeResources(value) {
@@ -102,7 +106,7 @@ module.exports = function ajrmMarineLocationEditor(app) {
 			},
 		});
 		app.setPluginStatus(`Started v${packageJson.version}`);
-		initializationPromise = trackOperation(migrateAndPublishHarbours().then(refreshStatus));
+		initializationPromise = trackOperation(initializeCatalogue().then(refreshStatus));
 		initializationPromise.catch((error) => {
 			updateStatus({ error: error.message });
 			app.setPluginError?.(error.message);
@@ -343,18 +347,84 @@ module.exports = function ajrmMarineLocationEditor(app) {
 		}
 	}
 
-	async function migrateAndPublishHarbours() {
-		if (!app.resourcesApi) return { migrated: 0 };
-		const resources = normalizeResources(await app.resourcesApi.listResources("regions", {}));
-		const candidates = resources.filter(isHarbourRegion).map(legacyHarbourLocation);
-		const migrated = await store.addMissing(candidates, {
-			editedBy: "Automatic Harbour Editor migration",
-		});
+	async function initializeCatalogue() {
+		let migrated = [];
+		if (app.resourcesApi) {
+			const resources = normalizeResources(await app.resourcesApi.listResources("regions", {}));
+			const candidates = resources.filter(isHarbourRegion).map(legacyHarbourLocation);
+			migrated = await store.addMissing(candidates, {
+				editedBy: "Automatic Harbour Editor migration",
+			});
+		}
+		const seeded = await addBundledLocations();
 		await reconcileHarbourRegions();
 		app.debug?.(
-			`[${plugin.id}] Imported ${migrated.length} existing Harbour region(s) into the versioned catalogue.`,
+			`[${plugin.id}] Migrated ${migrated.length} Harbour region(s) and added ${seeded.length} bundled West Scotland location(s).`,
 		);
-		return { migrated: migrated.length };
+		return { migrated: migrated.length, seeded: seeded.length };
+	}
+
+	async function addBundledLocations() {
+		if (
+			bundledWestScotlandSeed?.schema !== "org.ajrm.marine.location-seed/v1" ||
+			!Array.isArray(bundledWestScotlandSeed.locations)
+		) {
+			throw new Error("Bundled West Scotland location seed is invalid.");
+		}
+		const current = await store.list();
+		const bySource = new Map();
+		for (const location of current) {
+			for (const source of locationSourceKeys(location)) bySource.set(source, location);
+		}
+		const candidates = [];
+		for (const value of bundledWestScotlandSeed.locations) {
+			const seed = normalizeLocation(value);
+			const sourceMatch = locationSourceKeys(seed).map((key) => bySource.get(key)).find(Boolean);
+			if (sourceMatch) {
+				await enrichUneditedMigration(sourceMatch, seed);
+				continue;
+			}
+			const nearbyMatch = current.find((location) => locationsDescribeSamePlace(location, seed));
+			if (!nearbyMatch) candidates.push(seed);
+		}
+		return store.addMissing(candidates, { editedBy: "Bundled West Scotland open-data seed" });
+	}
+
+	function locationSourceKeys(location) {
+		const values = [
+			location.feature?.properties?.["ajrmMarine:sourceRef"],
+			...(location.properties?.provenance?.sources || []).map((source) => source.sourceId),
+		];
+		return [...new Set(values.filter(Boolean).map((value) => String(value).replace(/^openstreetmap:/i, "")))];
+	}
+
+	function locationsDescribeSamePlace(left, right) {
+		if (left.name.trim().toLocaleLowerCase() !== right.name.trim().toLocaleLowerCase()) return false;
+		if (!left.types.some((type) => right.types.includes(type))) return false;
+		const a = representativePosition(left);
+		const b = representativePosition(right);
+		if (!a || !b) return false;
+		const latitudeM = (a.latitude - b.latitude) * 111320;
+		const longitudeM = (a.longitude - b.longitude) * 111320 * Math.cos((a.latitude + b.latitude) * Math.PI / 360);
+		return Math.hypot(latitudeM, longitudeM) <= 500;
+	}
+
+	async function enrichUneditedMigration(current, seed) {
+		if (!current.properties.migratedFromSignalKRegion || current.revision !== 1) return;
+		const types = current.types.includes("harbour") && seed.types.includes("marina")
+			? [...new Set(current.types.filter((type) => type !== "harbour").concat(seed.types))]
+			: current.types;
+		const provenance = current.properties.provenance || seed.properties.provenance;
+		if (types === current.types && current.properties.provenance) return;
+		const saved = await store.set(current.id, {
+			...current,
+			types,
+			properties: { ...current.properties, provenance },
+		}, {
+			expectedRevision: current.revision,
+			editedBy: "Bundled open-data classification",
+		});
+		await publishHarbourChange(saved, current);
 	}
 
 	function legacyHarbourLocation(region) {

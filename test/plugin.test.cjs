@@ -81,12 +81,63 @@ test("existing Harbour regions migrate into the versioned catalogue and remain p
 	await new Promise((resolve) => setTimeout(resolve, 20));
 	const res = response();
 	await routes.get("GET /locations")({ query: { workspace: "all" } }, res);
-	assert.equal(res.body.locations.length, 1);
-	assert.equal(res.body.locations[0].id, id);
-	assert.equal(res.body.locations[0].name, "Test Bay");
-	assert.deepEqual(res.body.locations[0].types, ["marina"]);
-	assert.equal(res.body.locations[0].properties.publishAsHarbourRegion, true);
+	assert.ok(res.body.locations.length > 1);
+	const migrated = res.body.locations.find((location) => location.id === id);
+	assert.equal(migrated.name, "Test Bay");
+	assert.deepEqual(migrated.types, ["marina"]);
+	assert.equal(migrated.properties.publishAsHarbourRegion, true);
 	assert.equal(regions[id].name, "Harbour: Test Bay");
+	await plugin.stop();
+});
+
+test("a fresh catalogue receives the sourced West Scotland seed without publishing point profile regions", async (t) => {
+	const { app, call, plugin } = await fixture(t);
+	const result = await call("GET", "/locations", { query: { workspace: "all" } });
+	const corryvreckan = result.body.locations.find((location) => location.name === "Gulf of Corryvreckan");
+	const stornoway = result.body.locations.find((location) => location.name === "Stornoway tide gauge");
+	assert.ok(corryvreckan?.types.includes("tidalGate"));
+	assert.equal(corryvreckan.properties.provenance.reviewStatus, "sourceChecked");
+	assert.ok(stornoway?.types.includes("tidalObservationStation"));
+	assert.equal(Object.keys(app.regions).length, 0);
+	await plugin.stop();
+});
+
+test("an unedited migrated OSM harbour is upgraded when the source explicitly classifies a marina", async (t) => {
+	const directory = await fs.mkdtemp(path.join(os.tmpdir(), "ajrm-location-marina-upgrade-"));
+	t.after(() => fs.rm(directory, { recursive: true, force: true }));
+	const id = crypto.randomUUID();
+	const regions = {
+		[id]: {
+			id,
+			name: "Harbour: Ardfern Yacht Centre",
+			feature: {
+				type: "Feature",
+				properties: { "ajrmMarine:sourceRef": "openstreetmap:way/399034351" },
+				geometry: { type: "Polygon", coordinates: [[[-5.54, 56.18], [-5.53, 56.18], [-5.53, 56.19], [-5.54, 56.18]]] },
+			},
+		},
+	};
+	const app = {
+		getDataDirPath: () => directory, setPluginStatus() {}, handleMessage() {},
+		resourcesApi: {
+			async listResources() { return regions; },
+			async setResource(_type, resourceId, value) { regions[resourceId] = { ...structuredClone(value), id: resourceId }; },
+			async deleteResource(_type, resourceId) { delete regions[resourceId]; },
+		},
+	};
+	const routes = new Map();
+	const router = {};
+	for (const method of ["get", "put", "post", "delete"]) router[method] = (route, handler) => routes.set(`${method.toUpperCase()} ${route}`, handler);
+	const plugin = createPlugin(app);
+	plugin.registerWithRouter(router);
+	plugin.start({});
+	await new Promise((resolve) => setTimeout(resolve, 30));
+	const res = response();
+	await routes.get("GET /locations/:id")({ params: { id } }, res);
+	assert.deepEqual(res.body.types, ["marina"]);
+	assert.equal(res.body.revision, 2);
+	assert.equal(res.body.properties.provenance.reviewStatus, "sourceChecked");
+	assert.equal(regions[id].name, "Harbour: Ardfern Yacht Centre");
 	await plugin.stop();
 });
 

@@ -211,6 +211,16 @@ h3 {
 	transition: transform 160ms ease;
 }
 
+.source-links {
+	display: grid;
+	gap: 6px;
+}
+
+.source-links a {
+	color: #075985;
+	overflow-wrap: anywhere;
+}
+
 .drawer-left {
 	left: 52px;
 	width: min(430px, calc(100vw - 64px));

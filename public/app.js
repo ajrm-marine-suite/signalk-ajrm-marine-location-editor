@@ -19,6 +19,7 @@ const typeDefinitions = {
 	harbour: ["Harbour", "places", "#0369a1"],
 	tidalStandardPort: ["Tidal standard port", "tides", "#0891b2"],
 	tidalSecondaryPort: ["Tidal secondary port", "tides", "#06b6d4"],
+	tidalObservationStation: ["Tidal observation station", "tides", "#0e7490"],
 	tidalGate: ["Tidal gate", "tides", "#7c3aed"],
 	hazard: ["Hazard", "hazards", "#dc2626"],
 	avoidanceArea: ["Avoidance area", "hazards", "#ef4444"],
@@ -27,7 +28,7 @@ const typeDefinitions = {
 	preferredChannel: ["Preferred channel", "hazards", "#2563eb"],
 	pointOfInterest: ["Point of interest", "places", "#64748b"],
 };
-const tideTypes = new Set(["tidalStandardPort", "tidalSecondaryPort", "tidalGate"]);
+const tideTypes = new Set(["tidalStandardPort", "tidalSecondaryPort", "tidalObservationStation", "tidalGate"]);
 const anchorageTypes = new Set(["anchorage", "mooring"]);
 const hazardTypes = new Set(["hazard", "avoidanceArea", "noAnchoringArea", "waitingArea", "preferredChannel"]);
 const hazardApplicationChoices = ["display", "routePlanning", "proximityWarning", "anchorPlanning"];
@@ -46,7 +47,7 @@ const elements = Object.fromEntries([
 	"historyList", "closeHistory", "radiusNm", "decreaseRadius", "increaseRadius",
 	"applyRadius", "makeCircle", "nudgeNorth", "nudgeSouth", "nudgeWest", "nudgeEast",
 	"mergeLocations", "importLocations", "exportLocations", "locationImportFile", "syncMessages",
-	"deletedList", "status", "chartCycleStatus",
+	"deletedList", "status", "chartCycleStatus", "provenanceFields", "provenanceStatus", "provenanceWarning", "provenanceSources",
 ].map((id) => [id, document.querySelector(`#${id}`)]));
 
 let locations = [];
@@ -262,6 +263,7 @@ function resetEditor() {
 	elements.publishAsHarbourRegion.checked = false;
 	elements.hazardApplications.querySelectorAll("input").forEach((input) => { input.checked = false; });
 	elements.selectedSummary.textContent = "New location";
+	renderProvenance(null);
 	elements.deleteLocation.disabled = true;
 	elements.showHistory.disabled = true;
 	refreshReferences(null);
@@ -298,6 +300,7 @@ function selectLocation(id, fit = false) {
 	elements.hazardReason.value = properties.hazard?.reason || "";
 	elements.hazardClearanceM.value = properties.hazard?.clearanceM ?? "";
 	elements.hazardApplications.querySelectorAll("input").forEach((input) => { input.checked = properties.hazard?.appliesTo?.includes(input.value) || false; });
+	renderProvenance(properties.provenance);
 	elements.selectedSummary.textContent = `${location.name} · revision ${location.revision}`;
 	elements.deleteLocation.disabled = false;
 	elements.showHistory.disabled = false;
@@ -316,7 +319,10 @@ function buildLocation() {
 	const types = checkedTypes();
 	if (!name) throw new Error("Enter a location name.");
 	if (!types.length) throw new Error("Select at least one location type.");
-	const properties = {};
+	const current = selectedLocation();
+	const properties = current?.properties?.provenance
+		? { provenance: structuredClone(current.properties.provenance) }
+		: {};
 	if (elements.publishAsHarbourRegion.checked) properties.publishAsHarbourRegion = true;
 	if (elements.tideLocationRef.value) properties.tideLocationRef = `${resourcePrefix}${elements.tideLocationRef.value}`;
 	if (types.some((type) => anchorageTypes.has(type))) {
@@ -348,9 +354,35 @@ function buildLocation() {
 		name,
 		description: elements.description.value.trim() || undefined,
 		types,
-		feature: { type: "Feature", properties: {}, geometry: geometryFromEditor() },
+		feature: {
+			type: "Feature",
+			properties: structuredClone(current?.feature?.properties || {}),
+			geometry: geometryFromEditor(),
+		},
 		properties,
 	};
+}
+
+function renderProvenance(provenance) {
+	elements.provenanceFields.hidden = !provenance;
+	if (!provenance) {
+		elements.provenanceStatus.textContent = "";
+		elements.provenanceWarning.textContent = "";
+		elements.provenanceSources.replaceChildren();
+		return;
+	}
+	const labels = { imported: "Imported — not locally verified", sourceChecked: "Checked against cited sources", onboardVerified: "Verified onboard" };
+	elements.provenanceStatus.textContent = labels[provenance.reviewStatus] || provenance.reviewStatus || "Source recorded";
+	elements.provenanceWarning.textContent = provenance.warning || "";
+	elements.provenanceSources.replaceChildren();
+	for (const source of provenance.sources || []) {
+		const link = document.createElement("a");
+		link.href = source.url;
+		link.target = "_blank";
+		link.rel = "noopener noreferrer";
+		link.textContent = [source.provider, source.sourceId, source.license].filter(Boolean).join(" · ");
+		elements.provenanceSources.append(link);
+	}
 }
 
 async function loadLocations(preferredId = selectedId) {

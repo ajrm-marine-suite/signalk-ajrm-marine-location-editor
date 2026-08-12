@@ -11,6 +11,7 @@ and onboard testing. It stores:
 
 - harbours, anchorages, moorings, marinas and points of interest;
 - tidal standard ports, secondary ports and tidal gates;
+- tidal observation stations, kept distinct from prediction stations;
 - hazards, avoidance areas, no-anchoring areas, waiting areas and preferred
   channels;
 - links from places to tidal locations.
@@ -23,6 +24,28 @@ The separate **Classify this location** choices describe the record being
 edited and apply only when it is saved. Tide calculations,
 automatic profile selection and active hazard monitoring are deliberately not
 performed yet.
+
+## Bundled West Scotland starter data
+
+On first start, the plugin adds a sourced West Scotland starter catalogue. It
+currently contains named anchorages, mooring locations, marinas, harbours,
+tidal gates and National Tide Gauge Network observation stations. Stable IDs
+make the import repeatable. A locally edited record is never overwritten, and
+deleting a bundled record leaves a tombstone so a later software update does
+not recreate it.
+
+OpenStreetMap/OpenSeaMap supplies the distributable place positions and
+classifications. Selected marina entries are cross-checked against Welcome
+Anchorages, but its editorial directory is linked rather than copied. Tide
+gauge identities come from the Environment Agency open API. Each record shows
+its sources, licence, retrieval date and review status in the editor.
+
+The tidal-gate markers intentionally contain no stream direction, rate,
+passage time or clearance advice. Anchorage markers contain no assertion that
+an anchorage is suitable for a particular vessel or conditions. Use current
+official charts, Notices to Mariners, tidal data and appropriate pilotage.
+`DATA-LICENCE.md` records the data attributions separately from the software
+licence.
 
 ## Existing harbours and transition
 
@@ -69,7 +92,7 @@ before a large import or merge.
 
 ```bash
 cd ~/.signalk
-npm install git+https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor.git#v0.2.0 --omit=dev --no-package-lock
+npm install git+https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor.git#v0.3.0 --omit=dev --no-package-lock
 sudo systemctl restart signalk
 ```
 
@@ -81,7 +104,8 @@ Open **AJRM Marine Location Editor** from the Signal K app list.
    locations, or choose a filtered workspace.
 2. Press **New**, enter a name and select one or more location types.
 3. Store a point at the map centre, enter a polygon, or generate a circle.
-4. Add optional anchorage, tide, hazard and relationship details.
+4. Add optional anchorage, tide, hazard and relationship details. Imported
+   records display their source and review status below these fields.
 5. For a harbour-profile area, select a harbour, anchorage, mooring or marina
    type, use polygon/circle geometry, and tick **Use this area for automatic
    Harbour profile switching**.

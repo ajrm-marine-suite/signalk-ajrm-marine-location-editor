@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.3.0 - 2026-08-12
+
+- Added a repeatable, tombstone-aware West Scotland starter catalogue with
+  sourced anchorages, moorings, marinas, harbours, tidal gates and tide gauges.
+- Added explicit provenance, review status, source links, retrieval dates and
+  per-record licence metadata, preserving them through local edits.
+- Added `tidalObservationStation` so measured tide-gauge data is not
+  misrepresented as a standard or secondary prediction port.
+- Conservatively upgrades an unedited migrated OSM harbour to marina when the
+  bundled source explicitly classifies it as a marina.
+- Added a maintainer generator for refreshed OSM/OpenSeaMap and Environment
+  Agency source data.
+
 ## 0.2.1
 
 - Replace the flat harbour list with a searchable, grouped location browser.

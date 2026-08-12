@@ -17,6 +17,7 @@ const LOCATION_TYPES = Object.freeze([
 	"marina",
 	"tidalStandardPort",
 	"tidalSecondaryPort",
+	"tidalObservationStation",
 	"tidalGate",
 	"hazard",
 	"avoidanceArea",
@@ -28,7 +29,7 @@ const LOCATION_TYPES = Object.freeze([
 
 const WORKSPACES = Object.freeze({
 	places: ["harbour", "anchorage", "mooring", "marina", "pointOfInterest"],
-	tides: ["tidalStandardPort", "tidalSecondaryPort", "tidalGate"],
+	tides: ["tidalStandardPort", "tidalSecondaryPort", "tidalObservationStation", "tidalGate"],
 	hazards: ["hazard", "avoidanceArea", "noAnchoringArea", "waitingArea", "preferredChannel"],
 	all: LOCATION_TYPES,
 });
@@ -45,6 +46,12 @@ const HAZARD_APPLICATIONS = Object.freeze([
 	"routePlanning",
 	"proximityWarning",
 	"anchorPlanning",
+]);
+
+const PROVENANCE_REVIEW_STATUSES = Object.freeze([
+	"imported",
+	"sourceChecked",
+	"onboardVerified",
 ]);
 
 function isResourceId(value) {
@@ -207,6 +214,42 @@ function validateLocation(location) {
 				if (!HAZARD_APPLICATIONS.includes(use)) {
 					throw new Error(`Unknown hazard application: ${use}.`);
 				}
+			}
+		}
+	}
+	if (properties.provenance != null) {
+		if (typeof properties.provenance !== "object" || Array.isArray(properties.provenance)) {
+			throw new Error("Provenance must be an object.");
+		}
+		if (
+			properties.provenance.reviewStatus &&
+			!PROVENANCE_REVIEW_STATUSES.includes(properties.provenance.reviewStatus)
+		) {
+			throw new Error("Provenance review status is invalid.");
+		}
+		assertText(properties.provenance.warning, "Provenance warning", { max: 2000 });
+		if (!Array.isArray(properties.provenance.sources) || properties.provenance.sources.length === 0) {
+			throw new Error("Provenance needs at least one source.");
+		}
+		for (const [index, source] of properties.provenance.sources.entries()) {
+			if (!source || typeof source !== "object" || Array.isArray(source)) {
+				throw new Error(`Provenance source ${index + 1} must be an object.`);
+			}
+			assertText(source.provider, `Provenance source ${index + 1} provider`, { required: true, max: 200 });
+			assertText(source.sourceId, `Provenance source ${index + 1} id`, { max: 300 });
+			assertText(source.license, `Provenance source ${index + 1} licence`, { max: 100 });
+			assertText(source.url, `Provenance source ${index + 1} URL`, { required: true, max: 2000 });
+			try {
+				const url = new URL(source.url);
+				if (!/^https?:$/.test(url.protocol)) throw new Error("unsupported protocol");
+			} catch {
+				throw new Error(`Provenance source ${index + 1} URL must be HTTP or HTTPS.`);
+			}
+			if (
+				source.retrievedAt != null &&
+				(typeof source.retrievedAt !== "string" || Number.isNaN(Date.parse(source.retrievedAt)))
+			) {
+				throw new Error(`Provenance source ${index + 1} retrieval time must be an ISO timestamp.`);
 			}
 		}
 	}

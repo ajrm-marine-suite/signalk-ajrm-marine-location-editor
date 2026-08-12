@@ -38,6 +38,22 @@ test("rejects unknown types and unclosed areas", () => {
 	}), /must be closed/);
 });
 
+test("validates source provenance and tidal observation stations", () => {
+	const sourced = location({
+		types: ["tidalObservationStation"],
+		properties: {
+			provenance: {
+				reviewStatus: "sourceChecked",
+				sources: [{ provider: "Example", url: "https://example.test/station", retrievedAt: "2026-08-12T00:00:00Z" }],
+			},
+		},
+	});
+	assert.deepEqual(sourced.types, ["tidalObservationStation"]);
+	assert.throws(() => location({
+		properties: { provenance: { reviewStatus: "guessed", sources: [{ provider: "Example", url: "https://example.test" }] } },
+	}), /review status/);
+});
+
 test("catalogues retain version metadata and create initial immutable history", () => {
 	const value = location();
 	const catalog = normalizeCatalog({ schema: CATALOG_SCHEMA, schemaVersion: 1, locations: [value] });

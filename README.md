@@ -5,19 +5,39 @@
 > the skipper's judgement. The authors do not accept responsibility for loss
 > or damage resulting from their use.
 
-A separate Signal K webapp for maintaining reusable marine knowledge without
-changing **AJRM Marine Harbour Editor**. It stores:
+A Signal K webapp for maintaining reusable marine knowledge. It is a superset
+of **AJRM Marine Harbour Editor** and is intended to replace it after migration
+and onboard testing. It stores:
 
 - harbours, anchorages, moorings, marinas and points of interest;
 - tidal standard ports, secondary ports and tidal gates;
 - hazards, avoidance areas, no-anchoring areas, waiting areas and preferred
   channels;
-- links from places to existing Harbour Editor regions and tidal locations.
+- links from places to tidal locations.
 
-The map can be filtered into Places, Tides, Hazards or All workspaces. This
-first release is the catalogue and editing foundation. Tide calculations,
+The map defaults to **All Locations**, displaying migrated harbours and every
+other stored location. It can be filtered into Places, Tides, Hazards or All
+workspaces. Tide calculations,
 automatic profile selection and active hazard monitoring are deliberately not
 performed yet.
+
+## Existing harbours and transition
+
+On first start, Location Editor reads every existing Signal K region whose
+name begins `Harbour:` and copies it into the versioned catalogue. The stable
+region UUID, circle or polygon, name, description and explicit marina/harbour
+type are retained. The original Signal K resources are not removed.
+
+From then on, the Location Editor record is canonical. Saving a location with
+**Use this area for automatic Harbour profile switching** publishes the same
+UUID and geometry as a compatible `Harbour:` Signal K region, so existing
+Traffic automatic-profile behaviour continues to work. Unchecking it or
+deleting the location retracts that region; undo republishes it.
+
+During testing, keep Harbour Editor installed but make harbour changes in
+Location Editor. Once migration, editing and profile switching have been
+verified, Harbour Editor can be uninstalled without losing the versioned
+locations or the compatible runtime regions.
 
 ## Versioning and sharing
 
@@ -46,7 +66,7 @@ before a large import or merge.
 
 ```bash
 cd ~/.signalk
-npm install git+https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor.git#v0.1.0 --omit=dev --no-package-lock
+npm install git+https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor.git#v0.2.0 --omit=dev --no-package-lock
 sudo systemctl restart signalk
 ```
 
@@ -54,12 +74,16 @@ Open **AJRM Marine Location Editor** from the Signal K app list.
 
 ## Use
 
-1. Choose the relevant workspace.
+1. Start in **All Locations** to see existing migrated harbours and all other
+   locations, or choose a filtered workspace.
 2. Press **New**, enter a name and select one or more location types.
 3. Store a point at the map centre, enter a polygon, or generate a circle.
 4. Add optional anchorage, tide, hazard and relationship details.
-5. Press **Save Location**.
-6. Open **History** to inspect or restore an earlier snapshot.
+5. For a harbour-profile area, select a harbour, anchorage, mooring or marina
+   type, use polygon/circle geometry, and tick **Use this area for automatic
+   Harbour profile switching**.
+6. Press **Save Location**.
+7. Open **History** to inspect or restore an earlier snapshot.
 
 Settings provides versioned export, latest-edit merge and confirmed catalogue
 replacement. Edits require Signal K read/write or administrator access.

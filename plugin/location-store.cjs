@@ -83,6 +83,36 @@ function createLocationStore(filePath) {
 				return location;
 			});
 		},
+		async addMissing(values, options = {}) {
+			return mutate(async (catalog) => {
+				const added = [];
+				const editedAt = new Date().toISOString();
+				for (const value of values) {
+					if (catalog.locations[value.id] || catalog.tombstones[value.id]) continue;
+					const editId = crypto.randomUUID();
+					const location = normalizeLocation({
+						...value,
+						revision: 1,
+						createdAt: editedAt,
+						updatedAt: editedAt,
+						lastEditId: editId,
+					});
+					catalog.locations[location.id] = location;
+					catalog.history[location.id] = [{
+						editId,
+						revision: 1,
+						editedAt,
+						editedBy: String(options.editedBy || "migration"),
+						action: "create",
+						sourceCatalogId: catalog.catalogId,
+						snapshot: structuredClone(location),
+					}];
+					added.push(location);
+				}
+				if (added.length) await write(catalog);
+				return added;
+			});
+		},
 		async remove(id, options = {}) {
 			return mutate(async (catalog) => {
 				const previous = catalog.locations[id];

@@ -6,7 +6,7 @@
 		<title>AJRM Marine Location Editor</title>
 		<link rel="stylesheet" href="./leaflet.css">
 		<link rel="stylesheet" href="./ajrm-map-core.css?v=0.7.3">
-		<link rel="stylesheet" href="./styles.css?v=0.1.0">
+		<link rel="stylesheet" href="./styles.css?v=0.2.0">
 	</head>
 	<body>
 		<div id="map" class="map" aria-label="Marine location chart"></div>
@@ -30,7 +30,7 @@
 					<option value="places">Harbours &amp; Anchorages</option>
 					<option value="tides">Tides &amp; Gates</option>
 					<option value="hazards">Hazards &amp; Avoidance</option>
-					<option value="all">All Locations</option>
+					<option value="all" selected>All Locations</option>
 				</select>
 			</label>
 
@@ -73,9 +73,9 @@
 				<textarea id="points" spellcheck="false" rows="6" placeholder="56.20, -5.50&#10;56.21, -5.49&#10;56.19, -5.48"></textarea>
 			</label>
 
-			<label>
-				Linked Harbour Editor region
-				<select id="regionRef"><option value="">None</option></select>
+			<label id="profileRegionField" class="choice-row profile-region-choice">
+				<input id="publishAsHarbourRegion" type="checkbox">
+				<span>Use this area for automatic Harbour profile switching</span>
 			</label>
 			<label>
 				Tidal location used here
@@ -192,6 +192,6 @@
 		<div id="status" class="status" role="status"></div>
 		<script src="./leaflet.js"></script>
 		<script src="./protomaps-leaflet.js"></script>
-		<script type="module" src="./app.js?v=0.1.0"></script>
+		<script type="module" src="./app.js?v=0.2.0"></script>
 	</body>
 </html>

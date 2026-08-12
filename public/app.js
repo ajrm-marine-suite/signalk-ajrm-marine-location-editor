@@ -36,7 +36,7 @@ const elements = Object.fromEntries([
 	"closeEditor", "closeSettings", "closeGeometry", "selectedSummary", "workspace",
 	"newLocation", "refreshLocations", "locationName", "description", "typeChoices",
 	"geometryType", "setPoint", "openGeometry", "pointEditor", "polygonEditor", "point",
-	"points", "regionRef", "tideLocationRef", "anchorageFields", "seabed", "chartedDepthM",
+	"points", "profileRegionField", "publishAsHarbourRegion", "tideLocationRef", "anchorageFields", "seabed", "chartedDepthM",
 	"anchorageNotes", "tideFields", "tideProvider", "tideStationId", "tideStationName",
 	"parentLocationRef", "tideDatum", "hazardFields", "hazardSeverity", "hazardReason",
 	"hazardClearanceM", "hazardApplications", "saveLocation", "deleteLocation", "showHistory",
@@ -48,7 +48,6 @@ const elements = Object.fromEntries([
 ].map((id) => [id, document.querySelector(`#${id}`)]));
 
 let locations = [];
-let regions = [];
 let tombstones = [];
 let selectedId = null;
 let map;
@@ -130,6 +129,9 @@ function setupChoices() {
 
 function updateConditionalFields() {
 	const types = checkedTypes();
+	const profileEligible = types.some((type) => ["harbour", "anchorage", "mooring", "marina"].includes(type));
+	elements.profileRegionField.hidden = !profileEligible;
+	if (!profileEligible) elements.publishAsHarbourRegion.checked = false;
 	elements.anchorageFields.hidden = !types.some((type) => anchorageTypes.has(type));
 	elements.tideFields.hidden = !types.some((type) => tideTypes.has(type));
 	elements.hazardFields.hidden = !types.some((type) => hazardTypes.has(type));
@@ -187,7 +189,6 @@ function fillSelect(select, choices, selected, emptyLabel) {
 }
 
 function refreshReferences(location = selectedLocation()) {
-	fillSelect(elements.regionRef, regions.map((region) => ({ value: region.id, label: region.name.replace(/^Harbour:\s*/i, "") })), resourceId(location?.properties?.regionRef), "None");
 	const tidal = locations.filter((entry) => entry.types.some((type) => tideTypes.has(type)) && entry.id !== location?.id);
 	fillSelect(elements.tideLocationRef, tidal.map((entry) => ({ value: entry.id, label: entry.name })), resourceId(location?.properties?.tideLocationRef), "Automatic / none assigned");
 	const standardPorts = locations.filter((entry) => entry.types.includes("tidalStandardPort") && entry.id !== location?.id);
@@ -206,6 +207,7 @@ function resetEditor() {
 	elements.points.value = "";
 	for (const id of ["seabed", "chartedDepthM", "anchorageNotes", "tideProvider", "tideStationId", "tideStationName", "tideDatum", "hazardReason", "hazardClearanceM"]) elements[id].value = "";
 	elements.hazardSeverity.value = "advisory";
+	elements.publishAsHarbourRegion.checked = false;
 	elements.hazardApplications.querySelectorAll("input").forEach((input) => { input.checked = false; });
 	elements.selectedSummary.textContent = "New location";
 	elements.deleteLocation.disabled = true;
@@ -232,6 +234,7 @@ function selectLocation(id, fit = false) {
 		elements.points.value = formatPoints(ring.slice(0, -1).map(([lon, lat]) => ({ lat, lon })));
 	}
 	const properties = location.properties || {};
+	elements.publishAsHarbourRegion.checked = properties.publishAsHarbourRegion === true;
 	elements.seabed.value = properties.anchorage?.seabed || "";
 	elements.chartedDepthM.value = properties.anchorage?.chartedDepthM ?? "";
 	elements.anchorageNotes.value = properties.anchorage?.notes || "";
@@ -262,7 +265,7 @@ function buildLocation() {
 	if (!name) throw new Error("Enter a location name.");
 	if (!types.length) throw new Error("Select at least one location type.");
 	const properties = {};
-	if (elements.regionRef.value) properties.regionRef = `/resources/regions/${elements.regionRef.value}`;
+	if (elements.publishAsHarbourRegion.checked) properties.publishAsHarbourRegion = true;
 	if (elements.tideLocationRef.value) properties.tideLocationRef = `${resourcePrefix}${elements.tideLocationRef.value}`;
 	if (types.some((type) => anchorageTypes.has(type))) {
 		properties.anchorage = {
@@ -299,14 +302,12 @@ function buildLocation() {
 }
 
 async function loadLocations(preferredId = selectedId) {
-	const [data, deletedData, regionData] = await Promise.all([
+	const [data, deletedData] = await Promise.all([
 		requestJson(`${apiBase}/locations?workspace=all`),
 		requestJson(`${apiBase}/deleted`),
-		requestJson(`${apiBase}/harbour-regions`).catch(() => ({ regions: [] })),
 	]);
 	locations = data.locations || [];
 	tombstones = deletedData.tombstones || [];
-	regions = regionData.regions || [];
 	refreshReferences(selectedLocation());
 	renderLocations();
 	renderDeleted();
@@ -594,6 +595,6 @@ setupChoices();
 initMap();
 bindEvents();
 makeDraggable(elements.geometryControls, elements.geometryControlsHandle);
-elements.workspace.value = localStorage.getItem(`${storagePrefix}Workspace`) || "places";
+elements.workspace.value = localStorage.getItem(`${storagePrefix}Workspace`) || "all";
 resetEditor();
 loadLocations().catch((error) => showStatus(error.message, true));

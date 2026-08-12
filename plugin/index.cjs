@@ -60,6 +60,7 @@ function parseTypes(value) {
 module.exports = function ajrmMarineLocationEditor(app) {
 	const plugin = {};
 	let running = false;
+	let initializationPromise = Promise.resolve();
 	const pendingOperations = new Set();
 	const dataDirectory = app.getDataDirPath?.() || path.join(process.cwd(), ".ajrm-location-editor");
 	const store = createLocationStore(path.join(dataDirectory, "locations.json"));
@@ -88,16 +89,21 @@ module.exports = function ajrmMarineLocationEditor(app) {
 		app.ajrmMarineLocations = Object.freeze({
 			contract: "ajrm-marine-locations-service-v1",
 			list: async (options = {}) => {
+				await initializationPromise;
 				const locations = await store.list();
 				return options.workspace
 					? locations.filter((location) => locationMatchesWorkspace(location, options.workspace))
 					: locations;
 			},
-			get: (id) => store.get(id),
-			nearest: async (position, options) => nearestLocations(await store.list(), position, options),
+			get: async (id) => { await initializationPromise; return store.get(id); },
+			nearest: async (position, options) => {
+				await initializationPromise;
+				return nearestLocations(await store.list(), position, options);
+			},
 		});
 		app.setPluginStatus(`Started v${packageJson.version}`);
-		trackOperation(refreshStatus()).catch((error) => {
+		initializationPromise = trackOperation(migrateAndPublishHarbours().then(refreshStatus));
+		initializationPromise.catch((error) => {
 			updateStatus({ error: error.message });
 			app.setPluginError?.(error.message);
 		});
@@ -127,6 +133,7 @@ module.exports = function ajrmMarineLocationEditor(app) {
 		router.get("/locations", async (req, res) => {
 			try {
 				assertRunning();
+				await initializationPromise;
 				const workspace = String(req.query?.workspace || "all");
 				if (!WORKSPACES[workspace]) throw new Error(`Unknown workspace: ${workspace}.`);
 				const locations = (await store.list())
@@ -141,6 +148,7 @@ module.exports = function ajrmMarineLocationEditor(app) {
 		router.get("/locations/:id", async (req, res) => {
 			try {
 				assertRunning();
+				await initializationPromise;
 				if (!isResourceId(req.params.id)) throw new Error("Location id must be a UUIDv4.");
 				const location = await store.get(req.params.id);
 				if (!location) return res.status(404).json({ error: "Location was not found." });
@@ -153,6 +161,7 @@ module.exports = function ajrmMarineLocationEditor(app) {
 		router.get("/deleted", async (_req, res) => {
 			try {
 				assertRunning();
+				await initializationPromise;
 				const catalog = await store.read();
 				const tombstones = Object.values(catalog.tombstones)
 					.sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
@@ -162,17 +171,20 @@ module.exports = function ajrmMarineLocationEditor(app) {
 			}
 		});
 
-		router.put("/locations/:id", write(async (req, res) => {
+			router.put("/locations/:id", write(async (req, res) => {
 			try {
 				assertRunning();
+				await initializationPromise;
 				if (!isResourceId(req.params.id)) throw new Error("Location id must be a UUIDv4.");
 				const { expectedRevision, ...body } = req.body || {};
+				const previous = await store.get(req.params.id);
 				const location = normalizeLocation({ ...body, id: req.params.id });
 				await assertReferencesExist(location);
 				const saved = await store.set(req.params.id, location, {
 					expectedRevision,
 					editedBy: requestActor(req),
 				});
+				await publishHarbourChange(saved, previous);
 				await refreshStatus();
 				res.json({ ok: true, id: req.params.id, location: saved });
 			} catch (error) {
@@ -180,16 +192,21 @@ module.exports = function ajrmMarineLocationEditor(app) {
 			}
 		}));
 
-		router.delete("/locations/:id", write(async (req, res) => {
+			router.delete("/locations/:id", write(async (req, res) => {
 			try {
 				assertRunning();
+				await initializationPromise;
 				if (!isResourceId(req.params.id)) throw new Error("Location id must be a UUIDv4.");
 				await assertNotReferenced(req.params.id);
+				const previous = await store.get(req.params.id);
 				const removed = await store.remove(req.params.id, {
 					expectedRevision: req.body?.expectedRevision ?? req.query?.expectedRevision,
 					editedBy: requestActor(req),
 				});
 				if (!removed) return res.status(404).json({ error: "Location was not found." });
+				if (previous?.properties.publishAsHarbourRegion) {
+					await app.resourcesApi?.deleteResource("regions", req.params.id);
+				}
 				await refreshStatus();
 				return res.json({ ok: true });
 			} catch (error) {
@@ -200,6 +217,7 @@ module.exports = function ajrmMarineLocationEditor(app) {
 		router.get("/locations/:id/history", async (req, res) => {
 			try {
 				assertRunning();
+				await initializationPromise;
 				if (!isResourceId(req.params.id)) throw new Error("Location id must be a UUIDv4.");
 				const history = await store.history(req.params.id);
 				if (!history.length) return res.status(404).json({ error: "Location history was not found." });
@@ -212,6 +230,7 @@ module.exports = function ajrmMarineLocationEditor(app) {
 			router.post("/locations/:id/restore", write(async (req, res) => {
 			try {
 				assertRunning();
+				await initializationPromise;
 				if (!isResourceId(req.params.id)) throw new Error("Location id must be a UUIDv4.");
 				if (!isResourceId(req.body?.editId)) throw new Error("Select a valid history revision to restore.");
 				const location = await store.restore(req.params.id, req.body.editId, {
@@ -220,6 +239,7 @@ module.exports = function ajrmMarineLocationEditor(app) {
 					validate: (restored, catalog) =>
 						assertReferencesExist(restored, new Map(Object.entries(catalog.locations))),
 				});
+				await publishHarbourChange(location, null);
 				await refreshStatus();
 				res.json({ ok: true, location });
 			} catch (error) {
@@ -230,6 +250,7 @@ module.exports = function ajrmMarineLocationEditor(app) {
 		router.get("/nearest", async (req, res) => {
 			try {
 				assertRunning();
+				await initializationPromise;
 				const position = {
 					latitude: Number(req.query?.latitude),
 					longitude: Number(req.query?.longitude),
@@ -245,21 +266,6 @@ module.exports = function ajrmMarineLocationEditor(app) {
 			}
 		});
 
-		router.get("/harbour-regions", async (_req, res) => {
-			try {
-				const resources = app.resourcesApi
-					? await app.resourcesApi.listResources("regions", {})
-					: {};
-				const regions = normalizeResources(resources)
-					.filter(isHarbourRegion)
-					.map(({ id, name, description }) => ({ id, name, description }))
-					.sort((a, b) => a.name.localeCompare(b.name));
-				res.json({ regions });
-			} catch (error) {
-				res.status(500).json({ error: error.message });
-			}
-		});
-
 		router.get("/local/export", async (_req, res) => {
 			try {
 				const catalog = await store.read();
@@ -272,6 +278,7 @@ module.exports = function ajrmMarineLocationEditor(app) {
 		router.post("/local/import", write(async (req, res) => {
 			try {
 				assertRunning();
+				await initializationPromise;
 				if (!req.body?.confirm) throw new Error("Import must be confirmed.");
 				assertVersionedPayload(req.body.payload);
 				const incoming = normalizeCatalog(req.body.payload);
@@ -282,6 +289,7 @@ module.exports = function ajrmMarineLocationEditor(app) {
 				await validateCatalogReferences(incoming);
 				const previous = (await store.list()).length;
 				await store.replace(incoming);
+				await reconcileHarbourRegions();
 				await refreshStatus();
 				res.json({ ok: true, imported: count, replaced: previous, log: [`Imported ${count} location(s).`, `Replaced ${previous} previous location(s).`] });
 			} catch (error) {
@@ -292,6 +300,7 @@ module.exports = function ajrmMarineLocationEditor(app) {
 		router.post("/local/merge", write(async (req, res) => {
 			try {
 				assertRunning();
+				await initializationPromise;
 				if (!req.body?.confirm) throw new Error("Merge must be confirmed.");
 				assertVersionedPayload(req.body.payload);
 				const incoming = normalizeCatalog(req.body.payload);
@@ -301,6 +310,7 @@ module.exports = function ajrmMarineLocationEditor(app) {
 				const result = await store.merge(incoming, {
 					validate: validateCatalogReferences,
 				});
+				await reconcileHarbourRegions();
 				await refreshStatus();
 				res.json({
 					ok: result.conflicts.length === 0,
@@ -331,10 +341,84 @@ module.exports = function ajrmMarineLocationEditor(app) {
 			const id = reference.split("/").at(-1);
 			if (!locations.has(id)) throw new Error(`${label} reference does not exist in this catalogue.`);
 		}
-		if (location.properties.regionRef && app.resourcesApi) {
-			const id = location.properties.regionRef.split("/").at(-1);
-			const regions = new Map(normalizeResources(await app.resourcesApi.listResources("regions", {})).map((region) => [region.id, region]));
-			if (!regions.has(id)) throw new Error("Region reference does not exist on this Signal K server.");
+	}
+
+	async function migrateAndPublishHarbours() {
+		if (!app.resourcesApi) return { migrated: 0 };
+		const resources = normalizeResources(await app.resourcesApi.listResources("regions", {}));
+		const candidates = resources.filter(isHarbourRegion).map(legacyHarbourLocation);
+		const migrated = await store.addMissing(candidates, {
+			editedBy: "Automatic Harbour Editor migration",
+		});
+		await reconcileHarbourRegions();
+		app.debug?.(
+			`[${plugin.id}] Imported ${migrated.length} existing Harbour region(s) into the versioned catalogue.`,
+		);
+		return { migrated: migrated.length };
+	}
+
+	function legacyHarbourLocation(region) {
+		const declaredType = String(region.feature?.properties?.["ajrmMarine:type"] || "harbour");
+		const type = ["harbour", "anchorage", "mooring", "marina"].includes(declaredType)
+			? declaredType
+			: "harbour";
+		return normalizeLocation({
+			id: region.id,
+			name: String(region.name || "").replace(/^Harbour:\s*/i, "").trim(),
+			description: region.description || "",
+			types: [type],
+			feature: structuredClone(region.feature),
+			properties: {
+				publishAsHarbourRegion: true,
+				migratedFromSignalKRegion: true,
+			},
+		});
+	}
+
+	function harbourResource(location) {
+		return {
+			name: `Harbour: ${location.name}`,
+			description: location.description || "Harbour profile region managed by AJRM Marine Location Editor.",
+			feature: structuredClone(location.feature),
+		};
+	}
+
+	function harbourResourcesEqual(existing, expected) {
+		return (
+			existing?.name === expected.name &&
+			String(existing?.description || "") === String(expected.description || "") &&
+			JSON.stringify(existing?.feature) === JSON.stringify(expected.feature)
+		);
+	}
+
+	async function publishHarbourChange(location, previous) {
+		if (!app.resourcesApi) return;
+		if (location.properties.publishAsHarbourRegion) {
+			await app.resourcesApi.setResource("regions", location.id, harbourResource(location));
+		} else if (previous?.properties.publishAsHarbourRegion) {
+			await app.resourcesApi.deleteResource("regions", location.id);
+		}
+	}
+
+	async function reconcileHarbourRegions() {
+		if (!app.resourcesApi) return;
+		const locations = await store.list();
+		const desired = new Map(
+			locations
+				.filter((location) => location.properties.publishAsHarbourRegion)
+				.map((location) => [location.id, location]),
+		);
+		const existing = normalizeResources(await app.resourcesApi.listResources("regions", {}))
+			.filter(isHarbourRegion);
+		const existingById = new Map(existing.map((region) => [region.id, region]));
+		for (const location of desired.values()) {
+			const expected = harbourResource(location);
+			if (!harbourResourcesEqual(existingById.get(location.id), expected)) {
+				await app.resourcesApi.setResource("regions", location.id, expected);
+			}
+		}
+		for (const region of existing) {
+			if (!desired.has(region.id)) await app.resourcesApi.deleteResource("regions", region.id);
 		}
 	}
 
@@ -371,6 +455,9 @@ module.exports = function ajrmMarineLocationEditor(app) {
 			...lastStatus,
 			enabled: running,
 			locationCount: locations.length,
+			harbourRegionCount: locations.filter(
+				(location) => location.properties.publishAsHarbourRegion,
+			).length,
 			typeCounts: typeCounts(locations),
 			error: "",
 			updatedAt: new Date().toISOString(),

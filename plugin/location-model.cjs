@@ -153,7 +153,18 @@ function validateLocation(location) {
 	if (properties.schema !== LOCATION_SCHEMA) {
 		throw new Error(`Location properties.schema must be ${LOCATION_SCHEMA}.`);
 	}
-	assertReference(properties.regionRef, "Region reference");
+	if (properties.publishAsHarbourRegion != null && typeof properties.publishAsHarbourRegion !== "boolean") {
+		throw new Error("publishAsHarbourRegion must be true or false.");
+	}
+	if (properties.publishAsHarbourRegion && location.feature.geometry.type !== "Polygon") {
+		throw new Error("Automatic Harbour profile regions must use an area, not a point.");
+	}
+	if (
+		properties.publishAsHarbourRegion &&
+		!location.types.some((type) => ["harbour", "anchorage", "mooring", "marina"].includes(type))
+	) {
+		throw new Error("Only a harbour, anchorage, mooring or marina can switch to the Harbour profile.");
+	}
 	assertReference(properties.tideLocationRef, "Tide location reference");
 	if (properties.tideLocationRef?.endsWith(`/${location.id}`)) {
 		throw new Error("A location cannot use itself as its tidal location.");

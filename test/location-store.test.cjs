@@ -37,6 +37,15 @@ test("each save creates an immutable revision and rejects stale saves", async (t
 	await assert.rejects(store.set(id, value("Stale"), { expectedRevision: 1 }), /changed after it was opened/);
 });
 
+test("bulk migration adds only previously unseen stable ids in one catalogue", async (t) => {
+	const store = await fixture(t);
+	const first = { id: crypto.randomUUID(), ...value("Existing Harbour") };
+	const second = { id: crypto.randomUUID(), ...value("Second Harbour") };
+	assert.equal((await store.addMissing([first, second], { editedBy: "Harbour migration" })).length, 2);
+	assert.equal((await store.addMissing([{ ...first, name: "Must not overwrite" }])).length, 0);
+	assert.equal((await store.get(first.id)).name, "Existing Harbour");
+});
+
 test("deletion leaves a tombstone and restore appends a new revision", async (t) => {
 	const store = await fixture(t);
 	const id = crypto.randomUUID();

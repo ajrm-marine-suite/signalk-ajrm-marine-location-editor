@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "AJRM Marine Location Editor API",
-    "version": "0.1.0",
+    "version": "0.2.0",
     "description": "Versioned marine locations, relationships, import/export and nearest-location lookup."
   },
   "paths": {
@@ -17,7 +17,6 @@
     "/locations/{id}/history": { "get": { "parameters": [{ "$ref": "#/components/parameters/Id" }], "responses": { "200": { "description": "Immutable revision history" } } } },
     "/locations/{id}/restore": { "post": { "parameters": [{ "$ref": "#/components/parameters/Id" }], "responses": { "200": { "description": "Older snapshot restored as a new revision" } } } },
     "/nearest": { "get": { "responses": { "200": { "description": "Nearest matching locations" } } } },
-    "/harbour-regions": { "get": { "responses": { "200": { "description": "Existing Harbour Editor regions" } } } },
     "/local/export": { "get": { "responses": { "200": { "description": "Complete location catalogue" } } } },
     "/local/import": { "post": { "responses": { "200": { "description": "Catalogue replaced" } } } },
     "/local/merge": { "post": { "responses": { "200": { "description": "Catalogues merged per location by latest edit time" } } } }

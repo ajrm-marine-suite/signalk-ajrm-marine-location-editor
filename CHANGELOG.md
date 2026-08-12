@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.2.0
+
+- Make Location Editor a true superset and intended successor to Harbour Editor.
+- Automatically copy every existing `Harbour:` Signal K region into the
+  versioned catalogue on first start, preserving its UUID and geometry.
+- Default to the All Locations workspace so migrated harbours and every other
+  stored location are immediately visible on the chart.
+- Edit harbour circles and polygons in Location Editor and publish compatible
+  Signal K region resources for existing automatic profile switching.
+- Allow harbours, anchorages, moorings and marinas to opt into automatic
+  Harbour profile switching explicitly.
+- Reconcile published regions from the canonical versioned catalogue without
+  rewriting unchanged resources on every startup.
+- Add migration and bulk-versioning regression tests.
+
 ## 0.1.0
 
 - Create Location Editor as a new app while leaving Harbour Editor unchanged.

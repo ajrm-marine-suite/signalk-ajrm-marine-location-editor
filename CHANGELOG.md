@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.2.1
+
+- Replace the flat harbour list with a searchable, grouped location browser.
+- Add persistent **Show on chart** filters for every location type; changes
+  immediately affect both map geometry and browser results.
+- Show matching counts beside each type, plus an overall shown/total count.
+- Add an optional current-map-area filter for large shared catalogues.
+- Clearly distinguish display filters from the type classification fields that
+  describe the selected record and apply on save.
+- Add pure browser filtering/grouping helpers and regression tests.
+
 ## 0.2.0
 
 - Make Location Editor a true superset and intended successor to Harbour Editor.

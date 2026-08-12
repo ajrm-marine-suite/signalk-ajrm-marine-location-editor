@@ -16,8 +16,11 @@ and onboard testing. It stores:
 - links from places to tidal locations.
 
 The map defaults to **All Locations**, displaying migrated harbours and every
-other stored location. It can be filtered into Places, Tides, Hazards or All
-workspaces. Tide calculations,
+other stored location. Its location browser supports text search, grouped
+results, persistent per-type chart filters and an optional current-map-area
+filter. It can also be filtered into Places, Tides, Hazards or All workspaces.
+The separate **Classify this location** choices describe the record being
+edited and apply only when it is saved. Tide calculations,
 automatic profile selection and active hazard monitoring are deliberately not
 performed yet.
 

@@ -6,7 +6,7 @@
 		<title>AJRM Marine Location Editor</title>
 		<link rel="stylesheet" href="./leaflet.css">
 		<link rel="stylesheet" href="./ajrm-map-core.css?v=0.7.3">
-		<link rel="stylesheet" href="./styles.css?v=0.2.0">
+		<link rel="stylesheet" href="./styles.css?v=0.2.1">
 	</head>
 	<body>
 		<div id="map" class="map" aria-label="Marine location chart"></div>
@@ -34,10 +34,35 @@
 				</select>
 			</label>
 
+			<section class="location-browser" aria-labelledby="browserTitle">
+				<div class="section-heading">
+					<div><h3 id="browserTitle">Browse locations</h3><p>Filters alter both the chart and this list.</p></div>
+					<button id="refreshLocations" type="button">Refresh</button>
+				</div>
+				<label>
+					Search
+					<input id="locationSearch" type="search" autocomplete="off" placeholder="Name, description or type">
+				</label>
+				<fieldset>
+					<legend>Show on chart</legend>
+					<div class="filter-actions">
+						<button id="showAllTypes" type="button">All types</button>
+						<button id="hideAllTypes" type="button">No types</button>
+					</div>
+					<div id="displayTypeChoices" class="choice-grid display-type-choices"></div>
+				</fieldset>
+				<label class="choice-row">
+					<input id="mapAreaOnly" type="checkbox">
+					<span>Only locations in the current map area</span>
+				</label>
+				<h3 id="locationListTitle">Locations</h3>
+				<div id="locationList" class="location-groups"></div>
+			</section>
+
 			<div class="drawer-section compact-actions">
 				<button id="newLocation" type="button">New</button>
-				<button id="refreshLocations" type="button">Refresh</button>
 			</div>
+			<h3 class="edit-heading">Edit selected location</h3>
 
 			<label>
 				Name
@@ -49,7 +74,8 @@
 			</label>
 
 			<fieldset>
-				<legend>Location types</legend>
+				<legend>Classify this location</legend>
+				<p class="field-help">These choices describe the selected record. Press Save Location to apply them.</p>
 				<div id="typeChoices" class="choice-grid"></div>
 			</fieldset>
 
@@ -124,10 +150,6 @@
 			</div>
 			<input id="locationId" type="hidden">
 
-			<div class="drawer-section location-list-section">
-				<h3 id="locationListTitle">Locations</h3>
-				<div id="locationList" class="region-list"></div>
-			</div>
 		</aside>
 
 		<dialog id="historyDialog" class="history-dialog">
@@ -192,6 +214,6 @@
 		<div id="status" class="status" role="status"></div>
 		<script src="./leaflet.js"></script>
 		<script src="./protomaps-leaflet.js"></script>
-		<script type="module" src="./app.js?v=0.2.0"></script>
+		<script type="module" src="./app.js?v=0.2.1"></script>
 	</body>
 </html>

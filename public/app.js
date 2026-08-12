@@ -4,6 +4,7 @@
  */
 
 import * as MapCore from "./ajrm-map-core.mjs?v=0.7.3";
+import { filterLocations, groupLocations } from "./location-browser.mjs?v=0.2.1";
 
 const apiBase = "/plugins/signalk-ajrm-marine-location-editor";
 const resourcePrefix = "/resources/locations/";
@@ -34,7 +35,8 @@ const hazardApplicationChoices = ["display", "routePlanning", "proximityWarning"
 const elements = Object.fromEntries([
 	"map", "editorDrawer", "settingsDrawer", "geometryControls", "geometryControlsHandle",
 	"closeEditor", "closeSettings", "closeGeometry", "selectedSummary", "workspace",
-	"newLocation", "refreshLocations", "locationName", "description", "typeChoices",
+	"newLocation", "refreshLocations", "locationSearch", "displayTypeChoices", "showAllTypes",
+	"hideAllTypes", "mapAreaOnly", "locationName", "description", "typeChoices",
 	"geometryType", "setPoint", "openGeometry", "pointEditor", "polygonEditor", "point",
 	"points", "profileRegionField", "publishAsHarbourRegion", "tideLocationRef", "anchorageFields", "seabed", "chartedDepthM",
 	"anchorageNotes", "tideFields", "tideProvider", "tideStationId", "tideStationName",
@@ -50,6 +52,7 @@ const elements = Object.fromEntries([
 let locations = [];
 let tombstones = [];
 let selectedId = null;
+let activeDisplayTypes = loadDisplayTypes();
 let map;
 let locationLayer;
 let previewLayer;
@@ -89,9 +92,36 @@ function currentWorkspace() {
 	return elements.workspace.value || "places";
 }
 
+function loadDisplayTypes() {
+	try {
+		const stored = JSON.parse(localStorage.getItem(`${storagePrefix}DisplayTypes`) || "null");
+		if (Array.isArray(stored)) return new Set(stored.filter((type) => typeDefinitions[type]));
+	} catch { /* Ignore corrupt browser preferences. */ }
+	return new Set(Object.keys(typeDefinitions));
+}
+
+function locationIntersectsMap(location) {
+	if (!map || !elements.mapAreaOnly.checked) return true;
+	const bounds = map.getBounds();
+	const geometry = location.feature.geometry;
+	if (geometry.type === "Point") return bounds.contains([geometry.coordinates[1], geometry.coordinates[0]]);
+	const locationBounds = L.latLngBounds(geometry.coordinates[0].map(([lon, lat]) => [lat, lon]));
+	return bounds.overlaps ? bounds.overlaps(locationBounds) : bounds.intersects(locationBounds);
+}
+
+function browserCandidates() {
+	const terms = elements.locationSearch.value.trim().toLocaleLowerCase().split(/\s+/).filter(Boolean);
+	return filterLocations(locations, {
+		workspace: currentWorkspace(),
+		terms,
+		typeWorkspaces: Object.fromEntries(Object.entries(typeDefinitions).map(([type, definition]) => [type, definition[1]])),
+		typeLabels: Object.fromEntries(Object.entries(typeDefinitions).map(([type, definition]) => [type, definition[0]])),
+		intersects: locationIntersectsMap,
+	});
+}
+
 function visibleLocations() {
-	const workspace = currentWorkspace();
-	return locations.filter((location) => workspace === "all" || location.types.some((type) => typeDefinitions[type]?.[1] === workspace));
+	return filterLocations(browserCandidates(), { activeTypes: activeDisplayTypes });
 }
 
 function locationColor(location) {
@@ -118,6 +148,17 @@ function setupChoices() {
 		node.className = "choice";
 		node.innerHTML = `<input type="checkbox" value="${type}"> <span>${label}</span>`;
 		elements.typeChoices.append(node);
+		const displayNode = document.createElement("label");
+		displayNode.className = "choice display-choice";
+		displayNode.innerHTML = `<input type="checkbox" value="${type}"> <span>${label}</span><small data-type-count="${type}">0</small>`;
+		const displayInput = displayNode.querySelector("input");
+		displayInput.checked = activeDisplayTypes.has(type);
+		displayInput.addEventListener("change", () => {
+			if (displayInput.checked) activeDisplayTypes.add(type); else activeDisplayTypes.delete(type);
+			persistDisplayTypes();
+			renderLocations();
+		});
+		elements.displayTypeChoices.append(displayNode);
 	}
 	for (const value of hazardApplicationChoices) {
 		const node = document.createElement("label");
@@ -125,6 +166,17 @@ function setupChoices() {
 		node.innerHTML = `<input type="checkbox" value="${value}"> <span>${value.replace(/[A-Z]/g, (letter) => ` ${letter.toLowerCase()}`)}</span>`;
 		elements.hazardApplications.append(node);
 	}
+}
+
+function persistDisplayTypes() {
+	localStorage.setItem(`${storagePrefix}DisplayTypes`, JSON.stringify([...activeDisplayTypes]));
+}
+
+function setAllDisplayTypes(enabled) {
+	activeDisplayTypes = new Set(enabled ? Object.keys(typeDefinitions) : []);
+	elements.displayTypeChoices.querySelectorAll("input").forEach((input) => { input.checked = enabled; });
+	persistDisplayTypes();
+	renderLocations();
 }
 
 function updateConditionalFields() {
@@ -335,10 +387,29 @@ async function deleteLocation() {
 function renderLocations() {
 	if (!locationLayer) return;
 	locationLayer.clearLayers();
+	const candidates = browserCandidates();
 	const visible = visibleLocations();
-	elements.locationListTitle.textContent = `${currentWorkspace() === "all" ? "All" : elements.workspace.selectedOptions[0].textContent} (${visible.length})`;
+	elements.locationListTitle.textContent = `${visible.length} of ${locations.length} locations shown`;
+	for (const type of Object.keys(typeDefinitions)) {
+		const count = candidates.filter((location) => location.types.includes(type)).length;
+		const output = elements.displayTypeChoices.querySelector(`[data-type-count="${type}"]`);
+		if (output) output.textContent = String(count);
+	}
 	elements.locationList.replaceChildren();
-	for (const location of visible) {
+	const groups = groupLocations(
+		visible.sort((a, b) => a.name.localeCompare(b.name)),
+		new Set(Object.keys(typeDefinitions)),
+	);
+	for (const [groupType, groupLocations] of [...groups].sort((a, b) => typeLabel(a[0]).localeCompare(typeLabel(b[0])))) {
+		const group = document.createElement("details");
+		group.className = "location-group";
+		group.open = Boolean(elements.locationSearch.value.trim()) || groupLocations.some((location) => location.id === selectedId) || visible.length < 30;
+		const summary = document.createElement("summary");
+		summary.innerHTML = `<span class="type-dot" style="--type-colour:${locationColor(groupLocations[0])}"></span><strong>${escapeHtml(typeLabel(groupType))}</strong><span>${groupLocations.length}</span>`;
+		group.append(summary);
+		const groupList = document.createElement("div");
+		groupList.className = "region-list";
+		for (const location of groupLocations) {
 		const selected = location.id === selectedId;
 		const color = locationColor(location);
 		const geometry = location.feature.geometry;
@@ -356,7 +427,16 @@ function renderLocations() {
 		button.className = `region-item${selected ? " selected" : ""}`;
 		button.innerHTML = `<strong>${escapeHtml(location.name)}</strong><span>${escapeHtml(location.types.map(typeLabel).join(", "))} · r${location.revision}</span>`;
 		button.addEventListener("click", () => selectLocation(location.id, true));
-		elements.locationList.append(button);
+		groupList.append(button);
+		}
+		group.append(groupList);
+		elements.locationList.append(group);
+	}
+	if (!visible.length) {
+		const empty = document.createElement("p");
+		empty.className = "empty-results";
+		empty.textContent = locations.length ? "No locations match these filters." : "No locations have been added yet.";
+		elements.locationList.append(empty);
 	}
 	renderPreview();
 }
@@ -567,6 +647,10 @@ function bindEvents() {
 	elements.point.addEventListener("input", renderPreview);
 	elements.points.addEventListener("input", renderPreview);
 	elements.workspace.addEventListener("change", () => { localStorage.setItem(`${storagePrefix}Workspace`, currentWorkspace()); renderLocations(); });
+	elements.locationSearch.addEventListener("input", renderLocations);
+	elements.mapAreaOnly.addEventListener("change", () => { localStorage.setItem(`${storagePrefix}MapAreaOnly`, String(elements.mapAreaOnly.checked)); renderLocations(); });
+	elements.showAllTypes.addEventListener("click", () => setAllDisplayTypes(true));
+	elements.hideAllTypes.addEventListener("click", () => setAllDisplayTypes(false));
 	elements.newLocation.addEventListener("click", resetEditor);
 	elements.refreshLocations.addEventListener("click", () => loadLocations().catch((error) => showStatus(error.message, true)));
 	elements.setPoint.addEventListener("click", () => { const center = map.getCenter(); elements.geometryType.value = "Point"; elements.point.value = `${center.lat.toFixed(6)}, ${center.lng.toFixed(6)}`; updateConditionalFields(); });
@@ -589,6 +673,7 @@ function bindEvents() {
 	elements.nudgeSouth.addEventListener("click", () => changeCircle(0, -editStepNm, 0));
 	elements.nudgeWest.addEventListener("click", () => changeCircle(0, 0, -editStepNm));
 	elements.nudgeEast.addEventListener("click", () => changeCircle(0, 0, editStepNm));
+	map.on("moveend zoomend", () => { if (elements.mapAreaOnly.checked) renderLocations(); });
 }
 
 setupChoices();
@@ -596,5 +681,6 @@ initMap();
 bindEvents();
 makeDraggable(elements.geometryControls, elements.geometryControlsHandle);
 elements.workspace.value = localStorage.getItem(`${storagePrefix}Workspace`) || "all";
+elements.mapAreaOnly.checked = localStorage.getItem(`${storagePrefix}MapAreaOnly`) === "true";
 resetEditor();
 loadLocations().catch((error) => showStatus(error.message, true));

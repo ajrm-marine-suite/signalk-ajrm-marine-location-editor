@@ -276,6 +276,130 @@ h3 {
 	gap: 10px;
 }
 
+.location-browser {
+	display: grid;
+	gap: 10px;
+	padding: 12px;
+	border: 1px solid #94a3b8;
+	border-radius: 10px;
+	background: #f8fafc;
+}
+
+.section-heading {
+	display: flex;
+	align-items: start;
+	justify-content: space-between;
+	gap: 10px;
+}
+
+.section-heading p,
+.field-help {
+	margin: 3px 0 8px;
+	color: #52606b;
+	font-size: 12px;
+	font-weight: 500;
+}
+
+.edit-heading {
+	margin-top: 4px;
+	padding-top: 12px;
+	border-top: 2px solid #cbd5e1;
+}
+
+.filter-actions {
+	display: flex;
+	gap: 7px;
+	margin-bottom: 10px;
+}
+
+.filter-actions button {
+	padding: 5px 9px;
+	font-size: 12px;
+}
+
+.display-type-choices {
+	grid-template-columns: 1fr;
+}
+
+.display-choice {
+	display: grid;
+	grid-template-columns: auto minmax(0, 1fr) auto;
+	align-items: center;
+}
+
+.display-choice small {
+	min-width: 2em;
+	border-radius: 999px;
+	padding: 2px 6px;
+	background: #e2e8f0;
+	color: #334155;
+	font-size: 11px;
+	font-weight: 750;
+	text-align: center;
+}
+
+.location-groups {
+	display: grid;
+	gap: 7px;
+	max-height: 360px;
+	overflow: auto;
+	padding: 2px 5px 8px 1px;
+	overscroll-behavior: contain;
+}
+
+.location-group {
+	border: 1px solid #cbd5e1;
+	border-radius: 8px;
+	background: #ffffff;
+}
+
+.location-group > summary {
+	display: grid;
+	grid-template-columns: auto minmax(0, 1fr) auto auto;
+	align-items: center;
+	gap: 8px;
+	padding: 9px;
+	cursor: pointer;
+	list-style: none;
+}
+
+.location-group > summary::-webkit-details-marker {
+	display: none;
+}
+
+.location-group > summary::after {
+	grid-column: 4;
+	content: "▸";
+}
+
+.location-group[open] > summary::after {
+	content: "▾";
+}
+
+.location-group > summary > span:last-of-type {
+	grid-column: 3;
+	grid-row: 1;
+	color: #52606b;
+	font-size: 12px;
+}
+
+.type-dot {
+	width: 12px;
+	height: 12px;
+	border-radius: 50%;
+	background: var(--type-colour);
+}
+
+.location-group .region-list {
+	padding: 0 8px 10px;
+}
+
+.empty-results {
+	padding: 16px 8px;
+	color: #52606b;
+	text-align: center;
+}
+
 .icon-button {
 	width: 34px;
 	height: 34px;

@@ -1,0 +1,51 @@
+{
+  "name": "signalk-ajrm-marine-location-editor",
+  "version": "0.1.0",
+  "description": "Signal K editor and local catalogue for marine places, tidal locations, hazards and avoidance areas.",
+  "keywords": [
+    "signalk-node-server-plugin",
+    "signalk-webapp",
+    "signalk-category-utility",
+    "signal-k",
+    "signalk",
+    "ajrm-marine-suite",
+    "marine",
+    "navigation",
+    "anchorage",
+    "tides",
+    "hazards"
+  ],
+  "main": "plugin/index.cjs",
+  "engines": {
+    "node": ">=20"
+  },
+  "icon": "./public/icon-120.png",
+  "scripts": {
+    "test": "node --check plugin/index.cjs && node --check plugin/location-model.cjs && node --check plugin/location-store.cjs && node --check public/app.js && node --test test/*.test.cjs"
+  },
+  "signalk-plugin-enabled-by-default": true,
+  "signalk": {
+    "displayName": "AJRM Marine Location Editor",
+    "appIcon": "./public/icon-120.png"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor.git"
+  },
+  "author": "Anthony McDonald, with assistance from William McAusland",
+  "license": "AGPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor/issues"
+  },
+  "homepage": "https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor#readme",
+  "files": [
+    "plugin",
+    "public",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE"
+  ],
+  "devDependencies": {
+    "@ajrm-marine/map-core": "github:ajrm-marine-suite/ajrm-marine-map-core#v0.7.3"
+  }
+}

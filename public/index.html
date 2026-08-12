@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>AJRM Marine Location Editor</title>
+		<link rel="stylesheet" href="./leaflet.css">
+		<link rel="stylesheet" href="./ajrm-map-core.css?v=0.7.3">
+		<link rel="stylesheet" href="./styles.css?v=0.1.0">
+	</head>
+	<body>
+		<div id="map" class="map" aria-label="Marine location chart"></div>
+
+		<div class="map-status-stack">
+			<div id="chartCycleStatus" class="ajrm-map-chart-cycle-status" role="status" aria-live="polite" hidden></div>
+		</div>
+
+		<aside id="editorDrawer" class="drawer drawer-left open" aria-label="Location editor">
+			<div class="drawer-header">
+				<div>
+					<h2>Location Editor</h2>
+					<p id="selectedSummary">New location</p>
+				</div>
+				<button id="closeEditor" type="button" class="icon-button" aria-label="Close editor">×</button>
+			</div>
+
+			<label>
+				Workspace
+				<select id="workspace">
+					<option value="places">Harbours &amp; Anchorages</option>
+					<option value="tides">Tides &amp; Gates</option>
+					<option value="hazards">Hazards &amp; Avoidance</option>
+					<option value="all">All Locations</option>
+				</select>
+			</label>
+
+			<div class="drawer-section compact-actions">
+				<button id="newLocation" type="button">New</button>
+				<button id="refreshLocations" type="button">Refresh</button>
+			</div>
+
+			<label>
+				Name
+				<input id="locationName" type="text" autocomplete="off" placeholder="Ardmore Anchorage">
+			</label>
+			<label>
+				Description
+				<textarea id="description" rows="2" placeholder="Optional local information"></textarea>
+			</label>
+
+			<fieldset>
+				<legend>Location types</legend>
+				<div id="typeChoices" class="choice-grid"></div>
+			</fieldset>
+
+			<label>
+				Geometry
+				<select id="geometryType">
+					<option value="Point">Point</option>
+					<option value="Polygon">Area or circle</option>
+				</select>
+			</label>
+			<div class="drawer-section compact-actions">
+				<button id="setPoint" type="button">Set Point at Centre</button>
+				<button id="openGeometry" type="button">Edit Geometry</button>
+			</div>
+			<label id="pointEditor">
+				Position — latitude, longitude
+				<input id="point" type="text" inputmode="decimal" placeholder="56.200000, -5.500000">
+			</label>
+			<label id="polygonEditor" class="points-editor" hidden>
+				Polygon points — latitude, longitude
+				<textarea id="points" spellcheck="false" rows="6" placeholder="56.20, -5.50&#10;56.21, -5.49&#10;56.19, -5.48"></textarea>
+			</label>
+
+			<label>
+				Linked Harbour Editor region
+				<select id="regionRef"><option value="">None</option></select>
+			</label>
+			<label>
+				Tidal location used here
+				<select id="tideLocationRef"><option value="">Automatic / none assigned</option></select>
+			</label>
+
+			<section id="anchorageFields" class="conditional-section" hidden>
+				<h3>Anchorage details</h3>
+				<label>Seabed <input id="seabed" type="text" placeholder="Mud, sand, rock..."></label>
+				<label>Charted depth (m) <input id="chartedDepthM" type="number" min="0" step="0.1"></label>
+				<label>Notes <textarea id="anchorageNotes" rows="3"></textarea></label>
+			</section>
+
+			<section id="tideFields" class="conditional-section" hidden>
+				<h3>Tidal location details</h3>
+				<label>Provider <input id="tideProvider" type="text" placeholder="ukho, neaps..."></label>
+				<label>Station identifier <input id="tideStationId" type="text"></label>
+				<label>Station name <input id="tideStationName" type="text"></label>
+				<label>Parent standard port <select id="parentLocationRef"><option value="">None</option></select></label>
+				<label>Datum <input id="tideDatum" type="text" placeholder="Chart Datum"></label>
+			</section>
+
+			<section id="hazardFields" class="conditional-section" hidden>
+				<h3>Hazard and avoidance details</h3>
+				<label>Severity
+					<select id="hazardSeverity">
+						<option value="advisory">Advisory</option>
+						<option value="caution">Caution</option>
+						<option value="danger">Danger</option>
+						<option value="prohibited">Prohibited</option>
+					</select>
+				</label>
+				<label>Reason <textarea id="hazardReason" rows="2"></textarea></label>
+				<label>Additional clearance (m) <input id="hazardClearanceM" type="number" min="0" step="1"></label>
+				<fieldset>
+					<legend>Use for</legend>
+					<div id="hazardApplications" class="choice-grid compact"></div>
+				</fieldset>
+				<p class="safety-note">User-defined hazards supplement charts and a proper lookout. Hiding their map layer does not disable future monitoring or route rules.</p>
+			</section>
+
+			<div class="drawer-section action-row">
+				<button id="saveLocation" type="button" class="primary">Save Location</button>
+				<button id="showHistory" type="button">History</button>
+				<button id="deleteLocation" type="button" class="danger">Delete</button>
+			</div>
+			<input id="locationId" type="hidden">
+
+			<div class="drawer-section location-list-section">
+				<h3 id="locationListTitle">Locations</h3>
+				<div id="locationList" class="region-list"></div>
+			</div>
+		</aside>
+
+		<dialog id="historyDialog" class="history-dialog">
+			<div class="drawer-header">
+				<div><h2>Location History</h2><p id="historySummary">Select a revision to restore</p></div>
+				<button id="closeHistory" type="button" class="icon-button" aria-label="Close history">×</button>
+			</div>
+			<div id="historyList" class="history-list"></div>
+			<p class="safety-note">Restore creates a new revision; it does not delete later history.</p>
+		</dialog>
+
+		<section id="geometryControls" class="floating-panel" aria-label="Geometry editing controls">
+			<div id="geometryControlsHandle" class="floating-panel-header">
+				<div><h2>Edit Geometry</h2><p>Use the map centre and optional circle</p></div>
+				<button id="closeGeometry" type="button" class="icon-button" aria-label="Close geometry controls">×</button>
+			</div>
+			<div class="edit-grid">
+				<div class="nudge-panel" aria-label="Move geometry">
+					<button id="nudgeNorth" type="button" aria-label="Move north">↑</button>
+					<button id="nudgeWest" type="button" aria-label="Move west">←</button>
+					<div class="radius-stepper">
+						<button id="decreaseRadius" type="button" aria-label="Decrease radius">−</button>
+						<button id="increaseRadius" type="button" aria-label="Increase radius">+</button>
+					</div>
+					<button id="nudgeEast" type="button" aria-label="Move east">→</button>
+					<button id="nudgeSouth" type="button" aria-label="Move south">↓</button>
+				</div>
+				<div class="radius-control">
+					<label>Circle radius (NM)<input id="radiusNm" type="number" min="0.01" step="0.01" value="0.2"></label>
+					<button id="makeCircle" type="button">Make Circle</button>
+					<button id="applyRadius" type="button">Apply Radius</button>
+				</div>
+			</div>
+		</section>
+
+		<aside id="settingsDrawer" class="drawer drawer-right" aria-label="Settings">
+			<div class="drawer-header">
+				<div><h2>Settings</h2><p>Location catalogue</p></div>
+				<button id="closeSettings" type="button" class="icon-button" aria-label="Close settings">×</button>
+			</div>
+			<div class="drawer-section sync-panel">
+				<h3>Backup and transfer</h3>
+				<p>Export downloads the complete versioned catalogue. Merge keeps existing identifiers. Import replaces the catalogue after validating every location and relationship.</p>
+				<div class="action-row">
+					<button id="mergeLocations" type="button">Merge</button>
+					<button id="importLocations" type="button">Import</button>
+					<button id="exportLocations" type="button">Export</button>
+				</div>
+				<input id="locationImportFile" type="file" accept="application/json,.json" hidden>
+				<div class="sync-messages" aria-live="polite">
+					<div class="sync-messages-title">Messages</div>
+					<pre id="syncMessages">Ready.</pre>
+				</div>
+			</div>
+			<div class="drawer-section sync-panel">
+				<h3>Deleted locations</h3>
+				<p>Deletions remain as versioned tombstones. Open history to restore an earlier snapshot as a new revision.</p>
+				<div id="deletedList" class="region-list"></div>
+			</div>
+		</aside>
+
+		<div id="status" class="status" role="status"></div>
+		<script src="./leaflet.js"></script>
+		<script src="./protomaps-leaflet.js"></script>
+		<script type="module" src="./app.js?v=0.1.0"></script>
+	</body>
+</html>

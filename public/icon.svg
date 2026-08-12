@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-label="AJRM Marine Location Editor">
+  <rect width="120" height="120" rx="22" fill="#083344"/>
+  <path d="M15 88c18-12 34-12 48 0s27 12 42 0" fill="none" stroke="#67e8f9" stroke-width="7" stroke-linecap="round"/>
+  <path d="M60 17c-18 0-32 14-32 32 0 23 32 54 32 54s32-31 32-54c0-18-14-32-32-32z" fill="#f97316" stroke="#fff" stroke-width="6"/>
+  <circle cx="60" cy="49" r="12" fill="#083344"/>
+  <path d="M43 73h34M48 81h24" stroke="#fff" stroke-width="5" stroke-linecap="round"/>
+</svg>

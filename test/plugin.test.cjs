@@ -212,3 +212,41 @@ test("write routes enforce access and imports require the versioned schema", asy
 	assert.match(result.body.error, /org\.ajrm\.marine\.locations version 1/);
 	await plugin.stop();
 });
+
+test("Harbour Editor exports merge or replace with explicit catalogue semantics", async (t) => {
+	const { call, plugin } = await fixture(t);
+	const initial = await call("GET", "/locations", { query: { workspace: "all" } });
+	const initialCount = initial.body.locations.length;
+	const id = crypto.randomUUID();
+	const payload = {
+		ok: true,
+		version: 1,
+		exportedAt: "2026-08-13T14:48:56.354Z",
+		regions: [{
+			id,
+			name: "Harbour: Imported Marina",
+			timestamp: "2026-08-04T12:51:42.720Z",
+			feature: {
+				type: "Feature",
+				properties: { "aisPlus:type": "marina" },
+				geometry: { type: "Polygon", coordinates: [[[-5.2, 55.8], [-5.19, 55.8], [-5.19, 55.81], [-5.2, 55.8]]] },
+			},
+		}],
+	};
+	let result = await call("POST", "/local/merge", { body: { confirm: true, payload } });
+	assert.equal(result.statusCode, 200);
+	assert.equal(result.body.format, "harbour-editor-v1");
+	assert.equal(result.body.converted, 1);
+	result = await call("GET", "/locations", { query: { workspace: "all" } });
+	assert.equal(result.body.locations.length, initialCount + 1);
+	assert.deepEqual(result.body.locations.find((location) => location.id === id).types, ["marina"]);
+
+	result = await call("POST", "/local/import", { body: { confirm: true, payload } });
+	assert.equal(result.statusCode, 200);
+	assert.equal(result.body.format, "harbour-editor-v1");
+	result = await call("GET", "/locations", { query: { workspace: "all" } });
+	assert.deepEqual(result.body.locations.map((location) => location.id), [id]);
+	result = await call("GET", "/deleted", {});
+	assert.equal(result.body.tombstones.length, initialCount);
+	await plugin.stop();
+});

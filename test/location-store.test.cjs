@@ -81,3 +81,21 @@ test("merge accepts the latest edit and reports equal-time conflicts", async (t)
 	assert.equal(result.conflicts.length, 1);
 	assert.equal((await store.get(id)).name, "Imported newer");
 });
+
+test("replacement tombstones omitted locations so bundled data cannot return", async (t) => {
+	const store = await fixture(t);
+	const removedId = crypto.randomUUID();
+	const retainedId = crypto.randomUUID();
+	await store.set(removedId, value("Remove me"), { expectedRevision: 0 });
+	await store.set(retainedId, value("Retain me"), { expectedRevision: 0 });
+	const replacement = structuredClone(await store.read());
+	delete replacement.locations[removedId];
+	delete replacement.history[removedId];
+	await store.replace(replacement, { tombstoneMissing: true, editedBy: "Import" });
+	const result = await store.read();
+	assert.equal(result.locations[removedId], undefined);
+	assert.equal(result.locations[retainedId].name, "Retain me");
+	assert.equal(result.tombstones[removedId].name, "Remove me");
+	assert.equal(result.history[removedId].at(-1).action, "delete");
+	assert.equal((await store.addMissing([{ id: removedId, ...value("Seed retry") }])).length, 0);
+});

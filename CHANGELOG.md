@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.3.4 - 2026-08-13
+
+- Accept AJRM Marine Harbour Editor v1 exports in both Location Editor transfer
+  actions and convert their `Harbour:` regions into versioned locations.
+- Clarify that **Merge** retains unrelated locations while **Replace
+  Catalogue** removes locations absent from the selected file.
+- Tombstone locations omitted by replacement so bundled starter records do not
+  return after restart.
+- Keep transfer failures visible in the Settings messages panel.
+
 ## 0.3.3 - 2026-08-13
 
 - Clear the yellow unsaved-geometry preview after a successful save so the

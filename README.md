@@ -81,8 +81,12 @@ history. **Merge** compares the latest `updatedAt` for each stable location UUID
 The newer edit wins, while both histories are retained. An equal timestamp with
 different edit UUIDs is reported as a conflict and the local value is kept for
 manual review. Device clocks therefore need to be reasonably synchronized.
-**Import** is an explicit replacement and accepts only this app's versioned
-catalogue format.
+**Replace Catalogue** is an explicit replacement. **Merge** retains unrelated
+locations and compares matching stable UUIDs by latest edit time. Both actions
+accept this app's versioned catalogue format and AJRM Marine Harbour Editor v1
+exports; legacy `Harbour:` regions are converted into versioned locations.
+Replacement creates tombstones for omitted existing locations so bundled
+starter locations do not silently return after Signal K restarts.
 
 This provides deterministic offline sharing without pretending that two
 simultaneous edits can always be combined automatically. Export a catalogue
@@ -92,7 +96,7 @@ before a large import or merge.
 
 ```bash
 cd ~/.signalk
-npm install git+https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor.git#v0.3.3 --omit=dev --no-package-lock
+npm install git+https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor.git#v0.3.4 --omit=dev --no-package-lock
 sudo systemctl restart signalk
 ```
 

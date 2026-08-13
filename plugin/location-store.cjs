@@ -192,8 +192,37 @@ function createLocationStore(filePath) {
 				return location;
 			});
 		},
-		async replace(payload) {
-			return mutate(async () => write(normalizeCatalog(payload)));
+		async replace(payload, options = {}) {
+			return mutate(async (catalog) => {
+				const incoming = normalizeCatalog(payload);
+				if (options.tombstoneMissing) {
+					const editedAt = new Date().toISOString();
+					for (const [id, previous] of Object.entries(catalog.locations)) {
+						if (incoming.locations[id] || incoming.tombstones[id]) continue;
+						const revision = Number(previous.revision || 0) + 1;
+						const editId = crypto.randomUUID();
+						incoming.tombstones[id] = {
+							id,
+							name: previous.name,
+							types: previous.types,
+							revision,
+							updatedAt: editedAt,
+							lastEditId: editId,
+						};
+						incoming.history[id] = mergeHistory(catalog.history[id], incoming.history[id]);
+						incoming.history[id].push({
+							editId,
+							revision,
+							editedAt,
+							editedBy: String(options.editedBy || "catalogue replacement"),
+							action: "delete",
+							sourceCatalogId: incoming.catalogId,
+							snapshot: null,
+						});
+					}
+				}
+				return write(incoming);
+			});
 		},
 		async merge(payload, options = {}) {
 			return mutate(async (catalog) => {

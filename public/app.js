@@ -574,11 +574,22 @@ async function transfer(mode) {
 	const selected = await chooseJsonFile();
 	if (!selected) return;
 	const replacing = mode === "import";
-	const warning = replacing ? "Replace this catalogue with the selected versioned file?" : "Merge this catalogue by latest edit date?";
+	const harbourExport = selected.payload?.schema == null && Number(selected.payload?.version) === 1 && Array.isArray(selected.payload?.regions);
+	const count = harbourExport ? selected.payload.regions.length : null;
+	const sourceDescription = harbourExport ? `${count} Harbour Editor region(s)` : "the selected versioned catalogue";
+	const warning = replacing
+		? `Replace the entire Location Editor catalogue with ${sourceDescription}?\n\nExisting anchorages, tidal locations, hazards and other locations absent from the file will be deleted.`
+		: `Merge ${sourceDescription} into this catalogue?\n\nExisting anchorages and other unrelated locations will remain.`;
 	if (!confirm(warning)) return;
-	const result = await requestJson(`${apiBase}/local/${mode}`, { method: "POST", body: JSON.stringify({ confirm: true, payload: selected.payload }) });
-	setSyncMessages([`${mode === "merge" ? "Merged" : "Imported"} ${selected.file.name}.`, ...(result.log || []), ...(result.conflicts || []).map((item) => `CONFLICT ${item.name}: equal edit time; local retained.`)]);
-	await loadLocations();
+	setSyncMessages([`${replacing ? "Replacement import" : "Merge"} started.`, `Reading ${selected.file.name}...`]);
+	try {
+		const result = await requestJson(`${apiBase}/local/${mode}`, { method: "POST", body: JSON.stringify({ confirm: true, payload: selected.payload }) });
+		setSyncMessages([`${mode === "merge" ? "Merged" : "Imported"} ${selected.file.name}.`, ...(result.log || []), ...(result.conflicts || []).map((item) => `CONFLICT ${item.name}: equal edit time; local retained.`)]);
+		await loadLocations();
+	} catch (error) {
+		setSyncMessages([`${replacing ? "Import" : "Merge"} failed. Check the current catalogue before retrying.`, error.message]);
+		throw error;
+	}
 }
 
 function chartUrl(chart) { return chart?.tilemapUrl || chart?.url || chart?.tileUrl || chart?.href || ""; }

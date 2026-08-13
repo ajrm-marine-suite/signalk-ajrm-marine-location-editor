@@ -18,6 +18,7 @@ const {
 	representativePosition,
 } = require("./location-model.cjs");
 const { createLocationStore } = require("./location-store.cjs");
+const { prepareLocationImport } = require("./harbour-editor-import.cjs");
 
 const STATUS_CONTRACT = "ajrm-marine-location-editor-status-v1";
 const STATUS_PATH = "plugins.ajrmMarineLocationEditor";
@@ -284,18 +285,29 @@ module.exports = function ajrmMarineLocationEditor(app) {
 				assertRunning();
 				await initializationPromise;
 				if (!req.body?.confirm) throw new Error("Import must be confirmed.");
-				assertVersionedPayload(req.body.payload);
-				const incoming = normalizeCatalog(req.body.payload);
+				const prepared = prepareLocationImport(req.body.payload);
+				const incoming = prepared.catalog;
 				const count = Object.keys(incoming.locations).length;
 				if (count > MAX_IMPORT_LOCATIONS) {
 					throw new Error(`Import contains more than ${MAX_IMPORT_LOCATIONS} locations.`);
 				}
 				await validateCatalogReferences(incoming);
 				const previous = (await store.list()).length;
-				await store.replace(incoming);
+				await store.replace(incoming, { tombstoneMissing: true, editedBy: "Catalogue replacement" });
 				await reconcileHarbourRegions();
 				await refreshStatus();
-				res.json({ ok: true, imported: count, replaced: previous, log: [`Imported ${count} location(s).`, `Replaced ${previous} previous location(s).`] });
+				res.json({
+					ok: true,
+					imported: count,
+					replaced: previous,
+					format: prepared.format,
+					converted: prepared.converted,
+					log: [
+						...(prepared.converted ? [`Converted ${prepared.converted} Harbour Editor region(s) to versioned locations.`] : []),
+						`Imported ${count} location(s).`,
+						`Replaced ${previous} previous location(s).`,
+					],
+				});
 			} catch (error) {
 				res.status(400).json({ error: error.message });
 			}
@@ -306,8 +318,8 @@ module.exports = function ajrmMarineLocationEditor(app) {
 				assertRunning();
 				await initializationPromise;
 				if (!req.body?.confirm) throw new Error("Merge must be confirmed.");
-				assertVersionedPayload(req.body.payload);
-				const incoming = normalizeCatalog(req.body.payload);
+				const prepared = prepareLocationImport(req.body.payload);
+				const incoming = prepared.catalog;
 				if (Object.keys(incoming.locations).length > MAX_IMPORT_LOCATIONS) {
 					throw new Error(`Merge contains more than ${MAX_IMPORT_LOCATIONS} locations.`);
 				}
@@ -322,7 +334,10 @@ module.exports = function ajrmMarineLocationEditor(app) {
 					updated: result.updated,
 					keptLocal: result.keptLocal,
 					conflicts: result.conflicts,
+					format: prepared.format,
+					converted: prepared.converted,
 					log: [
+						...(prepared.converted ? [`Converted ${prepared.converted} Harbour Editor region(s) to versioned locations.`] : []),
 						`Added ${result.added} new location(s).`,
 						`Accepted ${result.updated} newer imported edit(s).`,
 						`Kept ${result.keptLocal} newer or identical local edit(s).`,
@@ -489,17 +504,6 @@ module.exports = function ajrmMarineLocationEditor(app) {
 		}
 		for (const region of existing) {
 			if (!desired.has(region.id)) await app.resourcesApi.deleteResource("regions", region.id);
-		}
-	}
-
-	function assertVersionedPayload(payload) {
-		if (
-			payload?.schema !== CATALOG_SCHEMA ||
-			Number(payload?.schemaVersion) !== CATALOG_SCHEMA_VERSION
-		) {
-			throw new Error(
-				`Select a ${CATALOG_SCHEMA} version ${CATALOG_SCHEMA_VERSION} catalogue.`,
-			);
 		}
 	}
 

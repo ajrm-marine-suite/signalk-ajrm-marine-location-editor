@@ -6,7 +6,7 @@
 		<title>AJRM Marine Location Editor</title>
 		<link rel="stylesheet" href="./leaflet.css">
 		<link rel="stylesheet" href="./ajrm-map-core.css?v=0.7.5">
-		<link rel="stylesheet" href="./styles.css?v=0.3.4">
+		<link rel="stylesheet" href="./styles.css?v=0.3.5">
 	</head>
 	<body>
 		<div id="map" class="map" aria-label="Marine location chart"></div>
@@ -152,6 +152,7 @@
 
 			<div class="drawer-section action-row">
 				<button id="saveLocation" type="button" class="primary">Save Location</button>
+				<button id="undoLocation" type="button" title="Discard unsaved changes and restore the last saved location">Undo Changes</button>
 				<button id="showHistory" type="button">History</button>
 				<button id="deleteLocation" type="button" class="danger">Delete</button>
 			</div>
@@ -189,7 +190,10 @@
 					<button id="makeCircle" type="button">Make Circle</button>
 					<button id="applyRadius" type="button">Apply Radius</button>
 					<p class="field-help">Movement and radius changes are previews until the location is saved.</p>
-					<button id="saveGeometry" type="button" class="primary">Save Location</button>
+					<div class="action-row">
+						<button id="saveGeometry" type="button" class="primary">Save Location</button>
+						<button id="undoGeometry" type="button" title="Discard unsaved changes and restore the last saved location">Undo Changes</button>
+					</div>
 				</div>
 			</div>
 		</section>
@@ -223,6 +227,6 @@
 		<div id="status" class="status" role="status"></div>
 		<script src="./leaflet.js"></script>
 		<script src="./protomaps-leaflet.js"></script>
-		<script type="module" src="./app.js?v=0.3.4"></script>
+		<script type="module" src="./app.js?v=0.3.5"></script>
 	</body>
 </html>

@@ -43,10 +43,10 @@ const elements = Object.fromEntries([
 	"points", "profileRegionField", "publishAsHarbourRegion", "tideLocationRef", "anchorageFields", "seabed", "chartedDepthM",
 	"anchorageNotes", "tideFields", "tideProvider", "tideStationId", "tideStationName",
 	"parentLocationRef", "tideDatum", "hazardFields", "hazardSeverity", "hazardReason",
-	"hazardClearanceM", "hazardApplications", "saveLocation", "deleteLocation", "showHistory",
+	"hazardClearanceM", "hazardApplications", "saveLocation", "undoLocation", "deleteLocation", "showHistory",
 	"locationId", "locationListTitle", "locationList", "historyDialog", "historySummary",
 	"historyList", "closeHistory", "radiusNm", "decreaseRadius", "increaseRadius",
-	"applyRadius", "makeCircle", "saveGeometry", "nudgeNorth", "nudgeSouth", "nudgeWest", "nudgeEast",
+	"applyRadius", "makeCircle", "saveGeometry", "undoGeometry", "nudgeNorth", "nudgeSouth", "nudgeWest", "nudgeEast",
 	"mergeLocations", "importLocations", "exportLocations", "locationImportFile", "syncMessages",
 	"deletedList", "status", "chartCycleStatus", "provenanceFields", "provenanceStatus", "provenanceWarning", "provenanceSources",
 ].map((id) => [id, document.querySelector(`#${id}`)]));
@@ -413,6 +413,16 @@ async function saveLocation() {
 	showStatus(`Saved revision ${result.location.revision}.`);
 }
 
+function undoChanges() {
+	if (selectedId && locations.some((location) => location.id === selectedId)) {
+		selectLocation(selectedId);
+		showStatus("Unsaved changes discarded; last saved location restored.");
+		return;
+	}
+	resetEditor();
+	showStatus("Unsaved new location cleared.");
+}
+
 async function deleteLocation() {
 	const location = selectedLocation();
 	if (!location || !confirm(`Delete ${location.name}? Its history will remain restorable.`)) return;
@@ -710,6 +720,7 @@ function bindEvents() {
 	elements.closeEditor.addEventListener("click", () => { elements.editorDrawer.classList.remove("open"); syncPanels(); });
 	elements.closeSettings.addEventListener("click", () => { elements.settingsDrawer.classList.remove("open"); syncPanels(); });
 	elements.saveLocation.addEventListener("click", () => saveLocation().catch((error) => showStatus(error.message, true)));
+	elements.undoLocation.addEventListener("click", undoChanges);
 	elements.deleteLocation.addEventListener("click", () => deleteLocation().catch((error) => showStatus(error.message, true)));
 	elements.showHistory.addEventListener("click", () => showHistory().catch((error) => showStatus(error.message, true)));
 	elements.closeHistory.addEventListener("click", () => elements.historyDialog.close());
@@ -718,6 +729,7 @@ function bindEvents() {
 	elements.mergeLocations.addEventListener("click", () => transfer("merge").catch((error) => showStatus(error.message, true)));
 	elements.makeCircle.addEventListener("click", () => { const center = map.getCenter(); geometryPreviewDirty = true; elements.geometryType.value = "Polygon"; elements.points.value = formatPoints(makeCirclePoints({ lat: center.lat, lon: center.lng }, Number(elements.radiusNm.value || 0.2))); updateConditionalFields(); });
 	elements.saveGeometry.addEventListener("click", () => saveLocation().catch((error) => showStatus(error.message, true)));
+	elements.undoGeometry.addEventListener("click", undoChanges);
 	elements.applyRadius.addEventListener("click", () => changeCircle());
 	elements.decreaseRadius.addEventListener("click", () => changeCircle(-0.01));
 	elements.increaseRadius.addEventListener("click", () => changeCircle(0.01));

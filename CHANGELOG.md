@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.3.5 - 2026-08-13
+
+- Add **Undo Changes** beside both **Save Location** actions. It restores every
+  field and the geometry from the last saved revision, or clears a new draft.
+
 ## 0.3.4 - 2026-08-13
 
 - Accept AJRM Marine Harbour Editor v1 exports in both Location Editor transfer

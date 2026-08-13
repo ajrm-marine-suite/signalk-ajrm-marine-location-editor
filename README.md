@@ -96,7 +96,7 @@ before a large import or merge.
 
 ```bash
 cd ~/.signalk
-npm install git+https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor.git#v0.3.4 --omit=dev --no-package-lock
+npm install git+https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor.git#v0.3.5 --omit=dev --no-package-lock
 sudo systemctl restart signalk
 ```
 
@@ -113,8 +113,9 @@ Open **AJRM Marine Location Editor** from the Signal K app list.
 5. For a harbour-profile area, select a harbour, anchorage, mooring or marina
    type, use polygon/circle geometry, and tick **Use this area for automatic
    Harbour profile switching**.
-6. Press **Save Location**.
-7. Open **History** to inspect or restore an earlier snapshot.
+6. Press **Save Location**, or **Undo Changes** to discard the draft and return
+   to the last saved location.
+7. Open **History** to inspect or restore an earlier saved snapshot.
 
 Settings provides versioned export, latest-edit merge and confirmed catalogue
 replacement. Edits require Signal K read/write or administrator access.

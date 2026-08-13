@@ -6,7 +6,7 @@
 		<title>AJRM Marine Location Editor</title>
 		<link rel="stylesheet" href="./leaflet.css">
 		<link rel="stylesheet" href="./ajrm-map-core.css?v=0.7.5">
-		<link rel="stylesheet" href="./styles.css?v=0.3.6">
+		<link rel="stylesheet" href="./styles.css?v=0.3.7">
 	</head>
 	<body>
 		<div id="map" class="map" aria-label="Marine location chart"></div>
@@ -15,13 +15,13 @@
 			<div id="chartCycleStatus" class="ajrm-map-chart-cycle-status" role="status" aria-live="polite" hidden></div>
 		</div>
 
-		<aside id="editorDrawer" class="drawer drawer-left open" aria-label="Location editor">
+		<aside id="selectorDrawer" class="drawer drawer-left open" aria-label="Select a location">
 			<div class="drawer-header">
 				<div>
-					<h2>Location Editor</h2>
-					<p id="selectedSummary">New location</p>
+					<h2>Select Location</h2>
+					<p>Choose a location to inspect or edit</p>
 				</div>
-				<button id="closeEditor" type="button" class="icon-button" aria-label="Close editor">×</button>
+				<button id="closeSelector" type="button" class="icon-button" aria-label="Close location selection">×</button>
 			</div>
 
 			<label>
@@ -60,9 +60,18 @@
 			</section>
 
 			<div class="drawer-section compact-actions">
-				<button id="newLocation" type="button">New</button>
+				<button id="newLocation" type="button">New Location</button>
 			</div>
-			<h3 class="edit-heading">Edit selected location</h3>
+		</aside>
+
+		<aside id="editorDrawer" class="drawer drawer-left" aria-label="Location editor">
+			<div class="drawer-header">
+				<div>
+					<h2>Location Editor</h2>
+					<p id="selectedSummary">New location</p>
+				</div>
+				<button id="closeEditor" type="button" class="icon-button" aria-label="Close editor">×</button>
+			</div>
 
 			<label>
 				Name
@@ -227,6 +236,6 @@
 		<div id="status" class="status" role="status"></div>
 		<script src="./leaflet.js"></script>
 		<script src="./protomaps-leaflet.js"></script>
-		<script type="module" src="./app.js?v=0.3.6"></script>
+		<script type="module" src="./app.js?v=0.3.7"></script>
 	</body>
 </html>

@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.3.7 - 2026-08-13
+
+- Separate the compact location selector from the full Location Editor.
+- Keep workspace, search, display filters and the location list in **Select
+  Location**; selecting a record opens its editor.
+- Keep geometry, classification, profile, anchorage, tide, hazard, provenance
+  and save/history/delete controls exclusively in **Location Editor**.
+- Use the pencil map button to reopen the current editor; geometry nudging is
+  launched from the editor's **Edit Geometry** action.
+
 ## 0.3.6 - 2026-08-13
 
 - Require a unique normalized name for every active location, independent of

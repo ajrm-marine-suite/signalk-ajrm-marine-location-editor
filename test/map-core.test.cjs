@@ -47,8 +47,8 @@ test("map page uses the standard left-side controls with zoom first", () => {
   const app = fs.readFileSync(path.join(root, "public/app.js"), "utf8");
   const css = fs.readFileSync(path.join(root, "public/styles.css"), "utf8");
 	assert.match(html, /ajrm-map-core\.css\?v=0\.7\.5/);
-	assert.match(html, /type="module" src="\.\/app\.js\?v=0\.3\.6"/);
-	assert.match(html, /styles\.css\?v=0\.3\.6/);
+	assert.match(html, /type="module" src="\.\/app\.js\?v=0\.3\.7"/);
+	assert.match(html, /styles\.css\?v=0\.3\.7/);
 	assert.match(html, /id="chartCycleStatus" class="ajrm-map-chart-cycle-status"[^>]+hidden/);
   assert.match(app, /zoomControl:\s*true/);
   assert.match(app, /MapCore\.createChartSelectorControl/);
@@ -57,6 +57,8 @@ test("map page uses the standard left-side controls with zoom first", () => {
 	assert.match(app, /MapCore\.labelLeafletZoomControls\(map\)/);
 	assert.match(app, /statusElement:\s*elements\.chartCycleStatus/);
 	assert.match(app, /MapCore\.createActionToolbarControl/);
+	assert.match(app, /title: "Select location"/);
+	assert.match(app, /title: "Edit location"/);
 	assert.match(html, /id="saveGeometry"[^>]*>Save Location</);
 	assert.match(html, /id="undoGeometry"[^>]*>Undo Changes</);
 	assert.match(html, /id="undoLocation"[^>]*>Undo Changes</);
@@ -78,4 +80,19 @@ test("map page uses the standard left-side controls with zoom first", () => {
   assert.doesNotMatch(css, /\.map\s*\{[^}]*position:\s*fixed/s);
   assert.doesNotMatch(css, /\.map\s*\{[^}]*z-index/s);
   assert.doesNotMatch(app, /position:\s*["']topright["']/);
+});
+
+test("location selection and editing use separate focused drawers", () => {
+	const root = path.resolve(__dirname, "..");
+	const html = fs.readFileSync(path.join(root, "public/index.html"), "utf8");
+	const selector = html.match(/<aside id="selectorDrawer"[\s\S]*?<\/aside>/)?.[0] || "";
+	const editor = html.match(/<aside id="editorDrawer"[\s\S]*?<\/aside>/)?.[0] || "";
+	assert.match(selector, /id="workspace"/);
+	assert.match(selector, /id="locationList"/);
+	assert.match(selector, /id="newLocation"/);
+	assert.doesNotMatch(selector, /id="geometryType"|id="anchorageFields"|id="tideFields"|id="hazardFields"/);
+	assert.match(editor, /id="geometryType"/);
+	assert.match(editor, /id="anchorageFields"/);
+	assert.match(editor, /id="tideFields"/);
+	assert.match(editor, /id="hazardFields"/);
 });

@@ -35,8 +35,8 @@ const hazardTypes = new Set(["hazard", "avoidanceArea", "noAnchoringArea", "wait
 const hazardApplicationChoices = ["display", "routePlanning", "proximityWarning", "anchorPlanning"];
 
 const elements = Object.fromEntries([
-	"map", "editorDrawer", "settingsDrawer", "geometryControls", "geometryControlsHandle",
-	"closeEditor", "closeSettings", "closeGeometry", "selectedSummary", "workspace",
+	"map", "selectorDrawer", "editorDrawer", "settingsDrawer", "geometryControls", "geometryControlsHandle",
+	"closeSelector", "closeEditor", "closeSettings", "closeGeometry", "selectedSummary", "workspace",
 	"newLocation", "refreshLocations", "locationSearch", "displayTypeChoices", "showAllTypes",
 	"hideAllTypes", "mapAreaOnly", "locationName", "description", "typeChoices",
 	"geometryType", "setPoint", "openGeometry", "pointEditor", "polygonEditor", "point",
@@ -274,7 +274,7 @@ function resetEditor() {
 	renderLocations();
 }
 
-function selectLocation(id, fit = false) {
+function selectLocation(id, fit = false, revealEditor = false) {
 	const location = locations.find((entry) => entry.id === id);
 	if (!location) return;
 	selectedId = id;
@@ -316,6 +316,7 @@ function selectLocation(id, fit = false) {
 		if (geometry.type === "Point") map.setView([geometry.coordinates[1], geometry.coordinates[0]], Math.max(map.getZoom(), 14));
 		else map.fitBounds(L.latLngBounds(geometry.coordinates[0].map(([lon, lat]) => [lat, lon])), { padding: [40, 40] });
 	}
+	if (revealEditor) showLeftPanel(elements.editorDrawer);
 }
 
 function buildLocation() {
@@ -468,13 +469,13 @@ function renderLocations() {
 			layer = L.polygon(geometry.coordinates[0].map(([lon, lat]) => [lat, lon]), { color, weight: selected ? 5 : 3, fillColor: color, fillOpacity: 0.16, dashArray: location.types.some((type) => hazardTypes.has(type)) ? "8 6" : null });
 		}
 		layer.bindTooltip(`${location.name} — ${location.types.map(typeLabel).join(", ")}`);
-		layer.on("click", () => selectLocation(location.id));
+		layer.on("click", () => selectLocation(location.id, false, true));
 		layer.addTo(locationLayer);
 		const button = document.createElement("button");
 		button.type = "button";
 		button.className = `region-item${selected ? " selected" : ""}`;
 		button.innerHTML = `<strong>${escapeHtml(location.name)}</strong><span>${escapeHtml(location.types.map(typeLabel).join(", "))} · r${location.revision}</span>`;
-		button.addEventListener("click", () => selectLocation(location.id, true));
+		button.addEventListener("click", () => selectLocation(location.id, true, true));
 		groupList.append(button);
 		}
 		group.append(groupList);
@@ -644,6 +645,16 @@ function makeNaturalEarthLayer() {
 }
 function syncPanels() { toolbar?.update(); setTimeout(() => map?.invalidateSize(), 180); }
 function togglePanel(panel) { panel.classList.toggle("open"); syncPanels(); }
+function showLeftPanel(panel) {
+	for (const candidate of [elements.selectorDrawer, elements.editorDrawer]) candidate.classList.toggle("open", candidate === panel);
+	syncPanels();
+}
+function toggleLeftPanel(panel) {
+	if (panel.classList.contains("open")) {
+		panel.classList.remove("open");
+		syncPanels();
+	} else showLeftPanel(panel);
+}
 function makeDraggable(panel, handle) {
 	let drag;
 	handle.addEventListener("pointerdown", (event) => { if (event.target.closest("button")) return; const rect = panel.getBoundingClientRect(); drag = { x: event.clientX - rect.left, y: event.clientY - rect.top }; handle.setPointerCapture(event.pointerId); });
@@ -673,8 +684,8 @@ function initMap() {
 	], onFoldersChanged: loadChartResources }).addTo();
 	chartCycle = MapCore.createChartCycleControl({ L, map, getCharts: () => autoChartList, isEnabled: () => map.hasLayer(autoChartGroup), onChange: updateAutoChart, statusElement: elements.chartCycleStatus }).addTo();
 	toolbar = MapCore.createActionToolbarControl({ L, map, actions: [
-		{ title: "Locations", icon: MapCore.MAP_ACTION_ICONS.list, activate: () => togglePanel(elements.editorDrawer), isPressed: () => elements.editorDrawer.classList.contains("open") },
-		{ title: "Edit geometry", icon: MapCore.MAP_ACTION_ICONS.edit, activate: () => togglePanel(elements.geometryControls), isPressed: () => elements.geometryControls.classList.contains("open") },
+		{ title: "Select location", icon: MapCore.MAP_ACTION_ICONS.list, activate: () => toggleLeftPanel(elements.selectorDrawer), isPressed: () => elements.selectorDrawer.classList.contains("open") },
+		{ title: "Edit location", icon: MapCore.MAP_ACTION_ICONS.edit, activate: () => toggleLeftPanel(elements.editorDrawer), isPressed: () => elements.editorDrawer.classList.contains("open") },
 		{ title: "Settings", icon: MapCore.MAP_ACTION_ICONS.settings, activate: () => togglePanel(elements.settingsDrawer), isPressed: () => elements.settingsDrawer.classList.contains("open") },
 	] }).addTo();
 	map.on("moveend zoomend", updateAutoChart);
@@ -712,11 +723,12 @@ function bindEvents() {
 	elements.mapAreaOnly.addEventListener("change", () => { localStorage.setItem(`${storagePrefix}MapAreaOnly`, String(elements.mapAreaOnly.checked)); renderLocations(); });
 	elements.showAllTypes.addEventListener("click", () => setAllDisplayTypes(true));
 	elements.hideAllTypes.addEventListener("click", () => setAllDisplayTypes(false));
-	elements.newLocation.addEventListener("click", resetEditor);
+	elements.newLocation.addEventListener("click", () => { resetEditor(); showLeftPanel(elements.editorDrawer); });
 	elements.refreshLocations.addEventListener("click", () => loadLocations().catch((error) => showStatus(error.message, true)));
 	elements.setPoint.addEventListener("click", () => { const center = map.getCenter(); geometryPreviewDirty = true; elements.geometryType.value = "Point"; elements.point.value = `${center.lat.toFixed(6)}, ${center.lng.toFixed(6)}`; updateConditionalFields(); });
 	elements.openGeometry.addEventListener("click", () => togglePanel(elements.geometryControls));
 	elements.closeGeometry.addEventListener("click", () => { elements.geometryControls.classList.remove("open"); syncPanels(); });
+	elements.closeSelector.addEventListener("click", () => { elements.selectorDrawer.classList.remove("open"); syncPanels(); });
 	elements.closeEditor.addEventListener("click", () => { elements.editorDrawer.classList.remove("open"); syncPanels(); });
 	elements.closeSettings.addEventListener("click", () => { elements.settingsDrawer.classList.remove("open"); syncPanels(); });
 	elements.saveLocation.addEventListener("click", () => saveLocation().catch((error) => showStatus(error.message, true)));

@@ -101,7 +101,7 @@ before a large import or merge.
 
 ```bash
 cd ~/.signalk
-npm install git+https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor.git#v0.3.6 --omit=dev --no-package-lock
+npm install git+https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor.git#v0.3.7 --omit=dev --no-package-lock
 sudo systemctl restart signalk
 ```
 
@@ -109,18 +109,21 @@ Open **AJRM Marine Location Editor** from the Signal K app list.
 
 ## Use
 
-1. Start in **All Locations** to see existing migrated harbours and all other
-   locations, or choose a filtered workspace.
-2. Press **New**, enter a name and select one or more location types.
-3. Store a point at the map centre, enter a polygon, or generate a circle.
-4. Add optional anchorage, tide, hazard and relationship details. Imported
+1. Open **Select Location** to browse existing records, choose a filtered
+   workspace, or search by name and type.
+2. Select a record to open it in the separate **Location Editor**, or press
+   **New Location**. The pencil toolbar button reopens the current editor.
+3. Enter a name and select one or more location types. Geometry and fields for
+   anchorages, tides and hazards appear only in the editor.
+4. Store a point at the map centre, enter a polygon, or generate a circle.
+5. Add optional anchorage, tide, hazard and relationship details. Imported
    records display their source and review status below these fields.
-5. For a harbour-profile area, select a harbour, anchorage, mooring or marina
+6. For a harbour-profile area, select a harbour, anchorage, mooring or marina
    type, use polygon/circle geometry, and tick **Use this area for automatic
    Harbour profile switching**.
-6. Press **Save Location**, or **Undo Changes** to discard the draft and return
+7. Press **Save Location**, or **Undo Changes** to discard the draft and return
    to the last saved location.
-7. Open **History** to inspect or restore an earlier saved snapshot.
+8. Open **History** to inspect or restore an earlier saved snapshot.
 
 Settings provides versioned export, latest-edit merge and confirmed catalogue
 replacement. Edits require Signal K read/write or administrator access.

@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.3.2 - 2026-08-13
+
+- Repeat circle movement after an arrow is held briefly, while retaining
+  single-step taps and keyboard activation.
+
 ## 0.3.1 - 2026-08-13
 
 - Keep the nested chart-folder controls visible after Auto Charts is switched

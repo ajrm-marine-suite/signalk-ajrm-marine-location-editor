@@ -47,8 +47,8 @@ test("map page uses the standard left-side controls with zoom first", () => {
   const app = fs.readFileSync(path.join(root, "public/app.js"), "utf8");
   const css = fs.readFileSync(path.join(root, "public/styles.css"), "utf8");
 	assert.match(html, /ajrm-map-core\.css\?v=0\.7\.5/);
-	assert.match(html, /type="module" src="\.\/app\.js\?v=0\.3\.1"/);
-	assert.match(html, /styles\.css\?v=0\.3\.1/);
+	assert.match(html, /type="module" src="\.\/app\.js\?v=0\.3\.2"/);
+	assert.match(html, /styles\.css\?v=0\.3\.2/);
 	assert.match(html, /id="chartCycleStatus" class="ajrm-map-chart-cycle-status"[^>]+hidden/);
   assert.match(app, /zoomControl:\s*true/);
   assert.match(app, /MapCore\.createChartSelectorControl/);
@@ -59,6 +59,7 @@ test("map page uses the standard left-side controls with zoom first", () => {
 	assert.match(app, /MapCore\.createActionToolbarControl/);
 	assert.match(html, /id="saveGeometry"[^>]*>Save Location</);
 	assert.match(app, /elements\.saveGeometry\.addEventListener\("click"/);
+	assert.match(app, /bindPressRepeat\(elements\.nudgeNorth/);
   assert.doesNotMatch(html, /name="baseMap"/);
   assert.doesNotMatch(html, /id="checkAutoCharts"/);
   assert.doesNotMatch(html, /id="checkOpenSeaMap"/);

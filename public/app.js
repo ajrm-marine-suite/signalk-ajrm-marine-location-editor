@@ -5,6 +5,7 @@
 
 import * as MapCore from "./ajrm-map-core.mjs?v=0.7.5";
 import { filterLocations, groupLocations } from "./location-browser.mjs?v=0.3.1";
+import { bindPressRepeat } from "./press-repeat.mjs?v=0.3.2";
 
 const apiBase = "/plugins/signalk-ajrm-marine-location-editor";
 const resourcePrefix = "/resources/locations/";
@@ -702,10 +703,10 @@ function bindEvents() {
 	elements.applyRadius.addEventListener("click", () => changeCircle());
 	elements.decreaseRadius.addEventListener("click", () => changeCircle(-0.01));
 	elements.increaseRadius.addEventListener("click", () => changeCircle(0.01));
-	elements.nudgeNorth.addEventListener("click", () => changeCircle(0, editStepNm, 0));
-	elements.nudgeSouth.addEventListener("click", () => changeCircle(0, -editStepNm, 0));
-	elements.nudgeWest.addEventListener("click", () => changeCircle(0, 0, -editStepNm));
-	elements.nudgeEast.addEventListener("click", () => changeCircle(0, 0, editStepNm));
+	bindPressRepeat(elements.nudgeNorth, () => changeCircle(0, editStepNm, 0));
+	bindPressRepeat(elements.nudgeSouth, () => changeCircle(0, -editStepNm, 0));
+	bindPressRepeat(elements.nudgeWest, () => changeCircle(0, 0, -editStepNm));
+	bindPressRepeat(elements.nudgeEast, () => changeCircle(0, 0, editStepNm));
 	map.on("moveend zoomend", () => { if (elements.mapAreaOnly.checked) renderLocations(); });
 }
 

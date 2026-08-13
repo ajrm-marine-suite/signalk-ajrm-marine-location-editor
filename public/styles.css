@@ -453,6 +453,11 @@ h3 {
 	width: max-content;
 }
 
+.nudge-panel > button {
+	touch-action: none;
+	user-select: none;
+}
+
 .nudge-panel button,
 .radius-stepper button {
 	padding: 0;

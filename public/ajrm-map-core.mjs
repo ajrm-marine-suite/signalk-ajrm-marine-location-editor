@@ -5,7 +5,7 @@
  */
 
 export const MAP_CORE_CONTRACT = "ajrm-marine-map-shell-v1";
-export const MAP_CORE_VERSION = "0.7.3";
+export const MAP_CORE_VERSION = "0.7.5";
 export const AUTO_CHARTS_NAME = "Auto Charts";
 export const OPEN_SEA_MAP_NAME = "OpenSeaMap";
 export const CHART_FOLDER_API_BASE = "/plugins/signalk-charts-provider-simple";
@@ -738,9 +738,13 @@ export function createChartSelectorControl({
 					}
 					return;
 				}
+				const foldersWereOpen = panel.querySelector("[data-folders]")?.open === true;
 				if (input.type === "radio") setBaseMap(input.value);
 				else overlays.find((item) => item.name === input.value)?.setEnabled(input.checked);
 				renderPanel();
+				const folderDetails = panel.querySelector("[data-folders]");
+				if (folderDetails) folderDetails.open = foldersWereOpen;
+				await refreshFolders();
 			};
 			panel.addEventListener("change", changeHandler);
 			mapClickHandler = () => {

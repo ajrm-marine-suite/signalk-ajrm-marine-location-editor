@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.3.1 - 2026-08-13
+
+- Keep the nested chart-folder controls visible after Auto Charts is switched
+  on or another map-selector option changes.
+- Add an explicit **Save Location** action beside the circle movement and radius
+  controls, clarifying that geometry adjustments are previews until saved.
+- Refresh all browser asset version markers so upgrades cannot retain the older
+  chart selector or Location Editor script from cache.
+
 ## 0.3.0 - 2026-08-12
 
 - Added a repeatable, tombstone-aware West Scotland starter catalogue with

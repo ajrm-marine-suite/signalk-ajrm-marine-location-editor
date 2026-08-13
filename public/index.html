@@ -5,8 +5,8 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<title>AJRM Marine Location Editor</title>
 		<link rel="stylesheet" href="./leaflet.css">
-		<link rel="stylesheet" href="./ajrm-map-core.css?v=0.7.3">
-		<link rel="stylesheet" href="./styles.css?v=0.2.1">
+		<link rel="stylesheet" href="./ajrm-map-core.css?v=0.7.5">
+		<link rel="stylesheet" href="./styles.css?v=0.3.1">
 	</head>
 	<body>
 		<div id="map" class="map" aria-label="Marine location chart"></div>
@@ -188,6 +188,8 @@
 					<label>Circle radius (NM)<input id="radiusNm" type="number" min="0.01" step="0.01" value="0.2"></label>
 					<button id="makeCircle" type="button">Make Circle</button>
 					<button id="applyRadius" type="button">Apply Radius</button>
+					<p class="field-help">Movement and radius changes are previews until the location is saved.</p>
+					<button id="saveGeometry" type="button" class="primary">Save Location</button>
 				</div>
 			</div>
 		</section>
@@ -221,6 +223,6 @@
 		<div id="status" class="status" role="status"></div>
 		<script src="./leaflet.js"></script>
 		<script src="./protomaps-leaflet.js"></script>
-		<script type="module" src="./app.js?v=0.2.1"></script>
+		<script type="module" src="./app.js?v=0.3.1"></script>
 	</body>
 </html>

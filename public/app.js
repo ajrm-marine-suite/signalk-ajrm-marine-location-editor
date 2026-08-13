@@ -3,8 +3,8 @@
  * and renders workspace-filtered places, tidal references and safety areas.
  */
 
-import * as MapCore from "./ajrm-map-core.mjs?v=0.7.3";
-import { filterLocations, groupLocations } from "./location-browser.mjs?v=0.2.1";
+import * as MapCore from "./ajrm-map-core.mjs?v=0.7.5";
+import { filterLocations, groupLocations } from "./location-browser.mjs?v=0.3.1";
 
 const apiBase = "/plugins/signalk-ajrm-marine-location-editor";
 const resourcePrefix = "/resources/locations/";
@@ -45,7 +45,7 @@ const elements = Object.fromEntries([
 	"hazardClearanceM", "hazardApplications", "saveLocation", "deleteLocation", "showHistory",
 	"locationId", "locationListTitle", "locationList", "historyDialog", "historySummary",
 	"historyList", "closeHistory", "radiusNm", "decreaseRadius", "increaseRadius",
-	"applyRadius", "makeCircle", "nudgeNorth", "nudgeSouth", "nudgeWest", "nudgeEast",
+	"applyRadius", "makeCircle", "saveGeometry", "nudgeNorth", "nudgeSouth", "nudgeWest", "nudgeEast",
 	"mergeLocations", "importLocations", "exportLocations", "locationImportFile", "syncMessages",
 	"deletedList", "status", "chartCycleStatus", "provenanceFields", "provenanceStatus", "provenanceWarning", "provenanceSources",
 ].map((id) => [id, document.querySelector(`#${id}`)]));
@@ -698,6 +698,7 @@ function bindEvents() {
 	elements.importLocations.addEventListener("click", () => transfer("import").catch((error) => showStatus(error.message, true)));
 	elements.mergeLocations.addEventListener("click", () => transfer("merge").catch((error) => showStatus(error.message, true)));
 	elements.makeCircle.addEventListener("click", () => { const center = map.getCenter(); elements.geometryType.value = "Polygon"; elements.points.value = formatPoints(makeCirclePoints({ lat: center.lat, lon: center.lng }, Number(elements.radiusNm.value || 0.2))); updateConditionalFields(); });
+	elements.saveGeometry.addEventListener("click", () => saveLocation().catch((error) => showStatus(error.message, true)));
 	elements.applyRadius.addEventListener("click", () => changeCircle());
 	elements.decreaseRadius.addEventListener("click", () => changeCircle(-0.01));
 	elements.increaseRadius.addEventListener("click", () => changeCircle(0.01));

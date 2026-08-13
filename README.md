@@ -84,7 +84,12 @@ manual review. Device clocks therefore need to be reasonably synchronized.
 **Replace Catalogue** is an explicit replacement. **Merge** retains unrelated
 locations and compares matching stable UUIDs by latest edit time. Both actions
 accept this app's versioned catalogue format and AJRM Marine Harbour Editor v1
-exports; legacy `Harbour:` regions are converted into versioned locations.
+exports. Legacy `Harbour:` regions are converted into versioned locations and
+matched to existing locations by name (ignoring case and repeated whitespace),
+because the older exporter did not preserve stable IDs.
+The later explicit edit timestamp wins and any earlier duplicate records with
+that name are tombstoned. Location names are unique across the whole catalogue,
+ignoring letter case and repeated whitespace, regardless of type or workspace.
 Replacement creates tombstones for omitted existing locations so bundled
 starter locations do not silently return after Signal K restarts.
 
@@ -96,7 +101,7 @@ before a large import or merge.
 
 ```bash
 cd ~/.signalk
-npm install git+https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor.git#v0.3.5 --omit=dev --no-package-lock
+npm install git+https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor.git#v0.3.6 --omit=dev --no-package-lock
 sudo systemctl restart signalk
 ```
 

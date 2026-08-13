@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.3.6 - 2026-08-13
+
+- Require a unique normalized name for every active location, independent of
+  type, workspace, letter case or repeated whitespace.
+- Match legacy Harbour Editor merges by normalized name, retain the record's
+  stable local ID, accept only a later explicit edit, and tombstone duplicate
+  records created by earlier imports.
+- During initial open-data setup, let a nearby same-name marina or other more
+  specific classification upgrade an unedited migrated harbour region. This
+  retains its useful profile polygon without adding a duplicate point record.
+
 ## 0.3.5 - 2026-08-13
 
 - Add **Undo Changes** beside both **Save Location** actions. It restores every

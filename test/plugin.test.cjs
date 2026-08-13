@@ -102,7 +102,7 @@ test("a fresh catalogue receives the sourced West Scotland seed without publishi
 	await plugin.stop();
 });
 
-test("an unedited migrated OSM harbour is upgraded when the source explicitly classifies a marina", async (t) => {
+test("an unedited migrated harbour is upgraded by a same-name nearby marina seed", async (t) => {
 	const directory = await fs.mkdtemp(path.join(os.tmpdir(), "ajrm-location-marina-upgrade-"));
 	t.after(() => fs.rm(directory, { recursive: true, force: true }));
 	const id = crypto.randomUUID();
@@ -112,7 +112,7 @@ test("an unedited migrated OSM harbour is upgraded when the source explicitly cl
 			name: "Harbour: Ardfern Yacht Centre",
 			feature: {
 				type: "Feature",
-				properties: { "ajrmMarine:sourceRef": "openstreetmap:way/399034351" },
+				properties: {},
 				geometry: { type: "Polygon", coordinates: [[[-5.54, 56.18], [-5.53, 56.18], [-5.53, 56.19], [-5.54, 56.18]]] },
 			},
 		},
@@ -138,6 +138,9 @@ test("an unedited migrated OSM harbour is upgraded when the source explicitly cl
 	assert.equal(res.body.revision, 2);
 	assert.equal(res.body.properties.provenance.reviewStatus, "sourceChecked");
 	assert.equal(regions[id].name, "Harbour: Ardfern Yacht Centre");
+	const list = response();
+	await routes.get("GET /locations")({ query: { workspace: "all" } }, list);
+	assert.equal(list.body.locations.filter((location) => location.name === "Ardfern Yacht Centre").length, 1);
 	await plugin.stop();
 });
 
@@ -248,5 +251,55 @@ test("Harbour Editor exports merge or replace with explicit catalogue semantics"
 	assert.deepEqual(result.body.locations.map((location) => location.id), [id]);
 	result = await call("GET", "/deleted", {});
 	assert.equal(result.body.tombstones.length, initialCount);
+	await plugin.stop();
+});
+
+test("Harbour Editor merge replaces a later exact-name harbour without duplicating it", async (t) => {
+	const { call, plugin } = await fixture(t);
+	const firstId = crypto.randomUUID();
+	let result = await call("PUT", "/locations/:id", { params: { id: firstId }, body: harbourBody("Timestamp Harbour") });
+	assert.equal(result.statusCode, 200);
+	const importedId = crypto.randomUUID();
+	const payload = {
+		version: 1,
+		exportedAt: "2099-08-14T00:00:01Z",
+		regions: [{
+			id: importedId,
+			name: "Harbour: Timestamp Harbour",
+			timestamp: "2099-08-14T00:00:00Z",
+			feature: {
+				type: "Feature",
+				properties: { "aisPlus:type": "marina" },
+				geometry: { type: "Polygon", coordinates: [[[-4.9, 55.8], [-4.89, 55.8], [-4.89, 55.81], [-4.9, 55.8]]] },
+			},
+		}],
+	};
+	result = await call("POST", "/local/merge", { body: { confirm: true, payload } });
+	assert.equal(result.statusCode, 200);
+	assert.equal(result.body.matchedByName, 1);
+	assert.equal(result.body.deduplicated, 0);
+	result = await call("GET", "/locations", { query: { workspace: "all" } });
+	const matches = result.body.locations.filter((location) => location.name === "Timestamp Harbour");
+	assert.equal(matches.length, 1);
+	assert.deepEqual(matches[0].types, ["marina"]);
+	assert.equal(matches[0].feature.geometry.coordinates[0][0][0], -4.9);
+	await plugin.stop();
+});
+
+test("location names are unique across all location types", async (t) => {
+	const { call, plugin } = await fixture(t);
+	const firstId = crypto.randomUUID();
+	const duplicateId = crypto.randomUUID();
+	let result = await call("PUT", "/locations/:id", {
+		params: { id: firstId },
+		body: harbourBody("Unique Harbour"),
+	});
+	assert.equal(result.statusCode, 200);
+	result = await call("PUT", "/locations/:id", {
+		params: { id: duplicateId },
+		body: { ...harbourBody("  unique   harbour  "), types: ["anchorage"], properties: {} },
+	});
+	assert.equal(result.statusCode, 400);
+	assert.match(result.body.error, /Location names must be unique/);
 	await plugin.stop();
 });

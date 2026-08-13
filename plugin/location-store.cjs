@@ -263,9 +263,109 @@ function createLocationStore(filePath) {
 				return { catalog, added, updated, keptLocal, conflicts };
 			});
 		},
+		async mergeHarboursByName(payload, options = {}) {
+			return mutate(async (catalog) => {
+				const incoming = normalizeCatalog(payload);
+				let added = 0;
+				let updated = 0;
+				let keptLocal = 0;
+				let matchedByName = 0;
+				let deduplicated = 0;
+				for (const imported of Object.values(incoming.locations)) {
+					const nameKey = normalizedHarbourName(imported.name);
+					const matches = Object.values(catalog.locations)
+						.filter((location) => normalizedHarbourName(location.name) === nameKey)
+						.sort(compareHarbourMergeCandidates);
+					if (!matches.length) {
+						catalog.locations[imported.id] = structuredClone(imported);
+						catalog.history[imported.id] = mergeHistory(catalog.history[imported.id], incoming.history[imported.id]);
+						delete catalog.tombstones[imported.id];
+						added += 1;
+						continue;
+					}
+					matchedByName += 1;
+					const canonical = matches[0];
+					for (const duplicate of matches.slice(1)) {
+						tombstoneDuplicate(catalog, duplicate, options.editedBy);
+						deduplicated += 1;
+					}
+					const migrationTimestampIsSynthetic =
+						canonical.revision === 1 &&
+						canonical.properties?.migratedFromSignalKRegion === true &&
+						canonical.properties?.importedFromHarbourEditor !== true;
+					if (!migrationTimestampIsSynthetic && Date.parse(imported.updatedAt) <= Date.parse(canonical.updatedAt)) {
+						keptLocal += 1;
+						continue;
+					}
+					const editId = crypto.randomUUID();
+					const revision = Number(canonical.revision || 0) + 1;
+					const replacement = normalizeLocation({
+						...structuredClone(imported),
+						id: canonical.id,
+						revision,
+						createdAt: canonical.createdAt || imported.createdAt,
+						lastEditId: editId,
+					});
+					catalog.locations[canonical.id] = replacement;
+					delete catalog.tombstones[canonical.id];
+					catalog.history[canonical.id] = catalog.history[canonical.id] || [];
+					catalog.history[canonical.id].push({
+						editId,
+						revision,
+						editedAt: replacement.updatedAt,
+						editedBy: String(options.editedBy || "Harbour Editor merge"),
+						action: "merge",
+						sourceCatalogId: incoming.catalogId,
+						snapshot: structuredClone(replacement),
+					});
+					updated += 1;
+				}
+				if (options.validate) await options.validate(catalog);
+				await write(catalog);
+				return { catalog, added, updated, keptLocal, matchedByName, deduplicated, conflicts: [] };
+			});
+		},
 		read,
 		write,
 	};
+}
+
+function normalizedHarbourName(value) {
+	return String(value || "").trim().replace(/\s+/g, " ").toLocaleLowerCase("en-GB");
+}
+
+function compareHarbourMergeCandidates(left, right) {
+	const leftImported = left.properties?.importedFromHarbourEditor === true ? 1 : 0;
+	const rightImported = right.properties?.importedFromHarbourEditor === true ? 1 : 0;
+	return leftImported - rightImported ||
+		Number(right.revision || 0) - Number(left.revision || 0) ||
+		String(left.createdAt || "").localeCompare(String(right.createdAt || "")) ||
+		left.id.localeCompare(right.id);
+}
+
+function tombstoneDuplicate(catalog, duplicate, editedBy) {
+	const editedAt = new Date().toISOString();
+	const revision = Number(duplicate.revision || 0) + 1;
+	const editId = crypto.randomUUID();
+	delete catalog.locations[duplicate.id];
+	catalog.tombstones[duplicate.id] = {
+		id: duplicate.id,
+		name: duplicate.name,
+		types: duplicate.types,
+		revision,
+		updatedAt: editedAt,
+		lastEditId: editId,
+	};
+	catalog.history[duplicate.id] = catalog.history[duplicate.id] || [];
+	catalog.history[duplicate.id].push({
+		editId,
+		revision,
+		editedAt,
+		editedBy: String(editedBy || "Harbour Editor merge"),
+		action: "delete",
+		sourceCatalogId: catalog.catalogId,
+		snapshot: null,
+	});
 }
 
 function mergeHistory(local = [], incoming = []) {

@@ -49,6 +49,10 @@ function isHarbourRegion(region) {
 	return String(region?.name || "").toLowerCase().startsWith("harbour:");
 }
 
+function normalizedLocationName(value) {
+	return String(value || "").trim().replace(/\s+/g, " ").toLocaleLowerCase("en-GB");
+}
+
 function typeCounts(locations) {
 	const result = Object.fromEntries(LOCATION_TYPES.map((type) => [type, 0]));
 	for (const location of locations) {
@@ -185,6 +189,7 @@ module.exports = function ajrmMarineLocationEditor(app) {
 				const previous = await store.get(req.params.id);
 				const location = normalizeLocation({ ...body, id: req.params.id });
 				await assertReferencesExist(location);
+				await assertUniqueLocationName(location);
 				const saved = await store.set(req.params.id, location, {
 					expectedRevision,
 					editedBy: requestActor(req),
@@ -241,8 +246,11 @@ module.exports = function ajrmMarineLocationEditor(app) {
 				const location = await store.restore(req.params.id, req.body.editId, {
 					expectedRevision: req.body.expectedRevision,
 					editedBy: requestActor(req),
-					validate: (restored, catalog) =>
-						assertReferencesExist(restored, new Map(Object.entries(catalog.locations))),
+					validate: async (restored, catalog) => {
+						const locations = new Map(Object.entries(catalog.locations));
+						await assertReferencesExist(restored, locations);
+						await assertUniqueLocationName(restored, locations);
+					},
 				});
 				await publishHarbourChange(location, null);
 				await refreshStatus();
@@ -323,9 +331,12 @@ module.exports = function ajrmMarineLocationEditor(app) {
 				if (Object.keys(incoming.locations).length > MAX_IMPORT_LOCATIONS) {
 					throw new Error(`Merge contains more than ${MAX_IMPORT_LOCATIONS} locations.`);
 				}
-				const result = await store.merge(incoming, {
-					validate: validateCatalogReferences,
-				});
+				const result = prepared.format === "harbour-editor-v1"
+					? await store.mergeHarboursByName(incoming, {
+						validate: validateCatalogReferences,
+						editedBy: "Harbour Editor merge",
+					})
+					: await store.merge(incoming, { validate: validateCatalogReferences });
 				await reconcileHarbourRegions();
 				await refreshStatus();
 				res.json({
@@ -336,8 +347,12 @@ module.exports = function ajrmMarineLocationEditor(app) {
 					conflicts: result.conflicts,
 					format: prepared.format,
 					converted: prepared.converted,
+					matchedByName: result.matchedByName || 0,
+					deduplicated: result.deduplicated || 0,
 					log: [
 						...(prepared.converted ? [`Converted ${prepared.converted} Harbour Editor region(s) to versioned locations.`] : []),
+						...(result.matchedByName ? [`Matched ${result.matchedByName} harbour(s) by name.`] : []),
+						...(result.deduplicated ? [`Removed ${result.deduplicated} duplicate harbour record(s).`] : []),
 						`Added ${result.added} new location(s).`,
 						`Accepted ${result.updated} newer imported edit(s).`,
 						`Kept ${result.keptLocal} newer or identical local edit(s).`,
@@ -359,6 +374,18 @@ module.exports = function ajrmMarineLocationEditor(app) {
 			if (!reference) continue;
 			const id = reference.split("/").at(-1);
 			if (!locations.has(id)) throw new Error(`${label} reference does not exist in this catalogue.`);
+		}
+	}
+
+	async function assertUniqueLocationName(location, catalogLocations = null) {
+		const locations = catalogLocations || new Map((await store.list()).map((entry) => [entry.id, entry]));
+		const nameKey = normalizedLocationName(location.name);
+		const duplicate = [...locations.values()].find((entry) =>
+			entry.id !== location.id &&
+			normalizedLocationName(entry.name) === nameKey,
+		);
+		if (duplicate) {
+			throw new Error(`A location named "${duplicate.name}" already exists. Location names must be unique.`);
 		}
 	}
 
@@ -400,7 +427,11 @@ module.exports = function ajrmMarineLocationEditor(app) {
 				continue;
 			}
 			const nearbyMatch = current.find((location) => locationsDescribeSamePlace(location, seed));
-			if (!nearbyMatch) candidates.push(seed);
+			if (nearbyMatch) {
+				await enrichUneditedMigration(nearbyMatch, seed);
+				continue;
+			}
+			candidates.push(seed);
 		}
 		return store.addMissing(candidates, { editedBy: "Bundled West Scotland open-data seed" });
 	}
@@ -414,8 +445,13 @@ module.exports = function ajrmMarineLocationEditor(app) {
 	}
 
 	function locationsDescribeSamePlace(left, right) {
-		if (left.name.trim().toLocaleLowerCase() !== right.name.trim().toLocaleLowerCase()) return false;
-		if (!left.types.some((type) => right.types.includes(type))) return false;
+		if (normalizedLocationName(left.name) !== normalizedLocationName(right.name)) return false;
+		const sharesType = left.types.some((type) => right.types.includes(type));
+		const upgradesMigratedHarbour =
+			left.properties.migratedFromSignalKRegion === true &&
+			left.types.includes("harbour") &&
+			right.types.some((type) => type !== "harbour");
+		if (!sharesType && !upgradesMigratedHarbour) return false;
 		const a = representativePosition(left);
 		const b = representativePosition(right);
 		if (!a || !b) return false;
@@ -426,8 +462,9 @@ module.exports = function ajrmMarineLocationEditor(app) {
 
 	async function enrichUneditedMigration(current, seed) {
 		if (!current.properties.migratedFromSignalKRegion || current.revision !== 1) return;
-		const types = current.types.includes("harbour") && seed.types.includes("marina")
-			? [...new Set(current.types.filter((type) => type !== "harbour").concat(seed.types))]
+		const seedSpecificTypes = seed.types.filter((type) => type !== "harbour");
+		const types = current.types.includes("harbour") && seedSpecificTypes.length
+			? [...new Set(current.types.filter((type) => type !== "harbour").concat(seedSpecificTypes))]
 			: current.types;
 		const provenance = current.properties.provenance || seed.properties.provenance;
 		if (types === current.types && current.properties.provenance) return;
@@ -509,7 +546,10 @@ module.exports = function ajrmMarineLocationEditor(app) {
 
 	async function validateCatalogReferences(catalog) {
 		const locations = new Map(Object.entries(catalog.locations));
-		for (const location of locations.values()) await assertReferencesExist(location, locations);
+		for (const location of locations.values()) {
+			await assertReferencesExist(location, locations);
+			await assertUniqueLocationName(location, locations);
+		}
 	}
 
 	async function assertNotReferenced(id) {

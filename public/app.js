@@ -5,7 +5,7 @@
 
 import * as MapCore from "./ajrm-map-core.mjs?v=0.7.5";
 import { filterLocations, groupLocations } from "./location-browser.mjs?v=0.3.1";
-import { bindPressRepeat } from "./press-repeat.mjs?v=0.3.2";
+import { bindPressRepeat } from "./press-repeat.mjs?v=0.3.3";
 
 const apiBase = "/plugins/signalk-ajrm-marine-location-editor";
 const resourcePrefix = "/resources/locations/";
@@ -58,6 +58,7 @@ let activeDisplayTypes = loadDisplayTypes();
 let map;
 let locationLayer;
 let previewLayer;
+let geometryPreviewDirty = false;
 let seamarkLayer;
 let autoChartGroup;
 let autoChartLayer;
@@ -251,6 +252,7 @@ function refreshReferences(location = selectedLocation()) {
 
 function resetEditor() {
 	selectedId = null;
+	geometryPreviewDirty = true;
 	elements.locationId.value = "";
 	elements.locationName.value = "";
 	elements.description.value = "";
@@ -276,6 +278,7 @@ function selectLocation(id, fit = false) {
 	const location = locations.find((entry) => entry.id === id);
 	if (!location) return;
 	selectedId = id;
+	geometryPreviewDirty = false;
 	elements.locationId.value = id;
 	elements.locationName.value = location.name;
 	elements.description.value = location.description || "";
@@ -405,6 +408,8 @@ async function saveLocation() {
 	const body = { ...buildLocation(), expectedRevision: previous?.revision || 0 };
 	const result = await requestJson(`${apiBase}/locations/${id}`, { method: "PUT", body: JSON.stringify(body) });
 	await loadLocations(id);
+	geometryPreviewDirty = false;
+	previewLayer?.clearLayers();
 	showStatus(`Saved revision ${result.location.revision}.`);
 }
 
@@ -477,6 +482,7 @@ function renderLocations() {
 function renderPreview() {
 	if (!previewLayer) return;
 	previewLayer.clearLayers();
+	if (!geometryPreviewDirty) return;
 	try {
 		const geometry = geometryFromEditor();
 		if (geometry.type === "Point") L.circleMarker([geometry.coordinates[1], geometry.coordinates[0]], { radius: 9, color: "#facc15", weight: 4, fillOpacity: 0.2 }).addTo(previewLayer);
@@ -671,14 +677,15 @@ function changeCircle(deltaRadius = 0, northNm = 0, eastNm = 0) {
 		elements.radiusNm.value = radius.toFixed(2);
 		elements.points.value = formatPoints(makeCirclePoints(center, radius));
 	}
+	geometryPreviewDirty = true;
 	renderPreview();
 }
 
 function bindEvents() {
 	elements.typeChoices.addEventListener("change", updateConditionalFields);
-	elements.geometryType.addEventListener("change", updateConditionalFields);
-	elements.point.addEventListener("input", renderPreview);
-	elements.points.addEventListener("input", renderPreview);
+	elements.geometryType.addEventListener("change", () => { geometryPreviewDirty = true; updateConditionalFields(); });
+	elements.point.addEventListener("input", () => { geometryPreviewDirty = true; renderPreview(); });
+	elements.points.addEventListener("input", () => { geometryPreviewDirty = true; renderPreview(); });
 	elements.workspace.addEventListener("change", () => { localStorage.setItem(`${storagePrefix}Workspace`, currentWorkspace()); renderLocations(); });
 	elements.locationSearch.addEventListener("input", renderLocations);
 	elements.mapAreaOnly.addEventListener("change", () => { localStorage.setItem(`${storagePrefix}MapAreaOnly`, String(elements.mapAreaOnly.checked)); renderLocations(); });
@@ -686,7 +693,7 @@ function bindEvents() {
 	elements.hideAllTypes.addEventListener("click", () => setAllDisplayTypes(false));
 	elements.newLocation.addEventListener("click", resetEditor);
 	elements.refreshLocations.addEventListener("click", () => loadLocations().catch((error) => showStatus(error.message, true)));
-	elements.setPoint.addEventListener("click", () => { const center = map.getCenter(); elements.geometryType.value = "Point"; elements.point.value = `${center.lat.toFixed(6)}, ${center.lng.toFixed(6)}`; updateConditionalFields(); });
+	elements.setPoint.addEventListener("click", () => { const center = map.getCenter(); geometryPreviewDirty = true; elements.geometryType.value = "Point"; elements.point.value = `${center.lat.toFixed(6)}, ${center.lng.toFixed(6)}`; updateConditionalFields(); });
 	elements.openGeometry.addEventListener("click", () => togglePanel(elements.geometryControls));
 	elements.closeGeometry.addEventListener("click", () => { elements.geometryControls.classList.remove("open"); syncPanels(); });
 	elements.closeEditor.addEventListener("click", () => { elements.editorDrawer.classList.remove("open"); syncPanels(); });
@@ -698,7 +705,7 @@ function bindEvents() {
 	elements.exportLocations.addEventListener("click", () => transfer("export").catch((error) => showStatus(error.message, true)));
 	elements.importLocations.addEventListener("click", () => transfer("import").catch((error) => showStatus(error.message, true)));
 	elements.mergeLocations.addEventListener("click", () => transfer("merge").catch((error) => showStatus(error.message, true)));
-	elements.makeCircle.addEventListener("click", () => { const center = map.getCenter(); elements.geometryType.value = "Polygon"; elements.points.value = formatPoints(makeCirclePoints({ lat: center.lat, lon: center.lng }, Number(elements.radiusNm.value || 0.2))); updateConditionalFields(); });
+	elements.makeCircle.addEventListener("click", () => { const center = map.getCenter(); geometryPreviewDirty = true; elements.geometryType.value = "Polygon"; elements.points.value = formatPoints(makeCirclePoints({ lat: center.lat, lon: center.lng }, Number(elements.radiusNm.value || 0.2))); updateConditionalFields(); });
 	elements.saveGeometry.addEventListener("click", () => saveLocation().catch((error) => showStatus(error.message, true)));
 	elements.applyRadius.addEventListener("click", () => changeCircle());
 	elements.decreaseRadius.addEventListener("click", () => changeCircle(-0.01));

@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.3.3 - 2026-08-13
+
+- Clear the yellow unsaved-geometry preview after a successful save so the
+  location immediately returns to its normal saved colour.
+- Show the yellow preview only while geometry is new or has been edited.
+
 ## 0.3.2 - 2026-08-13
 
 - Repeat circle movement after an arrow is held briefly, while retaining

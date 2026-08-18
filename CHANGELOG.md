@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.6.3 - 2026-08-18
+
+- Register the location, tide, weather, anchoring and diagnostic services in
+  lifecycle-safe process-wide registries. Signal K supplies separate `app`
+  wrappers to plugins, so properties placed only on Location Editor's wrapper
+  were invisible to Planning and Snapshot.
+
 ## 0.6.2 - 2026-08-18
 
 - Expose a read-only in-process diagnostics snapshot for AJRM Marine Snapshot,

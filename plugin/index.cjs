@@ -25,6 +25,13 @@ const { createAnchoringAssistant } = require("./anchoring-assistance.cjs");
 const { createWeatherService } = require("./weather-service.cjs");
 
 const STATUS_CONTRACT = "ajrm-marine-location-editor-status-v1";
+const SERVICE_REGISTRIES = Object.freeze({
+	ajrmMarineLocations: Symbol.for("mcdonaldajr.ajrmMarineLocations"),
+	ajrmMarineTides: Symbol.for("mcdonaldajr.ajrmMarineTides"),
+	ajrmMarineWeather: Symbol.for("mcdonaldajr.ajrmMarineWeather"),
+	ajrmMarineAnchoring: Symbol.for("mcdonaldajr.ajrmMarineAnchoring"),
+	ajrmMarineLocationDiagnostics: Symbol.for("mcdonaldajr.ajrmMarineLocationDiagnostics"),
+});
 const STATUS_PATH = "plugins.ajrmMarineLocationEditor";
 const TIDE_PATH = "plugins.ajrmMarineLocations.tide";
 const ANCHORING_PATH = "plugins.ajrmMarineLocations.anchoring";
@@ -253,6 +260,9 @@ module.exports = function ajrmMarineLocationEditor(app) {
 				};
 			},
 		});
+		for (const [name, registry] of Object.entries(SERVICE_REGISTRIES)) {
+			globalThis[registry] = app[name];
+		}
 		app.setPluginStatus(`Started v${packageJson.version}`);
 		initializationPromise = trackOperation(initializeCatalogue().then(async (result) => {
 			await tideResolver.initialize();
@@ -273,11 +283,10 @@ module.exports = function ajrmMarineLocationEditor(app) {
 		clearTimeout(tideDebounce);
 		for (const unsubscribe of unsubscribes.splice(0)) unsubscribe?.();
 		await Promise.allSettled([...pendingOperations]);
-		delete app.ajrmMarineLocations;
-		delete app.ajrmMarineTides;
-		delete app.ajrmMarineWeather;
-		delete app.ajrmMarineAnchoring;
-		delete app.ajrmMarineLocationDiagnostics;
+		for (const [name, registry] of Object.entries(SERVICE_REGISTRIES)) {
+			if (globalThis[registry] === app[name]) delete globalThis[registry];
+			delete app[name];
+		}
 		updateStatus({ enabled: false });
 		publishStatus(null);
 		publishTide(null);

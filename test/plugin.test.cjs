@@ -170,6 +170,9 @@ test("lifecycle exposes the spatial service and retracts status on stop", async 
 	assert.equal(app.ajrmMarineTides.contract, "ajrm-marine-tides-service-v1");
 	assert.equal(app.ajrmMarineAnchoring.contract, "ajrm-marine-anchoring-service-v1");
 	assert.equal(app.ajrmMarineLocationDiagnostics.contract, "ajrm-marine-location-diagnostics-v1");
+	assert.equal(globalThis[Symbol.for("mcdonaldajr.ajrmMarineLocations")], app.ajrmMarineLocations);
+	assert.equal(globalThis[Symbol.for("mcdonaldajr.ajrmMarineTides")], app.ajrmMarineTides);
+	assert.equal(globalThis[Symbol.for("mcdonaldajr.ajrmMarineWeather")], app.ajrmMarineWeather);
 	assert.equal(app.ajrmMarineAnchoring.status().contract, "ajrm-marine-anchoring-assistance-v1");
 	const diagnostics = await app.ajrmMarineLocationDiagnostics.snapshot();
 	assert.equal(diagnostics.catalogue.count > 0, true);
@@ -188,6 +191,9 @@ test("lifecycle exposes the spatial service and retracts status on stop", async 
 	assert.equal(app.ajrmMarineTides, undefined);
 	assert.equal(app.ajrmMarineAnchoring, undefined);
 	assert.equal(app.ajrmMarineLocationDiagnostics, undefined);
+	assert.equal(globalThis[Symbol.for("mcdonaldajr.ajrmMarineLocations")], undefined);
+	assert.equal(globalThis[Symbol.for("mcdonaldajr.ajrmMarineTides")], undefined);
+	assert.equal(globalThis[Symbol.for("mcdonaldajr.ajrmMarineWeather")], undefined);
 	assert.equal(messages.at(-1).updates[0].values[0].value, null);
 });
 

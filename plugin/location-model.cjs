@@ -4,7 +4,7 @@
 
 const crypto = require("node:crypto");
 const {
-	CONTRACT_V2: SECONDARY_PORT_CORRECTION_CONTRACT,
+	CONTRACT_V3: SECONDARY_PORT_CORRECTION_CONTRACT,
 	migrateSecondaryPortCorrections,
 } = require("./secondary-port-corrections.cjs");
 
@@ -217,6 +217,10 @@ function validateLocation(location) {
 			if (corrections.contract !== SECONDARY_PORT_CORRECTION_CONTRACT) {
 				throw new Error("Secondary-port corrections use an unsupported contract.");
 			}
+			if (![720, 1440].includes(Number(corrections.timeOffsetPeriodMinutes))) {
+				throw new Error("Secondary-port correction period must be 720 or 1440 minutes.");
+			}
+			const periodMinutes = Number(corrections.timeOffsetPeriodMinutes);
 			for (const [groupKey, label] of [
 				["highWaterTimeOffsets", "HW time correction"],
 				["lowWaterTimeOffsets", "LW time correction"],
@@ -231,8 +235,9 @@ function validateLocation(location) {
 					validateNumber(point.referenceTimeMinutes, `${label} point ${index + 1} reference time`, { minimum: 0, maximum: 1439 });
 					validateNumber(point.offsetMinutes, `${label} point ${index + 1} offset`, { minimum: -1440, maximum: 1440 });
 					if (!Number.isInteger(Number(point.referenceTimeMinutes))) throw new Error(`${label} reference times must use whole minutes.`);
-					if (times.has(Number(point.referenceTimeMinutes))) throw new Error(`${label} reference times must be unique.`);
-					times.add(Number(point.referenceTimeMinutes));
+					const cycleTime = Number(point.referenceTimeMinutes) % periodMinutes;
+					if (times.has(cycleTime)) throw new Error(`${label} reference times must be unique within their correction cycle.`);
+					times.add(cycleTime);
 				}
 			}
 			for (const [groupKey, label, keys, minimum, maximum] of [

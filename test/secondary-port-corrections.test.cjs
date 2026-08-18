@@ -1,4 +1,4 @@
-/** Verifies flexible Reeds-style correction anchors, migration and application. */
+/** Verifies Reeds-style paired correction anchors, migration and application. */
 
 const assert = require("node:assert/strict");
 const test = require("node:test");
@@ -8,47 +8,83 @@ const {
 	migrateSecondaryPortCorrections,
 } = require("../plugin/secondary-port-corrections.cjs");
 
-test("migrates the fixed v1 clock columns to explicit v2 correction points", () => {
+test("compacts duplicated v2 points to a Reeds-style 12-hour cycle", () => {
 	const result = migrateSecondaryPortCorrections({
-		contract: "ajrm-secondary-port-corrections-v1",
-		standardReferenceLevels: { mhws: 4, mhwn: 2.9, mlwn: 1.8, mlws: 0.7 },
-		hwTimeOffsetsMinutes: { t0000: 1, t0600: 2, t1200: 3, t1800: 4 },
-		lwTimeOffsetsMinutes: { t0000: 5, t0600: 6, t1200: 7, t1800: 8 },
-		heightDifferencesM: { mhws: 0, mhwn: 0, mlwn: 0, mlws: 0 },
+		contract: "ajrm-secondary-port-corrections-v2",
+		parentReferenceLevels: { mhws: 4, mhwn: 2.9, mlwn: 1.8, mlws: 0.7 },
+		highWaterTimeOffsets: [
+			{ referenceTimeMinutes: 60, offsetMinutes: -55 }, { referenceTimeMinutes: 420, offsetMinutes: -25 },
+			{ referenceTimeMinutes: 780, offsetMinutes: -55 }, { referenceTimeMinutes: 1140, offsetMinutes: -25 },
+		],
+		lowWaterTimeOffsets: [
+			{ referenceTimeMinutes: 60, offsetMinutes: -40 }, { referenceTimeMinutes: 480, offsetMinutes: -35 },
+			{ referenceTimeMinutes: 780, offsetMinutes: -40 }, { referenceTimeMinutes: 1200, offsetMinutes: -35 },
+		],
 	});
-	assert.equal(result.contract, "ajrm-secondary-port-corrections-v2");
-	assert.deepEqual(result.highWaterTimeOffsets[2], { referenceTimeMinutes: 720, offsetMinutes: 3 });
-	assert.equal(result.parentReferenceLevels.mhwn, 2.9);
-	assert.equal(result.hwTimeOffsetsMinutes, undefined);
+	assert.equal(result.contract, "ajrm-secondary-port-corrections-v3");
+	assert.equal(result.timeOffsetPeriodMinutes, 720);
+	assert.deepEqual(result.highWaterTimeOffsets, [
+		{ referenceTimeMinutes: 60, offsetMinutes: -55 },
+		{ referenceTimeMinutes: 420, offsetMinutes: -25 },
+	]);
 });
 
-test("interpolates explicit time columns across midnight", () => {
+test("retains a genuinely non-repeating v2 record as a 24-hour legacy pattern", () => {
+	const result = migrateSecondaryPortCorrections({
+		contract: "ajrm-secondary-port-corrections-v2",
+		highWaterTimeOffsets: [
+			{ referenceTimeMinutes: 0, offsetMinutes: -40 }, { referenceTimeMinutes: 360, offsetMinutes: -10 },
+			{ referenceTimeMinutes: 720, offsetMinutes: 0 }, { referenceTimeMinutes: 1080, offsetMinutes: -10 },
+		],
+		lowWaterTimeOffsets: [
+			{ referenceTimeMinutes: 0, offsetMinutes: 50 }, { referenceTimeMinutes: 360, offsetMinutes: 110 },
+			{ referenceTimeMinutes: 720, offsetMinutes: 70 }, { referenceTimeMinutes: 1080, offsetMinutes: 110 },
+		],
+	});
+	assert.equal(result.timeOffsetPeriodMinutes, 1440);
+	assert.equal(result.highWaterTimeOffsets.length, 4);
+});
+
+test("interpolates paired Reeds columns and repeats them twelve hours later", () => {
 	const points = [
 		{ referenceTimeMinutes: 60, offsetMinutes: -55 },
 		{ referenceTimeMinutes: 420, offsetMinutes: -25 },
-		{ referenceTimeMinutes: 780, offsetMinutes: -55 },
-		{ referenceTimeMinutes: 1140, offsetMinutes: -25 },
 	];
-	assert.equal(interpolateCircular(points, 60), -55);
-	assert.equal(interpolateCircular(points, 240), -40);
-	assert.equal(interpolateCircular(points, 1320), -40);
+	assert.equal(interpolateCircular(points, 60, 720), -55);
+	assert.equal(interpolateCircular(points, 240, 720), -40);
+	assert.equal(interpolateCircular(points, 780, 720), -55);
+	assert.equal(interpolateCircular(points, 1320, 720), -40);
+});
+
+test("preserves a Reeds pair stated in the 1300-to-0100 order", () => {
+	const result = migrateSecondaryPortCorrections({
+		contract: "ajrm-secondary-port-corrections-v2",
+		highWaterTimeOffsets: [
+			{ referenceTimeMinutes: 780, offsetMinutes: -55 },
+			{ referenceTimeMinutes: 60, offsetMinutes: -55 },
+		],
+		lowWaterTimeOffsets: [
+			{ referenceTimeMinutes: 780, offsetMinutes: -40 },
+			{ referenceTimeMinutes: 60, offsetMinutes: -40 },
+		],
+	});
+	assert.equal(result.timeOffsetPeriodMinutes, 720);
+	assert.equal(result.highWaterTimeOffsets[0].referenceTimeMinutes, 780);
+	assert.equal(interpolateCircular(result.highWaterTimeOffsets, 60, 720), -55);
 });
 
 test("applies the stated Loch Melfort HW/LW time and height corrections", () => {
 	const correction = {
-		contract: "ajrm-secondary-port-corrections-v2",
+		contract: "ajrm-secondary-port-corrections-v3",
+		timeOffsetPeriodMinutes: 720,
 		parentReferenceLevels: { mhws: 4, mhwn: 2.9, mlwn: 1.8, mlws: 0.7 },
 		highWaterTimeOffsets: [
 			{ referenceTimeMinutes: 60, offsetMinutes: -55 },
 			{ referenceTimeMinutes: 420, offsetMinutes: -25 },
-			{ referenceTimeMinutes: 780, offsetMinutes: -55 },
-			{ referenceTimeMinutes: 1140, offsetMinutes: -25 },
 		],
 		lowWaterTimeOffsets: [
 			{ referenceTimeMinutes: 60, offsetMinutes: -40 },
 			{ referenceTimeMinutes: 480, offsetMinutes: -35 },
-			{ referenceTimeMinutes: 780, offsetMinutes: -40 },
-			{ referenceTimeMinutes: 1200, offsetMinutes: -35 },
 		],
 		heightDifferencesM: { mhws: -1.2, mhwn: -0.8, mlwn: -0.5, mlws: -0.1 },
 	};

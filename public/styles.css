@@ -581,6 +581,60 @@ legend {
 	gap: 8px;
 }
 
+.reeds-table {
+	width: 100%;
+	border-collapse: collapse;
+	table-layout: fixed;
+	font-size: 13px;
+}
+
+.reeds-table th,
+.reeds-table td {
+	padding: 7px;
+	border: 1px solid #cbd5e1;
+	vertical-align: middle;
+	text-align: center;
+}
+
+.reeds-table thead th,
+.reeds-table tbody th {
+	background: #e2e8f0;
+	color: #334155;
+}
+
+.reeds-table input {
+	min-width: 0;
+	width: 100%;
+	margin: 0;
+}
+
+.reeds-time-table td:first-child {
+	display: grid;
+	grid-template-columns: minmax(100px, 1fr) auto;
+	align-items: center;
+	gap: 6px;
+}
+
+.paired-time {
+	white-space: nowrap;
+	font-weight: 650;
+	color: #475569;
+}
+
+.paired-time:not(:empty)::before {
+	content: "/ ";
+}
+
+.reeds-height-table th:first-child {
+	width: 25%;
+}
+
+.field-help.warning {
+	padding: 8px;
+	border-left: 4px solid #d97706;
+	background: #fffbeb;
+}
+
 @media (max-width: 520px) {
 	.secondary-correction-grid {
 		grid-template-columns: repeat(2, minmax(0, 1fr));

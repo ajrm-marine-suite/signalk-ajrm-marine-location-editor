@@ -48,6 +48,7 @@ const elements = Object.fromEntries([
 	"detectionRadiusM", "trustedAutomation", "anchorageNotes", "tideFields", "tideProviderId", "tideProvider", "tideStationId", "tideStationName",
 	"parentLocationRef", "tideDatum", "tideMhws", "tideMhwn", "tideMlwn", "tideMlws", "secondaryPortFields",
 	"secondaryStandardMhws", "secondaryStandardMhwn", "secondaryStandardMlwn", "secondaryStandardMlws",
+	"secondaryTimePeriod", "secondaryLegacyPattern", "secondaryHwPair1", "secondaryHwPair2", "secondaryLwPair1", "secondaryLwPair2",
 	...secondaryPointIndexes.flatMap((index) => [`secondaryHwTime${index}`, `secondaryHwOffset${index}`]),
 	...secondaryPointIndexes.flatMap((index) => [`secondaryLwTime${index}`, `secondaryLwOffset${index}`]),
 	"secondaryDiffMhws", "secondaryDiffMhwn", "secondaryDiffMlwn", "secondaryDiffMlws", "secondaryPortNotes",
@@ -257,13 +258,46 @@ function parseClockMinutes(value, label) {
 	return minutes;
 }
 
+function formatOffsetHHMM(value) {
+	const minutes = Number(value);
+	if (!Number.isFinite(minutes)) return "";
+	const absolute = Math.abs(Math.round(minutes));
+	return `${minutes < 0 ? "-" : "+"}${String(Math.floor(absolute / 60)).padStart(2, "0")}${String(absolute % 60).padStart(2, "0")}`;
+}
+
+function parseOffsetHHMM(value, label) {
+	const match = /^([+-])(\d{2})([0-5]\d)$/.exec(String(value || "").trim());
+	if (!match) throw new Error(`${label} must be signed HHMM, for example -0055 or +0020.`);
+	const minutes = Number(match[2]) * 60 + Number(match[3]);
+	return match[1] === "-" ? -minutes : minutes;
+}
+
+function activeSecondaryPointIndexes() {
+	return Number(elements.secondaryTimePeriod.value) === 1440 ? secondaryPointIndexes : [1, 2];
+}
+
+function updateSecondaryTimeLayout(periodMinutes = Number(elements.secondaryTimePeriod.value || 720)) {
+	elements.secondaryTimePeriod.value = String(periodMinutes === 1440 ? 1440 : 720);
+	const legacy = periodMinutes === 1440;
+	elements.secondaryLegacyPattern.hidden = !legacy;
+	document.querySelectorAll(".legacy-correction-row").forEach((row) => { row.hidden = !legacy; });
+	for (const prefix of ["Hw", "Lw"]) {
+		for (const index of [1, 2]) {
+			const value = elements[`secondary${prefix}Time${index}`].value;
+			elements[`secondary${prefix}Pair${index}`].textContent = value
+				? formatClockMinutes((parseClockMinutes(value, "Reference time") + 720) % 1440)
+				: "";
+		}
+	}
+}
+
 function correctionPoints(prefix) {
-	return secondaryPointIndexes.map((index) => {
+	return activeSecondaryPointIndexes().map((index) => {
 		const time = elements[`secondary${prefix}Time${index}`].value;
 		const offset = elements[`secondary${prefix}Offset${index}`].value;
 		if (!time && offset === "") return null;
 		if (!time || offset === "") throw new Error(`Complete both time and offset for ${prefix.toUpperCase()} correction ${index}.`);
-		return { referenceTimeMinutes: parseClockMinutes(time, `${prefix.toUpperCase()} correction ${index}`), offsetMinutes: Number(offset) };
+		return { referenceTimeMinutes: parseClockMinutes(time, `${prefix.toUpperCase()} correction ${index}`), offsetMinutes: parseOffsetHHMM(offset, `${prefix.toUpperCase()} correction ${index}`) };
 	}).filter(Boolean);
 }
 
@@ -321,6 +355,7 @@ function resetEditor() {
 	for (const id of ["seabed", "chartedDepthM", "detectionRadiusM", "anchorageNotes", "tideProviderId", "tideProvider", "tideStationId", "tideStationName", "tideDatum", "tideMhws", "tideMhwn", "tideMlwn", "tideMlws", "secondaryStandardMhws", "secondaryStandardMhwn", "secondaryStandardMlwn", "secondaryStandardMlws", ...secondaryPointIndexes.flatMap((index) => [`secondaryHwTime${index}`, `secondaryHwOffset${index}`, `secondaryLwTime${index}`, `secondaryLwOffset${index}`]), "secondaryDiffMhws", "secondaryDiffMhwn", "secondaryDiffMlwn", "secondaryDiffMlws", "secondaryPortNotes", "hazardReason", "hazardClearanceM"]) elements[id].value = "";
 	for (const id of ["gateFloodSet", "gateEbbSet", "gateSpringPeak", "gateNeapPeak", "gateFloodSpringAfter", "gateFloodNeapAfter", "gateFloodSpringSlack", "gateFloodNeapSlack", "gateEbbSpringAfter", "gateEbbNeapAfter", "gateEbbSpringSlack", "gateEbbNeapSlack", "gateSource"]) elements[id].value = "";
 	elements.trustedAutomation.checked = false;
+	updateSecondaryTimeLayout(720);
 	elements.hazardSeverity.value = "advisory";
 	elements.publishAsHarbourRegion.checked = false;
 	elements.hazardApplications.querySelectorAll("input").forEach((input) => { input.checked = false; });
@@ -367,6 +402,7 @@ function selectLocation(id, fit = false, revealEditor = false) {
 	elements.tideMlwn.value = properties.tide?.referenceLevels?.mlwn ?? "";
 	elements.tideMlws.value = properties.tide?.referenceLevels?.mlws ?? "";
 	const corrections = properties.tide?.secondaryPortCorrections || {};
+	updateSecondaryTimeLayout(Number(corrections.timeOffsetPeriodMinutes || 720));
 	for (const [id, key] of [["secondaryStandardMhws", "mhws"], ["secondaryStandardMhwn", "mhwn"], ["secondaryStandardMlwn", "mlwn"], ["secondaryStandardMlws", "mlws"]]) {
 		elements[id].value = corrections.parentReferenceLevels?.[key] ?? corrections.standardReferenceLevels?.[key] ?? "";
 	}
@@ -374,9 +410,10 @@ function selectLocation(id, fit = false, revealEditor = false) {
 		secondaryPointIndexes.forEach((index, pointIndex) => {
 			const point = points?.[pointIndex];
 			elements[`secondary${prefix}Time${index}`].value = formatClockMinutes(point?.referenceTimeMinutes);
-			elements[`secondary${prefix}Offset${index}`].value = point?.offsetMinutes ?? "";
+			elements[`secondary${prefix}Offset${index}`].value = point ? formatOffsetHHMM(point.offsetMinutes) : "";
 		});
 	}
+	updateSecondaryTimeLayout();
 	for (const [id, group, key] of [
 		["secondaryDiffMhws", "heightDifferencesM", "mhws"], ["secondaryDiffMhwn", "heightDifferencesM", "mhwn"],
 		["secondaryDiffMlwn", "heightDifferencesM", "mlwn"], ["secondaryDiffMlws", "heightDifferencesM", "mlws"],
@@ -450,7 +487,8 @@ function buildLocation() {
 			const lowWaterTimeOffsets = correctionPoints("Lw");
 			if (!highWaterTimeOffsets.length || !lowWaterTimeOffsets.length) throw new Error("Enter at least one HW and one LW correction point.");
 			properties.tide.secondaryPortCorrections = {
-				contract: "ajrm-secondary-port-corrections-v2",
+				contract: "ajrm-secondary-port-corrections-v3",
+				timeOffsetPeriodMinutes: Number(elements.secondaryTimePeriod.value || 720),
 				legacyId: current?.properties?.tide?.secondaryPortCorrections?.legacyId,
 				standardPortName: current?.properties?.tide?.secondaryPortCorrections?.standardPortName,
 				parentReferenceLevels: numericGroup([["mhws", "secondaryStandardMhws"], ["mhwn", "secondaryStandardMhwn"], ["mlwn", "secondaryStandardMlwn"], ["mlws", "secondaryStandardMlws"]]),
@@ -877,6 +915,9 @@ function nudgeGeometry(northDirection, eastDirection, context = {}) {
 }
 
 function bindEvents() {
+	for (const prefix of ["Hw", "Lw"]) {
+		for (const index of [1, 2]) elements[`secondary${prefix}Time${index}`].addEventListener("input", () => updateSecondaryTimeLayout());
+	}
 	elements.typeChoices.addEventListener("change", updateConditionalFields);
 	elements.geometryType.addEventListener("change", () => { geometryPreviewDirty = true; updateConditionalFields(); });
 	elements.point.addEventListener("input", () => { geometryPreviewDirty = true; renderPreview(); });

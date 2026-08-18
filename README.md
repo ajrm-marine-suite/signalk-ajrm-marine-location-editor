@@ -1,12 +1,20 @@
 # AJRM Marine Location Editor
 
+Version `0.6.12` makes secondary-port entry match the paired columns in Reeds.
+HW and LW reference times twelve hours apart now share one signed-HHMM
+difference, and parent-port levels and four height differences appear in one
+table for direct transcription and checking. Existing repeating v2 records are
+compacted automatically to the new 12-hour contract; genuinely non-repeating
+legacy records retain their full 24-hour pattern. Time and height corrections
+continue to be interpolated independently against the parent prediction.
+
 Version `0.6.11` adds a shared recommendation for the nearest usable secondary
 port inside the vessel's containing tidal region. It respects explicit region
 links and spatially classifies older unlinked secondary-port records, allowing
 planning consumers to offer a consistent nearby-port action.
 
-Version `0.6.10` replaces the fixed secondary-port clock columns with the
-`ajrm-secondary-port-corrections-v2` contract. Each HW and LW correction now
+Version `0.6.10` replaced the fixed secondary-port clock columns with the
+`ajrm-secondary-port-corrections-v2` contract. Each HW and LW correction
 stores the reference time printed in the almanac, so tables beginning at 0100,
 1200, 1300 or another stated time are represented exactly. The Tide Resolver
 applies corrections centrally, follows secondary-to-secondary parent chains

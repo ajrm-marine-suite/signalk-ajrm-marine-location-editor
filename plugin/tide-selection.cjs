@@ -16,7 +16,7 @@ function referenceId(reference) {
 function isPredictionPort(location) {
 	const tide = location?.properties?.tide;
 	const correctedSecondary = location?.types?.includes("tidalSecondaryPort") &&
-		tide?.secondaryPortCorrections?.contract === "ajrm-secondary-port-corrections-v2" &&
+		["ajrm-secondary-port-corrections-v2", "ajrm-secondary-port-corrections-v3"].includes(tide?.secondaryPortCorrections?.contract) &&
 		Boolean(tide.parentLocationRef);
 	return Boolean(
 		location?.types?.some((type) => PREDICTION_PORT_TYPES.has(type)) &&
@@ -95,9 +95,13 @@ function automaticSelection(locations, { position, contextLocationId } = {}) {
 
 	if (tidalRegion) {
 		const regionReference = `${LOCATION_REF_PREFIX}${tidalRegion.id}`;
-		const eligible = locations.filter((location) =>
-			isPredictionPort(location) && location.properties?.tideRegionRef === regionReference,
-		);
+		const eligible = locations.filter((location) => {
+			if (!isPredictionPort(location)) return false;
+			if (location.properties?.tideRegionRef === regionReference) return true;
+			if (location.properties?.tideRegionRef) return false;
+			const locationPosition = representativePosition(location);
+			return Boolean(locationPosition && containsPosition(tidalRegion, locationPosition));
+		});
 		const nearest = position ? nearestLocations(eligible, position, { limit: 1 })[0] : null;
 		if (nearest) {
 			return { port: nearest, reason: "nearestPortInTidalRegion", contextLocation: context || null, tidalRegion };

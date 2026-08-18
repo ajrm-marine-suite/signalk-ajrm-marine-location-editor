@@ -75,6 +75,8 @@ test("validates complete secondary-port correction tables", () => {
 		heightDifferencesM: { mhws: 0.5, mhwn: 0.6, mlwn: 0.1, mlws: 0.2 },
 	};
 	const secondary = location({ types: ["tidalSecondaryPort"], properties: { tide: { secondaryPortCorrections: corrections } } });
+	assert.equal(secondary.properties.tide.secondaryPortCorrections.contract, "ajrm-secondary-port-corrections-v3");
+	assert.equal(secondary.properties.tide.secondaryPortCorrections.timeOffsetPeriodMinutes, 720);
 	assert.equal(secondary.properties.tide.secondaryPortCorrections.heightDifferencesM.mhws, 0.5);
 	assert.throws(() => location({
 		types: ["tidalSecondaryPort"],

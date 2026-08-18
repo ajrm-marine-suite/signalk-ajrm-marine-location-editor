@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.6.12 - 2026-08-18
+
+- Replace duplicated 24-hour secondary-port entries with the paired 12-hour
+  correction pattern printed by Reeds.
+- Accept signed-HHMM time differences directly and arrange time and height
+  entry as Reeds-style tables for easier transcription and validation.
+- Migrate repeating v1/v2 records to `ajrm-secondary-port-corrections-v3`
+  without changing their calculated results, retaining a bounded 24-hour
+  representation only for genuinely non-repeating legacy data.
+- Let automatic tide selection use suitable unlinked ports whose positions lie
+  inside the vessel's tidal region.
+
 ## 0.6.11 - 2026-08-18
 
 - Add a shared nearest-secondary-port recommendation constrained to the

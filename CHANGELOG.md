@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.6.16 - 2026-08-18
+
+- Reveal and scroll to the secondary-port form immediately when its
+  classification is selected.
+- Widen the editor for the complete Reeds correction row on desktop displays.
+- Make standard-port and secondary-port classifications mutually exclusive.
+- Require a parent standard port, list only standard ports in that selector,
+  and reject secondary-port parents in backend catalogue validation.
+
 ## 0.6.15 - 2026-08-18
 
 - Put all secondary-port HW, LW and height differences on one Reeds-style

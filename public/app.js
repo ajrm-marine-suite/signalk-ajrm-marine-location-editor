@@ -220,6 +220,7 @@ function updateConditionalFields() {
 	elements.tideFields.hidden = !types.some((type) => ["tidalStandardPort", "tidalSecondaryPort", "tidalGate"].includes(type));
 	elements.standardPortFields.hidden = !types.includes("tidalStandardPort");
 	elements.secondaryPortFields.hidden = !types.includes("tidalSecondaryPort");
+	elements.editorDrawer.classList.toggle("secondary-port-editor", types.includes("tidalSecondaryPort"));
 	elements.tidalGateFields.hidden = !types.includes("tidalGate");
 	elements.hazardFields.hidden = !types.some((type) => hazardTypes.has(type));
 	elements.pointEditor.hidden = elements.geometryType.value !== "Point";
@@ -337,12 +338,8 @@ function refreshReferences(location = selectedLocation()) {
 	fillSelect(elements.tideLocationRef, tidal.map((entry) => ({ value: entry.id, label: entry.name })), resourceId(location?.properties?.tideLocationRef), "None assigned");
 	const regions = locations.filter((entry) => entry.types.includes("tidalRegion") && entry.id !== location?.id);
 	fillSelect(elements.tideRegionRef, regions.map((entry) => ({ value: entry.id, label: entry.name })), resourceId(location?.properties?.tideRegionRef), "None assigned");
-	const parentPorts = locations.filter((entry) => entry.types.some((type) => predictionPortTypes.has(type)) && entry.id !== location?.id);
-	fillSelect(elements.parentLocationRef, parentPorts.map((entry) => ({
-		value: entry.id,
-		label: `${entry.name} (${entry.types.includes("tidalStandardPort") ? "standard" : "secondary"})`,
-	})), resourceId(location?.properties?.tide?.parentLocationRef), "None");
 	const standardPorts = locations.filter((entry) => entry.types.includes("tidalStandardPort") && entry.id !== location?.id);
+	fillSelect(elements.parentLocationRef, standardPorts.map((entry) => ({ value: entry.id, label: entry.name })), resourceId(location?.properties?.tide?.parentLocationRef), "Select a standard port");
 	fillSelect(elements.gateStandardPortRef, standardPorts.map((entry) => ({ value: entry.id, label: entry.name })), resourceId(location?.properties?.tidalGate?.standardPortRef), "None");
 }
 
@@ -480,6 +477,7 @@ function buildLocation() {
 			});
 		}
 		if (types.includes("tidalSecondaryPort")) {
+			if (!elements.parentLocationRef.value) throw new Error("Select the parent standard port for this secondary port.");
 			properties.tide.parentLocationRef = elements.parentLocationRef.value
 				? `${resourcePrefix}${elements.parentLocationRef.value}`
 				: undefined;
@@ -899,7 +897,18 @@ function bindEvents() {
 	for (const prefix of ["Hw", "Lw"]) {
 		for (const index of [1, 2]) elements[`secondary${prefix}Time${index}`].addEventListener("input", () => updateSecondaryTimeLayout());
 	}
-	elements.typeChoices.addEventListener("change", updateConditionalFields);
+	elements.typeChoices.addEventListener("change", (event) => {
+		if (event.target.matches('input[value="tidalStandardPort"]:checked')) {
+			elements.typeChoices.querySelector('input[value="tidalSecondaryPort"]').checked = false;
+		}
+		if (event.target.matches('input[value="tidalSecondaryPort"]:checked')) {
+			elements.typeChoices.querySelector('input[value="tidalStandardPort"]').checked = false;
+		}
+		updateConditionalFields();
+		if (event.target.matches('input[value="tidalSecondaryPort"]:checked')) {
+			setTimeout(() => elements.secondaryPortFields.scrollIntoView({ behavior: "smooth", block: "start" }), 50);
+		}
+	});
 	elements.geometryType.addEventListener("change", () => { geometryPreviewDirty = true; updateConditionalFields(); });
 	elements.point.addEventListener("input", () => { geometryPreviewDirty = true; renderPreview(); });
 	elements.points.addEventListener("input", () => { geometryPreviewDirty = true; renderPreview(); });

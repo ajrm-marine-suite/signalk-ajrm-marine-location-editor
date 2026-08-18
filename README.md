@@ -1,5 +1,11 @@
 # AJRM Marine Location Editor
 
+Version `0.6.16` makes creation of a secondary port an explicit standard-port
+correction workflow. Selecting the secondary-port classification immediately
+opens its Reeds table in a wider editor, and standard-port and secondary-port
+roles are mutually exclusive. The required parent selector lists standard
+ports only; both the editor and backend reject a secondary-port parent.
+
 Version `0.6.15` arranges the complete secondary-port correction set as one
 Reeds-style horizontal row: two HW time differences, two LW time differences,
 and the MHWS/MHWN/MLWN/MLWS height differences. Standard-port reference times

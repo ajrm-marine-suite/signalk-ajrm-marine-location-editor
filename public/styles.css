@@ -221,6 +221,10 @@ h3 {
 	width: min(560px, calc(100vw - 64px));
 }
 
+#editorDrawer.secondary-port-editor {
+	width: min(1180px, calc(100vw - 64px));
+}
+
 .drawer-right {
 	right: 12px;
 	transform: translateX(calc(100% + 24px));

@@ -652,7 +652,7 @@ module.exports = function ajrmMarineLocationEditor(app) {
 		for (const [label, reference, allowedTypes] of [
 			["Tidal-region prediction port", location.properties.tideLocationRef, ["tidalStandardPort", "tidalSecondaryPort"]],
 			["Tidal region", location.properties.tideRegionRef, ["tidalRegion"]],
-			["Parent tidal location", location.properties.tide?.parentLocationRef, ["tidalStandardPort", "tidalSecondaryPort"]],
+			["Parent standard port", location.properties.tide?.parentLocationRef, ["tidalStandardPort"]],
 			["Tidal-gate standard port", location.properties.tidalGate?.standardPortRef, ["tidalStandardPort"]],
 		]) {
 			if (!reference) continue;

@@ -277,6 +277,34 @@ test("routes save, version, inspect and restore a location", async (t) => {
 	await plugin.stop();
 });
 
+test("a secondary port can only reference a standard port as its parent", async (t) => {
+	const { call, plugin } = await fixture(t);
+	const listed = await call("GET", "/locations", { query: { workspace: "all" } });
+	const secondaryParent = listed.body.locations.find((location) => location.types.includes("tidalSecondaryPort"));
+	assert.ok(secondaryParent);
+	const id = crypto.randomUUID();
+	const candidate = {
+		expectedRevision: 0,
+		name: "Invalid chained secondary port",
+		types: ["tidalSecondaryPort"],
+		feature: { type: "Feature", properties: {}, geometry: { type: "Point", coordinates: [-5.1, 56] } },
+		properties: { tide: {
+			parentLocationRef: `/resources/locations/${secondaryParent.id}`,
+			secondaryPortCorrections: {
+				contract: "ajrm-secondary-port-corrections-v4",
+				timeOffsetPeriodMinutes: 720,
+				highWaterTimeOffsets: [{ referenceTimeMinutes: 60, offsetMinutes: 0 }],
+				lowWaterTimeOffsets: [{ referenceTimeMinutes: 60, offsetMinutes: 0 }],
+				heightDifferencesM: { mhws: 0, mhwn: 0, mlwn: 0, mlws: 0 },
+			},
+		} },
+	};
+	const result = await call("PUT", "/locations/:id", { params: { id }, body: candidate });
+	assert.equal(result.statusCode, 400);
+	assert.match(result.body.error, /Parent standard port reference points to an incompatible location type/);
+	await plugin.stop();
+});
+
 test("versioned harbour save, delete and undo keep the compatible Signal K region synchronized", async (t) => {
 	const { app, call, plugin } = await fixture(t);
 	const id = crypto.randomUUID();

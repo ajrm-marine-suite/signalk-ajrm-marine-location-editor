@@ -47,8 +47,8 @@ test("map page uses the standard left-side controls with zoom first", () => {
   const app = fs.readFileSync(path.join(root, "public/app.js"), "utf8");
   const css = fs.readFileSync(path.join(root, "public/styles.css"), "utf8");
 	assert.match(html, /ajrm-map-core\.css\?v=0\.7\.5/);
-	assert.match(html, /type="module" src="\.\/app\.js\?v=0\.6\.15"/);
-	assert.match(html, /styles\.css\?v=0\.6\.15/);
+	assert.match(html, /type="module" src="\.\/app\.js\?v=0\.6\.16"/);
+	assert.match(html, /styles\.css\?v=0\.6\.16/);
 	assert.match(html, /id="chartCycleStatus" class="ajrm-map-chart-cycle-status"[^>]+hidden/);
   assert.match(app, /zoomControl:\s*true/);
   assert.match(app, /MapCore\.createChartSelectorControl/);
@@ -114,6 +114,9 @@ test("tidal location fields are separated by port class", () => {
 	assert.match(standard, /id="tideStationId"/);
 	assert.doesNotMatch(standard, /id="parentLocationRef"/);
 	assert.match(secondary, /id="parentLocationRef"/);
+	assert.match(secondary, /Parent standard port/);
+	assert.match(secondary, /parentLocationRef" required/);
+	assert.match(secondary, /cannot be based on another secondary port/);
 	assert.match(secondary, /id="secondaryDiffMhws"/);
 	for (const id of ["secondaryHwOffset1", "secondaryHwOffset2", "secondaryLwOffset1", "secondaryLwOffset2", "secondaryDiffMhws", "secondaryDiffMhwn", "secondaryDiffMlwn", "secondaryDiffMlws"]) {
 		assert.match(differenceRow, new RegExp(`id="${id}"`));
@@ -131,6 +134,12 @@ test("tidal location fields are separated by port class", () => {
 	assert.match(app, /harbourProfileArea = profileEligible && elements\.geometryType\.value === "Polygon"/);
 	assert.match(app, /if \(types\.includes\("tidalStandardPort"\)\)[\s\S]*Object\.assign\(properties\.tide/);
 	assert.match(app, /elements\.secondaryLegacyTable\.hidden = !legacy/);
+	assert.match(app, /standardPorts\.map\(\(entry\) => \(\{ value: entry\.id, label: entry\.name \}\)\).*parentLocationRef/s);
+	assert.match(app, /tidalSecondaryPort[\s\S]+checked[\s\S]+setTimeout[\s\S]+secondaryPortFields\.scrollIntoView/);
+	assert.match(app, /tidalStandardPort[\s\S]+checked[\s\S]+tidalSecondaryPort[\s\S]+checked = false/);
+	assert.match(app, /tidalSecondaryPort[\s\S]+checked[\s\S]+tidalStandardPort[\s\S]+checked = false/);
+	assert.match(app, /Select the parent standard port for this secondary port/);
 	assert.match(css, /\.reeds-table input\s*\{[^}]*min-width:\s*76px/s);
 	assert.match(css, /\.reeds-secondary-table\s*\{[^}]*min-width:\s*1120px/s);
+	assert.match(css, /#editorDrawer\.secondary-port-editor\s*\{[^}]*width:\s*min\(1180px, calc\(100vw - 64px\)\)/s);
 });

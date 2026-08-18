@@ -6,7 +6,7 @@
 		<title>AJRM Marine Location Editor</title>
 		<link rel="stylesheet" href="./leaflet.css">
 		<link rel="stylesheet" href="./ajrm-map-core.css?v=0.7.5">
-		<link rel="stylesheet" href="./styles.css?v=0.6.15">
+		<link rel="stylesheet" href="./styles.css?v=0.6.16">
 	</head>
 	<body>
 		<div id="map" class="map" aria-label="Marine location chart"></div>
@@ -133,8 +133,9 @@
 					</div>
 				</section>
 				<section id="secondaryPortFields" class="secondary-port-fields" hidden>
-					<h3>Secondary-port corrections</h3>
-					<label>Parent tidal port <select id="parentLocationRef"><option value="">None</option></select></label>
+					<h3>Secondary port based on a standard port</h3>
+					<label>Parent standard port <select id="parentLocationRef" required><option value="">Select a standard port</option></select></label>
+					<p class="field-help">Select the standard port whose predictions the Reeds differences adjust. A secondary port cannot be based on another secondary port.</p>
 					<p class="field-help">Copy the table as printed in Reeds. Each standard-port time is paired with the time 12 hours later and therefore has one shared difference. Enter time differences as signed HHMM, for example <strong>-0055</strong> or <strong>+0020</strong>.</p>
 					<input id="secondaryTimePeriod" type="hidden" value="720">
 					<p id="secondaryLegacyPattern" class="field-help warning" hidden>This imported record has a non-repeating 24-hour pattern, so all four legacy rows are retained.</p>
@@ -290,6 +291,6 @@
 		<div id="status" class="status" role="status"></div>
 		<script src="./leaflet.js"></script>
 		<script src="./protomaps-leaflet.js"></script>
-		<script type="module" src="./app.js?v=0.6.15"></script>
+		<script type="module" src="./app.js?v=0.6.16"></script>
 	</body>
 </html>

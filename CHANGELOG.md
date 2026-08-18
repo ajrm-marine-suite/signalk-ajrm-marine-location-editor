@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.6.4 - 2026-08-18
+
+- Accept explicit latitude/longitude selection context on tide status, refresh
+  and pin requests. Chart applications can now resolve the visible area when
+  there is no current own-vessel position instead of receiving an unrelated
+  no-port result.
+
 ## 0.6.3 - 2026-08-18
 
 - Register the location, tide, weather, anchoring and diagnostic services in

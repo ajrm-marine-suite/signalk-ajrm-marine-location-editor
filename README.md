@@ -1,5 +1,9 @@
 # AJRM Marine Location Editor
 
+Version `0.6.4` lets chart applications supply the visible chart centre to
+tide status, refresh and pin requests. Automatic port selection therefore
+continues to work while inspecting an area without a current vessel position.
+
 Version `0.5.1` clarifies that Location Editor owns assisted Anchored-profile
 selection only; evidence-based automatic release is owned by AJRM Marine
 Traffic.

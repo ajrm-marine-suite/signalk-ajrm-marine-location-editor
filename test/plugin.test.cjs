@@ -197,6 +197,17 @@ test("lifecycle exposes the spatial service and retracts status on stop", async 
 	assert.equal(messages.at(-1).updates[0].values[0].value, null);
 });
 
+test("HTTP tide requests select a port using explicit chart coordinates", async (t) => {
+	const { call, plugin } = await fixture(t);
+	const result = await call("GET", "/tides/status", {
+		query: { latitude: "56.27224", longitude: "-5.637656" },
+	});
+	assert.equal(result.statusCode, 200);
+	assert.equal(result.body.selectedPort.name, "Oban tidal prediction port");
+	assert.equal(result.body.selection.reason, "containingRegionAssignment");
+	await plugin.stop();
+});
+
 test("routes save, version, inspect and restore a location", async (t) => {
 	const { call, plugin } = await fixture(t);
 	const id = crypto.randomUUID();

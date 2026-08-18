@@ -311,10 +311,7 @@ module.exports = function ajrmMarineLocationEditor(app) {
 			try {
 				assertRunning();
 				await initializationPromise;
-				res.json(await resolveTide({
-					contextLocationId: req.query?.locationId || undefined,
-					includeEvents: req.query?.includeEvents === "true",
-				}));
+				res.json(await resolveTide(tideRequest(req)));
 			} catch (error) {
 				res.status(400).json({ error: error.message });
 			}
@@ -347,17 +344,17 @@ module.exports = function ajrmMarineLocationEditor(app) {
 				const portId = req.body?.portId || null;
 				if (portId && !isResourceId(portId)) throw new Error("Pinned tidal port id must be a UUIDv4.");
 				await tideResolver.setPinnedPort(portId);
-				res.json(await resolveTide());
+				res.json(await resolveTide(tideRequest(req)));
 			} catch (error) {
 				res.status(400).json({ error: error.message });
 			}
 		}));
 
-		router.post("/tides/refresh", write(async (_req, res) => {
+		router.post("/tides/refresh", write(async (req, res) => {
 			try {
 				assertRunning();
 				await initializationPromise;
-				res.json(await resolveTide({ force: true }));
+				res.json(await resolveTide({ ...tideRequest(req), force: true }));
 			} catch (error) {
 				res.status(400).json({ error: error.message });
 			}
@@ -982,6 +979,19 @@ module.exports = function ajrmMarineLocationEditor(app) {
 			position: Number.isFinite(latitude) && Number.isFinite(longitude) ? { latitude, longitude } : undefined,
 			weatherDays: values.weatherDays,
 			marineDays: values.marineDays,
+		};
+	}
+
+	function tideRequest(req) {
+		const values = { ...(req.query || {}), ...(req.body || {}) };
+		const hasPosition = values.latitude != null && values.latitude !== "" &&
+			values.longitude != null && values.longitude !== "";
+		return {
+			contextLocationId: values.locationId || values.contextLocationId || undefined,
+			position: hasPosition
+				? normalizePosition({ latitude: values.latitude, longitude: values.longitude }) || undefined
+				: undefined,
+			includeEvents: values.includeEvents === true || values.includeEvents === "true",
 		};
 	}
 

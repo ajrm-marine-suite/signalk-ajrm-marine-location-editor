@@ -24,3 +24,17 @@ test("cosine estimate is halfway at the temporal midpoint and reports rising", (
 test("invalid provider records are discarded without throwing", () => {
 	assert.deepEqual(normalizeTideEvents([{ DateTime: "bad", EventType: "HighWater", Height: 3 }]), []);
 });
+
+test("timezone-free UKHO predictions are normalized as GMT rather than Pi local time", () => {
+	const [event] = normalizeTideEvents([
+		{ DateTime: "2026-08-18T08:53:00", EventType: "HighWater", Height: 3.4 },
+	]);
+	assert.equal(event.at, "2026-08-18T08:53:00.000Z");
+});
+
+test("explicit provider offsets retain their represented instant", () => {
+	const [event] = normalizeTideEvents([
+		{ DateTime: "2026-08-18T09:53:00+01:00", EventType: "HighWater", Height: 3.4 },
+	]);
+	assert.equal(event.at, "2026-08-18T08:53:00.000Z");
+});

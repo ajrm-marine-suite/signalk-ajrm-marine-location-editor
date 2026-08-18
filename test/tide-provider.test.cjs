@@ -38,6 +38,25 @@ test("Foundation tier may persist and recover the shared station cache", async (
 		apiKey: "secret", subscriptionTier: "foundation", cacheDirectory: directory,
 		fetchFn: async () => ({ ok: true, json: async () => payload }),
 	});
-	await provider.get(port, { now: "2026-08-18T01:00:00Z" });
+	const result = await provider.get(port, { now: "2026-08-18T01:00:00Z" });
+	assert.equal(result.timestampContract, "ukho-gmt-v1");
 	assert.deepEqual(await fs.readdir(directory), ["ukho-0372.json"]);
+});
+
+test("Foundation tier discards caches created before the explicit GMT contract", async (t) => {
+	const directory = await fs.mkdtemp(path.join(os.tmpdir(), "ajrm-tides-"));
+	t.after(() => fs.rm(directory, { recursive: true, force: true }));
+	await fs.writeFile(path.join(directory, "ukho-0372.json"), JSON.stringify({
+		fetchedAt: "2026-08-18T01:00:00Z",
+		events: [{ at: "2026-08-18T07:53:00.000Z", type: "high", heightM: 3.4 }],
+	}));
+	let calls = 0;
+	const provider = createUkhoTideProvider({
+		apiKey: "secret", subscriptionTier: "foundation", cacheDirectory: directory,
+		fetchFn: async () => { calls += 1; return { ok: true, json: async () => payload }; },
+	});
+	const result = await provider.get(port, { now: "2026-08-18T02:00:00Z" });
+	assert.equal(calls, 1);
+	assert.equal(result.cache, "network");
+	assert.equal(result.timestampContract, "ukho-gmt-v1");
 });

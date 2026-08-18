@@ -12,6 +12,7 @@ const UKHO_ENDPOINTS = [
 	"https://admiraltyapi.azure-api.net/uktidalapi/api/v1/Stations",
 ];
 const PERSISTENT_TIERS = new Set(["foundation", "premium"]);
+const CACHE_TIMESTAMP_CONTRACT = "ukho-gmt-v1";
 
 function safeStationId(value) {
 	const stationId = String(value || "").trim();
@@ -41,7 +42,10 @@ function createUkhoTideProvider(options = {}) {
 		if (!directory || !PERSISTENT_TIERS.has(tier)) return null;
 		try {
 			const value = JSON.parse(await fs.readFile(cacheFile(directory, stationId), "utf8"));
-			return Array.isArray(value.events) ? value : null;
+			// Pre-0.6.5 caches may contain UKHO GMT wall-clock values that were
+			// interpreted as BST before serialization. They cannot be repaired
+			// reliably, so force one authoritative refetch after upgrade.
+			return value.timestampContract === CACHE_TIMESTAMP_CONTRACT && Array.isArray(value.events) ? value : null;
 		} catch (error) {
 			if (error.code === "ENOENT") return null;
 			throw error;
@@ -82,6 +86,7 @@ function createUkhoTideProvider(options = {}) {
 			const events = await fetchEvents(stationId, request.apiKey || options.apiKey);
 			const result = {
 				providerId: "ukhoTidalEvents",
+				timestampContract: CACHE_TIMESTAMP_CONTRACT,
 				stationId,
 				fetchedAt: now.toISOString(),
 				events,

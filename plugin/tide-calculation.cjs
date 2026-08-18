@@ -4,7 +4,14 @@
  */
 
 function eventTime(event) {
-	return Date.parse(event?.at || event?.DateTime || event?.dateTime || "");
+	const value = String(event?.at || event?.DateTime || event?.dateTime || "").trim();
+	if (!value) return Number.NaN;
+	// UKHO documents Tidal API prediction times as GMT, but its DateTime values
+	// do not carry a Z or numeric offset. Date.parse would otherwise interpret
+	// them in the Pi's local zone and silently shift summer predictions by an
+	// hour. Preserve explicitly-zoned inputs and make UKHO's implicit GMT clear.
+	const explicitlyZoned = /(?:Z|[+-]\d{2}:?\d{2})$/i.test(value);
+	return Date.parse(explicitlyZoned ? value : `${value}Z`);
 }
 
 function eventHeight(event) {

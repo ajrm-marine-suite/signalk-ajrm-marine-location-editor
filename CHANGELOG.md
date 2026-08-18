@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.6.5 - 2026-08-18
+
+- Interpret timezone-free UKHO Tidal API event times as documented GMT rather
+  than as the Pi's local timezone.
+- Preserve explicitly zoned provider timestamps and publish normalized UTC
+  instants to every shared Tide Resolver consumer.
+- Invalidate pre-fix persistent tide caches once, forcing an authoritative
+  refresh instead of retaining summer predictions shifted one hour early.
+
 ## 0.6.4 - 2026-08-18
 
 - Accept explicit latitude/longitude selection context on tide status, refresh

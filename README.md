@@ -1,5 +1,10 @@
 # AJRM Marine Location Editor
 
+Version `0.6.5` treats UKHO's timezone-free Tidal API predictions explicitly
+as GMT before publishing UTC instants to Display and Planning. Older durable
+tide caches are invalidated once because their summer timestamps may be one
+hour early.
+
 Version `0.6.4` lets chart applications supply the visible chart centre to
 tide status, refresh and pin requests. Automatic port selection therefore
 continues to work while inspecting an area without a current vessel position.

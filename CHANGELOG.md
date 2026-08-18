@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.6.18 - 2026-08-18
+
+- Remove the expandable Tide relationships disclosure and show its applicable
+  controls directly above the role-specific tidal fields.
+- Put tidal-region, prediction-port and parent-standard-port labels alongside
+  their dropdowns in the wide editor, with a stacked mobile fallback.
+
 ## 0.6.17 - 2026-08-18
 
 - Replace the yellow new/unsaved geometry preview with bright red for stronger

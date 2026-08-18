@@ -1,5 +1,11 @@
 # AJRM Marine Location Editor
 
+Version `0.6.18` removes the Tide relationships disclosure. Relevant tidal
+region and prediction-port selectors are always shown within Tidal location
+details, immediately above the role-specific fields. Relationship labels and
+their dropdowns share one compact row on wide screens and stack on narrow
+ones.
+
 Version `0.6.17` draws new and unsaved location geometry in bright red so its
 circle or polygon remains conspicuous against chart colours.
 

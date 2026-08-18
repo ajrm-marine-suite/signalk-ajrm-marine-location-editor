@@ -218,7 +218,7 @@ function updateConditionalFields() {
 	elements.tideAssignmentField.hidden = !tidalRegion;
 	elements.tideRegionLabel.textContent = tidalRegion ? "Parent tidal region" : "Tidal region";
 	elements.anchorageFields.hidden = !types.some((type) => anchorageTypes.has(type));
-	elements.tideFields.hidden = !types.some((type) => ["tidalStandardPort", "tidalSecondaryPort", "tidalGate"].includes(type));
+	elements.tideFields.hidden = !types.some((type) => tideTypes.has(type));
 	elements.standardPortFields.hidden = !types.includes("tidalStandardPort");
 	elements.secondaryPortFields.hidden = !types.includes("tidalSecondaryPort");
 	elements.editorDrawer.classList.toggle("secondary-port-editor", types.includes("tidalSecondaryPort"));

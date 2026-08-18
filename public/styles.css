@@ -562,25 +562,28 @@ legend {
 	gap: 10px;
 }
 
-.editor-details {
+.tide-relationship-fields {
+	display: grid;
+	gap: 8px;
 	border: 1px solid #cbd5e1;
 	border-radius: 8px;
 	padding: 9px 11px;
 	background: #f8fafc;
 }
 
-.editor-details summary {
-	cursor: pointer;
-	font-weight: 700;
-}
-
-.editor-details[open] {
+.inline-select-row {
 	display: grid;
-	gap: 10px;
+	grid-template-columns: minmax(190px, auto) minmax(280px, 1fr);
+	align-items: center;
+	gap: 12px;
 }
 
-.editor-details[open] summary {
-	margin-bottom: 2px;
+.inline-select-row > span {
+	font-weight: 650;
+}
+
+.inline-select-row select {
+	margin: 0;
 }
 
 .secondary-port-fields {
@@ -843,9 +846,16 @@ legend {
 }
 
 .profile-region-choice[hidden],
-.editor-details[hidden],
+.tide-relationship-fields[hidden],
 #tideAssignmentField[hidden] {
 	display: none;
+}
+
+@media (max-width: 700px) {
+	.inline-select-row {
+		grid-template-columns: 1fr;
+		gap: 5px;
+	}
 }
 
 .harbour-list-section {

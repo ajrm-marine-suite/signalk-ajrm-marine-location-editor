@@ -6,7 +6,7 @@
 		<title>AJRM Marine Location Editor</title>
 		<link rel="stylesheet" href="./leaflet.css">
 		<link rel="stylesheet" href="./ajrm-map-core.css?v=0.7.5">
-		<link rel="stylesheet" href="./styles.css?v=0.6.17">
+		<link rel="stylesheet" href="./styles.css?v=0.6.18">
 	</head>
 	<body>
 		<div id="map" class="map" aria-label="Marine location chart"></div>
@@ -96,12 +96,6 @@
 				<input id="publishAsHarbourRegion" type="checkbox">
 				<span>Use this area for automatic Harbour profile switching</span>
 			</label>
-			<details id="tideRelationships" class="editor-details" hidden>
-				<summary>Tide relationships</summary>
-				<label id="tideAssignmentField" hidden>Prediction port for this region<select id="tideLocationRef"><option value="">None assigned</option></select></label>
-				<label id="tideRegionField"><span id="tideRegionLabel">Tidal region</span><select id="tideRegionRef"><option value="">None assigned</option></select></label>
-			</details>
-
 			<section id="anchorageFields" class="conditional-section" hidden>
 				<h3>Anchorage details</h3>
 				<label>Seabed <input id="seabed" type="text" placeholder="Mud, sand, rock..."></label>
@@ -113,6 +107,10 @@
 
 			<section id="tideFields" class="conditional-section" hidden>
 				<h3>Tidal location details</h3>
+				<section id="tideRelationships" class="tide-relationship-fields" hidden>
+					<label id="tideAssignmentField" class="inline-select-row" hidden><span>Prediction port for this region</span><select id="tideLocationRef"><option value="">None assigned</option></select></label>
+					<label id="tideRegionField" class="inline-select-row"><span id="tideRegionLabel">Tidal region</span><select id="tideRegionRef"><option value="">None assigned</option></select></label>
+				</section>
 				<section id="standardPortFields" class="secondary-port-fields" hidden>
 					<h3>Standard-port prediction source</h3>
 					<label>Provider identifier
@@ -134,7 +132,7 @@
 				</section>
 				<section id="secondaryPortFields" class="secondary-port-fields" hidden>
 					<h3>Secondary port based on a standard port</h3>
-					<label>Parent standard port <select id="parentLocationRef" required><option value="">Select a standard port</option></select></label>
+					<label class="inline-select-row"><span>Parent standard port</span><select id="parentLocationRef" required><option value="">Select a standard port</option></select></label>
 					<p class="field-help">Select the standard port whose predictions the Reeds differences adjust. A secondary port cannot be based on another secondary port.</p>
 					<p class="field-help">Copy the table as printed in Reeds. Each standard-port time is paired with the time 12 hours later and therefore has one shared difference. Enter time differences as signed HHMM, for example <strong>-0055</strong> or <strong>+0020</strong>.</p>
 					<input id="secondaryTimePeriod" type="hidden" value="720">
@@ -291,6 +289,6 @@
 		<div id="status" class="status" role="status"></div>
 		<script src="./leaflet.js"></script>
 		<script src="./protomaps-leaflet.js"></script>
-		<script type="module" src="./app.js?v=0.6.17"></script>
+		<script type="module" src="./app.js?v=0.6.18"></script>
 	</body>
 </html>

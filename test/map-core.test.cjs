@@ -47,8 +47,8 @@ test("map page uses the standard left-side controls with zoom first", () => {
   const app = fs.readFileSync(path.join(root, "public/app.js"), "utf8");
   const css = fs.readFileSync(path.join(root, "public/styles.css"), "utf8");
 	assert.match(html, /ajrm-map-core\.css\?v=0\.7\.5/);
-	assert.match(html, /type="module" src="\.\/app\.js\?v=0\.6\.17"/);
-	assert.match(html, /styles\.css\?v=0\.6\.17/);
+	assert.match(html, /type="module" src="\.\/app\.js\?v=0\.6\.18"/);
+	assert.match(html, /styles\.css\?v=0\.6\.18/);
 	assert.match(html, /id="chartCycleStatus" class="ajrm-map-chart-cycle-status"[^>]+hidden/);
   assert.match(app, /zoomControl:\s*true/);
   assert.match(app, /MapCore\.createChartSelectorControl/);
@@ -131,9 +131,13 @@ test("tidal location fields are separated by port class", () => {
 	assert.doesNotMatch(html, /Sources and review|id="provenanceFields"/);
 	assert.doesNotMatch(secondary, /id="secondaryStandardMhws"|Parent port \(m\)/);
 	assert.doesNotMatch(secondary, /id="tideProviderId"/);
-	assert.match(html, /id="tideAssignmentField" hidden>Prediction port for this region/);
+	assert.doesNotMatch(html, /<details id="tideRelationships"|<summary>Tide relationships<\/summary>/);
+	assert.match(html, /id="tideRelationships" class="tide-relationship-fields" hidden/);
+	assert.match(html, /id="tideAssignmentField" class="inline-select-row" hidden><span>Prediction port for this region/);
 	assert.match(html, /id="tideRegionLabel">Tidal region/);
+	assert.match(secondary, /class="inline-select-row"><span>Parent standard port<\/span><select id="parentLocationRef"/);
 	assert.doesNotMatch(html, /Tidal location used here/);
+	assert.match(app, /tideFields\.hidden = !types\.some\(\(type\) => tideTypes\.has\(type\)\)/);
 	assert.match(app, /standardPortFields\.hidden = !types\.includes\("tidalStandardPort"\)/);
 	assert.match(app, /harbourProfileArea = profileEligible && elements\.geometryType\.value === "Polygon"/);
 	assert.match(app, /if \(types\.includes\("tidalStandardPort"\)\)[\s\S]*Object\.assign\(properties\.tide/);
@@ -146,4 +150,5 @@ test("tidal location fields are separated by port class", () => {
 	assert.match(css, /\.reeds-table input\s*\{[^}]*min-width:\s*76px/s);
 	assert.match(css, /\.reeds-secondary-table\s*\{[^}]*min-width:\s*1120px/s);
 	assert.match(css, /#editorDrawer\.secondary-port-editor\s*\{[^}]*width:\s*min\(1180px, calc\(100vw - 64px\)\)/s);
+	assert.match(css, /\.inline-select-row\s*\{[^}]*grid-template-columns:\s*minmax\(190px, auto\) minmax\(280px, 1fr\)/s);
 });

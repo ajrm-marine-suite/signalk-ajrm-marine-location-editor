@@ -133,6 +133,7 @@ function createTideResolver(options) {
 				},
 				freshness: dataFreshness,
 				curve: calculated.curve,
+				events: request.includeEvents === true ? calculated.curve : undefined,
 				error: valid ? "" : dataFreshness.state === "expired" ? "Tidal data have expired." : "Current height could not be calculated.",
 			};
 		} catch (error) {

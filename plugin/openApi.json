@@ -2,8 +2,8 @@
   "openapi": "3.0.3",
   "info": {
     "title": "AJRM Marine Location Editor API",
-    "version": "0.5.1",
-    "description": "Versioned marine locations, relationships, shared tide resolution, assisted anchoring, import/export and nearest-location lookup."
+    "version": "0.6.0",
+    "description": "Versioned marine locations, relationships, shared tide and weather resolution, assisted anchoring, import/export and nearest-location lookup."
   },
   "paths": {
     "/status": { "get": { "responses": { "200": { "description": "Plugin status" } } } },
@@ -20,6 +20,8 @@
     "/tides/status": { "get": { "responses": { "200": { "description": "Resolved tidal port, current height, extremes, provenance and freshness" } } } },
     "/tides/pin": { "post": { "responses": { "200": { "description": "Pin or clear a manual tidal-port override" } } } },
     "/tides/refresh": { "post": { "responses": { "200": { "description": "Refresh the selected port and publish a new tide projection" } } } },
+    "/weather/status": { "get": { "responses": { "200": { "description": "Cached weather and marine forecast with explicit provenance and freshness" } } } },
+    "/weather/refresh": { "post": { "responses": { "200": { "description": "Refresh weather and marine forecasts for a location or position" } } } },
     "/anchoring/status": { "get": { "responses": { "200": { "description": "Stationary-at-location evidence and current anchoring suggestion/action state" } } } },
     "/anchoring/confirm": { "post": { "responses": { "200": { "description": "Confirm the current suggestion and select Anchored" } } } },
     "/anchoring/dismiss": { "post": { "responses": { "200": { "description": "Dismiss the current suggestion until the vessel leaves or moves" } } } },

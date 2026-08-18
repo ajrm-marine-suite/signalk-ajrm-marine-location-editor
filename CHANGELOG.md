@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.6.0 - 2026-08-18
+
+- Add the shared `ajrm-marine-weather-service-v1` contract for planners and
+  other suite plugins, backed by position-keyed Open-Meteo weather and marine
+  caches with explicit fresh/stale/expired state and fallback provenance.
+- Publish only a compact current-weather projection to Signal K; detailed
+  hourly provider series remain available in-process and by HTTP without
+  bloating normal deltas.
+- Allow consumers to request the tide resolver's normalized event series while
+  retaining the compact published tide projection.
+
 ## 0.5.1 - 2026-08-18
 
 - Clarifies that assisted anchoring selects Anchored, while Traffic owns evidence-based release.

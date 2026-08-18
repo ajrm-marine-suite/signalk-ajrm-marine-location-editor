@@ -2,9 +2,51 @@
   "schema": "org.ajrm.marine.location-seed/v1",
   "region": "West Scotland",
   "generatedAt": "2026-08-12T00:00:00.000Z",
-  "locationCount": 85,
+  "locationCount": 86,
   "licenceNote": "Each location records its source and licence. OSM-derived records are ODbL 1.0; Environment Agency records are OGL 3.0. Editorial references are links used only for corroboration.",
   "locations": [
+    {
+      "id": "e0e5661f-1675-4dbb-8fa0-ea8566c62ef4",
+      "name": "Oban tidal prediction port",
+      "description": "UKHO prediction station used as the reference port for West Scotland tidal planning. Confirm the station identifier against the current UKHO service before relying on predictions.",
+      "types": [
+        "tidalStandardPort"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {},
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -5.474,
+            56.412
+          ]
+        }
+      },
+      "properties": {
+        "tide": {
+          "provider": "UK Hydrographic Office Tidal API",
+          "providerId": "0372",
+          "stationId": "0372",
+          "stationName": "Oban",
+          "datum": "UKHO station datum"
+        },
+        "provenance": {
+          "reviewStatus": "imported",
+          "warning": "Migrated from the proven standalone planners' Oban reference-port configuration. Verify the provider identifier and datum in Location Editor before operational use.",
+          "sources": [
+            {
+              "provider": "ADMIRALTY Tidal API / migrated AJRM planner configuration",
+              "sourceId": "0372",
+              "license": "UKHO service terms apply",
+              "url": "https://www.admiralty.co.uk/access-data/tidal-data",
+              "retrievedAt": "2026-08-18T00:00:00.000Z"
+            }
+          ]
+        },
+        "schema": "org.ajrm.marine.location/v1"
+      }
+    },
     {
       "id": "5e63de0d-8963-4f8e-8448-b6e162367377",
       "name": "Acarseid Mhor",

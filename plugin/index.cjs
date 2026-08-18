@@ -22,11 +22,13 @@ const { prepareLocationImport } = require("./harbour-editor-import.cjs");
 const { createUkhoTideProvider } = require("./tide-provider.cjs");
 const { createTideResolver } = require("./tide-resolver.cjs");
 const { createAnchoringAssistant } = require("./anchoring-assistance.cjs");
+const { createWeatherService } = require("./weather-service.cjs");
 
 const STATUS_CONTRACT = "ajrm-marine-location-editor-status-v1";
 const STATUS_PATH = "plugins.ajrmMarineLocationEditor";
 const TIDE_PATH = "plugins.ajrmMarineLocations.tide";
 const ANCHORING_PATH = "plugins.ajrmMarineLocations.anchoring";
+const WEATHER_PATH = "plugins.ajrmMarineLocations.weather";
 const MAX_IMPORT_LOCATIONS = 10000;
 
 const packageJson = JSON.parse(
@@ -85,11 +87,13 @@ module.exports = function ajrmMarineLocationEditor(app) {
 	let latestPosition = null;
 	let latestSog = null;
 	let latestTide = null;
+	let latestWeather = null;
 	let options = {};
 	const dataDirectory = app.getDataDirPath?.() || path.join(process.cwd(), ".ajrm-location-editor");
 	const store = createLocationStore(path.join(dataDirectory, "locations.json"));
 	let tideResolver = null;
 	let anchoringAssistant = null;
+	let weatherService = null;
 	let lastStatus = {
 		contract: STATUS_CONTRACT,
 		contractVersion: 1,
@@ -109,6 +113,9 @@ module.exports = function ajrmMarineLocationEditor(app) {
 	plugin.schema = {
 		type: "object",
 		properties: {
+			weatherServiceEnabled: { type: "boolean", title: "Enable shared weather service", default: true },
+			weatherRefreshHours: { type: "number", title: "Refresh weather forecasts after (hours)", default: 1, minimum: 0.25, maximum: 24 },
+			weatherExpiresHours: { type: "number", title: "Reject weather forecasts older than (hours)", default: 24, minimum: 1, maximum: 168 },
 			tideResolverEnabled: { type: "boolean", title: "Enable shared tide resolver", default: true },
 			ukhoApiKey: { type: "string", title: "UKHO Tidal API subscription key", format: "password" },
 			ukhoSubscriptionTier: {
@@ -133,6 +140,9 @@ module.exports = function ajrmMarineLocationEditor(app) {
 		running = true;
 		const configuredStationarySpeedKn = Number(configured.anchoringStationarySpeedKn);
 		options = {
+			weatherServiceEnabled: configured.weatherServiceEnabled !== false,
+			weatherRefreshHours: Number(configured.weatherRefreshHours) || 1,
+			weatherExpiresHours: Number(configured.weatherExpiresHours) || 24,
 			tideResolverEnabled: configured.tideResolverEnabled !== false,
 			ukhoApiKey: configured.ukhoApiKey || process.env.UKHO_API_KEY || "",
 			ukhoSubscriptionTier: configured.ukhoSubscriptionTier || "discovery",
@@ -145,6 +155,11 @@ module.exports = function ajrmMarineLocationEditor(app) {
 			anchoringPointRadiusM: Number(configured.anchoringPointRadiusM) || 250,
 			trustedLocationAutomation: configured.trustedLocationAutomation === true,
 		};
+		weatherService = createWeatherService({
+			cacheDirectory: path.join(dataDirectory, "weather"),
+			staleAfterHours: options.weatherRefreshHours,
+			expiresAfterHours: Math.max(options.weatherRefreshHours, options.weatherExpiresHours),
+		});
 		const tideProvider = createUkhoTideProvider({
 			apiKey: options.ukhoApiKey,
 			subscriptionTier: options.ukhoSubscriptionTier,
@@ -187,12 +202,18 @@ module.exports = function ajrmMarineLocationEditor(app) {
 		});
 		app.ajrmMarineTides = Object.freeze({
 			contract: "ajrm-marine-tides-service-v1",
+			configured: Boolean(options.ukhoApiKey),
 			status: async (request = {}) => resolveTide(request),
 			pin: async (portId) => {
 				await tideResolver.setPinnedPort(portId);
 				return resolveTide({ force: false });
 			},
-			refresh: async () => resolveTide({ force: true }),
+			refresh: async (request = {}) => resolveTide({ ...request, force: true }),
+		});
+		app.ajrmMarineWeather = Object.freeze({
+			contract: "ajrm-marine-weather-service-v1",
+			status: async (request = {}) => resolveWeather(request),
+			refresh: async (request = {}) => resolveWeather({ ...request, force: true }),
 		});
 		app.ajrmMarineAnchoring = Object.freeze({
 			contract: "ajrm-marine-anchoring-service-v1",
@@ -222,10 +243,12 @@ module.exports = function ajrmMarineLocationEditor(app) {
 		await Promise.allSettled([...pendingOperations]);
 		delete app.ajrmMarineLocations;
 		delete app.ajrmMarineTides;
+		delete app.ajrmMarineWeather;
 		delete app.ajrmMarineAnchoring;
 		updateStatus({ enabled: false });
 		publishStatus(null);
 		publishTide(null);
+		publishWeather(null);
 		publishAnchoring(null);
 		delete app.ajrmMarineLocationEditorStatus;
 		app.setPluginStatus?.("Stopped");
@@ -248,11 +271,32 @@ module.exports = function ajrmMarineLocationEditor(app) {
 				await initializationPromise;
 				res.json(await resolveTide({
 					contextLocationId: req.query?.locationId || undefined,
+					includeEvents: req.query?.includeEvents === "true",
 				}));
 			} catch (error) {
 				res.status(400).json({ error: error.message });
 			}
 		});
+
+		router.get("/weather/status", async (req, res) => {
+			try {
+				assertRunning();
+				await initializationPromise;
+				res.json(await resolveWeather(weatherRequest(req)));
+			} catch (error) {
+				res.status(400).json({ error: error.message });
+			}
+		});
+
+		router.post("/weather/refresh", write(async (req, res) => {
+			try {
+				assertRunning();
+				await initializationPromise;
+				res.json(await resolveWeather({ ...weatherRequest(req), force: true }));
+			} catch (error) {
+				res.status(400).json({ error: error.message });
+			}
+		}));
 
 		router.post("/tides/pin", write(async (req, res) => {
 			try {
@@ -772,6 +816,13 @@ module.exports = function ajrmMarineLocationEditor(app) {
 				enabled: options.anchoringAssistanceEnabled,
 				state: "unavailable",
 			},
+			weatherService: latestWeather ? {
+				enabled: options.weatherServiceEnabled,
+				valid: latestWeather.valid,
+				contextLocation: latestWeather.contextLocation,
+				freshness: latestWeather.freshness,
+				error: latestWeather.error,
+			} : { enabled: options.weatherServiceEnabled, valid: false },
 			error: "",
 			updatedAt: new Date().toISOString(),
 		};
@@ -788,6 +839,7 @@ module.exports = function ajrmMarineLocationEditor(app) {
 		latestPosition = normalizePosition(app.getSelfPath?.("navigation.position"));
 		latestSog = normalizeSpeed(app.getSelfPath?.("navigation.speedOverGround"));
 		publishTideMetadata();
+		publishWeatherMetadata();
 		publishAnchoringMetadata();
 		if (app.subscriptionmanager?.subscribe) {
 			app.subscriptionmanager.subscribe(
@@ -875,8 +927,45 @@ module.exports = function ajrmMarineLocationEditor(app) {
 			? await execute()
 			: await (tideResolution || (tideResolution = execute().finally(() => { tideResolution = null; })));
 		latestTide = result;
-		publishTide(result);
+		publishTide(withoutLargeSeries(result));
 		return result;
+	}
+
+	function weatherRequest(req) {
+		const values = req.method === "POST" ? req.body || {} : req.query || {};
+		const latitude = Number(values.latitude);
+		const longitude = Number(values.longitude);
+		return {
+			contextLocationId: values.locationId || values.contextLocationId || undefined,
+			position: Number.isFinite(latitude) && Number.isFinite(longitude) ? { latitude, longitude } : undefined,
+			weatherDays: values.weatherDays,
+			marineDays: values.marineDays,
+		};
+	}
+
+	async function resolveWeather(request = {}) {
+		if (!options.weatherServiceEnabled) {
+			return { contract: "ajrm-marine-weather-service-v1", contractVersion: 1, valid: false, error: "Shared weather service is disabled." };
+		}
+		let contextLocation = null;
+		if (request.contextLocationId) {
+			contextLocation = await store.get(String(request.contextLocationId).split("/").at(-1));
+			if (!contextLocation) throw new Error("Weather context location was not found.");
+		}
+		const result = await weatherService.resolve({
+			...request,
+			contextLocation,
+			position: request.position || representativePosition(contextLocation) || latestPosition,
+		});
+		latestWeather = result;
+		publishWeather(withoutLargeSeries(result));
+		return result;
+	}
+
+	function withoutLargeSeries(value) {
+		if (!value || typeof value !== "object") return value;
+		const { hourly, events, ...compact } = value;
+		return compact;
 	}
 
 	function publishTideMetadata() {
@@ -894,6 +983,14 @@ module.exports = function ajrmMarineLocationEditor(app) {
 		app.handleMessage?.(plugin.id, {
 			updates: [{ meta: [{ path: ANCHORING_PATH, value: {
 				description: "Stationary-at-location evidence, Anchored-profile suggestion and skipper/automation action provenance.",
+			} }] }],
+		});
+	}
+
+	function publishWeatherMetadata() {
+		app.handleMessage?.(plugin.id, {
+			updates: [{ meta: [{ path: WEATHER_PATH, value: {
+				description: "Cached marine weather forecast with position, provenance and freshness. Speeds and angles use Signal K SI units.",
 			} }] }],
 		});
 	}
@@ -924,6 +1021,17 @@ module.exports = function ajrmMarineLocationEditor(app) {
 				source: { label: plugin.id },
 				timestamp: new Date().toISOString(),
 				values: [{ path: ANCHORING_PATH, value }],
+			}],
+		});
+	}
+
+	function publishWeather(value) {
+		app.handleMessage?.(plugin.id, {
+			context: "vessels.self",
+			updates: [{
+				source: { label: plugin.id },
+				timestamp: new Date().toISOString(),
+				values: [{ path: WEATHER_PATH, value }],
 			}],
 		});
 	}

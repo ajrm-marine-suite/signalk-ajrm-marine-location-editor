@@ -92,6 +92,21 @@ Tidal predictions and interpolation are planning aids, not a substitute for
 official current information or safe navigation. Verify datum, station,
 freshness and suitability for the intended use.
 
+## Shared Weather Service
+
+The backend also exposes `app.ajrmMarineWeather` and publishes a compact current
+projection at `plugins.ajrmMarineLocations.weather`. Consumers request a
+location or position; the service retrieves Open-Meteo weather and marine
+hourly forecasts, stores a position-keyed cache, and reports explicit
+fresh/stale/expired state and offline-fallback provenance. The in-process and
+HTTP contracts can return the full hourly series, while the normal Signal K
+delta deliberately omits it. Compact speeds and directions use Signal K SI
+units; the retained provider payload includes its own explicit units.
+
+AJRM Marine Planning consumes this service instead of maintaining another
+forecast cache. Forecast data remain planning inputs which must be checked
+against current official forecasts and observed conditions.
+
 ## Bundled West Scotland starter data
 
 On first start, the plugin adds a sourced West Scotland starter catalogue. It
@@ -204,9 +219,10 @@ Signal K read/write or administrator access.
 
 Other plugins can use `app.ajrmMarineLocations` to list, get or find nearby
 locations, `app.ajrmMarineTides` to resolve, pin or refresh the shared tide
-projection, and `app.ajrmMarineAnchoring` to inspect/confirm/dismiss assisted
-anchoring. The HTTP API and its OpenAPI document provide the same services to
-browser applications.
+projection, `app.ajrmMarineWeather` for cached marine forecasts, and
+`app.ajrmMarineAnchoring` to inspect/confirm/dismiss assisted anchoring. The
+HTTP API and its OpenAPI document provide the same services to browser
+applications.
 
 ## Licence
 

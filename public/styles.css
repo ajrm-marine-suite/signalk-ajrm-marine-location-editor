@@ -227,6 +227,10 @@ h3 {
 	transform: translateX(calc(-100% - 64px));
 }
 
+#editorDrawer {
+	width: min(560px, calc(100vw - 64px));
+}
+
 .drawer-right {
 	right: 12px;
 	transform: translateX(calc(100% + 24px));
@@ -242,7 +246,7 @@ h3 {
 	right: 18px;
 	z-index: 540;
 	display: none;
-	width: min(360px, calc(100vw - 24px));
+	width: min(560px, calc(100vw - 24px));
 	gap: 12px;
 	padding: 12px;
 	border: 1px solid #d5dde1;
@@ -270,6 +274,11 @@ h3 {
 	margin-top: 3px;
 	color: #52606b;
 	font-size: 13px;
+}
+
+.geometry-data-fields {
+	display: grid;
+	gap: 10px;
 }
 
 .drawer-header {
@@ -559,6 +568,27 @@ legend {
 	gap: 10px;
 }
 
+.editor-details {
+	border: 1px solid #cbd5e1;
+	border-radius: 8px;
+	padding: 9px 11px;
+	background: #f8fafc;
+}
+
+.editor-details summary {
+	cursor: pointer;
+	font-weight: 700;
+}
+
+.editor-details[open] {
+	display: grid;
+	gap: 10px;
+}
+
+.editor-details[open] summary {
+	margin-bottom: 2px;
+}
+
 .secondary-port-fields {
 	display: grid;
 	gap: 10px;
@@ -603,9 +633,14 @@ legend {
 }
 
 .reeds-table input {
-	min-width: 0;
+	min-width: 76px;
 	width: 100%;
 	margin: 0;
+}
+
+.reeds-table-scroll {
+	overflow-x: auto;
+	padding-bottom: 3px;
 }
 
 .reeds-time-table td:first-child {
@@ -626,7 +661,11 @@ legend {
 }
 
 .reeds-height-table th:first-child {
-	width: 25%;
+	width: 130px;
+}
+
+.reeds-height-table {
+	min-width: 520px;
 }
 
 .field-help.warning {

@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.6.13 - 2026-08-18
+
+- Move point coordinates and polygon points from the main location drawer to
+  the focused Geometry editor.
+- Show prediction provider, station, datum and reference levels only for
+  standard ports, and show parent-port/Reeds corrections only for secondary
+  ports.
+- Prevent hidden standard-port fields from being written into secondary-port
+  records.
+- Widen the secondary height-difference cells and provide horizontal overflow
+  on small screens so signed decimal corrections are not clipped.
+
 ## 0.6.12 - 2026-08-18
 
 - Replace duplicated 24-hour secondary-port entries with the paired 12-hour

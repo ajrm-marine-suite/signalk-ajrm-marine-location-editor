@@ -1,5 +1,12 @@
 # AJRM Marine Location Editor
 
+Version `0.6.13` shortens and clarifies location editing. Coordinate and
+polygon entry now live entirely in the separate Geometry panel, while tidal
+fields are divided by location class: standard ports show prediction-source,
+station, datum and reference-level data; secondary ports show only their
+parent port and Reeds corrections. The secondary height table is wider and
+scrolls on narrow displays so signed values such as `-0.8` remain visible.
+
 Version `0.6.12` makes secondary-port entry match the paired columns in Reeds.
 HW and LW reference times twelve hours apart now share one signed-HHMM
 difference, and parent-port levels and four height differences appear in one

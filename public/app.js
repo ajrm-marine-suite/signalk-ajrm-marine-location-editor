@@ -45,7 +45,7 @@ const elements = Object.fromEntries([
 	"hideAllTypes", "mapAreaOnly", "locationName", "description", "typeChoices",
 	"geometryType", "setPoint", "openGeometry", "pointEditor", "polygonEditor", "point",
 	"points", "profileRegionField", "publishAsHarbourRegion", "tideLocationRef", "tideRegionRef", "anchorageFields", "seabed", "chartedDepthM",
-	"detectionRadiusM", "trustedAutomation", "anchorageNotes", "tideFields", "tideProviderId", "tideProvider", "tideStationId", "tideStationName",
+	"detectionRadiusM", "trustedAutomation", "anchorageNotes", "tideFields", "standardPortFields", "tideProviderId", "tideProvider", "tideStationId", "tideStationName",
 	"parentLocationRef", "tideDatum", "tideMhws", "tideMhwn", "tideMlwn", "tideMlws", "secondaryPortFields",
 	"secondaryStandardMhws", "secondaryStandardMhwn", "secondaryStandardMlwn", "secondaryStandardMlws",
 	"secondaryTimePeriod", "secondaryLegacyPattern", "secondaryHwPair1", "secondaryHwPair2", "secondaryLwPair1", "secondaryLwPair2",
@@ -214,6 +214,7 @@ function updateConditionalFields() {
 	if (!profileEligible) elements.publishAsHarbourRegion.checked = false;
 	elements.anchorageFields.hidden = !types.some((type) => anchorageTypes.has(type));
 	elements.tideFields.hidden = !types.some((type) => tideTypes.has(type));
+	elements.standardPortFields.hidden = !types.includes("tidalStandardPort");
 	elements.secondaryPortFields.hidden = !types.includes("tidalSecondaryPort");
 	elements.tidalGateFields.hidden = !types.includes("tidalGate");
 	elements.hazardFields.hidden = !types.some((type) => hazardTypes.has(type));
@@ -465,20 +466,25 @@ function buildLocation() {
 		};
 	}
 	if (types.some((type) => tideTypes.has(type))) {
-		const referenceLevels = Object.fromEntries([
-			["mhws", elements.tideMhws], ["mhwn", elements.tideMhwn],
-			["mlwn", elements.tideMlwn], ["mlws", elements.tideMlws],
-		].filter(([, input]) => input.value !== "").map(([key, input]) => [key, Number(input.value)]));
-		properties.tide = {
-			providerId: elements.tideProviderId.value || undefined,
-			provider: elements.tideProvider.value.trim() || undefined,
-			stationId: elements.tideStationId.value.trim() || undefined,
-			stationName: elements.tideStationName.value.trim() || undefined,
-			parentLocationRef: elements.parentLocationRef.value ? `${resourcePrefix}${elements.parentLocationRef.value}` : undefined,
-			datum: elements.tideDatum.value.trim() || undefined,
-			referenceLevels: Object.keys(referenceLevels).length ? referenceLevels : undefined,
-		};
+		properties.tide = {};
+		if (types.includes("tidalStandardPort")) {
+			const referenceLevels = Object.fromEntries([
+				["mhws", elements.tideMhws], ["mhwn", elements.tideMhwn],
+				["mlwn", elements.tideMlwn], ["mlws", elements.tideMlws],
+			].filter(([, input]) => input.value !== "").map(([key, input]) => [key, Number(input.value)]));
+			Object.assign(properties.tide, {
+				providerId: elements.tideProviderId.value || undefined,
+				provider: elements.tideProvider.value.trim() || undefined,
+				stationId: elements.tideStationId.value.trim() || undefined,
+				stationName: elements.tideStationName.value.trim() || undefined,
+				datum: elements.tideDatum.value.trim() || undefined,
+				referenceLevels: Object.keys(referenceLevels).length ? referenceLevels : undefined,
+			});
+		}
 		if (types.includes("tidalSecondaryPort")) {
+			properties.tide.parentLocationRef = elements.parentLocationRef.value
+				? `${resourcePrefix}${elements.parentLocationRef.value}`
+				: undefined;
 			const numericGroup = (entries) => Object.fromEntries(entries.map(([key, id]) => {
 				if (elements[id].value === "") throw new Error("Complete every secondary-port correction field; use zero where there is no correction.");
 				return [key, Number(elements[id].value)];

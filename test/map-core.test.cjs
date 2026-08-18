@@ -47,8 +47,8 @@ test("map page uses the standard left-side controls with zoom first", () => {
   const app = fs.readFileSync(path.join(root, "public/app.js"), "utf8");
   const css = fs.readFileSync(path.join(root, "public/styles.css"), "utf8");
 	assert.match(html, /ajrm-map-core\.css\?v=0\.7\.5/);
-	assert.match(html, /type="module" src="\.\/app\.js\?v=0\.4\.3"/);
-	assert.match(html, /styles\.css\?v=0\.4\.2/);
+	assert.match(html, /type="module" src="\.\/app\.js\?v=0\.6\.13"/);
+	assert.match(html, /styles\.css\?v=0\.6\.13/);
 	assert.match(html, /id="chartCycleStatus" class="ajrm-map-chart-cycle-status"[^>]+hidden/);
   assert.match(app, /zoomControl:\s*true/);
   assert.match(app, /MapCore\.createChartSelectorControl/);
@@ -87,12 +87,35 @@ test("location selection and editing use separate focused drawers", () => {
 	const html = fs.readFileSync(path.join(root, "public/index.html"), "utf8");
 	const selector = html.match(/<aside id="selectorDrawer"[\s\S]*?<\/aside>/)?.[0] || "";
 	const editor = html.match(/<aside id="editorDrawer"[\s\S]*?<\/aside>/)?.[0] || "";
+	const geometry = html.match(/<section id="geometryControls"[\s\S]*?<\/section>/)?.[0] || "";
 	assert.match(selector, /id="workspace"/);
 	assert.match(selector, /id="locationList"/);
 	assert.match(selector, /id="newLocation"/);
 	assert.doesNotMatch(selector, /id="geometryType"|id="anchorageFields"|id="tideFields"|id="hazardFields"/);
-	assert.match(editor, /id="geometryType"/);
+	assert.doesNotMatch(editor, /id="geometryType"|id="pointEditor"|id="polygonEditor"/);
+	assert.match(geometry, /id="geometryType"/);
+	assert.match(geometry, /id="pointEditor"/);
+	assert.match(geometry, /id="polygonEditor"/);
 	assert.match(editor, /id="anchorageFields"/);
 	assert.match(editor, /id="tideFields"/);
 	assert.match(editor, /id="hazardFields"/);
+});
+
+test("tidal location fields are separated by port class", () => {
+	const root = path.resolve(__dirname, "..");
+	const html = fs.readFileSync(path.join(root, "public/index.html"), "utf8");
+	const app = fs.readFileSync(path.join(root, "public/app.js"), "utf8");
+	const css = fs.readFileSync(path.join(root, "public/styles.css"), "utf8");
+	const standard = html.match(/<section id="standardPortFields"[\s\S]*?<\/section>/)?.[0] || "";
+	const secondary = html.match(/<section id="secondaryPortFields"[\s\S]*?<\/section>/)?.[0] || "";
+	assert.match(standard, /id="tideProviderId"/);
+	assert.match(standard, /id="tideStationId"/);
+	assert.doesNotMatch(standard, /id="parentLocationRef"/);
+	assert.match(secondary, /id="parentLocationRef"/);
+	assert.match(secondary, /id="secondaryDiffMhws"/);
+	assert.doesNotMatch(secondary, /id="tideProviderId"/);
+	assert.match(app, /standardPortFields\.hidden = !types\.includes\("tidalStandardPort"\)/);
+	assert.match(app, /if \(types\.includes\("tidalStandardPort"\)\)[\s\S]*Object\.assign\(properties\.tide/);
+	assert.match(css, /\.reeds-table input\s*\{[^}]*min-width:\s*76px/s);
+	assert.match(css, /\.reeds-height-table\s*\{[^}]*min-width:\s*520px/s);
 });

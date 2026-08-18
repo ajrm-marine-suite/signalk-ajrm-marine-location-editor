@@ -299,6 +299,7 @@ function emptyCatalog() {
 		locations: {},
 		tombstones: {},
 		history: {},
+		purgedIds: [],
 	};
 }
 
@@ -382,7 +383,11 @@ function normalizeCatalog(payload, { preserveIds = true } = {}) {
 		locations,
 		tombstones: {},
 		history: {},
+		purgedIds: [...new Set(payload.purgedIds || [])],
 	};
+	if (!result.purgedIds.every(isResourceId)) {
+		throw new Error("Catalogue purgedIds must contain only UUIDv4 location ids.");
+	}
 	for (const [id, tombstone] of Object.entries(payload.tombstones || {})) {
 		if (locations[id]) throw new Error(`Location ${id} is both active and deleted.`);
 		result.tombstones[id] = normalizeTombstone(tombstone, id);
@@ -396,6 +401,11 @@ function normalizeCatalog(payload, { preserveIds = true } = {}) {
 			throw new Error(`Location ${id} history contains duplicate edit ids.`);
 		}
 		result.history[id] = normalized.sort((a, b) => a.revision - b.revision || a.editedAt.localeCompare(b.editedAt));
+	}
+	for (const id of result.purgedIds) {
+		if (result.locations[id] || result.tombstones[id] || result.history[id]) {
+			throw new Error(`Purged location ${id} still has catalogue data.`);
+		}
 	}
 	for (const location of Object.values(result.locations)) {
 		if (!result.history[location.id]?.length) {

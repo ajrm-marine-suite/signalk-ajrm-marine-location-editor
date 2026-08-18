@@ -22,6 +22,18 @@ test("browser filters workspace, type, search and map scope independently", asyn
 	assert.deepEqual(filterLocations(locations, { ...common, intersects: ({ id }) => id === "b" }).map(({ id }) => id), ["b"]);
 });
 
+test("workspace display choices contain only types from the selected workspace", async () => {
+	const { displayTypesForWorkspace } = await import("../public/location-browser.mjs");
+	const definitions = {
+		anchorage: ["Anchorage", "places"],
+		tidalGate: ["Tidal gate", "tides"],
+		hazard: ["Hazard", "hazards"],
+	};
+	assert.deepEqual([...displayTypesForWorkspace(definitions, "places")], ["anchorage"]);
+	assert.deepEqual([...displayTypesForWorkspace(definitions, "tides")], ["tidalGate"]);
+	assert.deepEqual([...displayTypesForWorkspace(definitions, "all")], ["anchorage", "tidalGate", "hazard"]);
+});
+
 test("browser groups a multi-classified location once under its primary type", async () => {
 	const { groupLocations } = await import("../public/location-browser.mjs");
 	const groups = groupLocations([

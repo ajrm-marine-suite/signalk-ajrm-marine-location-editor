@@ -59,6 +59,27 @@ test("deletion leaves a tombstone and restore appends a new revision", async (t)
 	assert.deepEqual((await store.history(id)).map((entry) => entry.action), ["create", "delete", "restore"]);
 });
 
+test("purge permanently removes deleted tombstones and their history only", async (t) => {
+	const store = await fixture(t);
+	const deletedId = crypto.randomUUID();
+	const activeId = crypto.randomUUID();
+	await store.set(deletedId, value("Deleted"), { expectedRevision: 0 });
+	await store.set(activeId, value("Active"), { expectedRevision: 0 });
+	const olderExport = structuredClone(await store.read());
+	await store.remove(deletedId, { expectedRevision: 1 });
+	assert.equal(await store.purgeDeleted(), 1);
+	const catalog = await store.read();
+	assert.equal(catalog.tombstones[deletedId], undefined);
+	assert.equal(catalog.history[deletedId], undefined);
+	assert.deepEqual(catalog.purgedIds, [deletedId]);
+	assert.equal(catalog.locations[activeId].name, "Active");
+	assert.equal(catalog.history[activeId].length, 1);
+	assert.equal((await store.addMissing([{ id: deletedId, ...value("Seed retry") }])).length, 0);
+	await store.merge(olderExport);
+	assert.equal(await store.get(deletedId), null);
+	assert.equal(await store.purgeDeleted(), 0);
+});
+
 test("merge accepts the latest edit and reports equal-time conflicts", async (t) => {
 	const store = await fixture(t);
 	const id = crypto.randomUUID();

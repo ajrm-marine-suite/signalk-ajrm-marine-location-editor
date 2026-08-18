@@ -288,6 +288,19 @@ module.exports = function ajrmMarineLocationEditor(app) {
 			}
 		});
 
+		router.post("/local/purge-deleted", write(async (req, res) => {
+			try {
+				assertRunning();
+				await initializationPromise;
+				if (!req.body?.confirm) throw new Error("Purging deleted locations must be confirmed.");
+				const purged = await store.purgeDeleted();
+				await refreshStatus();
+				res.json({ ok: true, purged });
+			} catch (error) {
+				res.status(400).json({ error: error.message });
+			}
+		}));
+
 		router.post("/local/import", write(async (req, res) => {
 			try {
 				assertRunning();

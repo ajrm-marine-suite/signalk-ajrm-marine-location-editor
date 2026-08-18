@@ -205,6 +205,24 @@ test("versioned harbour save, delete and undo keep the compatible Signal K regio
 	await plugin.stop();
 });
 
+test("confirmed purge permanently removes deleted location history", async (t) => {
+	const { call, plugin } = await fixture(t);
+	const id = crypto.randomUUID();
+	await call("PUT", "/locations/:id", { params: { id }, body: body("Temporary Anchorage") });
+	await call("DELETE", "/locations/:id", { params: { id }, query: { expectedRevision: 1 } });
+	let result = await call("POST", "/local/purge-deleted", { body: {} });
+	assert.equal(result.statusCode, 400);
+	assert.match(result.body.error, /must be confirmed/);
+	result = await call("POST", "/local/purge-deleted", { body: { confirm: true } });
+	assert.equal(result.statusCode, 200);
+	assert.equal(result.body.purged, 1);
+	result = await call("GET", "/deleted");
+	assert.equal(result.body.tombstones.length, 0);
+	result = await call("GET", "/locations/:id/history", { params: { id } });
+	assert.equal(result.statusCode, 404);
+	await plugin.stop();
+});
+
 test("write routes enforce access and imports require the versioned schema", async (t) => {
 	const { call, plugin } = await fixture(t);
 	const id = crypto.randomUUID();

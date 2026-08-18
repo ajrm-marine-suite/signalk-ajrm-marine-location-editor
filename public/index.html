@@ -6,7 +6,7 @@
 		<title>AJRM Marine Location Editor</title>
 		<link rel="stylesheet" href="./leaflet.css">
 		<link rel="stylesheet" href="./ajrm-map-core.css?v=0.7.5">
-		<link rel="stylesheet" href="./styles.css?v=0.3.7">
+		<link rel="stylesheet" href="./styles.css?v=0.3.8">
 	</head>
 	<body>
 		<div id="map" class="map" aria-label="Marine location chart"></div>
@@ -228,14 +228,16 @@
 			</div>
 			<div class="drawer-section sync-panel">
 				<h3>Deleted locations</h3>
-				<p>Deletions remain as versioned tombstones. Open history to restore an earlier snapshot as a new revision.</p>
+				<p>Deletions remain as versioned tombstones. Open history to restore an earlier snapshot as a new revision. Purge permanently removes every deleted location and its history.</p>
 				<div id="deletedList" class="region-list"></div>
+				<button id="purgeDeleted" type="button" class="danger" disabled>Purge Deleted Locations</button>
+				<p class="safety-note">Purging cannot be undone. Purged IDs remain blocked from automatic seeding and ordinary merges; replacing the whole catalogue can reintroduce them.</p>
 			</div>
 		</aside>
 
 		<div id="status" class="status" role="status"></div>
 		<script src="./leaflet.js"></script>
 		<script src="./protomaps-leaflet.js"></script>
-		<script type="module" src="./app.js?v=0.3.7"></script>
+		<script type="module" src="./app.js?v=0.3.8"></script>
 	</body>
 </html>

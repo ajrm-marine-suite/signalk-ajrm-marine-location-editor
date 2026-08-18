@@ -4,13 +4,13 @@
  */
 
 import * as MapCore from "./ajrm-map-core.mjs?v=0.7.5";
-import { filterLocations, groupLocations } from "./location-browser.mjs?v=0.3.1";
-import { bindPressRepeat } from "./press-repeat.mjs?v=0.3.3";
+import { displayTypesForWorkspace, filterLocations, groupLocations } from "./location-browser.mjs?v=0.3.8";
+import { geometryNudgeNm, holdAcceleration } from "./geometry-motion.mjs?v=0.3.8";
+import { bindPressRepeat } from "./press-repeat.mjs?v=0.3.8";
 
 const apiBase = "/plugins/signalk-ajrm-marine-location-editor";
 const resourcePrefix = "/resources/locations/";
 const storagePrefix = "ajrmMarineLocationEditor";
-const editStepNm = 0.025;
 const chartLayerZIndex = 650;
 const seamarkLayerZIndex = 750;
 const typeDefinitions = {
@@ -48,7 +48,7 @@ const elements = Object.fromEntries([
 	"historyList", "closeHistory", "radiusNm", "decreaseRadius", "increaseRadius",
 	"applyRadius", "makeCircle", "saveGeometry", "undoGeometry", "nudgeNorth", "nudgeSouth", "nudgeWest", "nudgeEast",
 	"mergeLocations", "importLocations", "exportLocations", "locationImportFile", "syncMessages",
-	"deletedList", "status", "chartCycleStatus", "provenanceFields", "provenanceStatus", "provenanceWarning", "provenanceSources",
+	"deletedList", "purgeDeleted", "status", "chartCycleStatus", "provenanceFields", "provenanceStatus", "provenanceWarning", "provenanceSources",
 ].map((id) => [id, document.querySelector(`#${id}`)]));
 
 let locations = [];
@@ -176,8 +176,19 @@ function persistDisplayTypes() {
 }
 
 function setAllDisplayTypes(enabled) {
-	activeDisplayTypes = new Set(enabled ? Object.keys(typeDefinitions) : []);
-	elements.displayTypeChoices.querySelectorAll("input").forEach((input) => { input.checked = enabled; });
+	activeDisplayTypes = enabled ? displayTypesForWorkspace(typeDefinitions, currentWorkspace()) : new Set();
+	elements.displayTypeChoices.querySelectorAll("input").forEach((input) => {
+		input.checked = activeDisplayTypes.has(input.value);
+	});
+	persistDisplayTypes();
+	renderLocations();
+}
+
+function applyWorkspaceDisplayTypes() {
+	activeDisplayTypes = displayTypesForWorkspace(typeDefinitions, currentWorkspace());
+	elements.displayTypeChoices.querySelectorAll("input").forEach((input) => {
+		input.checked = activeDisplayTypes.has(input.value);
+	});
 	persistDisplayTypes();
 	renderLocations();
 }
@@ -538,6 +549,7 @@ async function showHistory(requestedId = selectedId) {
 
 function renderDeleted() {
 	elements.deletedList.replaceChildren();
+	elements.purgeDeleted.disabled = tombstones.length === 0;
 	if (!tombstones.length) {
 		const empty = document.createElement("p");
 		empty.textContent = "No deleted locations.";
@@ -552,6 +564,21 @@ function renderDeleted() {
 		button.addEventListener("click", () => showHistory(tombstone.id).catch((error) => showStatus(error.message, true)));
 		elements.deletedList.append(button);
 	}
+}
+
+async function purgeDeletedLocations() {
+	if (!tombstones.length) return;
+	if (!confirm(
+		`Permanently purge ${tombstones.length} deleted location${tombstones.length === 1 ? "" : "s"} and all of their revision history?\n\n` +
+		"This cannot be undone. Replacing the whole catalogue later can reintroduce purged locations.",
+	)) return;
+	const result = await requestJson(`${apiBase}/local/purge-deleted`, {
+		method: "POST",
+		body: JSON.stringify({ confirm: true }),
+	});
+	await loadLocations();
+	setSyncMessages([`Permanently purged ${result.purged} deleted location${result.purged === 1 ? "" : "s"}.`, "Their tombstones and revision histories were removed; their IDs remain blocked from automatic seeding and ordinary merges."]);
+	showStatus(`Purged ${result.purged} deleted location${result.purged === 1 ? "" : "s"}.`);
 }
 
 function chooseJsonFile() {
@@ -713,12 +740,23 @@ function changeCircle(deltaRadius = 0, northNm = 0, eastNm = 0) {
 	renderPreview();
 }
 
+function nudgeGeometry(northDirection, eastDirection, context = {}) {
+	const mapCenter = map.getCenter();
+	const stepNm = geometryNudgeNm(map.getZoom(), mapCenter.lat, {
+		multiplier: holdAcceleration(context.repeatCount),
+	});
+	changeCircle(0, northDirection * stepNm, eastDirection * stepNm);
+}
+
 function bindEvents() {
 	elements.typeChoices.addEventListener("change", updateConditionalFields);
 	elements.geometryType.addEventListener("change", () => { geometryPreviewDirty = true; updateConditionalFields(); });
 	elements.point.addEventListener("input", () => { geometryPreviewDirty = true; renderPreview(); });
 	elements.points.addEventListener("input", () => { geometryPreviewDirty = true; renderPreview(); });
-	elements.workspace.addEventListener("change", () => { localStorage.setItem(`${storagePrefix}Workspace`, currentWorkspace()); renderLocations(); });
+	elements.workspace.addEventListener("change", () => {
+		localStorage.setItem(`${storagePrefix}Workspace`, currentWorkspace());
+		applyWorkspaceDisplayTypes();
+	});
 	elements.locationSearch.addEventListener("input", renderLocations);
 	elements.mapAreaOnly.addEventListener("change", () => { localStorage.setItem(`${storagePrefix}MapAreaOnly`, String(elements.mapAreaOnly.checked)); renderLocations(); });
 	elements.showAllTypes.addEventListener("click", () => setAllDisplayTypes(true));
@@ -739,16 +777,17 @@ function bindEvents() {
 	elements.exportLocations.addEventListener("click", () => transfer("export").catch((error) => showStatus(error.message, true)));
 	elements.importLocations.addEventListener("click", () => transfer("import").catch((error) => showStatus(error.message, true)));
 	elements.mergeLocations.addEventListener("click", () => transfer("merge").catch((error) => showStatus(error.message, true)));
+	elements.purgeDeleted.addEventListener("click", () => purgeDeletedLocations().catch((error) => showStatus(error.message, true)));
 	elements.makeCircle.addEventListener("click", () => { const center = map.getCenter(); geometryPreviewDirty = true; elements.geometryType.value = "Polygon"; elements.points.value = formatPoints(makeCirclePoints({ lat: center.lat, lon: center.lng }, Number(elements.radiusNm.value || 0.2))); updateConditionalFields(); });
 	elements.saveGeometry.addEventListener("click", () => saveLocation().catch((error) => showStatus(error.message, true)));
 	elements.undoGeometry.addEventListener("click", undoChanges);
 	elements.applyRadius.addEventListener("click", () => changeCircle());
 	elements.decreaseRadius.addEventListener("click", () => changeCircle(-0.01));
 	elements.increaseRadius.addEventListener("click", () => changeCircle(0.01));
-	bindPressRepeat(elements.nudgeNorth, () => changeCircle(0, editStepNm, 0));
-	bindPressRepeat(elements.nudgeSouth, () => changeCircle(0, -editStepNm, 0));
-	bindPressRepeat(elements.nudgeWest, () => changeCircle(0, 0, -editStepNm));
-	bindPressRepeat(elements.nudgeEast, () => changeCircle(0, 0, editStepNm));
+	bindPressRepeat(elements.nudgeNorth, (context) => nudgeGeometry(1, 0, context));
+	bindPressRepeat(elements.nudgeSouth, (context) => nudgeGeometry(-1, 0, context));
+	bindPressRepeat(elements.nudgeWest, (context) => nudgeGeometry(0, -1, context));
+	bindPressRepeat(elements.nudgeEast, (context) => nudgeGeometry(0, 1, context));
 	map.on("moveend zoomend", () => { if (elements.mapAreaOnly.checked) renderLocations(); });
 }
 

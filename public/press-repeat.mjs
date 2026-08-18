@@ -12,6 +12,12 @@ export function bindPressRepeat(button, action, {
 } = {}) {
 	let delayTimer = null;
 	let repeatTimer = null;
+	let repeatCount = 0;
+
+	const invoke = (isRepeat = false) => {
+		if (isRepeat) repeatCount += 1;
+		action({ isRepeat, repeatCount });
+	};
 
 	const stop = (event) => {
 		if (delayTimer !== null) clearTimeoutFn(delayTimer);
@@ -28,10 +34,11 @@ export function bindPressRepeat(button, action, {
 		event.preventDefault?.();
 		stop();
 		button.setPointerCapture?.(event.pointerId);
-		action();
+		repeatCount = 0;
+		invoke();
 		delayTimer = setTimeoutFn(() => {
 			delayTimer = null;
-			repeatTimer = setIntervalFn(action, repeatIntervalMs);
+			repeatTimer = setIntervalFn(() => invoke(true), repeatIntervalMs);
 		}, initialDelayMs);
 	};
 
@@ -39,7 +46,10 @@ export function bindPressRepeat(button, action, {
 		// Mouse and touch clicks follow pointerdown, which already performed the
 		// first step. Keyboard/programmatic clicks have detail zero.
 		if (Number(event.detail) > 0) event.preventDefault?.();
-		else action();
+		else {
+			repeatCount = 0;
+			invoke();
+		}
 	};
 
 	button.addEventListener("pointerdown", pointerDown);

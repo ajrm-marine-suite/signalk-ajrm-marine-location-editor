@@ -34,3 +34,9 @@ export function groupLocations(locations, knownTypes) {
 	}
 	return groups;
 }
+
+export function displayTypesForWorkspace(typeDefinitions, workspace = "all") {
+	return new Set(Object.entries(typeDefinitions)
+		.filter(([, definition]) => workspace === "all" || definition?.[1] === workspace)
+		.map(([type]) => type));
+}

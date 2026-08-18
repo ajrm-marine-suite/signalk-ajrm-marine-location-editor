@@ -20,6 +20,9 @@ The map defaults to **All Locations**, displaying migrated harbours and every
 other stored location. Its location browser supports text search, grouped
 results, persistent per-type chart filters and an optional current-map-area
 filter. It can also be filtered into Places, Tides, Hazards or All workspaces.
+Selecting a workspace selects only the chart types belonging to it. Geometry
+arrow movement follows the current chart zoom and accelerates gradually while
+an arrow is held.
 The separate **Classify this location** choices describe the record being
 edited and apply only when it is saved. Tide calculations,
 automatic profile selection and active hazard monitoring are deliberately not
@@ -93,6 +96,12 @@ ignoring letter case and repeated whitespace, regardless of type or workspace.
 Replacement creates tombstones for omitted existing locations so bundled
 starter locations do not silently return after Signal K restarts.
 
+Settings can permanently purge deleted records and their revision histories.
+Purged UUIDs remain in a minimal blocklist, preventing automatic starter-data
+loading and ordinary merges from recreating them. A deliberate **Replace
+Catalogue** operation replaces that blocklist as part of replacing the whole
+catalogue.
+
 This provides deterministic offline sharing without pretending that two
 simultaneous edits can always be combined automatically. Export a catalogue
 before a large import or merge.
@@ -101,7 +110,7 @@ before a large import or merge.
 
 ```bash
 cd ~/.signalk
-npm install git+https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor.git#v0.3.7 --omit=dev --no-package-lock
+npm install git+https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor.git#v0.3.8 --omit=dev --no-package-lock
 sudo systemctl restart signalk
 ```
 
@@ -125,8 +134,9 @@ Open **AJRM Marine Location Editor** from the Signal K app list.
    to the last saved location.
 8. Open **History** to inspect or restore an earlier saved snapshot.
 
-Settings provides versioned export, latest-edit merge and confirmed catalogue
-replacement. Edits require Signal K read/write or administrator access.
+Settings provides versioned export, latest-edit merge, confirmed catalogue
+replacement and permanent purging of deleted records. Edits and purge require
+Signal K read/write or administrator access.
 
 Other plugins can use the in-process `app.ajrmMarineLocations` service to list,
 get or find nearby locations. The HTTP API and its OpenAPI document provide the

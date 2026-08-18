@@ -69,6 +69,7 @@ function createLocationStore(filePath) {
 				});
 				catalog.locations[id] = location;
 				delete catalog.tombstones[id];
+				catalog.purgedIds = catalog.purgedIds.filter((purgedId) => purgedId !== id);
 				catalog.history[id] = catalog.history[id] || [];
 				catalog.history[id].push({
 					editId,
@@ -88,7 +89,7 @@ function createLocationStore(filePath) {
 				const added = [];
 				const editedAt = new Date().toISOString();
 				for (const value of values) {
-					if (catalog.locations[value.id] || catalog.tombstones[value.id]) continue;
+					if (catalog.locations[value.id] || catalog.tombstones[value.id] || catalog.purgedIds.includes(value.id)) continue;
 					const editId = crypto.randomUUID();
 					const location = normalizeLocation({
 						...value,
@@ -151,6 +152,18 @@ function createLocationStore(filePath) {
 		},
 		async history(id) {
 			return structuredClone((await read()).history[id] || []);
+		},
+		async purgeDeleted() {
+			return mutate(async (catalog) => {
+				const ids = Object.keys(catalog.tombstones);
+				catalog.purgedIds = [...new Set([...catalog.purgedIds, ...ids])];
+				for (const id of ids) {
+					delete catalog.tombstones[id];
+					delete catalog.history[id];
+				}
+				if (ids.length) await write(catalog);
+				return ids.length;
+			});
 		},
 		async restore(id, targetEditId, options = {}) {
 			return mutate(async (catalog) => {
@@ -227,6 +240,12 @@ function createLocationStore(filePath) {
 		async merge(payload, options = {}) {
 			return mutate(async (catalog) => {
 				const incoming = normalizeCatalog(payload);
+				for (const id of incoming.purgedIds) {
+					delete catalog.locations[id];
+					delete catalog.tombstones[id];
+					delete catalog.history[id];
+				}
+				catalog.purgedIds = [...new Set([...catalog.purgedIds, ...incoming.purgedIds])];
 				let added = 0;
 				let updated = 0;
 				let keptLocal = 0;
@@ -236,6 +255,7 @@ function createLocationStore(filePath) {
 					...Object.keys(incoming.tombstones),
 				]);
 				for (const id of ids) {
+					if (catalog.purgedIds.includes(id)) continue;
 					const incomingValue = incoming.locations[id] || incoming.tombstones[id];
 					const localValue = catalog.locations[id] || catalog.tombstones[id];
 					catalog.history[id] = mergeHistory(catalog.history[id], incoming.history[id]);
@@ -272,6 +292,10 @@ function createLocationStore(filePath) {
 				let matchedByName = 0;
 				let deduplicated = 0;
 				for (const imported of Object.values(incoming.locations)) {
+					if (catalog.purgedIds.includes(imported.id)) {
+						keptLocal += 1;
+						continue;
+					}
 					const nameKey = normalizedHarbourName(imported.name);
 					const matches = Object.values(catalog.locations)
 						.filter((location) => normalizedHarbourName(location.name) === nameKey)

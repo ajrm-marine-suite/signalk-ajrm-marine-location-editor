@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.3.8 - 2026-08-18
+
+- Selecting a workspace now selects its relevant **Show on chart** types and
+  deselects types belonging to the other workspaces.
+- Scale geometry-arrow movement to the chart zoom, giving much finer control
+  when zoomed in, and gradually accelerate repeated movement while held.
+- Add a confirmed **Purge Deleted Locations** Settings action. It permanently
+  removes tombstones and revision histories while retaining a minimal UUID
+  blocklist so automatic seed loading and ordinary merges cannot recreate the
+  purged records.
+
 ## 0.3.7 - 2026-08-13
 
 - Separate the compact location selector from the full Location Editor.

@@ -9,6 +9,7 @@ const path = require("node:path");
 const crypto = require("node:crypto");
 const test = require("node:test");
 const createPlugin = require("../plugin/index.cjs");
+const { emptyCatalog, normalizeLocation } = require("../plugin/location-model.cjs");
 
 function response() {
 	return {
@@ -95,10 +96,55 @@ test("a fresh catalogue receives the sourced West Scotland seed without publishi
 	const result = await call("GET", "/locations", { query: { workspace: "all" } });
 	const corryvreckan = result.body.locations.find((location) => location.name === "Gulf of Corryvreckan");
 	const stornoway = result.body.locations.find((location) => location.name === "Stornoway tide gauge");
+	const tobermory = result.body.locations.find((location) => location.name === "Tobermory");
+	const portEllen = result.body.locations.find((location) => location.name === "Port Ellen");
 	assert.ok(corryvreckan?.types.includes("tidalGate"));
 	assert.equal(corryvreckan.properties.provenance.reviewStatus, "sourceChecked");
 	assert.ok(stornoway?.types.includes("tidalObservationStation"));
+	assert.ok(tobermory?.types.includes("tidalSecondaryPort"));
+	assert.equal(tobermory.properties.tide.secondaryPortCorrections.legacyId, "tobermory");
+	assert.equal(tobermory.properties.tide.secondaryPortCorrections.standardReferenceLevels.mhws, 4);
+	assert.equal(portEllen.properties.tide.secondaryPortCorrections.hwTimeOffsetsMinutes.t0000, -330);
 	assert.equal(Object.keys(app.regions).length, 0);
+	await plugin.stop();
+});
+
+test("secondary-port migration enriches an edited matching location without moving it", async (t) => {
+	const directory = await fs.mkdtemp(path.join(os.tmpdir(), "ajrm-secondary-upgrade-"));
+	t.after(() => fs.rm(directory, { recursive: true, force: true }));
+	const id = "0b9ecfef-3260-4f1e-a41f-5f2fdf7dfbec";
+	const catalog = emptyCatalog();
+	catalog.locations[id] = normalizeLocation({
+		id, revision: 4, createdAt: "2026-08-13T10:00:00.000Z", updatedAt: "2026-08-17T10:00:00.000Z",
+		lastEditId: crypto.randomUUID(), name: "Cuan Sound", description: "User-positioned gate",
+		types: ["tidalGate"],
+		feature: { type: "Feature", properties: {}, geometry: { type: "Point", coordinates: [-5.63, 56.27] } },
+		properties: {},
+	});
+	await fs.writeFile(path.join(directory, "locations.json"), `${JSON.stringify(catalog, null, 2)}\n`);
+	const regions = {};
+	const app = {
+		getDataDirPath: () => directory, setPluginStatus() {}, handleMessage() {},
+		resourcesApi: {
+			async listResources() { return regions; },
+			async setResource(_type, resourceId, value) { regions[resourceId] = { ...structuredClone(value), id: resourceId }; },
+			async deleteResource(_type, resourceId) { delete regions[resourceId]; },
+		},
+	};
+	const routes = new Map();
+	const router = {};
+	for (const method of ["get", "put", "post", "delete"]) router[method] = (route, handler) => routes.set(`${method.toUpperCase()} ${route}`, handler);
+	const plugin = createPlugin(app);
+	plugin.registerWithRouter(router);
+	plugin.start({});
+	await new Promise((resolve) => setTimeout(resolve, 30));
+	const res = response();
+	await routes.get("GET /locations/:id")({ params: { id } }, res);
+	assert.equal(res.body.revision, 5);
+	assert.equal(res.body.description, "User-positioned gate");
+	assert.deepEqual(res.body.feature.geometry.coordinates, [-5.63, 56.27]);
+	assert.ok(res.body.types.includes("tidalSecondaryPort"));
+	assert.equal(res.body.properties.tide.secondaryPortCorrections.legacyId, "cuan-sound");
 	await plugin.stop();
 });
 

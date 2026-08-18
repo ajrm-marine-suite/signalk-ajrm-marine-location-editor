@@ -6,7 +6,7 @@
 		<title>AJRM Marine Location Editor</title>
 		<link rel="stylesheet" href="./leaflet.css">
 		<link rel="stylesheet" href="./ajrm-map-core.css?v=0.7.5">
-		<link rel="stylesheet" href="./styles.css?v=0.4.1">
+		<link rel="stylesheet" href="./styles.css?v=0.4.2">
 	</head>
 	<body>
 		<div id="map" class="map" aria-label="Marine location chart"></div>
@@ -149,6 +149,39 @@
 					<label>MLWN (m) <input id="tideMlwn" type="number" step="0.1"></label>
 					<label>MLWS (m) <input id="tideMlws" type="number" step="0.1"></label>
 				</div>
+				<section id="secondaryPortFields" class="secondary-port-fields" hidden>
+					<h3>Secondary-port corrections</h3>
+					<p class="field-help">Minutes and metres to add to the selected standard port. Intermediary event times are interpolated between the four time columns.</p>
+					<h4>Standard-port reference levels (metres)</h4>
+					<div class="secondary-correction-grid">
+						<label>MHWS <input id="secondaryStandardMhws" type="number" step="0.1"></label>
+						<label>MHWN <input id="secondaryStandardMhwn" type="number" step="0.1"></label>
+						<label>MLWN <input id="secondaryStandardMlwn" type="number" step="0.1"></label>
+						<label>MLWS <input id="secondaryStandardMlws" type="number" step="0.1"></label>
+					</div>
+					<h4>High-water time corrections (minutes)</h4>
+					<div class="secondary-correction-grid">
+						<label>0000 <input id="secondaryHw0000" type="number" step="1"></label>
+						<label>0600 <input id="secondaryHw0600" type="number" step="1"></label>
+						<label>1200 <input id="secondaryHw1200" type="number" step="1"></label>
+						<label>1800 <input id="secondaryHw1800" type="number" step="1"></label>
+					</div>
+					<h4>Low-water time corrections (minutes)</h4>
+					<div class="secondary-correction-grid">
+						<label>0000 <input id="secondaryLw0000" type="number" step="1"></label>
+						<label>0600 <input id="secondaryLw0600" type="number" step="1"></label>
+						<label>1200 <input id="secondaryLw1200" type="number" step="1"></label>
+						<label>1800 <input id="secondaryLw1800" type="number" step="1"></label>
+					</div>
+					<h4>Height corrections (metres)</h4>
+					<div class="secondary-correction-grid">
+						<label>MHWS <input id="secondaryDiffMhws" type="number" step="0.1"></label>
+						<label>MHWN <input id="secondaryDiffMhwn" type="number" step="0.1"></label>
+						<label>MLWN <input id="secondaryDiffMlwn" type="number" step="0.1"></label>
+						<label>MLWS <input id="secondaryDiffMlws" type="number" step="0.1"></label>
+					</div>
+					<label>Correction notes <textarea id="secondaryPortNotes" rows="3" placeholder="Source, year, page and assumptions"></textarea></label>
+				</section>
 			</section>
 
 			<section id="hazardFields" class="conditional-section" hidden>
@@ -256,6 +289,6 @@
 		<div id="status" class="status" role="status"></div>
 		<script src="./leaflet.js"></script>
 		<script src="./protomaps-leaflet.js"></script>
-		<script type="module" src="./app.js?v=0.4.2"></script>
+		<script type="module" src="./app.js?v=0.4.3"></script>
 	</body>
 </html>

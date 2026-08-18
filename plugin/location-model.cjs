@@ -205,6 +205,42 @@ function validateLocation(location) {
 				validateNumber(properties.tide.referenceLevels[key], `${label} reference level`, { minimum: -100, maximum: 100 });
 			}
 		}
+		if (properties.tide.secondaryPortCorrections != null) {
+			const corrections = properties.tide.secondaryPortCorrections;
+			if (typeof corrections !== "object" || Array.isArray(corrections)) {
+				throw new Error("Secondary-port corrections must be an object.");
+			}
+			if (corrections.contract !== "ajrm-secondary-port-corrections-v1") {
+				throw new Error("Secondary-port corrections use an unsupported contract.");
+			}
+			for (const [groupKey, label, keys, minimum, maximum] of [
+				["hwTimeOffsetsMinutes", "HW time correction", ["t0000", "t0600", "t1200", "t1800"], -1440, 1440],
+				["lwTimeOffsetsMinutes", "LW time correction", ["t0000", "t0600", "t1200", "t1800"], -1440, 1440],
+				["heightDifferencesM", "Height correction", ["mhws", "mhwn", "mlwn", "mlws"], -20, 20],
+			]) {
+				const group = corrections[groupKey];
+				if (!group || typeof group !== "object" || Array.isArray(group)) throw new Error(`${label} values are required.`);
+				for (const key of keys) {
+					if (group[key] == null || group[key] === "") throw new Error(`${label} ${key} is required; use zero where there is no correction.`);
+					validateNumber(group[key], `${label} ${key}`, { minimum, maximum });
+				}
+			}
+			assertText(corrections.notes, "Secondary-port correction notes", { max: 4000 });
+			assertText(corrections.legacyId, "Secondary-port legacy id", { max: 100 });
+			assertText(corrections.standardPortName, "Secondary-port standard port name", { max: 200 });
+			if (!corrections.standardReferenceLevels || typeof corrections.standardReferenceLevels !== "object" || Array.isArray(corrections.standardReferenceLevels)) {
+				throw new Error("Standard-port reference levels are required.");
+			}
+			for (const key of ["mhws", "mhwn", "mlwn", "mlws"]) {
+				if (corrections.standardReferenceLevels[key] == null || corrections.standardReferenceLevels[key] === "") throw new Error(`Standard-port ${key.toUpperCase()} is required.`);
+				validateNumber(corrections.standardReferenceLevels[key], `Standard-port ${key.toUpperCase()}`, { minimum: -100, maximum: 100 });
+			}
+		}
+	}
+	if (location.types.includes("tidalSecondaryPort") && properties.tide?.secondaryPortCorrections) {
+		if (!properties.tide.parentLocationRef && !properties.tide.secondaryPortCorrections.standardPortName) {
+			throw new Error("A secondary port needs a parent standard port.");
+		}
 	}
 	if (properties.anchorage != null) {
 		if (typeof properties.anchorage !== "object" || Array.isArray(properties.anchorage)) {

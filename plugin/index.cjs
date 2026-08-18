@@ -23,6 +23,7 @@ const { createUkhoTideProvider } = require("./tide-provider.cjs");
 const { createTideResolver } = require("./tide-resolver.cjs");
 const { createAnchoringAssistant } = require("./anchoring-assistance.cjs");
 const { createWeatherService } = require("./weather-service.cjs");
+const { mergeSecondaryPortSeed } = require("./secondary-port-seed.cjs");
 
 const STATUS_CONTRACT = "ajrm-marine-location-editor-status-v1";
 const SERVICE_REGISTRIES = Object.freeze({
@@ -44,6 +45,10 @@ const packageJson = JSON.parse(
 const bundledWestScotlandSeed = JSON.parse(
 	fs.readFileSync(path.join(__dirname, "..", "defaults", "west-scotland-locations.json"), "utf8"),
 );
+const bundledSecondaryPortSeed = JSON.parse(
+	fs.readFileSync(path.join(__dirname, "..", "defaults", "secondary-port-locations.json"), "utf8"),
+);
+const bundledLocationSeed = mergeSecondaryPortSeed(bundledWestScotlandSeed, bundledSecondaryPortSeed);
 
 function normalizeResources(value) {
 	if (!value) return [];
@@ -677,8 +682,8 @@ module.exports = function ajrmMarineLocationEditor(app) {
 
 	async function addBundledLocations() {
 		if (
-			bundledWestScotlandSeed?.schema !== "org.ajrm.marine.location-seed/v1" ||
-			!Array.isArray(bundledWestScotlandSeed.locations)
+			bundledLocationSeed?.schema !== "org.ajrm.marine.location-seed/v1" ||
+			!Array.isArray(bundledLocationSeed.locations)
 		) {
 			throw new Error("Bundled West Scotland location seed is invalid.");
 		}
@@ -688,16 +693,18 @@ module.exports = function ajrmMarineLocationEditor(app) {
 			for (const source of locationSourceKeys(location)) bySource.set(source, location);
 		}
 		const candidates = [];
-		for (const value of bundledWestScotlandSeed.locations) {
+		for (const value of bundledLocationSeed.locations) {
 			const seed = normalizeLocation(value);
 			const sourceMatch = locationSourceKeys(seed).map((key) => bySource.get(key)).find(Boolean);
 			if (sourceMatch) {
+				if (await enrichBundledSecondaryPort(sourceMatch, seed)) continue;
 				await enrichUneditedBundledTideReferenceLevels(sourceMatch, seed);
 				await enrichUneditedMigration(sourceMatch, seed);
 				continue;
 			}
 			const nearbyMatch = current.find((location) => locationsDescribeSamePlace(location, seed));
 			if (nearbyMatch) {
+				if (await enrichBundledSecondaryPort(nearbyMatch, seed)) continue;
 				await enrichUneditedBundledTideReferenceLevels(nearbyMatch, seed);
 				await enrichUneditedMigration(nearbyMatch, seed);
 				continue;
@@ -705,6 +712,32 @@ module.exports = function ajrmMarineLocationEditor(app) {
 			candidates.push(seed);
 		}
 		return store.addMissing(candidates, { editedBy: "Bundled West Scotland open-data seed" });
+	}
+
+	async function enrichBundledSecondaryPort(current, seed) {
+		const corrections = seed.properties?.tide?.secondaryPortCorrections;
+		if (!corrections || current.properties?.tide?.secondaryPortCorrections) return false;
+		const provenanceSources = [...(current.properties?.provenance?.sources || [])];
+		for (const source of seed.properties?.provenance?.sources || []) {
+			if (!provenanceSources.some((value) => value.sourceId === source.sourceId && value.url === source.url)) provenanceSources.push(source);
+		}
+		await store.set(current.id, {
+			...current,
+			types: [...new Set([...current.types, "tidalSecondaryPort"])],
+			properties: {
+				...current.properties,
+				tide: { ...current.properties?.tide, ...seed.properties.tide },
+				provenance: {
+					...seed.properties.provenance,
+					...current.properties?.provenance,
+					sources: provenanceSources,
+				},
+			},
+		}, {
+			expectedRevision: current.revision,
+			editedBy: "Bundled secondary-port migration",
+		});
+		return true;
 	}
 
 	async function enrichUneditedBundledTideReferenceLevels(current, seed) {

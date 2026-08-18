@@ -559,6 +559,34 @@ legend {
 	gap: 10px;
 }
 
+.secondary-port-fields {
+	display: grid;
+	gap: 10px;
+	margin-top: 14px;
+	padding-top: 12px;
+	border-top: 1px solid #cbd5e1;
+}
+
+.secondary-port-fields[hidden] {
+	display: none;
+}
+
+.secondary-port-fields h4 {
+	margin: 4px 0 0;
+}
+
+.secondary-correction-grid {
+	display: grid;
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+	gap: 8px;
+}
+
+@media (max-width: 520px) {
+	.secondary-correction-grid {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+}
+
 .choice {
 	display: flex;
 	align-items: start;

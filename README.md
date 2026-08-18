@@ -1,5 +1,12 @@
 # AJRM Marine Location Editor
 
+Version `0.6.8` makes Location Editor the single owner of secondary-port
+setup. It stores the standard-port reference levels, HW/LW time corrections,
+height corrections and source notes needed by Marine Planning. Existing
+Marine Planning constants are bundled as versioned locations and matching
+locations without correction data are upgraded automatically without changing
+their geometry or other user-edited fields.
+
 Version `0.6.7` restores the selection workflow after editing: closing an
 editor opened from **Select Location** returns to the location selector rather
 than dropping the user back to the map.
@@ -36,6 +43,14 @@ and onboard testing. It stores:
 - hazards, avoidance areas, no-anchoring areas, waiting areas and preferred
   channels;
 - links from places to tidal locations.
+
+For a `tidalSecondaryPort`, select its parent standard port and enter the
+standard port's MHWS/MHWN/MLWN/MLWS levels, the four almanac HW and LW time
+corrections, the four height corrections, and source notes. Marine Planning
+reads these values from Location Editor; it no longer maintains a second copy.
+The bundled migration includes Bucklers Hard, Tobermory, Cuan Sound, Port
+Ellen, Craignure and Loch Melfort. Their positions and migrated constants are
+planning data that must be checked against current licensed sources.
 
 The map defaults to **All Locations**, displaying migrated harbours and every
 other stored location. Its location browser supports text search, grouped

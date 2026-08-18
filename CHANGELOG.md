@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.6.8 - 2026-08-18
+
+- Make Location Editor authoritative for secondary-port correction setup.
+- Store standard-port reference levels, four HW and LW time corrections, four
+  height corrections and editorial/source notes in each versioned location.
+- Migrate the six Marine Planning secondary-port datasets into the bundled
+  catalogue, enriching matching locations that lack correction data without
+  overwriting geometry or other user edits.
+- Preserve stable legacy correction identifiers so existing Planning
+  selections continue to resolve after migration.
+
 ## 0.6.7 - 2026-08-18
 
 - Return to the Select Location drawer when closing an editor that was opened

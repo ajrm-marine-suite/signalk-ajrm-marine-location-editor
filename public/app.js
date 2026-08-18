@@ -45,7 +45,12 @@ const elements = Object.fromEntries([
 	"geometryType", "setPoint", "openGeometry", "pointEditor", "polygonEditor", "point",
 	"points", "profileRegionField", "publishAsHarbourRegion", "tideLocationRef", "tideRegionRef", "anchorageFields", "seabed", "chartedDepthM",
 	"detectionRadiusM", "trustedAutomation", "anchorageNotes", "tideFields", "tideProviderId", "tideProvider", "tideStationId", "tideStationName",
-	"parentLocationRef", "tideDatum", "tideMhws", "tideMhwn", "tideMlwn", "tideMlws", "hazardFields", "hazardSeverity", "hazardReason",
+	"parentLocationRef", "tideDatum", "tideMhws", "tideMhwn", "tideMlwn", "tideMlws", "secondaryPortFields",
+	"secondaryStandardMhws", "secondaryStandardMhwn", "secondaryStandardMlwn", "secondaryStandardMlws",
+	"secondaryHw0000", "secondaryHw0600", "secondaryHw1200", "secondaryHw1800",
+	"secondaryLw0000", "secondaryLw0600", "secondaryLw1200", "secondaryLw1800",
+	"secondaryDiffMhws", "secondaryDiffMhwn", "secondaryDiffMlwn", "secondaryDiffMlws", "secondaryPortNotes",
+	"hazardFields", "hazardSeverity", "hazardReason",
 	"hazardClearanceM", "hazardApplications", "saveLocation", "undoLocation", "deleteLocation", "showHistory",
 	"locationId", "locationListTitle", "locationList", "historyDialog", "historySummary",
 	"historyList", "closeHistory", "radiusNm", "decreaseRadius", "increaseRadius",
@@ -204,6 +209,7 @@ function updateConditionalFields() {
 	if (!profileEligible) elements.publishAsHarbourRegion.checked = false;
 	elements.anchorageFields.hidden = !types.some((type) => anchorageTypes.has(type));
 	elements.tideFields.hidden = !types.some((type) => tideTypes.has(type));
+	elements.secondaryPortFields.hidden = !types.includes("tidalSecondaryPort");
 	elements.hazardFields.hidden = !types.some((type) => hazardTypes.has(type));
 	elements.pointEditor.hidden = elements.geometryType.value !== "Point";
 	elements.polygonEditor.hidden = elements.geometryType.value !== "Polygon";
@@ -278,7 +284,7 @@ function resetEditor() {
 	const center = map?.getCenter() || { lat: 55.8, lng: -5.2 };
 	elements.point.value = `${center.lat.toFixed(6)}, ${(center.lng ?? center.lon).toFixed(6)}`;
 	elements.points.value = "";
-	for (const id of ["seabed", "chartedDepthM", "detectionRadiusM", "anchorageNotes", "tideProviderId", "tideProvider", "tideStationId", "tideStationName", "tideDatum", "tideMhws", "tideMhwn", "tideMlwn", "tideMlws", "hazardReason", "hazardClearanceM"]) elements[id].value = "";
+	for (const id of ["seabed", "chartedDepthM", "detectionRadiusM", "anchorageNotes", "tideProviderId", "tideProvider", "tideStationId", "tideStationName", "tideDatum", "tideMhws", "tideMhwn", "tideMlwn", "tideMlws", "secondaryStandardMhws", "secondaryStandardMhwn", "secondaryStandardMlwn", "secondaryStandardMlws", "secondaryHw0000", "secondaryHw0600", "secondaryHw1200", "secondaryHw1800", "secondaryLw0000", "secondaryLw0600", "secondaryLw1200", "secondaryLw1800", "secondaryDiffMhws", "secondaryDiffMhwn", "secondaryDiffMlwn", "secondaryDiffMlws", "secondaryPortNotes", "hazardReason", "hazardClearanceM"]) elements[id].value = "";
 	elements.trustedAutomation.checked = false;
 	elements.hazardSeverity.value = "advisory";
 	elements.publishAsHarbourRegion.checked = false;
@@ -325,6 +331,19 @@ function selectLocation(id, fit = false, revealEditor = false) {
 	elements.tideMhwn.value = properties.tide?.referenceLevels?.mhwn ?? "";
 	elements.tideMlwn.value = properties.tide?.referenceLevels?.mlwn ?? "";
 	elements.tideMlws.value = properties.tide?.referenceLevels?.mlws ?? "";
+	const corrections = properties.tide?.secondaryPortCorrections || {};
+	for (const [id, key] of [["secondaryStandardMhws", "mhws"], ["secondaryStandardMhwn", "mhwn"], ["secondaryStandardMlwn", "mlwn"], ["secondaryStandardMlws", "mlws"]]) {
+		elements[id].value = corrections.standardReferenceLevels?.[key] ?? "";
+	}
+	for (const [id, group, key] of [
+		["secondaryHw0000", "hwTimeOffsetsMinutes", "t0000"], ["secondaryHw0600", "hwTimeOffsetsMinutes", "t0600"],
+		["secondaryHw1200", "hwTimeOffsetsMinutes", "t1200"], ["secondaryHw1800", "hwTimeOffsetsMinutes", "t1800"],
+		["secondaryLw0000", "lwTimeOffsetsMinutes", "t0000"], ["secondaryLw0600", "lwTimeOffsetsMinutes", "t0600"],
+		["secondaryLw1200", "lwTimeOffsetsMinutes", "t1200"], ["secondaryLw1800", "lwTimeOffsetsMinutes", "t1800"],
+		["secondaryDiffMhws", "heightDifferencesM", "mhws"], ["secondaryDiffMhwn", "heightDifferencesM", "mhwn"],
+		["secondaryDiffMlwn", "heightDifferencesM", "mlwn"], ["secondaryDiffMlws", "heightDifferencesM", "mlws"],
+	]) elements[id].value = corrections[group]?.[key] ?? "";
+	elements.secondaryPortNotes.value = corrections.notes || "";
 	elements.hazardSeverity.value = properties.hazard?.severity || "advisory";
 	elements.hazardReason.value = properties.hazard?.reason || "";
 	elements.hazardClearanceM.value = properties.hazard?.clearanceM ?? "";
@@ -382,6 +401,22 @@ function buildLocation() {
 			datum: elements.tideDatum.value.trim() || undefined,
 			referenceLevels: Object.keys(referenceLevels).length ? referenceLevels : undefined,
 		};
+		if (types.includes("tidalSecondaryPort")) {
+			const numericGroup = (entries) => Object.fromEntries(entries.map(([key, id]) => {
+				if (elements[id].value === "") throw new Error("Complete every secondary-port correction field; use zero where there is no correction.");
+				return [key, Number(elements[id].value)];
+			}));
+			properties.tide.secondaryPortCorrections = {
+				contract: "ajrm-secondary-port-corrections-v1",
+				legacyId: current?.properties?.tide?.secondaryPortCorrections?.legacyId,
+				standardPortName: current?.properties?.tide?.secondaryPortCorrections?.standardPortName,
+				standardReferenceLevels: numericGroup([["mhws", "secondaryStandardMhws"], ["mhwn", "secondaryStandardMhwn"], ["mlwn", "secondaryStandardMlwn"], ["mlws", "secondaryStandardMlws"]]),
+				hwTimeOffsetsMinutes: numericGroup([["t0000", "secondaryHw0000"], ["t0600", "secondaryHw0600"], ["t1200", "secondaryHw1200"], ["t1800", "secondaryHw1800"]]),
+				lwTimeOffsetsMinutes: numericGroup([["t0000", "secondaryLw0000"], ["t0600", "secondaryLw0600"], ["t1200", "secondaryLw1200"], ["t1800", "secondaryLw1800"]]),
+				heightDifferencesM: numericGroup([["mhws", "secondaryDiffMhws"], ["mhwn", "secondaryDiffMhwn"], ["mlwn", "secondaryDiffMlwn"], ["mlws", "secondaryDiffMlws"]]),
+				notes: elements.secondaryPortNotes.value.trim() || undefined,
+			};
+		}
 	}
 	if (types.some((type) => hazardTypes.has(type))) {
 		properties.hazard = {

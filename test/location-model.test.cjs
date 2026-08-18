@@ -65,6 +65,23 @@ test("validates optional tidal reference levels", () => {
 	}), /MHWS reference level must be a number between -100 and 100/);
 });
 
+test("validates complete secondary-port correction tables", () => {
+	const corrections = {
+		contract: "ajrm-secondary-port-corrections-v1",
+		standardPortName: "Oban",
+		standardReferenceLevels: { mhws: 4, mhwn: 2.9, mlwn: 1.8, mlws: 0.7 },
+		hwTimeOffsetsMinutes: { t0000: 20, t0600: 20, t1200: 20, t1800: 20 },
+		lwTimeOffsetsMinutes: { t0000: 20, t0600: 20, t1200: 20, t1800: 20 },
+		heightDifferencesM: { mhws: 0.5, mhwn: 0.6, mlwn: 0.1, mlws: 0.2 },
+	};
+	const secondary = location({ types: ["tidalSecondaryPort"], properties: { tide: { secondaryPortCorrections: corrections } } });
+	assert.equal(secondary.properties.tide.secondaryPortCorrections.heightDifferencesM.mhws, 0.5);
+	assert.throws(() => location({
+		types: ["tidalSecondaryPort"],
+		properties: { tide: { secondaryPortCorrections: { ...corrections, hwTimeOffsetsMinutes: { ...corrections.hwTimeOffsetsMinutes, t0000: 2000 } } } },
+	}), /HW time correction t0000 must be a number between -1440 and 1440/);
+});
+
 test("catalogues retain version metadata and create initial immutable history", () => {
 	const value = location();
 	const catalog = normalizeCatalog({ schema: CATALOG_SCHEMA, schemaVersion: 1, locations: [value] });

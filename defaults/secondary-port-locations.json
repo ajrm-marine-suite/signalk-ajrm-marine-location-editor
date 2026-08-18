@@ -1,0 +1,67 @@
+{
+  "schema": "org.ajrm.marine.secondary-port-seed/v1",
+  "standardPortId": "e0e5661f-1675-4dbb-8fa0-ea8566c62ef4",
+  "standardReferenceLevels": { "mhws": 4.0, "mhwn": 2.9, "mlwn": 1.8, "mlws": 0.7 },
+  "locations": [
+    {
+      "id": "2e0eb500-8f1f-4c5c-85ab-391b0b7945d0",
+      "name": "Tobermory",
+      "legacyId": "tobermory",
+      "hw": [20, 20, 20, 20],
+      "lw": [20, 20, 20, 20],
+      "heights": [0.5, 0.6, 0.1, 0.2],
+      "notes": "HW Oban +0020. LW time assumed +0020 until checked against your almanac."
+    },
+    {
+      "id": "0b9ecfef-3260-4f1e-a41f-5f2fdf7dfbec",
+      "name": "Cuan Sound",
+      "legacyId": "cuan-sound",
+      "hw": [-25, -25, -25, -25],
+      "lw": [-25, -25, -25, -25],
+      "heights": [-1.3, -0.9, -0.7, -0.3],
+      "notes": "Constant -0025 Oban (-0555 Dover). Heights: MHWS 2.7, MHWN 2.0, MLWN 1.1, MLWS 0.4. Stream: flood west +0430 Oban springs/+0515 neaps; ebb east -0145 springs/-0100 neaps; spring rate 7 kn both ways, neap up to 5 kn."
+    },
+    {
+      "id": "47a24a27-bd5f-4db6-a6f9-a5c975364a72",
+      "name": "Port Ellen",
+      "legacyId": "port-ellen",
+      "coordinates": [-6.1895944, 55.6272692],
+      "hw": [-330, -50, -330, -50],
+      "lw": [0, 0, 0, 0],
+      "heights": [-3.1, -2.1, -1.3, -0.4],
+      "notes": "HW Oban -0530 at springs, -0050 at neaps. LW time not supplied."
+    },
+    {
+      "id": "3d1309a3-1a5a-4a29-b337-536224ffb1da",
+      "name": "Sound of Mull (Craignure)",
+      "legacyId": "sound-of-mull-craignure",
+      "coordinates": [-5.7069314, 56.4706746],
+      "hw": [15, 15, 15, 15],
+      "lw": [15, 15, 15, 15],
+      "heights": [0, 0.1, -0.1, -0.1],
+      "notes": "Constant +0015 Oban (-0515 Dover). Heights at Craignure: MHWS 4.0, MHWN 3.0, MLWN 1.7, MLWS 0.6. Stream: north-going -0545 Oban; south-going +0025 Oban; spring rate 3 kn, neap 1 kn."
+    },
+    {
+      "id": "20c6ef3c-3eb1-4563-af18-ac0eeb8f75e4",
+      "name": "Loch Melfort",
+      "legacyId": "loch-melfort",
+      "coordinates": [-5.588, 56.246],
+      "hw": [-45, -45, -45, -45],
+      "lw": [-45, -45, -45, -45],
+      "heights": [-1.2, -0.8, -0.5, -0.1],
+      "notes": "HW approximately Oban -0045. Interpreted supplied 2.1 m as MHWN. Position is an approximate planning marker and must be checked."
+    },
+    {
+      "id": "29bdf6ae-922e-486a-b9b3-8c1ca88a7624",
+      "name": "Bucklers Hard",
+      "legacyId": "bucklers-hard",
+      "coordinates": [-1.422, 50.8],
+      "standardPortName": "Portsmouth",
+      "standardReferenceLevels": { "mhws": 4.7, "mhwn": 3.8, "mlwn": 1.5, "mlws": 0.8 },
+      "hw": [-40, -10, 0, -10],
+      "lw": [50, 110, 70, 110],
+      "heights": [-1, -0.8, -0.3, -0.3],
+      "notes": "Example migrated from Marine Planning. Standard port Portsmouth. Position is an approximate planning marker and must be checked."
+    }
+  ]
+}

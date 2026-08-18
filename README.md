@@ -1,5 +1,9 @@
 # AJRM Marine Location Editor
 
+Version `0.6.23` prevents broad tidal planning-region polygons from masking
+the individual locations drawn inside them. Regions remain visible and can be
+selected from the catalogue list.
+
 Version `0.6.22` fixes the v0.6.21 startup migration failure caused by several
 secondary ports legitimately citing the same almanac page. Catalogue records
 are preserved, migration is idempotent, and the known cross-applied bundled

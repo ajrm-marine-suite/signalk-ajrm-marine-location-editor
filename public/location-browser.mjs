@@ -40,3 +40,8 @@ export function displayTypesForWorkspace(typeDefinitions, workspace = "all") {
 		.filter(([, definition]) => workspace === "all" || definition?.[1] === workspace)
 		.map(([type]) => type));
 }
+
+/** Broad planning-region polygons must not mask the locations inside them. */
+export function chartLocationInteractive(location) {
+	return !location.types.includes("tidalRegion");
+}

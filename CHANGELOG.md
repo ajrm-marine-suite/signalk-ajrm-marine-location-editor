@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.6.23 - 2026-08-18
+
+- Keep broad tidal planning-region polygons visible without allowing their
+  filled area to intercept clicks and hover labels intended for contained
+  ports, gates, hazards and other locations.
+- Retain planning-region selection through the location list.
+
 ## 0.6.22 - 2026-08-18
 
 - Fix an upgrade failure caused by treating a shared almanac page as a unique

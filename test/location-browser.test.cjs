@@ -43,3 +43,10 @@ test("browser groups a multi-classified location once under its primary type", a
 	assert.equal(groups.get("anchorage").length, 2);
 	assert.equal([...groups.values()].flat().length, 2);
 });
+
+test("broad tidal planning regions do not mask contained chart locations", async () => {
+	const { chartLocationInteractive } = await import("../public/location-browser.mjs");
+	assert.equal(chartLocationInteractive({ types: ["tidalRegion"] }), false);
+	assert.equal(chartLocationInteractive({ types: ["tidalSecondaryPort"] }), true);
+	assert.equal(chartLocationInteractive({ types: ["hazard"] }), true);
+});

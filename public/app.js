@@ -4,7 +4,7 @@
  */
 
 import * as MapCore from "./ajrm-map-core.mjs?v=0.7.5";
-import { displayTypesForWorkspace, filterLocations, groupLocations } from "./location-browser.mjs?v=0.5.1";
+import { chartLocationInteractive, displayTypesForWorkspace, filterLocations, groupLocations } from "./location-browser.mjs?v=0.5.2";
 import { geometryNudgeNm, holdAcceleration } from "./geometry-motion.mjs?v=0.5.1";
 import { createEditorNavigationState } from "./panel-navigation.mjs?v=0.1.0";
 import { bindPressRepeat } from "./press-repeat.mjs?v=0.5.1";
@@ -611,14 +611,17 @@ function renderLocations() {
 		const selected = location.id === selectedId;
 		const color = locationColor(location);
 		const geometry = location.feature.geometry;
+		const interactive = chartLocationInteractive(location);
 		let layer;
 		if (geometry.type === "Point") {
 			layer = L.circleMarker([geometry.coordinates[1], geometry.coordinates[0]], { radius: selected ? 9 : 7, color, weight: selected ? 4 : 2, fillColor: color, fillOpacity: 0.72 });
 		} else {
-			layer = L.polygon(geometry.coordinates[0].map(([lon, lat]) => [lat, lon]), { color, weight: selected ? 5 : 3, fillColor: color, fillOpacity: 0.16, dashArray: location.types.some((type) => hazardTypes.has(type)) ? "8 6" : null });
+			layer = L.polygon(geometry.coordinates[0].map(([lon, lat]) => [lat, lon]), { color, weight: selected ? 5 : 3, fillColor: color, fillOpacity: 0.16, interactive, dashArray: location.types.some((type) => hazardTypes.has(type)) ? "8 6" : null });
 		}
-		layer.bindTooltip(`${location.name} — ${location.types.map(typeLabel).join(", ")}`);
-		layer.on("click", () => selectLocation(location.id, false, true));
+		if (interactive) {
+			layer.bindTooltip(`${location.name} — ${location.types.map(typeLabel).join(", ")}`);
+			layer.on("click", () => selectLocation(location.id, false, true));
+		}
 		layer.addTo(locationLayer);
 		const button = document.createElement("button");
 		button.type = "button";

@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.6.10 - 2026-08-18
+
+- Replace fixed 0000/0600/1200/1800 secondary-port columns with explicit,
+  independently timed HW and LW correction points.
+- Migrate v1 corrections to `ajrm-secondary-port-corrections-v2` without
+  guessing new source times.
+- Resolve secondary-port and sub-port chains centrally from the standard-port
+  events, with missing-parent, excessive-depth and cycle protection.
+- Let consumers explicitly request a standard or secondary tidal location and
+  return corrected events, reference levels and correction provenance.
+- Correct Loch Melfort from the supplied Reeds table and add Seil Sound from
+  the same page, marking its open-data position as approximate.
+
 ## 0.6.9 - 2026-08-18
 
 - Add UKHO standard prediction ports Stornoway `0308` and Ullapool `0334`

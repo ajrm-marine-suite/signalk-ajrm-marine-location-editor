@@ -3,6 +3,10 @@
  */
 
 const crypto = require("node:crypto");
+const {
+	CONTRACT_V2: SECONDARY_PORT_CORRECTION_CONTRACT,
+	migrateSecondaryPortCorrections,
+} = require("./secondary-port-corrections.cjs");
 
 const CATALOG_SCHEMA = "org.ajrm.marine.locations";
 const CATALOG_SCHEMA_VERSION = 1;
@@ -210,12 +214,28 @@ function validateLocation(location) {
 			if (typeof corrections !== "object" || Array.isArray(corrections)) {
 				throw new Error("Secondary-port corrections must be an object.");
 			}
-			if (corrections.contract !== "ajrm-secondary-port-corrections-v1") {
+			if (corrections.contract !== SECONDARY_PORT_CORRECTION_CONTRACT) {
 				throw new Error("Secondary-port corrections use an unsupported contract.");
 			}
+			for (const [groupKey, label] of [
+				["highWaterTimeOffsets", "HW time correction"],
+				["lowWaterTimeOffsets", "LW time correction"],
+			]) {
+				const group = corrections[groupKey];
+				if (!Array.isArray(group) || group.length < 1 || group.length > 12) {
+					throw new Error(`${label} needs between 1 and 12 explicit reference-time points.`);
+				}
+				const times = new Set();
+				for (const [index, point] of group.entries()) {
+					if (!point || typeof point !== "object" || Array.isArray(point)) throw new Error(`${label} point ${index + 1} is invalid.`);
+					validateNumber(point.referenceTimeMinutes, `${label} point ${index + 1} reference time`, { minimum: 0, maximum: 1439 });
+					validateNumber(point.offsetMinutes, `${label} point ${index + 1} offset`, { minimum: -1440, maximum: 1440 });
+					if (!Number.isInteger(Number(point.referenceTimeMinutes))) throw new Error(`${label} reference times must use whole minutes.`);
+					if (times.has(Number(point.referenceTimeMinutes))) throw new Error(`${label} reference times must be unique.`);
+					times.add(Number(point.referenceTimeMinutes));
+				}
+			}
 			for (const [groupKey, label, keys, minimum, maximum] of [
-				["hwTimeOffsetsMinutes", "HW time correction", ["t0000", "t0600", "t1200", "t1800"], -1440, 1440],
-				["lwTimeOffsetsMinutes", "LW time correction", ["t0000", "t0600", "t1200", "t1800"], -1440, 1440],
 				["heightDifferencesM", "Height correction", ["mhws", "mhwn", "mlwn", "mlws"], -20, 20],
 			]) {
 				const group = corrections[groupKey];
@@ -228,12 +248,13 @@ function validateLocation(location) {
 			assertText(corrections.notes, "Secondary-port correction notes", { max: 4000 });
 			assertText(corrections.legacyId, "Secondary-port legacy id", { max: 100 });
 			assertText(corrections.standardPortName, "Secondary-port standard port name", { max: 200 });
-			if (!corrections.standardReferenceLevels || typeof corrections.standardReferenceLevels !== "object" || Array.isArray(corrections.standardReferenceLevels)) {
-				throw new Error("Standard-port reference levels are required.");
+			assertText(corrections.migratedFromContract, "Migrated correction contract", { max: 100 });
+			if (!corrections.parentReferenceLevels || typeof corrections.parentReferenceLevels !== "object" || Array.isArray(corrections.parentReferenceLevels)) {
+				throw new Error("Parent-port reference levels are required.");
 			}
 			for (const key of ["mhws", "mhwn", "mlwn", "mlws"]) {
-				if (corrections.standardReferenceLevels[key] == null || corrections.standardReferenceLevels[key] === "") throw new Error(`Standard-port ${key.toUpperCase()} is required.`);
-				validateNumber(corrections.standardReferenceLevels[key], `Standard-port ${key.toUpperCase()}`, { minimum: -100, maximum: 100 });
+				if (corrections.parentReferenceLevels[key] == null || corrections.parentReferenceLevels[key] === "") throw new Error(`Parent-port ${key.toUpperCase()} is required.`);
+				validateNumber(corrections.parentReferenceLevels[key], `Parent-port ${key.toUpperCase()}`, { minimum: -100, maximum: 100 });
 			}
 		}
 	}
@@ -364,6 +385,11 @@ function normalizeLocation(input, { preserveId = true } = {}) {
 		...(location.properties || {}),
 		schema: LOCATION_SCHEMA,
 	};
+	if (location.properties.tide?.secondaryPortCorrections) {
+		location.properties.tide.secondaryPortCorrections = migrateSecondaryPortCorrections(
+			location.properties.tide.secondaryPortCorrections,
+		);
+	}
 	validateLocation(location);
 	return location;
 }

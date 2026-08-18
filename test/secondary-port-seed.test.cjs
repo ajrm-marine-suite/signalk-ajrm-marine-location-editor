@@ -23,7 +23,7 @@ test("secondary-port seed enriches existing locations and adds positioned ports"
 	const existing = merged.locations.find(({ id }) => id === "existing");
 	assert.deepEqual(existing.types, ["marina", "tidalSecondaryPort"]);
 	assert.equal(existing.properties.tide.parentLocationRef, "/resources/locations/standard");
-	assert.equal(existing.properties.tide.secondaryPortCorrections.hwTimeOffsetsMinutes.t1200, 3);
-	assert.equal(existing.properties.tide.secondaryPortCorrections.standardReferenceLevels.mhwn, 2.9);
+	assert.deepEqual(existing.properties.tide.secondaryPortCorrections.highWaterTimeOffsets[2], { referenceTimeMinutes: 720, offsetMinutes: 3 });
+	assert.equal(existing.properties.tide.secondaryPortCorrections.parentReferenceLevels.mhwn, 2.9);
 	assert.deepEqual(merged.locations.find(({ id }) => id === "new").feature.geometry.coordinates, [-6, 55]);
 });

@@ -643,10 +643,11 @@ module.exports = function ajrmMarineLocationEditor(app) {
 
 	async function assertReferencesExist(location, catalogLocations = null) {
 		const locations = catalogLocations || new Map((await store.list()).map((entry) => [entry.id, entry]));
+		locations.set(location.id, location);
 		for (const [label, reference, allowedTypes] of [
 			["Tidal location", location.properties.tideLocationRef, ["tidalStandardPort", "tidalSecondaryPort"]],
 			["Tidal region", location.properties.tideRegionRef, ["tidalRegion"]],
-			["Parent tidal location", location.properties.tide?.parentLocationRef, ["tidalStandardPort"]],
+			["Parent tidal location", location.properties.tide?.parentLocationRef, ["tidalStandardPort", "tidalSecondaryPort"]],
 			["Tidal-gate standard port", location.properties.tidalGate?.standardPortRef, ["tidalStandardPort"]],
 		]) {
 			if (!reference) continue;
@@ -656,6 +657,15 @@ module.exports = function ajrmMarineLocationEditor(app) {
 			if (!target.types.some((type) => allowedTypes.includes(type))) {
 				throw new Error(`${label} reference points to an incompatible location type.`);
 			}
+		}
+		const visited = new Set([location.id]);
+		let reference = location.properties.tide?.parentLocationRef;
+		while (reference) {
+			const parentId = reference.split("/").at(-1);
+			if (visited.has(parentId)) throw new Error("Secondary-port parent references must not contain a cycle.");
+			visited.add(parentId);
+			if (visited.size > 12) throw new Error("Secondary-port parent chain is too deep.");
+			reference = locations.get(parentId)?.properties?.tide?.parentLocationRef;
 		}
 	}
 
@@ -726,13 +736,24 @@ module.exports = function ajrmMarineLocationEditor(app) {
 
 	async function enrichBundledSecondaryPort(current, seed) {
 		const corrections = seed.properties?.tide?.secondaryPortCorrections;
-		if (!corrections || current.properties?.tide?.secondaryPortCorrections) return false;
+		if (!corrections) return false;
+		const currentCorrections = current.properties?.tide?.secondaryPortCorrections;
+		const replacesProvisionalLochMelfort =
+			corrections.legacyId === "loch-melfort" &&
+			currentCorrections?.legacyId === "loch-melfort" &&
+			String(currentCorrections.notes || "").startsWith("HW approximately Oban -0045");
+		const currentCoordinates = current.feature?.geometry?.coordinates;
+		const replacesProvisionalGeometry = replacesProvisionalLochMelfort &&
+			current.feature?.geometry?.type === "Point" &&
+			Number(currentCoordinates?.[0]) === -5.588 && Number(currentCoordinates?.[1]) === 56.246;
+		if (currentCorrections && !replacesProvisionalLochMelfort) return false;
 		const provenanceSources = [...(current.properties?.provenance?.sources || [])];
 		for (const source of seed.properties?.provenance?.sources || []) {
 			if (!provenanceSources.some((value) => value.sourceId === source.sourceId && value.url === source.url)) provenanceSources.push(source);
 		}
 		await store.set(current.id, {
 			...current,
+			feature: replacesProvisionalGeometry ? structuredClone(seed.feature) : current.feature,
 			types: [...new Set([...current.types, "tidalSecondaryPort"])],
 			properties: {
 				...current.properties,
@@ -1063,6 +1084,7 @@ module.exports = function ajrmMarineLocationEditor(app) {
 			values.longitude != null && values.longitude !== "";
 		return {
 			contextLocationId: values.locationId || values.contextLocationId || undefined,
+			portId: values.portId || undefined,
 			position: hasPosition
 				? normalizePosition({ latitude: values.latitude, longitude: values.longitude }) || undefined
 				: undefined,

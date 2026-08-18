@@ -4,8 +4,8 @@
  */
 
 const LOCATION_REF_PREFIX = "/resources/locations/";
-const CORRECTION_CONTRACT = "ajrm-secondary-port-corrections-v1";
-const TIMES = ["t0000", "t0600", "t1200", "t1800"];
+const { CONTRACT_V2: CORRECTION_CONTRACT } = require("./secondary-port-corrections.cjs");
+const DEFAULT_REFERENCE_TIMES = [0, 360, 720, 1080];
 const LEVELS = ["mhws", "mhwn", "mlwn", "mlws"];
 
 function keyed(keys, values) {
@@ -13,13 +13,17 @@ function keyed(keys, values) {
 }
 
 function correction(entry, defaults) {
+	const points = (times, offsets) => times.map((referenceTimeMinutes, index) => ({
+		referenceTimeMinutes: Number(referenceTimeMinutes),
+		offsetMinutes: Number(offsets?.[index] ?? 0),
+	}));
 	return {
 		contract: CORRECTION_CONTRACT,
 		legacyId: entry.legacyId,
 		standardPortName: entry.standardPortName || defaults.standardPortName,
-		standardReferenceLevels: entry.standardReferenceLevels || defaults.standardReferenceLevels,
-		hwTimeOffsetsMinutes: keyed(TIMES, entry.hw),
-		lwTimeOffsetsMinutes: keyed(TIMES, entry.lw),
+		parentReferenceLevels: entry.parentReferenceLevels || entry.standardReferenceLevels || defaults.standardReferenceLevels,
+		highWaterTimeOffsets: points(entry.hwReferenceTimesMinutes || DEFAULT_REFERENCE_TIMES, entry.hw),
+		lowWaterTimeOffsets: points(entry.lwReferenceTimesMinutes || DEFAULT_REFERENCE_TIMES, entry.lw),
 		heightDifferencesM: keyed(LEVELS, entry.heights),
 		notes: entry.notes,
 	};

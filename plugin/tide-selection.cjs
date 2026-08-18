@@ -14,10 +14,13 @@ function referenceId(reference) {
 }
 
 function isPredictionPort(location) {
+	const tide = location?.properties?.tide;
+	const correctedSecondary = location?.types?.includes("tidalSecondaryPort") &&
+		tide?.secondaryPortCorrections?.contract === "ajrm-secondary-port-corrections-v2" &&
+		Boolean(tide.parentLocationRef);
 	return Boolean(
 		location?.types?.some((type) => PREDICTION_PORT_TYPES.has(type)) &&
-		location.properties?.tide?.providerId &&
-		location.properties?.tide?.stationId,
+		((tide?.providerId && tide?.stationId) || correctedSecondary),
 	);
 }
 
@@ -80,12 +83,17 @@ function automaticSelection(locations, { position, contextLocationId } = {}) {
 
 function selectTidePort(locations, options = {}) {
 	const automatic = automaticSelection(locations, options);
+	const requested = options.portId
+		? locations.find((location) => location.id === options.portId && isPredictionPort(location))
+		: null;
 	const pinned = options.pinnedPortId
 		? locations.find((location) => location.id === options.pinnedPortId && isPredictionPort(location))
 		: null;
 	return {
-		port: pinned || automatic.port,
-		reason: pinned ? "manualPinnedOverride" : automatic.reason,
+		port: requested || pinned || automatic.port,
+		reason: requested ? "explicitRequestedPort" : pinned ? "manualPinnedOverride" : automatic.reason,
+		requestedPortId: options.portId || null,
+		requestValid: !options.portId || Boolean(requested),
 		pinned: Boolean(pinned),
 		requestedPinnedPortId: options.pinnedPortId || null,
 		pinValid: !options.pinnedPortId || Boolean(pinned),

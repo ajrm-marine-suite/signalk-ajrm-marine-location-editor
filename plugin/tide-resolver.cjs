@@ -7,6 +7,7 @@ const fs = require("node:fs/promises");
 const path = require("node:path");
 const { calculateTide } = require("./tide-calculation.cjs");
 const { selectTidePort } = require("./tide-selection.cjs");
+const { applySecondaryPortCorrections } = require("./secondary-port-corrections.cjs");
 
 const TIDE_CONTRACT = "ajrm-marine-tide-resolver-v1";
 
@@ -36,7 +37,7 @@ function eventSummary(event) {
 }
 
 function referenceLevelSummary(location) {
-	const source = location?.properties?.tide?.referenceLevels;
+	const source = location?.properties?.tide?.referenceLevels || location;
 	if (!source || typeof source !== "object") return null;
 	const result = Object.fromEntries(["mhws", "mhwn", "mlwn", "mlws"]
 		.filter((key) => Number.isFinite(Number(source[key])))
@@ -106,6 +107,43 @@ function createTideResolver(options) {
 		return pinnedPortId;
 	}
 
+	async function resolvePortData(port, byId, request, visited = new Set()) {
+		if (!port?.id) throw new Error("Selected tidal port is invalid.");
+		if (visited.has(port.id)) throw new Error("Secondary-port parent references contain a cycle.");
+		if (visited.size >= 12) throw new Error("Secondary-port parent chain is too deep.");
+		const nextVisited = new Set(visited).add(port.id);
+		const correction = port.properties?.tide?.secondaryPortCorrections;
+		if (correction) {
+			const parentId = String(port.properties?.tide?.parentLocationRef || "").split("/").at(-1);
+			const parent = byId.get(parentId);
+			if (!parent) throw new Error(`Parent tidal location for ${port.name} was not found.`);
+			const parentData = await resolvePortData(parent, byId, request, nextVisited);
+			const corrected = applySecondaryPortCorrections(
+				parentData.events,
+				correction,
+				parentData.referenceLevels,
+			);
+			return {
+				...parentData,
+				events: corrected.events,
+				referenceLevels: corrected.referenceLevels,
+				datum: port.properties?.tide?.datum || parentData.datum,
+				correctionChain: [
+					...(parentData.correctionChain || []),
+					{ locationId: port.id, name: port.name, contract: correction.contract, parentLocationId: parent.id },
+				],
+			};
+		}
+		const providerData = await options.provider.get(port, request);
+		return {
+			...providerData,
+			referenceLevels: referenceLevelSummary(port),
+			datum: port.properties?.tide?.datum || null,
+			rootPort: locationSummary(port),
+			correctionChain: [],
+		};
+	}
+
 	async function resolve(request = {}) {
 		await initialize();
 		const now = new Date(request.now || Date.now());
@@ -113,11 +151,16 @@ function createTideResolver(options) {
 		const selection = selectTidePort(locations, {
 			position: request.position,
 			contextLocationId: request.contextLocationId,
+			portId: request.portId,
 			pinnedPortId,
 		});
 		if (!selection.port) return emptyProjection(selection, null, now);
 		try {
-			const providerData = await options.provider.get(selection.port, { force: request.force, now });
+			const providerData = await resolvePortData(
+				selection.port,
+				new Map(locations.map((location) => [location.id, location])),
+				{ force: request.force, now },
+			);
 			const calculated = calculateTide(providerData.events, now);
 			const dataFreshness = freshness(providerData.fetchedAt, now, options);
 			const valid = calculated.valid && dataFreshness.state !== "expired";
@@ -128,10 +171,13 @@ function createTideResolver(options) {
 				nextHighWater: eventSummary(calculated.nextHighWater),
 				nextLowWater: eventSummary(calculated.nextLowWater),
 				trend: calculated.trend,
+				datum: providerData.datum,
+				referenceLevels: referenceLevelSummary(providerData.referenceLevels),
 				station: {
 					providerId: providerData.providerId,
 					id: providerData.stationId,
-					name: selection.port.properties.tide.stationName || selection.port.name,
+					name: selection.port.properties.tide?.stationName || selection.port.name,
+					standardPort: providerData.rootPort,
 				},
 				source: {
 					provider: "UK Hydrographic Office Tidal API",
@@ -140,6 +186,7 @@ function createTideResolver(options) {
 					persistent: providerData.persistent === true,
 					fallbackReason: providerData.fallbackReason || null,
 					interpolation: calculated.interpolation || null,
+					secondaryPortCorrections: providerData.correctionChain,
 				},
 				freshness: dataFreshness,
 				curve: calculated.curve,

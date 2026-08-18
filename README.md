@@ -1,5 +1,14 @@
 # AJRM Marine Location Editor
 
+Version `0.6.10` replaces the fixed secondary-port clock columns with the
+`ajrm-secondary-port-corrections-v2` contract. Each HW and LW correction now
+stores the reference time printed in the almanac, so tables beginning at 0100,
+1200, 1300 or another stated time are represented exactly. The Tide Resolver
+applies corrections centrally, follows secondary-to-secondary parent chains
+with cycle protection, and returns fully resolved events to Display and
+Planning. Existing v1 records migrate automatically. Loch Melfort is corrected
+from the supplied Reeds page and Seil Sound is added from the same table.
+
 Version `0.6.9` also makes Location Editor the single owner of tidal-gate
 passage constants. All 15 datasets formerly bundled in Gate Passage Planner
 are migrated into versioned `tidalGate` locations, editable only here. The
@@ -7,7 +16,7 @@ bundled standard prediction ports now include Oban, Stornoway (`0308`) and
 Ullapool (`0334`) with their reference levels.
 
 Version `0.6.8` makes Location Editor the single owner of secondary-port
-setup. It stores the standard-port reference levels, HW/LW time corrections,
+setup. It stores the parent-port reference levels, HW/LW time corrections,
 height corrections and source notes needed by Marine Planning. Existing
 Marine Planning constants are bundled as versioned locations and matching
 locations without correction data are upgraded automatically without changing
@@ -50,13 +59,20 @@ and onboard testing. It stores:
   channels;
 - links from places to tidal locations.
 
-For a `tidalSecondaryPort`, select its parent standard port and enter the
-standard port's MHWS/MHWN/MLWN/MLWS levels, the four almanac HW and LW time
-corrections, the four height corrections, and source notes. Marine Planning
-reads these values from Location Editor; it no longer maintains a second copy.
+For a `tidalSecondaryPort`, select its immediate parent tidal port and enter
+the parent port's MHWS/MHWN/MLWN/MLWS levels. For each HW and LW column, enter
+both the almanac's printed reference time and the correction in minutes, then
+enter the four height corrections and source notes. Marine Planning reads
+fully corrected events from Location Editor; it no longer maintains or applies
+a second copy. A parent may itself be a secondary port where an almanac uses
+sub-ports; the resolver follows that chain and rejects missing or cyclic
+relationships. Almanac clock times are stored as explicit UT minute-of-day
+values and resolved events remain canonical UTC instants.
+
 The bundled migration includes Bucklers Hard, Tobermory, Cuan Sound, Port
-Ellen, Craignure and Loch Melfort. Their positions and migrated constants are
-planning data that must be checked against current licensed sources.
+Ellen, Craignure, Loch Melfort and Seil Sound. Apart from positions explicitly
+printed in a supplied source, their planning positions and migrated constants
+must be checked against current licensed sources.
 
 For a `tidalGate`, select its reference standard port and maintain the flood
 and ebb sets, spring/neap peak rates, start offsets, slack durations and source

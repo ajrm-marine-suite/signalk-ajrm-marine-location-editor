@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "AJRM Marine Location Editor API",
-    "version": "0.6.9",
+    "version": "0.6.10",
     "description": "Versioned marine locations, relationships, shared tide and weather resolution, assisted anchoring, import/export and nearest-location lookup."
   },
   "paths": {
@@ -17,7 +17,7 @@
     "/locations/{id}/history": { "get": { "parameters": [{ "$ref": "#/components/parameters/Id" }], "responses": { "200": { "description": "Immutable revision history" } } } },
     "/locations/{id}/restore": { "post": { "parameters": [{ "$ref": "#/components/parameters/Id" }], "responses": { "200": { "description": "Older snapshot restored as a new revision" } } } },
     "/nearest": { "get": { "responses": { "200": { "description": "Nearest matching locations" } } } },
-    "/tides/status": { "get": { "description": "Accepts optional latitude and longitude query parameters as explicit selection context.", "responses": { "200": { "description": "Resolved tidal port, current height, extremes, provenance and freshness" } } } },
+    "/tides/status": { "get": { "description": "Accepts optional latitude/longitude selection context or an explicit portId. Secondary ports are resolved through their parent chain.", "responses": { "200": { "description": "Resolved tidal port, current height, extremes, provenance and freshness" } } } },
     "/tides/pin": { "post": { "description": "The JSON body may include latitude and longitude so the automatic candidate remains meaningful beneath the pin.", "responses": { "200": { "description": "Pin or clear a manual tidal-port override" } } } },
     "/tides/refresh": { "post": { "description": "The JSON body may include latitude and longitude as explicit selection context.", "responses": { "200": { "description": "Refresh the selected port and publish a new tide projection" } } } },
     "/weather/status": { "get": { "responses": { "200": { "description": "Cached weather and marine forecast with explicit provenance and freshness" } } } },

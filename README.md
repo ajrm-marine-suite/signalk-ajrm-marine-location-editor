@@ -1,5 +1,13 @@
 # AJRM Marine Location Editor
 
+Version `0.6.15` arranges the complete secondary-port correction set as one
+Reeds-style horizontal row: two HW time differences, two LW time differences,
+and the MHWS/MHWN/MLWN/MLWS height differences. Standard-port reference times
+sit directly above their differences, and the table scrolls rather than wraps
+on a narrow screen. The redundant correction-notes and imported-provenance
+footer has been removed from the editor, while existing metadata remains in
+stored records and exports.
+
 Version `0.6.14` separates tidal geography from tidal prediction data. A
 tidal-region polygon may select its prediction port and may itself belong to a
 broader parent region; automatic resolution chooses the most specific
@@ -320,7 +328,8 @@ Open **AJRM Marine Location Editor** from the Signal K app list.
    anchorages, tides and hazards appear only in the editor.
 4. Store a point at the map centre, enter a polygon, or generate a circle.
 5. Add optional anchorage, tide, hazard and relationship details. Imported
-   records display their source and review status below these fields.
+   source and review metadata remains part of the stored record and exports,
+   without adding a read-only provenance footer to the editing form.
 6. For a harbour-profile area, select a harbour, anchorage, mooring or marina
    type, use polygon/circle geometry, and tick **Use this area for automatic
    Harbour profile switching**.

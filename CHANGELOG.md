@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.6.15 - 2026-08-18
+
+- Put all secondary-port HW, LW and height differences on one Reeds-style
+  horizontal row, with the standard-port reference times directly above.
+- Keep the table on one line and allow horizontal scrolling on narrow screens.
+- Remove the correction-notes control and imported source/review footer from
+  the editor without deleting that metadata from existing stored records.
+
 ## 0.6.14 - 2026-08-18
 
 - Restrict automatic Harbour-profile switching to harbour, marina, anchorage

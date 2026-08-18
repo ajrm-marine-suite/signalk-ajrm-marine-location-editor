@@ -47,10 +47,10 @@ const elements = Object.fromEntries([
 	"points", "profileRegionField", "publishAsHarbourRegion", "tideRelationships", "tideAssignmentField", "tideRegionField", "tideRegionLabel", "tideLocationRef", "tideRegionRef", "anchorageFields", "seabed", "chartedDepthM",
 	"detectionRadiusM", "trustedAutomation", "anchorageNotes", "tideFields", "standardPortFields", "tideProviderId", "tideProvider", "tideStationId", "tideStationName",
 	"parentLocationRef", "tideDatum", "tideMhws", "tideMhwn", "tideMlwn", "tideMlws", "secondaryPortFields",
-	"secondaryTimePeriod", "secondaryLegacyPattern", "secondaryHwPair1", "secondaryHwPair2", "secondaryLwPair1", "secondaryLwPair2",
+	"secondaryTimePeriod", "secondaryLegacyPattern", "secondaryLegacyTable", "secondaryHwPair1", "secondaryHwPair2", "secondaryLwPair1", "secondaryLwPair2",
 	...secondaryPointIndexes.flatMap((index) => [`secondaryHwTime${index}`, `secondaryHwOffset${index}`]),
 	...secondaryPointIndexes.flatMap((index) => [`secondaryLwTime${index}`, `secondaryLwOffset${index}`]),
-	"secondaryDiffMhws", "secondaryDiffMhwn", "secondaryDiffMlwn", "secondaryDiffMlws", "secondaryPortNotes",
+	"secondaryDiffMhws", "secondaryDiffMhwn", "secondaryDiffMlwn", "secondaryDiffMlws",
 	"tidalGateFields", "gateStandardPortRef", "gateFloodSet", "gateEbbSet", "gateSpringPeak", "gateNeapPeak",
 	"gateFloodSpringAfter", "gateFloodNeapAfter", "gateFloodSpringSlack", "gateFloodNeapSlack",
 	"gateEbbSpringAfter", "gateEbbNeapAfter", "gateEbbSpringSlack", "gateEbbNeapSlack", "gateSource",
@@ -60,7 +60,7 @@ const elements = Object.fromEntries([
 	"historyList", "closeHistory", "radiusNm", "decreaseRadius", "increaseRadius",
 	"applyRadius", "makeCircle", "saveGeometry", "undoGeometry", "nudgeNorth", "nudgeSouth", "nudgeWest", "nudgeEast",
 	"mergeLocations", "importLocations", "exportLocations", "locationImportFile", "syncMessages",
-	"deletedList", "purgeDeleted", "status", "chartCycleStatus", "provenanceFields", "provenanceStatus", "provenanceWarning", "provenanceSources",
+	"deletedList", "purgeDeleted", "status", "chartCycleStatus",
 ].map((id) => [id, document.querySelector(`#${id}`)]));
 
 let locations = [];
@@ -285,7 +285,7 @@ function updateSecondaryTimeLayout(periodMinutes = Number(elements.secondaryTime
 	elements.secondaryTimePeriod.value = String(periodMinutes === 1440 ? 1440 : 720);
 	const legacy = periodMinutes === 1440;
 	elements.secondaryLegacyPattern.hidden = !legacy;
-	document.querySelectorAll(".legacy-correction-row").forEach((row) => { row.hidden = !legacy; });
+	elements.secondaryLegacyTable.hidden = !legacy;
 	for (const prefix of ["Hw", "Lw"]) {
 		for (const index of [1, 2]) {
 			const value = elements[`secondary${prefix}Time${index}`].value;
@@ -357,7 +357,7 @@ function resetEditor() {
 	const center = map?.getCenter() || { lat: 55.8, lng: -5.2 };
 	elements.point.value = `${center.lat.toFixed(6)}, ${(center.lng ?? center.lon).toFixed(6)}`;
 	elements.points.value = "";
-	for (const id of ["seabed", "chartedDepthM", "detectionRadiusM", "anchorageNotes", "tideProviderId", "tideProvider", "tideStationId", "tideStationName", "tideDatum", "tideMhws", "tideMhwn", "tideMlwn", "tideMlws", ...secondaryPointIndexes.flatMap((index) => [`secondaryHwTime${index}`, `secondaryHwOffset${index}`, `secondaryLwTime${index}`, `secondaryLwOffset${index}`]), "secondaryDiffMhws", "secondaryDiffMhwn", "secondaryDiffMlwn", "secondaryDiffMlws", "secondaryPortNotes", "hazardReason", "hazardClearanceM"]) elements[id].value = "";
+	for (const id of ["seabed", "chartedDepthM", "detectionRadiusM", "anchorageNotes", "tideProviderId", "tideProvider", "tideStationId", "tideStationName", "tideDatum", "tideMhws", "tideMhwn", "tideMlwn", "tideMlws", ...secondaryPointIndexes.flatMap((index) => [`secondaryHwTime${index}`, `secondaryHwOffset${index}`, `secondaryLwTime${index}`, `secondaryLwOffset${index}`]), "secondaryDiffMhws", "secondaryDiffMhwn", "secondaryDiffMlwn", "secondaryDiffMlws", "hazardReason", "hazardClearanceM"]) elements[id].value = "";
 	for (const id of ["gateFloodSet", "gateEbbSet", "gateSpringPeak", "gateNeapPeak", "gateFloodSpringAfter", "gateFloodNeapAfter", "gateFloodSpringSlack", "gateFloodNeapSlack", "gateEbbSpringAfter", "gateEbbNeapAfter", "gateEbbSpringSlack", "gateEbbNeapSlack", "gateSource"]) elements[id].value = "";
 	elements.trustedAutomation.checked = false;
 	updateSecondaryTimeLayout(720);
@@ -365,7 +365,6 @@ function resetEditor() {
 	elements.publishAsHarbourRegion.checked = false;
 	elements.hazardApplications.querySelectorAll("input").forEach((input) => { input.checked = false; });
 	elements.selectedSummary.textContent = "New location";
-	renderProvenance(null);
 	elements.deleteLocation.disabled = true;
 	elements.showHistory.disabled = true;
 	refreshReferences(null);
@@ -420,14 +419,12 @@ function selectLocation(id, fit = false, revealEditor = false) {
 		["secondaryDiffMhws", "heightDifferencesM", "mhws"], ["secondaryDiffMhwn", "heightDifferencesM", "mhwn"],
 		["secondaryDiffMlwn", "heightDifferencesM", "mlwn"], ["secondaryDiffMlws", "heightDifferencesM", "mlws"],
 	]) elements[id].value = corrections[group]?.[key] ?? "";
-	elements.secondaryPortNotes.value = corrections.notes || "";
 	const gate = properties.tidalGate || {};
 	for (const [id, key] of [["gateFloodSet", "floodSet"], ["gateEbbSet", "ebbSet"], ["gateSpringPeak", "springPeakFlowKnots"], ["gateNeapPeak", "neapPeakFlowKnots"], ["gateFloodSpringAfter", "floodSpringAfter"], ["gateFloodNeapAfter", "floodNeapAfter"], ["gateFloodSpringSlack", "floodSpringSlack"], ["gateFloodNeapSlack", "floodNeapSlack"], ["gateEbbSpringAfter", "ebbSpringAfter"], ["gateEbbNeapAfter", "ebbNeapAfter"], ["gateEbbSpringSlack", "ebbSpringSlack"], ["gateEbbNeapSlack", "ebbNeapSlack"], ["gateSource", "source"]]) elements[id].value = gate[key] ?? "";
 	elements.hazardSeverity.value = properties.hazard?.severity || "advisory";
 	elements.hazardReason.value = properties.hazard?.reason || "";
 	elements.hazardClearanceM.value = properties.hazard?.clearanceM ?? "";
 	elements.hazardApplications.querySelectorAll("input").forEach((input) => { input.checked = properties.hazard?.appliesTo?.includes(input.value) || false; });
-	renderProvenance(properties.provenance);
 	elements.selectedSummary.textContent = `${location.name} · revision ${location.revision}`;
 	elements.deleteLocation.disabled = false;
 	elements.showHistory.disabled = false;
@@ -501,7 +498,7 @@ function buildLocation() {
 				highWaterTimeOffsets,
 				lowWaterTimeOffsets,
 				heightDifferencesM: numericGroup([["mhws", "secondaryDiffMhws"], ["mhwn", "secondaryDiffMhwn"], ["mlwn", "secondaryDiffMlwn"], ["mlws", "secondaryDiffMlws"]]),
-				notes: elements.secondaryPortNotes.value.trim() || undefined,
+				notes: current?.properties?.tide?.secondaryPortCorrections?.notes,
 			};
 		}
 	}
@@ -541,28 +538,6 @@ function buildLocation() {
 		},
 		properties,
 	};
-}
-
-function renderProvenance(provenance) {
-	elements.provenanceFields.hidden = !provenance;
-	if (!provenance) {
-		elements.provenanceStatus.textContent = "";
-		elements.provenanceWarning.textContent = "";
-		elements.provenanceSources.replaceChildren();
-		return;
-	}
-	const labels = { imported: "Imported — not locally verified", sourceChecked: "Checked against cited sources", onboardVerified: "Verified onboard" };
-	elements.provenanceStatus.textContent = labels[provenance.reviewStatus] || provenance.reviewStatus || "Source recorded";
-	elements.provenanceWarning.textContent = provenance.warning || "";
-	elements.provenanceSources.replaceChildren();
-	for (const source of provenance.sources || []) {
-		const link = document.createElement("a");
-		link.href = source.url;
-		link.target = "_blank";
-		link.rel = "noopener noreferrer";
-		link.textContent = [source.provider, source.sourceId, source.license].filter(Boolean).join(" · ");
-		elements.provenanceSources.append(link);
-	}
 }
 
 async function loadLocations(preferredId = selectedId) {

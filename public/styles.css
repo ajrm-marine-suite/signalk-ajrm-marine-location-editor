@@ -211,16 +211,6 @@ h3 {
 	transition: transform 160ms ease;
 }
 
-.source-links {
-	display: grid;
-	gap: 6px;
-}
-
-.source-links a {
-	color: #075985;
-	overflow-wrap: anywhere;
-}
-
 .drawer-left {
 	left: 52px;
 	width: min(430px, calc(100vw - 64px));
@@ -643,13 +633,6 @@ legend {
 	padding-bottom: 3px;
 }
 
-.reeds-time-table td:first-child {
-	display: grid;
-	grid-template-columns: minmax(100px, 1fr) auto;
-	align-items: center;
-	gap: 6px;
-}
-
 .paired-time {
 	white-space: nowrap;
 	font-weight: 650;
@@ -660,12 +643,24 @@ legend {
 	content: "/ ";
 }
 
-.reeds-height-table th:first-child {
+.reeds-secondary-table {
+	min-width: 1120px;
+}
+
+.reeds-secondary-table th:first-child {
 	width: 130px;
 }
 
-.reeds-height-table {
-	min-width: 520px;
+.reeds-time-heading {
+	min-width: 150px;
+}
+
+.reeds-time-heading input {
+	min-width: 105px;
+}
+
+.reeds-legacy-table {
+	min-width: 650px;
 }
 
 .field-help.warning {

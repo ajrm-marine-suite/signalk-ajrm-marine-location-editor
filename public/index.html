@@ -6,7 +6,7 @@
 		<title>AJRM Marine Location Editor</title>
 		<link rel="stylesheet" href="./leaflet.css">
 		<link rel="stylesheet" href="./ajrm-map-core.css?v=0.7.5">
-		<link rel="stylesheet" href="./styles.css?v=0.6.14">
+		<link rel="stylesheet" href="./styles.css?v=0.6.15">
 	</head>
 	<body>
 		<div id="map" class="map" aria-label="Marine location chart"></div>
@@ -138,31 +138,26 @@
 					<p class="field-help">Copy the table as printed in Reeds. Each standard-port time is paired with the time 12 hours later and therefore has one shared difference. Enter time differences as signed HHMM, for example <strong>-0055</strong> or <strong>+0020</strong>.</p>
 					<input id="secondaryTimePeriod" type="hidden" value="720">
 					<p id="secondaryLegacyPattern" class="field-help warning" hidden>This imported record has a non-repeating 24-hour pattern, so all four legacy rows are retained.</p>
-					<table class="reeds-table reeds-time-table">
-						<thead><tr><th>HW at standard port</th><th>Time difference</th></tr></thead>
+					<div class="reeds-table-scroll"><table id="secondaryCorrectionTable" class="reeds-table reeds-secondary-table">
+						<thead>
+							<tr><th rowspan="2">Standard-port reference</th><th colspan="2">High Water</th><th colspan="2">Low Water</th><th colspan="4">Height differences (m)</th></tr>
+							<tr>
+								<th class="reeds-time-heading"><input id="secondaryHwTime1" type="time" aria-label="First HW standard-port reference time"><span id="secondaryHwPair1" class="paired-time"></span></th>
+								<th class="reeds-time-heading"><input id="secondaryHwTime2" type="time" aria-label="Second HW standard-port reference time"><span id="secondaryHwPair2" class="paired-time"></span></th>
+								<th class="reeds-time-heading"><input id="secondaryLwTime1" type="time" aria-label="First LW standard-port reference time"><span id="secondaryLwPair1" class="paired-time"></span></th>
+								<th class="reeds-time-heading"><input id="secondaryLwTime2" type="time" aria-label="Second LW standard-port reference time"><span id="secondaryLwPair2" class="paired-time"></span></th>
+								<th>MHWS</th><th>MHWN</th><th>MLWN</th><th>MLWS</th>
+							</tr>
+						</thead>
+						<tbody><tr id="secondaryDifferenceRow"><th>Difference</th><td><input id="secondaryHwOffset1" type="text" inputmode="numeric" placeholder="-0055"></td><td><input id="secondaryHwOffset2" type="text" inputmode="numeric" placeholder="-0025"></td><td><input id="secondaryLwOffset1" type="text" inputmode="numeric" placeholder="-0040"></td><td><input id="secondaryLwOffset2" type="text" inputmode="numeric" placeholder="-0035"></td><td><input id="secondaryDiffMhws" type="number" step="0.1"></td><td><input id="secondaryDiffMhwn" type="number" step="0.1"></td><td><input id="secondaryDiffMlwn" type="number" step="0.1"></td><td><input id="secondaryDiffMlws" type="number" step="0.1"></td></tr></tbody>
+					</table></div>
+					<div id="secondaryLegacyTable" class="reeds-table-scroll" hidden><table class="reeds-table reeds-legacy-table">
+						<thead><tr><th>Additional reference</th><th>HW time</th><th>HW difference</th><th>LW time</th><th>LW difference</th></tr></thead>
 						<tbody>
-							<tr><td><input id="secondaryHwTime1" type="time"> <span id="secondaryHwPair1" class="paired-time"></span></td><td><input id="secondaryHwOffset1" type="text" inputmode="numeric" placeholder="-0055"></td></tr>
-							<tr><td><input id="secondaryHwTime2" type="time"> <span id="secondaryHwPair2" class="paired-time"></span></td><td><input id="secondaryHwOffset2" type="text" inputmode="numeric" placeholder="-0025"></td></tr>
-							<tr class="legacy-correction-row" hidden><td><input id="secondaryHwTime3" type="time"></td><td><input id="secondaryHwOffset3" type="text" inputmode="numeric"></td></tr>
-							<tr class="legacy-correction-row" hidden><td><input id="secondaryHwTime4" type="time"></td><td><input id="secondaryHwOffset4" type="text" inputmode="numeric"></td></tr>
-						</tbody>
-					</table>
-					<table class="reeds-table reeds-time-table">
-						<thead><tr><th>LW at standard port</th><th>Time difference</th></tr></thead>
-						<tbody>
-							<tr><td><input id="secondaryLwTime1" type="time"> <span id="secondaryLwPair1" class="paired-time"></span></td><td><input id="secondaryLwOffset1" type="text" inputmode="numeric" placeholder="-0040"></td></tr>
-							<tr><td><input id="secondaryLwTime2" type="time"> <span id="secondaryLwPair2" class="paired-time"></span></td><td><input id="secondaryLwOffset2" type="text" inputmode="numeric" placeholder="-0035"></td></tr>
-							<tr class="legacy-correction-row" hidden><td><input id="secondaryLwTime3" type="time"></td><td><input id="secondaryLwOffset3" type="text" inputmode="numeric"></td></tr>
-							<tr class="legacy-correction-row" hidden><td><input id="secondaryLwTime4" type="time"></td><td><input id="secondaryLwOffset4" type="text" inputmode="numeric"></td></tr>
-						</tbody>
-					</table>
-					<div class="reeds-table-scroll"><table class="reeds-table reeds-height-table">
-						<thead><tr><th></th><th>MHWS</th><th>MHWN</th><th>MLWN</th><th>MLWS</th></tr></thead>
-						<tbody>
-							<tr><th>Difference (m)</th><td><input id="secondaryDiffMhws" type="number" step="0.1"></td><td><input id="secondaryDiffMhwn" type="number" step="0.1"></td><td><input id="secondaryDiffMlwn" type="number" step="0.1"></td><td><input id="secondaryDiffMlws" type="number" step="0.1"></td></tr>
+							<tr><th>3</th><td><input id="secondaryHwTime3" type="time"></td><td><input id="secondaryHwOffset3" type="text" inputmode="numeric"></td><td><input id="secondaryLwTime3" type="time"></td><td><input id="secondaryLwOffset3" type="text" inputmode="numeric"></td></tr>
+							<tr><th>4</th><td><input id="secondaryHwTime4" type="time"></td><td><input id="secondaryHwOffset4" type="text" inputmode="numeric"></td><td><input id="secondaryLwTime4" type="time"></td><td><input id="secondaryLwOffset4" type="text" inputmode="numeric"></td></tr>
 						</tbody>
 					</table></div>
-					<label>Correction notes <textarea id="secondaryPortNotes" rows="3" placeholder="Source, year, page and assumptions"></textarea></label>
 				</section>
 				<section id="tidalGateFields" class="secondary-port-fields" hidden>
 					<h3>Tidal-gate constants</h3>
@@ -203,13 +198,6 @@
 					<div id="hazardApplications" class="choice-grid compact"></div>
 				</fieldset>
 				<p class="safety-note">User-defined hazards supplement charts and a proper lookout. Hiding their map layer does not disable future monitoring or route rules.</p>
-			</section>
-
-			<section id="provenanceFields" class="conditional-section provenance" hidden>
-				<h3>Sources and review</h3>
-				<strong id="provenanceStatus"></strong>
-				<p id="provenanceWarning" class="safety-note"></p>
-				<div id="provenanceSources" class="source-links"></div>
 			</section>
 
 			<div class="drawer-section action-row">
@@ -302,6 +290,6 @@
 		<div id="status" class="status" role="status"></div>
 		<script src="./leaflet.js"></script>
 		<script src="./protomaps-leaflet.js"></script>
-		<script type="module" src="./app.js?v=0.6.14"></script>
+		<script type="module" src="./app.js?v=0.6.15"></script>
 	</body>
 </html>

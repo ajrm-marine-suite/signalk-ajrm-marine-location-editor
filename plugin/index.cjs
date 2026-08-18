@@ -47,14 +47,18 @@ const packageJson = JSON.parse(
 const bundledWestScotlandSeed = JSON.parse(
 	fs.readFileSync(path.join(__dirname, "..", "defaults", "west-scotland-locations.json"), "utf8"),
 );
-const bundledSecondaryPortSeed = JSON.parse(
-	fs.readFileSync(path.join(__dirname, "..", "defaults", "secondary-port-locations.json"), "utf8"),
-);
+const bundledSecondaryPortSeeds = [
+	"secondary-port-locations.json",
+	"secondary-port-locations-ullapool.json",
+	"secondary-port-locations-stornoway.json",
+].map((filename) => JSON.parse(
+	fs.readFileSync(path.join(__dirname, "..", "defaults", filename), "utf8"),
+));
 const bundledGateSeed = JSON.parse(
 	fs.readFileSync(path.join(__dirname, "..", "defaults", "tidal-gate-locations.json"), "utf8"),
 );
 const bundledLocationSeed = mergeGateConstantsSeed(
-	mergeSecondaryPortSeed(bundledWestScotlandSeed, bundledSecondaryPortSeed),
+	bundledSecondaryPortSeeds.reduce(mergeSecondaryPortSeed, bundledWestScotlandSeed),
 	bundledGateSeed,
 );
 

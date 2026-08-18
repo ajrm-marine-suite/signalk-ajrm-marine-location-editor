@@ -46,21 +46,28 @@ function correction(entry, defaults) {
 		timeOffsetPeriodMinutes: Number(entry.timeOffsetPeriodMinutes || defaults.timeOffsetPeriodMinutes || REEDS_PERIOD_MINUTES),
 		legacyId: entry.legacyId,
 		standardPortName: entry.standardPortName || defaults.standardPortName,
-		highWaterTimeOffsets: points(entry.hwReferenceTimesMinutes || DEFAULT_REFERENCE_TIMES, entry.hw),
-		lowWaterTimeOffsets: points(entry.lwReferenceTimesMinutes || DEFAULT_REFERENCE_TIMES, entry.lw),
+		highWaterTimeOffsets: points(entry.hwReferenceTimesMinutes || defaults.hwReferenceTimesMinutes || DEFAULT_REFERENCE_TIMES, entry.hw),
+		lowWaterTimeOffsets: points(entry.lwReferenceTimesMinutes || defaults.lwReferenceTimesMinutes || DEFAULT_REFERENCE_TIMES, entry.lw),
 		heightDifferencesM: keyed(LEVELS, entry.heights),
 		notes: entry.notes,
 	};
 }
 
 function incompleteSourceData(entry, defaults) {
+	const knownHeightDifferencesM = Array.isArray(entry.partialHeights)
+		? Object.fromEntries(LEVELS.map((key, index) => {
+			const value = entry.partialHeights[index];
+			return [key, value !== null && value !== undefined && Number.isFinite(Number(value)) ? Number(value) : null];
+		}))
+		: undefined;
 	return {
 		contract: "ajrm-secondary-port-source-data-v1",
 		status: "incomplete",
 		timeOffsetPeriodMinutes: Number(entry.timeOffsetPeriodMinutes || defaults.timeOffsetPeriodMinutes || REEDS_PERIOD_MINUTES),
-		highWaterTimeOffsets: points(entry.hwReferenceTimesMinutes || DEFAULT_REFERENCE_TIMES, entry.hw),
-		lowWaterTimeOffsets: points(entry.lwReferenceTimesMinutes || DEFAULT_REFERENCE_TIMES, entry.lw),
+		highWaterTimeOffsets: points(entry.hwReferenceTimesMinutes || defaults.hwReferenceTimesMinutes || DEFAULT_REFERENCE_TIMES, entry.hw),
+		lowWaterTimeOffsets: points(entry.lwReferenceTimesMinutes || defaults.lwReferenceTimesMinutes || DEFAULT_REFERENCE_TIMES, entry.lw),
 		meanRangeM: Number.isFinite(Number(entry.meanRangeM)) ? Number(entry.meanRangeM) : null,
+		...(knownHeightDifferencesM ? { knownHeightDifferencesM } : {}),
 		missing: ["heightDifferencesM"],
 		notes: entry.notes,
 	};
@@ -75,7 +82,7 @@ function correctionProvenance(entry, existing, defaults) {
 		retrievedAt: "2026-08-18T00:00:00.000Z",
 	};
 	const sources = [...(existing?.sources || [])];
-	for (const candidate of [entry.dataSource || defaults.dataSource || source, entry.positionSource]) {
+	for (const candidate of [entry.dataSource || defaults.dataSource || source, entry.positionSource || defaults.positionDataSource]) {
 		if (candidate && !sources.some((value) => value.sourceId === candidate.sourceId)) sources.push(candidate);
 	}
 	return {

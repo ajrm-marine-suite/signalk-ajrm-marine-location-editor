@@ -1,5 +1,9 @@
 # AJRM Marine Location Editor
 
+Version `0.6.21` adds 33 complete Ullapool and Stornoway secondary ports from
+the supplied Reeds tables. Soay (Camus nan Gall) is retained as an incomplete
+record because its MLWN and MLWS height differences are printed as ND.
+
 Version `0.6.20` corrects Port Ellen from the supplied Reeds table and adds the
 other Oban secondary ports shown on that page. Machrihanish is retained as an
 incomplete secondary-port record because the page supplies times and mean
@@ -124,10 +128,9 @@ the almanac's printed HW and LW reference times, their time differences, the
 four height differences and source notes. Do not copy the parent's mean levels:
 they belong to the parent standard-port record. Marine Planning reads fully
 corrected events from Location Editor; it no longer maintains or applies a
-second copy. A parent may itself be a secondary port where an almanac uses
-sub-ports; the resolver follows that chain and rejects missing or cyclic
-relationships. Almanac clock times are stored as explicit UT minute-of-day
-values and resolved events remain canonical UTC instants.
+second copy. The parent must be a standard port; the editor and backend reject
+a secondary-port parent. Almanac clock times are stored as explicit UT
+minute-of-day values and resolved events remain canonical UTC instants.
 
 The calculation follows the structure of the published secondary-port table:
 
@@ -147,7 +150,8 @@ The calculation deliberately keeps time and height interpolation independent.
 The bundled migration includes Tobermory, Cuan Sound, Port Ellen, Scalasaig,
 Glengarrisdale Bay, Craighouse, Rubha a’ Mhail, Ardnave Point, Orsay Island,
 Bruichladdich, Port Askaig, Gigha Sound, Machrihanish, Craignure, Loch Melfort
-and Seil Sound. Apart from positions explicitly
+and Seil Sound, together with the supplied Ullapool and Stornoway secondary
+port tables. Apart from positions explicitly
 printed in a supplied source, their planning positions and migrated constants
 must be checked against current licensed sources.
 

@@ -1,0 +1,39 @@
+{
+  "schema": "org.ajrm.marine.secondary-port-seed/v1",
+  "standardPortId": "24c0305b-8e6a-4ed7-98a1-809b9bab0334",
+  "standardPortName": "Ullapool",
+  "hwReferenceTimesMinutes": [0, 360],
+  "lwReferenceTimesMinutes": [180, 540],
+  "dataSource": {
+    "provider": "Reeds Nautical Almanac 2026 (user-supplied page images)",
+    "sourceId": "reeds-2026:ullapool-secondary-ports",
+    "license": "licensed user reference",
+    "url": "https://www.bloomsbury.com/uk/reeds-nautical-almanac-2026-9781399424950/",
+    "retrievedAt": "2026-08-18T00:00:00.000Z"
+  },
+  "positionDataSource": {
+    "provider": "OpenStreetMap and public Scottish gazetteer lookup",
+    "sourceId": "position-review:ullapool-secondary-ports",
+    "license": "mixed public reference; verify on chart",
+    "url": "https://www.openstreetmap.org/copyright",
+    "retrievedAt": "2026-08-18T00:00:00.000Z"
+  },
+  "locations": [
+    { "id": "f61940aa-fb71-4232-b345-ee4ce1178e43", "name": "Plockton", "legacyId": "plockton", "coordinates": [-5.6518941, 57.3380810], "hw": [5, -25], "lw": [-5, -10], "heights": [0.5, 0.5, 0.5, 0.2], "notes": "User-supplied Reeds table: corrections relative to Ullapool." },
+    { "id": "d8398a12-ada8-4c05-b2f6-30082a9b5743", "name": "Portree Harbour", "legacyId": "portree", "coordinates": [-6.1901141, 57.4113636], "hw": [-25, -25], "lw": [-25, -25], "heights": [0.1, -0.2, -0.2, 0.0], "notes": "User-supplied Reeds table: Portree (Skye), corrections relative to Ullapool." },
+    { "id": "9d44165c-d37f-4214-93e1-b665574344c3", "name": "Shieldaig", "legacyId": "shieldaig", "coordinates": [-5.6495898, 57.5234507], "hw": [-20, -20], "lw": [-15, -15], "heights": [0.4, 0.3, 0.1, 0.0], "notes": "User-supplied Reeds table: Shieldaig (Loch Torridon), corrections relative to Ullapool." },
+    { "id": "ff57f0fb-e423-45f2-80f7-a57dfba3e9dd", "name": "Loch a’ Bhraige", "legacyId": "loch-a-bhraige-rona", "coordinates": [-5.962872, 57.579438], "hw": [-20, 0], "lw": [-10, 0], "heights": [-0.1, -0.1, -0.1, -0.2], "notes": "User-supplied Reeds table: Loch a’ Bhraige (Rona), corrections relative to Ullapool." },
+    { "id": "d0fd245d-a636-4fc5-b32a-69973b7b1216", "name": "Loch Snizort (Uig Bay)", "legacyId": "loch-snizort-uig-bay", "coordinates": [-6.3636237, 57.5915181], "hw": [-45, -20], "lw": [-5, -25], "heights": [0.1, -0.4, -0.2, 0.0], "notes": "User-supplied Reeds table: corrections relative to Ullapool." },
+    { "id": "deebd206-b3e2-4f63-b7e7-d56a227f9a70", "name": "Loch Dunvegan", "legacyId": "loch-dunvegan", "coordinates": [-6.6573980, 57.4871013], "hw": [-65, -30], "lw": [-20, -40], "heights": [0.0, -0.1, 0.0, 0.0], "notes": "User-supplied Reeds table: corrections relative to Ullapool." },
+    { "id": "a263f943-80b3-4bee-bbc5-5c49f3ee76ed", "name": "Loch Harport", "legacyId": "loch-harport", "coordinates": [-6.4077060, 57.3380064], "hw": [-75, -35], "lw": [-20, -60], "heights": [-0.1, -0.1, 0.0, 0.1], "notes": "User-supplied Reeds table: corrections relative to Ullapool." },
+    { "id": "58e0499b-5c60-4e8b-8054-0e51843e363a", "name": "Soay (Camus nan Gall)", "legacyId": "soay-camus-nan-gall", "coordinates": [-6.216405, 57.153047], "hw": [-55, -25], "lw": [-25, -45], "partialHeights": [-0.4, -0.2, null, null], "notes": "User-supplied Reeds table gives MHWS/MHWN differences but records MLWN and MLWS as ND. Retained as incomplete and excluded from tide calculation." },
+    { "id": "dcf945cf-cc97-4f30-8a51-e80930bfce12", "name": "Loch Laxford", "legacyId": "loch-laxford", "coordinates": [-5.0730688, 58.3980350], "hw": [15, 15], "lw": [5, 5], "heights": [-0.3, -0.4, -0.2, 0.0], "notes": "User-supplied Reeds table: corrections relative to Ullapool." },
+    { "id": "9c103f21-bb09-49d5-8485-2e9204e65bc8", "name": "Badcall Bay", "legacyId": "badcall-bay", "coordinates": [-5.1431137, 58.3199467], "hw": [5, 5], "lw": [5, 5], "heights": [-0.7, -0.5, -0.5, 0.2], "notes": "User-supplied Reeds table: corrections relative to Ullapool." },
+    { "id": "8f65cb00-2a01-4048-8b65-9ff6195015ae", "name": "Loch Nedd", "legacyId": "loch-nedd", "coordinates": [-5.1728585, 58.2360501], "hw": [0, 0], "lw": [0, 0], "heights": [-0.3, -0.2, -0.2, 0.0], "notes": "User-supplied Reeds table: corrections relative to Ullapool." },
+    { "id": "3f47e2bb-faf3-4c1c-bbc4-051f73834128", "name": "Loch Inver", "legacyId": "loch-inver", "coordinates": [-5.2405774, 58.1523908], "hw": [-5, -5], "lw": [-5, -5], "heights": [-0.2, 0.0, 0.0, 0.1], "notes": "User-supplied Reeds table: corrections relative to Ullapool." },
+    { "id": "77cd79ab-ffa1-4753-903f-711557c55af5", "name": "Summer Isles (Tanera Mòr)", "legacyId": "summer-isles-tanera-mor", "coordinates": [-5.408881, 58.009461], "hw": [-5, -5], "lw": [-10, -10], "heights": [-0.1, 0.1, 0.0, 0.1], "notes": "User-supplied Reeds table: corrections relative to Ullapool." },
+    { "id": "f3d5c25c-c044-426e-a08f-ce17a8343493", "name": "Loch Ewe (Mellon Charles)", "legacyId": "loch-ewe-mellon-charles", "coordinates": [-5.6318252, 57.8591539], "hw": [-5, -10], "lw": [-5, -5], "heights": [-0.1, -0.1, -0.1, 0.1], "notes": "User-supplied Reeds table: coordinates 57°51′N 05°38′W; corrections relative to Ullapool." },
+    { "id": "ca205cec-6a47-497b-aa44-2637b9a6be0d", "name": "Gairloch Harbour", "legacyId": "loch-gairloch", "coordinates": [-5.6829972, 57.7110556], "hw": [-12, -11], "lw": [-11, -11], "heights": [-0.2, 0.1, -0.2, 0.2], "notes": "User-supplied Reeds table: Loch Gairloch, corrections relative to Ullapool." },
+    { "id": "21d80c4d-c95d-44cc-b451-4df506891a52", "name": "Loch Bervie", "legacyId": "loch-bervie", "coordinates": [-5.05174, 58.45687], "hw": [17, 20], "lw": [15, 15], "heights": [-0.4, -0.2, -0.1, 0.1], "notes": "User-supplied Reeds table: corrections relative to Ullapool." }
+  ]
+}

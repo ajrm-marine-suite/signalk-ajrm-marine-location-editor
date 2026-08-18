@@ -101,6 +101,9 @@ test("a fresh catalogue receives the sourced West Scotland seed without publishi
 	const lochMelfort = result.body.locations.find((location) => location.name === "Loch Melfort");
 	const seilSound = result.body.locations.find((location) => location.name === "Seil Sound");
 	const machrihanish = result.body.locations.find((location) => location.name === "Machrihanish");
+	const plockton = result.body.locations.find((location) => location.name === "Plockton");
+	const carloway = result.body.locations.find((location) => location.name === "Carloway");
+	const soay = result.body.locations.find((location) => location.name === "Soay (Camus nan Gall)");
 	assert.ok(corryvreckan?.types.includes("tidalGate"));
 	assert.equal(corryvreckan.properties.provenance.reviewStatus, "sourceChecked");
 	assert.ok(stornoway?.types.includes("tidalObservationStation"));
@@ -121,6 +124,12 @@ test("a fresh catalogue receives the sourced West Scotland seed without publishi
 	assert.ok(machrihanish.types.includes("tidalSecondaryPort"));
 	assert.equal(machrihanish.properties.tide.secondaryPortCorrections, undefined);
 	assert.equal(machrihanish.properties.tide.secondaryPortSourceData.meanRangeM, 0.5);
+	assert.equal(plockton.properties.tide.parentLocationRef, "/resources/locations/24c0305b-8e6a-4ed7-98a1-809b9bab0334");
+	assert.equal(plockton.properties.tide.secondaryPortCorrections.standardPortName, "Ullapool");
+	assert.equal(carloway.properties.tide.parentLocationRef, "/resources/locations/f31d48a1-d625-4a93-a9c2-b54fc6cad308");
+	assert.equal(carloway.properties.tide.secondaryPortCorrections.standardPortName, "Stornoway");
+	assert.equal(soay.properties.tide.secondaryPortCorrections, undefined);
+	assert.equal(soay.properties.tide.secondaryPortSourceData.status, "incomplete");
 	assert.equal(Object.keys(app.regions).length, 0);
 	await plugin.stop();
 });

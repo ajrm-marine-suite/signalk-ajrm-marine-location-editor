@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.6.21 - 2026-08-18
+
+- Add 16 Ullapool and 18 Stornoway secondary-port source records from the
+  supplied Reeds page images, with each table's printed HW/LW reference times.
+- Make 33 complete records available for prediction through their standard
+  parent and retain Soay (Camus nan Gall) as explicitly incomplete because its
+  MLWN and MLWS height differences are printed as ND.
+- Seed all three secondary-port tables independently so their standard-port
+  links and reference columns cannot be mixed.
+
 ## 0.6.20 - 2026-08-18
 
 - Correct Port Ellen's HW and LW reference columns from the supplied Reeds

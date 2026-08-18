@@ -129,10 +129,13 @@ function validateGeometry(geometry) {
 	throw new Error("Location geometry must be Point or Polygon.");
 }
 
-function validateNumber(value, label, { minimum = -Infinity } = {}) {
+function validateNumber(value, label, { minimum = -Infinity, maximum = Infinity } = {}) {
 	if (value == null || value === "") return;
-	if (!Number.isFinite(Number(value)) || Number(value) < minimum) {
-		throw new Error(`${label} must be a number${Number.isFinite(minimum) ? ` at least ${minimum}` : ""}.`);
+	if (!Number.isFinite(Number(value)) || Number(value) < minimum || Number(value) > maximum) {
+		const range = Number.isFinite(minimum) && Number.isFinite(maximum)
+			? ` between ${minimum} and ${maximum}`
+			: Number.isFinite(minimum) ? ` at least ${minimum}` : Number.isFinite(maximum) ? ` at most ${maximum}` : "";
+		throw new Error(`${label} must be a number${range}.`);
 	}
 }
 
@@ -194,6 +197,14 @@ function validateLocation(location) {
 		assertText(properties.tide.stationName, "Tide station name", { max: 200 });
 		assertReference(properties.tide.parentLocationRef, "Parent tidal location reference");
 		assertText(properties.tide.datum, "Tide datum", { max: 100 });
+		if (properties.tide.referenceLevels != null) {
+			if (typeof properties.tide.referenceLevels !== "object" || Array.isArray(properties.tide.referenceLevels)) {
+				throw new Error("Tide reference levels must be an object.");
+			}
+			for (const [key, label] of [["mhws", "MHWS"], ["mhwn", "MHWN"], ["mlwn", "MLWN"], ["mlws", "MLWS"]]) {
+				validateNumber(properties.tide.referenceLevels[key], `${label} reference level`, { minimum: -100, maximum: 100 });
+			}
+		}
 	}
 	if (properties.anchorage != null) {
 		if (typeof properties.anchorage !== "object" || Array.isArray(properties.anchorage)) {

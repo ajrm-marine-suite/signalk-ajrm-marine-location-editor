@@ -44,7 +44,7 @@ const elements = Object.fromEntries([
 	"geometryType", "setPoint", "openGeometry", "pointEditor", "polygonEditor", "point",
 	"points", "profileRegionField", "publishAsHarbourRegion", "tideLocationRef", "tideRegionRef", "anchorageFields", "seabed", "chartedDepthM",
 	"detectionRadiusM", "trustedAutomation", "anchorageNotes", "tideFields", "tideProviderId", "tideProvider", "tideStationId", "tideStationName",
-	"parentLocationRef", "tideDatum", "hazardFields", "hazardSeverity", "hazardReason",
+	"parentLocationRef", "tideDatum", "tideMhws", "tideMhwn", "tideMlwn", "tideMlws", "hazardFields", "hazardSeverity", "hazardReason",
 	"hazardClearanceM", "hazardApplications", "saveLocation", "undoLocation", "deleteLocation", "showHistory",
 	"locationId", "locationListTitle", "locationList", "historyDialog", "historySummary",
 	"historyList", "closeHistory", "radiusNm", "decreaseRadius", "increaseRadius",
@@ -276,7 +276,7 @@ function resetEditor() {
 	const center = map?.getCenter() || { lat: 55.8, lng: -5.2 };
 	elements.point.value = `${center.lat.toFixed(6)}, ${(center.lng ?? center.lon).toFixed(6)}`;
 	elements.points.value = "";
-	for (const id of ["seabed", "chartedDepthM", "detectionRadiusM", "anchorageNotes", "tideProviderId", "tideProvider", "tideStationId", "tideStationName", "tideDatum", "hazardReason", "hazardClearanceM"]) elements[id].value = "";
+	for (const id of ["seabed", "chartedDepthM", "detectionRadiusM", "anchorageNotes", "tideProviderId", "tideProvider", "tideStationId", "tideStationName", "tideDatum", "tideMhws", "tideMhwn", "tideMlwn", "tideMlws", "hazardReason", "hazardClearanceM"]) elements[id].value = "";
 	elements.trustedAutomation.checked = false;
 	elements.hazardSeverity.value = "advisory";
 	elements.publishAsHarbourRegion.checked = false;
@@ -319,6 +319,10 @@ function selectLocation(id, fit = false, revealEditor = false) {
 	elements.tideStationId.value = properties.tide?.stationId || "";
 	elements.tideStationName.value = properties.tide?.stationName || "";
 	elements.tideDatum.value = properties.tide?.datum || "";
+	elements.tideMhws.value = properties.tide?.referenceLevels?.mhws ?? "";
+	elements.tideMhwn.value = properties.tide?.referenceLevels?.mhwn ?? "";
+	elements.tideMlwn.value = properties.tide?.referenceLevels?.mlwn ?? "";
+	elements.tideMlws.value = properties.tide?.referenceLevels?.mlws ?? "";
 	elements.hazardSeverity.value = properties.hazard?.severity || "advisory";
 	elements.hazardReason.value = properties.hazard?.reason || "";
 	elements.hazardClearanceM.value = properties.hazard?.clearanceM ?? "";
@@ -360,6 +364,10 @@ function buildLocation() {
 		};
 	}
 	if (types.some((type) => tideTypes.has(type))) {
+		const referenceLevels = Object.fromEntries([
+			["mhws", elements.tideMhws], ["mhwn", elements.tideMhwn],
+			["mlwn", elements.tideMlwn], ["mlws", elements.tideMlws],
+		].filter(([, input]) => input.value !== "").map(([key, input]) => [key, Number(input.value)]));
 		properties.tide = {
 			providerId: elements.tideProviderId.value || undefined,
 			provider: elements.tideProvider.value.trim() || undefined,
@@ -367,6 +375,7 @@ function buildLocation() {
 			stationName: elements.tideStationName.value.trim() || undefined,
 			parentLocationRef: elements.parentLocationRef.value ? `${resourcePrefix}${elements.parentLocationRef.value}` : undefined,
 			datum: elements.tideDatum.value.trim() || undefined,
+			referenceLevels: Object.keys(referenceLevels).length ? referenceLevels : undefined,
 		};
 	}
 	if (types.some((type) => hazardTypes.has(type))) {

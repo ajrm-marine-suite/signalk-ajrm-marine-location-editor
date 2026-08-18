@@ -54,6 +54,17 @@ test("validates source provenance and tidal observation stations", () => {
 	}), /review status/);
 });
 
+test("validates optional tidal reference levels", () => {
+	const port = location({
+		types: ["tidalStandardPort"],
+		properties: { tide: { referenceLevels: { mhws: 4, mhwn: 2.9, mlwn: 1.8, mlws: 0.7 } } },
+	});
+	assert.equal(port.properties.tide.referenceLevels.mlwn, 1.8);
+	assert.throws(() => location({
+		types: ["tidalStandardPort"], properties: { tide: { referenceLevels: { mhws: 101 } } },
+	}), /MHWS reference level must be a number between -100 and 100/);
+});
+
 test("catalogues retain version metadata and create initial immutable history", () => {
 	const value = location();
 	const catalog = normalizeCatalog({ schema: CATALOG_SCHEMA, schemaVersion: 1, locations: [value] });

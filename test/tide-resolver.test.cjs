@@ -15,7 +15,7 @@ function port() {
 	return normalizeLocation({
 		id: crypto.randomUUID(), name: "Oban", types: ["tidalStandardPort"],
 		feature: { type: "Feature", properties: {}, geometry: { type: "Point", coordinates: [-5.47, 56.41] } },
-		properties: { tide: { providerId: "ukhoTidalEvents", stationId: "0372", stationName: "Oban", datum: "Chart Datum" } },
+		properties: { tide: { providerId: "ukhoTidalEvents", stationId: "0372", stationName: "Oban", datum: "Chart Datum", referenceLevels: { mhws: 4, mhwn: 2.9, mlwn: 1.8, mlws: 0.7 } } },
 	});
 }
 
@@ -38,6 +38,7 @@ test("manual pin resolves a fresh projection and persists across resolver instan
 	assert.equal(result.heightNowM, 3);
 	assert.equal(result.selection.reason, "manualPinnedOverride");
 	assert.equal(result.datum, "Chart Datum");
+	assert.deepEqual(result.referenceLevels, { mhws: 4, mhwn: 2.9, mlwn: 1.8, mlws: 0.7 });
 
 	resolver = createTideResolver({ stateFile, listLocations: async () => [station], provider, staleAfterHours: 24, expiresAfterHours: 72 });
 	result = await resolver.resolve({ now: "2026-08-18T03:00:00Z" });

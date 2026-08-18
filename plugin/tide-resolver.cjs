@@ -35,6 +35,15 @@ function eventSummary(event) {
 	return event ? { at: event.at, heightM: event.heightM } : null;
 }
 
+function referenceLevelSummary(location) {
+	const source = location?.properties?.tide?.referenceLevels;
+	if (!source || typeof source !== "object") return null;
+	const result = Object.fromEntries(["mhws", "mhwn", "mlwn", "mlws"]
+		.filter((key) => Number.isFinite(Number(source[key])))
+		.map((key) => [key, Number(source[key])]));
+	return Object.keys(result).length ? result : null;
+}
+
 function freshness(fetchedAt, now, options) {
 	const ageSeconds = Math.max(0, (new Date(now).getTime() - Date.parse(fetchedAt)) / 1000);
 	const staleAfterSeconds = options.staleAfterHours * 3600;
@@ -69,6 +78,7 @@ function emptyProjection(selection, error, now) {
 		nextLowWater: null,
 		trend: "unknown",
 		datum: selection.port?.properties?.tide?.datum || null,
+		referenceLevels: referenceLevelSummary(selection.port),
 		station: null,
 		source: null,
 		freshness: null,

@@ -1,5 +1,9 @@
 # AJRM Marine Location Editor
 
+Version `0.6.6` stores optional MHWS, MHWN, MLWN and MLWS reference levels
+with each tidal prediction port and publishes them through the shared Tide
+Resolver. Existing unedited bundled ports are upgraded automatically.
+
 Version `0.6.5` treats UKHO's timezone-free Tidal API predictions explicitly
 as GMT before publishing UTC instants to Display and Planning. Older durable
 tide caches are invalidated once because their summer timestamps may be one

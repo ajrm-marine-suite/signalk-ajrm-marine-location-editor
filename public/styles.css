@@ -553,6 +553,12 @@ legend {
 	grid-template-columns: 1fr 1fr;
 }
 
+.field-grid {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 10px;
+}
+
 .choice {
 	display: flex;
 	align-items: start;

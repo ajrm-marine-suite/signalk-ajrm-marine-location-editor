@@ -6,7 +6,7 @@
 		<title>AJRM Marine Location Editor</title>
 		<link rel="stylesheet" href="./leaflet.css">
 		<link rel="stylesheet" href="./ajrm-map-core.css?v=0.7.5">
-		<link rel="stylesheet" href="./styles.css?v=0.4.0">
+		<link rel="stylesheet" href="./styles.css?v=0.4.1">
 	</head>
 	<body>
 		<div id="map" class="map" aria-label="Marine location chart"></div>
@@ -143,6 +143,12 @@
 				<label>Station name <input id="tideStationName" type="text"></label>
 				<label>Parent standard port <select id="parentLocationRef"><option value="">None</option></select></label>
 				<label>Datum <input id="tideDatum" type="text" placeholder="Chart Datum"></label>
+				<div class="field-grid">
+					<label>MHWS (m) <input id="tideMhws" type="number" step="0.1"></label>
+					<label>MHWN (m) <input id="tideMhwn" type="number" step="0.1"></label>
+					<label>MLWN (m) <input id="tideMlwn" type="number" step="0.1"></label>
+					<label>MLWS (m) <input id="tideMlws" type="number" step="0.1"></label>
+				</div>
 			</section>
 
 			<section id="hazardFields" class="conditional-section" hidden>
@@ -250,6 +256,6 @@
 		<div id="status" class="status" role="status"></div>
 		<script src="./leaflet.js"></script>
 		<script src="./protomaps-leaflet.js"></script>
-		<script type="module" src="./app.js?v=0.4.0"></script>
+		<script type="module" src="./app.js?v=0.4.1"></script>
 	</body>
 </html>

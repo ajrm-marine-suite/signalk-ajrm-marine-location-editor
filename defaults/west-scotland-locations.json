@@ -70,7 +70,13 @@
           "providerId": "ukhoTidalEvents",
           "stationId": "0372",
           "stationName": "Oban",
-          "datum": "UKHO station datum"
+          "datum": "UKHO station datum",
+          "referenceLevels": {
+            "mhws": 4.0,
+            "mhwn": 2.9,
+            "mlwn": 1.8,
+            "mlws": 0.7
+          }
         },
         "provenance": {
           "reviewStatus": "imported",

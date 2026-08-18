@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.6.6 - 2026-08-18
+
+- Store editable MHWS, MHWN, MLWN and MLWS station reference levels with tidal
+  locations and validate them as explicit numeric data.
+- Publish available station reference levels through the shared Tide Resolver.
+- Upgrade the existing unedited bundled Oban station with its migrated
+  reference levels, without overwriting user-edited locations.
+
 ## 0.6.5 - 2026-08-18
 
 - Interpret timezone-free UKHO Tidal API event times as documented GMT rather

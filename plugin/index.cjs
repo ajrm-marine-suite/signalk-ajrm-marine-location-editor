@@ -692,17 +692,34 @@ module.exports = function ajrmMarineLocationEditor(app) {
 			const seed = normalizeLocation(value);
 			const sourceMatch = locationSourceKeys(seed).map((key) => bySource.get(key)).find(Boolean);
 			if (sourceMatch) {
+				await enrichUneditedBundledTideReferenceLevels(sourceMatch, seed);
 				await enrichUneditedMigration(sourceMatch, seed);
 				continue;
 			}
 			const nearbyMatch = current.find((location) => locationsDescribeSamePlace(location, seed));
 			if (nearbyMatch) {
+				await enrichUneditedBundledTideReferenceLevels(nearbyMatch, seed);
 				await enrichUneditedMigration(nearbyMatch, seed);
 				continue;
 			}
 			candidates.push(seed);
 		}
 		return store.addMissing(candidates, { editedBy: "Bundled West Scotland open-data seed" });
+	}
+
+	async function enrichUneditedBundledTideReferenceLevels(current, seed) {
+		const levels = seed.properties?.tide?.referenceLevels;
+		if (!levels || current.properties?.tide?.referenceLevels || current.revision !== 1) return;
+		await store.set(current.id, {
+			...current,
+			properties: {
+				...current.properties,
+				tide: { ...current.properties?.tide, referenceLevels: structuredClone(levels) },
+			},
+		}, {
+			expectedRevision: current.revision,
+			editedBy: "Bundled tidal reference-level upgrade",
+		});
 	}
 
 	function locationSourceKeys(location) {

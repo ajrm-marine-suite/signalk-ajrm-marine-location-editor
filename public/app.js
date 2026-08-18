@@ -4,9 +4,9 @@
  */
 
 import * as MapCore from "./ajrm-map-core.mjs?v=0.7.5";
-import { displayTypesForWorkspace, filterLocations, groupLocations } from "./location-browser.mjs?v=0.4.0";
-import { geometryNudgeNm, holdAcceleration } from "./geometry-motion.mjs?v=0.4.0";
-import { bindPressRepeat } from "./press-repeat.mjs?v=0.4.0";
+import { displayTypesForWorkspace, filterLocations, groupLocations } from "./location-browser.mjs?v=0.5.0";
+import { geometryNudgeNm, holdAcceleration } from "./geometry-motion.mjs?v=0.5.0";
+import { bindPressRepeat } from "./press-repeat.mjs?v=0.5.0";
 
 const apiBase = "/plugins/signalk-ajrm-marine-location-editor";
 const resourcePrefix = "/resources/locations/";
@@ -43,7 +43,7 @@ const elements = Object.fromEntries([
 	"hideAllTypes", "mapAreaOnly", "locationName", "description", "typeChoices",
 	"geometryType", "setPoint", "openGeometry", "pointEditor", "polygonEditor", "point",
 	"points", "profileRegionField", "publishAsHarbourRegion", "tideLocationRef", "tideRegionRef", "anchorageFields", "seabed", "chartedDepthM",
-	"anchorageNotes", "tideFields", "tideProviderId", "tideProvider", "tideStationId", "tideStationName",
+	"detectionRadiusM", "trustedAutomation", "anchorageNotes", "tideFields", "tideProviderId", "tideProvider", "tideStationId", "tideStationName",
 	"parentLocationRef", "tideDatum", "hazardFields", "hazardSeverity", "hazardReason",
 	"hazardClearanceM", "hazardApplications", "saveLocation", "undoLocation", "deleteLocation", "showHistory",
 	"locationId", "locationListTitle", "locationList", "historyDialog", "historySummary",
@@ -276,7 +276,8 @@ function resetEditor() {
 	const center = map?.getCenter() || { lat: 55.8, lng: -5.2 };
 	elements.point.value = `${center.lat.toFixed(6)}, ${(center.lng ?? center.lon).toFixed(6)}`;
 	elements.points.value = "";
-	for (const id of ["seabed", "chartedDepthM", "anchorageNotes", "tideProviderId", "tideProvider", "tideStationId", "tideStationName", "tideDatum", "hazardReason", "hazardClearanceM"]) elements[id].value = "";
+	for (const id of ["seabed", "chartedDepthM", "detectionRadiusM", "anchorageNotes", "tideProviderId", "tideProvider", "tideStationId", "tideStationName", "tideDatum", "hazardReason", "hazardClearanceM"]) elements[id].value = "";
+	elements.trustedAutomation.checked = false;
 	elements.hazardSeverity.value = "advisory";
 	elements.publishAsHarbourRegion.checked = false;
 	elements.hazardApplications.querySelectorAll("input").forEach((input) => { input.checked = false; });
@@ -310,6 +311,8 @@ function selectLocation(id, fit = false, revealEditor = false) {
 	elements.publishAsHarbourRegion.checked = properties.publishAsHarbourRegion === true;
 	elements.seabed.value = properties.anchorage?.seabed || "";
 	elements.chartedDepthM.value = properties.anchorage?.chartedDepthM ?? "";
+	elements.detectionRadiusM.value = properties.anchorage?.detectionRadiusM ?? "";
+	elements.trustedAutomation.checked = properties.anchorage?.trustedAutomation === true;
 	elements.anchorageNotes.value = properties.anchorage?.notes || "";
 	elements.tideProviderId.value = properties.tide?.providerId || "";
 	elements.tideProvider.value = properties.tide?.provider || "";
@@ -351,6 +354,8 @@ function buildLocation() {
 		properties.anchorage = {
 			seabed: elements.seabed.value.trim() || undefined,
 			chartedDepthM: elements.chartedDepthM.value === "" ? undefined : Number(elements.chartedDepthM.value),
+			detectionRadiusM: elements.detectionRadiusM.value === "" ? undefined : Number(elements.detectionRadiusM.value),
+			trustedAutomation: elements.trustedAutomation.checked || undefined,
 			notes: elements.anchorageNotes.value.trim() || undefined,
 		};
 	}

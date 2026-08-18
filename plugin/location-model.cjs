@@ -202,6 +202,10 @@ function validateLocation(location) {
 		assertText(properties.anchorage.seabed, "Seabed", { max: 100 });
 		assertText(properties.anchorage.notes, "Anchorage notes", { max: 4000 });
 		validateNumber(properties.anchorage.chartedDepthM, "Charted depth", { minimum: 0 });
+		validateNumber(properties.anchorage.detectionRadiusM, "Anchoring detection radius", { minimum: 10 });
+		if (properties.anchorage.trustedAutomation != null && typeof properties.anchorage.trustedAutomation !== "boolean") {
+			throw new Error("Trusted anchoring automation must be true or false.");
+		}
 	}
 	if (properties.hazard != null) {
 		if (typeof properties.hazard !== "object" || Array.isArray(properties.hazard)) {

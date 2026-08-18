@@ -21,10 +21,12 @@ const { createLocationStore } = require("./location-store.cjs");
 const { prepareLocationImport } = require("./harbour-editor-import.cjs");
 const { createUkhoTideProvider } = require("./tide-provider.cjs");
 const { createTideResolver } = require("./tide-resolver.cjs");
+const { createAnchoringAssistant } = require("./anchoring-assistance.cjs");
 
 const STATUS_CONTRACT = "ajrm-marine-location-editor-status-v1";
 const STATUS_PATH = "plugins.ajrmMarineLocationEditor";
 const TIDE_PATH = "plugins.ajrmMarineLocations.tide";
+const ANCHORING_PATH = "plugins.ajrmMarineLocations.anchoring";
 const MAX_IMPORT_LOCATIONS = 10000;
 
 const packageJson = JSON.parse(
@@ -76,14 +78,18 @@ module.exports = function ajrmMarineLocationEditor(app) {
 	const pendingOperations = new Set();
 	let unsubscribes = [];
 	let tideTimer = null;
+	let anchoringTimer = null;
 	let tideDebounce = null;
 	let tideResolution = null;
+	let anchoringEvaluation = Promise.resolve();
 	let latestPosition = null;
+	let latestSog = null;
 	let latestTide = null;
 	let options = {};
 	const dataDirectory = app.getDataDirPath?.() || path.join(process.cwd(), ".ajrm-location-editor");
 	const store = createLocationStore(path.join(dataDirectory, "locations.json"));
 	let tideResolver = null;
+	let anchoringAssistant = null;
 	let lastStatus = {
 		contract: STATUS_CONTRACT,
 		contractVersion: 1,
@@ -113,6 +119,11 @@ module.exports = function ajrmMarineLocationEditor(app) {
 			},
 			tideRefreshHours: { type: "number", title: "Refresh tidal events after (hours)", default: 24, minimum: 1, maximum: 168 },
 			tideExpiresHours: { type: "number", title: "Reject tidal data older than (hours)", default: 72, minimum: 2, maximum: 720 },
+			anchoringAssistanceEnabled: { type: "boolean", title: "Suggest Anchored when stationary at an anchorage or mooring", default: true },
+			anchoringStationarySpeedKn: { type: "number", title: "Maximum stationary speed (knots)", default: 0.3, minimum: 0, maximum: 3 },
+			anchoringStationaryMinutes: { type: "number", title: "Stationary time before suggesting (minutes)", default: 5, minimum: 1, maximum: 60 },
+			anchoringPointRadiusM: { type: "number", title: "Default radius around point anchorages (metres)", default: 250, minimum: 10, maximum: 2000 },
+			trustedLocationAutomation: { type: "boolean", title: "Automatically select Anchored at individually trusted locations", default: false },
 		},
 	};
 	plugin.getOpenApi = () => openApi;
@@ -120,12 +131,19 @@ module.exports = function ajrmMarineLocationEditor(app) {
 	plugin.start = (configured = {}) => {
 		if (running) return;
 		running = true;
+		const configuredStationarySpeedKn = Number(configured.anchoringStationarySpeedKn);
 		options = {
 			tideResolverEnabled: configured.tideResolverEnabled !== false,
 			ukhoApiKey: configured.ukhoApiKey || process.env.UKHO_API_KEY || "",
 			ukhoSubscriptionTier: configured.ukhoSubscriptionTier || "discovery",
 			tideRefreshHours: Number(configured.tideRefreshHours) || 24,
 			tideExpiresHours: Number(configured.tideExpiresHours) || 72,
+			anchoringAssistanceEnabled: configured.anchoringAssistanceEnabled !== false,
+			anchoringStationarySpeedKn: Number.isFinite(configuredStationarySpeedKn) && configuredStationarySpeedKn >= 0
+				? configuredStationarySpeedKn : 0.3,
+			anchoringStationaryMinutes: Number(configured.anchoringStationaryMinutes) || 5,
+			anchoringPointRadiusM: Number(configured.anchoringPointRadiusM) || 250,
+			trustedLocationAutomation: configured.trustedLocationAutomation === true,
 		};
 		const tideProvider = createUkhoTideProvider({
 			apiKey: options.ukhoApiKey,
@@ -139,6 +157,18 @@ module.exports = function ajrmMarineLocationEditor(app) {
 			provider: tideProvider,
 			staleAfterHours: options.tideRefreshHours,
 			expiresAfterHours: Math.max(options.tideRefreshHours, options.tideExpiresHours),
+		});
+		anchoringAssistant = createAnchoringAssistant({
+			listLocations: () => store.list(),
+			getTrafficApi: () => app.ajrmMarineTrafficApi || globalThis[Symbol.for("ajrmMarineTrafficApi")] || null,
+			publish: publishAnchoring,
+			options: {
+				enabled: options.anchoringAssistanceEnabled,
+				stationarySpeedMps: options.anchoringStationarySpeedKn * 0.514444,
+				stationarySeconds: options.anchoringStationaryMinutes * 60,
+				pointRadiusM: options.anchoringPointRadiusM,
+				trustedLocationAutomation: options.trustedLocationAutomation,
+			},
 		});
 		app.ajrmMarineLocations = Object.freeze({
 			contract: "ajrm-marine-locations-service-v1",
@@ -164,6 +194,12 @@ module.exports = function ajrmMarineLocationEditor(app) {
 			},
 			refresh: async () => resolveTide({ force: true }),
 		});
+		app.ajrmMarineAnchoring = Object.freeze({
+			contract: "ajrm-marine-anchoring-service-v1",
+			status: () => anchoringAssistant.status(),
+			confirm: (suggestionId) => anchoringAssistant.confirm(suggestionId),
+			dismiss: (suggestionId) => anchoringAssistant.dismiss(suggestionId),
+		});
 		app.setPluginStatus(`Started v${packageJson.version}`);
 		initializationPromise = trackOperation(initializeCatalogue().then(async (result) => {
 			await tideResolver.initialize();
@@ -180,14 +216,17 @@ module.exports = function ajrmMarineLocationEditor(app) {
 	plugin.stop = async () => {
 		running = false;
 		clearInterval(tideTimer);
+		clearInterval(anchoringTimer);
 		clearTimeout(tideDebounce);
 		for (const unsubscribe of unsubscribes.splice(0)) unsubscribe?.();
 		await Promise.allSettled([...pendingOperations]);
 		delete app.ajrmMarineLocations;
 		delete app.ajrmMarineTides;
+		delete app.ajrmMarineAnchoring;
 		updateStatus({ enabled: false });
 		publishStatus(null);
 		publishTide(null);
+		publishAnchoring(null);
 		delete app.ajrmMarineLocationEditorStatus;
 		app.setPluginStatus?.("Stopped");
 	};
@@ -235,6 +274,36 @@ module.exports = function ajrmMarineLocationEditor(app) {
 				res.json(await resolveTide({ force: true }));
 			} catch (error) {
 				res.status(400).json({ error: error.message });
+			}
+		}));
+
+		router.get("/anchoring/status", async (_req, res) => {
+			try {
+				assertRunning();
+				await initializationPromise;
+				res.json(anchoringAssistant.status());
+			} catch (error) {
+				res.status(400).json({ error: error.message });
+			}
+		});
+
+		router.post("/anchoring/confirm", write(async (req, res) => {
+			try {
+				assertRunning();
+				await initializationPromise;
+				res.json(await anchoringAssistant.confirm(String(req.body?.suggestionId || "")));
+			} catch (error) {
+				res.status(409).json({ error: error.message });
+			}
+		}));
+
+		router.post("/anchoring/dismiss", write(async (req, res) => {
+			try {
+				assertRunning();
+				await initializationPromise;
+				res.json(anchoringAssistant.dismiss(String(req.body?.suggestionId || "")));
+			} catch (error) {
+				res.status(409).json({ error: error.message });
 			}
 		}));
 
@@ -699,6 +768,10 @@ module.exports = function ajrmMarineLocationEditor(app) {
 				freshness: latestTide.freshness,
 				error: latestTide.error,
 			} : { enabled: options.tideResolverEnabled, valid: false },
+			anchoringAssistance: anchoringAssistant?.status?.() || {
+				enabled: options.anchoringAssistanceEnabled,
+				state: "unavailable",
+			},
 			error: "",
 			updatedAt: new Date().toISOString(),
 		};
@@ -713,12 +786,17 @@ module.exports = function ajrmMarineLocationEditor(app) {
 
 	function startTideMonitoring() {
 		latestPosition = normalizePosition(app.getSelfPath?.("navigation.position"));
+		latestSog = normalizeSpeed(app.getSelfPath?.("navigation.speedOverGround"));
 		publishTideMetadata();
+		publishAnchoringMetadata();
 		if (app.subscriptionmanager?.subscribe) {
 			app.subscriptionmanager.subscribe(
 				{
 					context: "vessels.self",
-					subscribe: [{ path: "navigation.position", policy: "instant", format: "delta" }],
+					subscribe: [
+						{ path: "navigation.position", policy: "instant", format: "delta" },
+						{ path: "navigation.speedOverGround", policy: "instant", format: "delta" },
+					],
 				},
 				unsubscribes,
 				(error) => app.error?.(`[${plugin.id}] tide position subscription error: ${error}`),
@@ -727,7 +805,10 @@ module.exports = function ajrmMarineLocationEditor(app) {
 		}
 		tideTimer = setInterval(() => scheduleTideResolution(), 5 * 60 * 1000);
 		tideTimer.unref?.();
+		anchoringTimer = setInterval(() => scheduleAnchoringEvaluation(), 30 * 1000);
+		anchoringTimer.unref?.();
 		scheduleTideResolution(0);
+		scheduleAnchoringEvaluation();
 	}
 
 	function normalizePosition(value) {
@@ -739,14 +820,33 @@ module.exports = function ajrmMarineLocationEditor(app) {
 			: null;
 	}
 
+	function normalizeSpeed(value) {
+		const speed = Number(value);
+		return Number.isFinite(speed) && speed >= 0 ? speed : null;
+	}
+
 	function handlePositionDelta(delta) {
 		for (const update of delta?.updates || []) {
 			for (const value of update.values || []) {
-				if (value.path !== "navigation.position") continue;
-				latestPosition = normalizePosition(value.value);
-				scheduleTideResolution();
+				if (value.path === "navigation.position") {
+					latestPosition = normalizePosition(value.value);
+					scheduleTideResolution();
+				}
+				if (value.path === "navigation.speedOverGround") {
+					latestSog = normalizeSpeed(value.value);
+				}
 			}
+			scheduleAnchoringEvaluation(update.timestamp);
 		}
+	}
+
+	function scheduleAnchoringEvaluation(at) {
+		if (!running || !anchoringAssistant) return;
+		const observation = { position: latestPosition, sog: latestSog, at };
+		anchoringEvaluation = anchoringEvaluation
+			.then(() => anchoringAssistant.observe(observation))
+			.catch((error) => app.error?.(`[${plugin.id}] anchoring assistance error: ${error.message}`));
+		trackOperation(anchoringEvaluation);
 	}
 
 	function scheduleTideResolution(delay = 750) {
@@ -790,6 +890,14 @@ module.exports = function ajrmMarineLocationEditor(app) {
 		});
 	}
 
+	function publishAnchoringMetadata() {
+		app.handleMessage?.(plugin.id, {
+			updates: [{ meta: [{ path: ANCHORING_PATH, value: {
+				description: "Stationary-at-location evidence, Anchored-profile suggestion and skipper/automation action provenance.",
+			} }] }],
+		});
+	}
+
 	function publishTide(value) {
 		const valid = value?.valid === true;
 		app.handleMessage?.(plugin.id, {
@@ -805,6 +913,17 @@ module.exports = function ajrmMarineLocationEditor(app) {
 					{ path: "environment.tide.heightLow", value: valid ? value.nextLowWater?.heightM ?? null : null },
 					{ path: "environment.tide.timeLow", value: valid ? value.nextLowWater?.at ?? null : null },
 				],
+			}],
+		});
+	}
+
+	function publishAnchoring(value) {
+		app.handleMessage?.(plugin.id, {
+			context: "vessels.self",
+			updates: [{
+				source: { label: plugin.id },
+				timestamp: new Date().toISOString(),
+				values: [{ path: ANCHORING_PATH, value }],
 			}],
 		});
 	}

@@ -28,6 +28,24 @@ edited and apply only when it is saved. The shared Tide Resolver now selects
 and publishes tidal predictions; automatic profile selection and active hazard
 monitoring are separate later stages.
 
+## Assisted Anchored-profile detection
+
+The backend watches position and speed over ground. When the vessel remains at
+or below the configured stationary speed for the configured time inside an
+anchorage/mooring area—or within the configured radius of a point
+anchorage/mooring—it publishes an Anchored-profile suggestion. Display asks the
+skipper to confirm or dismiss it. A dismissal remains effective until the
+vessel leaves or moves.
+
+Confirmation selects the Anchored profile but does not invent an anchor
+position. Use Display's manual **Drop Anchor** action when the anchor is
+actually dropped to retain the accurate position and depth below keel.
+
+Trusted automation is deliberately double opt-in: enable it in Signal K plugin
+settings and mark the individual anchorage/mooring as trusted in Location
+Editor. Motion never automatically leaves Anchored; only an explicit skipper
+profile action can do that.
+
 ## Shared Tide Resolver
 
 The backend exposes `app.ajrmMarineTides` and
@@ -150,7 +168,7 @@ before a large import or merge.
 
 ```bash
 cd ~/.signalk
-npm install git+https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor.git#v0.4.0 --omit=dev --no-package-lock
+npm install git+https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor.git#v0.5.0 --omit=dev --no-package-lock
 sudo systemctl restart signalk
 ```
 
@@ -179,8 +197,9 @@ replacement and permanent purging of deleted records. Edits and purge require
 Signal K read/write or administrator access.
 
 Other plugins can use `app.ajrmMarineLocations` to list, get or find nearby
-locations and `app.ajrmMarineTides` to resolve, pin or refresh the shared tide
-projection. The HTTP API and its OpenAPI document provide the same services to
+locations, `app.ajrmMarineTides` to resolve, pin or refresh the shared tide
+projection, and `app.ajrmMarineAnchoring` to inspect/confirm/dismiss assisted
+anchoring. The HTTP API and its OpenAPI document provide the same services to
 browser applications.
 
 ## Licence

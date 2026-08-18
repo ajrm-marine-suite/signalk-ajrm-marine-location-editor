@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.5.0 - 2026-08-18
+
+- Add backend stationary-at-anchorage/mooring detection and publish its full
+  evidence and action provenance at `plugins.ajrmMarineLocations.anchoring`.
+- Ask for skipper confirmation by default; allow automation only when it is
+  enabled globally and the individual location is explicitly trusted.
+- Support per-location detection radii for point anchorages and moorings.
+- Confirming or trusted automation selects Traffic's Anchored profile without
+  fabricating an anchor position. Manual **Drop Anchor** remains the accurate
+  way to record the physical anchor position and depth.
+- Never infer un-anchoring from vessel movement.
+
 ## 0.4.0 - 2026-08-18
 
 - Add the shared `ajrm-marine-tide-resolver-v1` backend contract and publish its

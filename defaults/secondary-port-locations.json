@@ -2,6 +2,13 @@
   "schema": "org.ajrm.marine.secondary-port-seed/v1",
   "standardPortId": "e0e5661f-1675-4dbb-8fa0-ea8566c62ef4",
   "standardPortName": "Oban",
+  "dataSource": {
+    "provider": "Reeds Nautical Almanac 2026 (user-supplied page image)",
+    "sourceId": "reeds-2026:oban-secondary-ports",
+    "license": "licensed user reference",
+    "url": "https://www.bloomsbury.com/uk/reeds-nautical-almanac-2026-9781399424950/",
+    "retrievedAt": "2026-08-18T00:00:00.000Z"
+  },
   "locations": [
     {
       "id": "2e0eb500-8f1f-4c5c-85ab-391b0b7945d0",
@@ -26,10 +33,186 @@
       "name": "Port Ellen",
       "legacyId": "port-ellen",
       "coordinates": [-6.1895944, 55.6272692],
+      "hwReferenceTimesMinutes": [60, 420],
+      "lwReferenceTimesMinutes": [60, 480],
       "hw": [-330, -50],
-      "lw": [0, 0],
+      "lw": [-45, -330],
       "heights": [-3.1, -2.1, -1.3, -0.4],
-      "notes": "HW Oban -0530 at springs, -0050 at neaps. LW time not supplied."
+      "notes": "User-supplied Reeds table: corrections relative to Oban at HW 0100/0700 and LW 0100/0800, repeating after 12 hours."
+    },
+    {
+      "id": "b3012c64-b3e1-4ecd-996a-100650300093",
+      "name": "Scalasaig",
+      "legacyId": "scalasaig",
+      "hwReferenceTimesMinutes": [60, 420],
+      "lwReferenceTimesMinutes": [60, 480],
+      "hw": [-20, -5],
+      "lw": [-15, 5],
+      "heights": [-0.3, -0.2, -0.3, 0.0],
+      "notes": "User-supplied Reeds table: Scalasaig (E Colonsay), corrections relative to Oban."
+    },
+    {
+      "id": "10b62f70-ef91-4ad5-ac6f-3685d7bc5e77",
+      "name": "Glengarrisdale Bay",
+      "legacyId": "glengarrisdale-bay",
+      "coordinates": [-5.7870069, 56.1122379],
+      "positionSource": {
+        "provider": "OpenStreetMap Nominatim",
+        "sourceId": "node/1507714678",
+        "license": "ODbL-1.0",
+        "url": "https://www.openstreetmap.org/node/1507714678",
+        "retrievedAt": "2026-08-18T00:00:00.000Z"
+      },
+      "hwReferenceTimesMinutes": [60, 420],
+      "lwReferenceTimesMinutes": [60, 480],
+      "hw": [-20, 0],
+      "lw": [-10, 0],
+      "heights": [-0.4, -0.2, 0.0, -0.2],
+      "notes": "User-supplied Reeds table: Glengarrisdale Bay (N Jura), corrections relative to Oban."
+    },
+    {
+      "id": "d451e2d0-2402-4d9a-98b5-bf5e27722cd3",
+      "name": "Craighouse moorings",
+      "legacyId": "craighouse",
+      "hwReferenceTimesMinutes": [60, 420],
+      "lwReferenceTimesMinutes": [60, 480],
+      "hw": [-150, -170],
+      "lw": [-110, -150],
+      "heights": [-3.0, -2.4, -1.3, -0.6],
+      "notes": "User-supplied Reeds table: Craighouse (SE Jura), corrections relative to Oban."
+    },
+    {
+      "id": "27ca7bf5-0129-4130-9a81-4dfb70ca2e07",
+      "name": "Rubha a’ Mhail",
+      "legacyId": "rubha-a-mhail",
+      "coordinates": [-6.1234833, 55.93635],
+      "positionSource": {
+        "provider": "Northern Lighthouse Board",
+        "sourceId": "ruvaal-rubh-a-mhail",
+        "license": "public web reference",
+        "url": "https://www.nlb.org.uk/lighthouses/ruvaal-rubh-a-mhail/",
+        "retrievedAt": "2026-08-18T00:00:00.000Z"
+      },
+      "hwReferenceTimesMinutes": [60, 420],
+      "lwReferenceTimesMinutes": [60, 480],
+      "hw": [-20, 0],
+      "lw": [5, -15],
+      "heights": [-0.3, -0.1, -0.3, -0.1],
+      "notes": "User-supplied Reeds table: Rubha a’ Mhail (N Islay), corrections relative to Oban."
+    },
+    {
+      "id": "7b6408f4-c1f5-4caf-a3e8-7f1690360e71",
+      "name": "Ardnave Point",
+      "legacyId": "ardnave-point",
+      "coordinates": [-6.3283986, 55.8907629],
+      "positionSource": {
+        "provider": "OpenStreetMap Nominatim",
+        "sourceId": "node/6572313934",
+        "license": "ODbL-1.0",
+        "url": "https://www.openstreetmap.org/node/6572313934",
+        "retrievedAt": "2026-08-18T00:00:00.000Z"
+      },
+      "hwReferenceTimesMinutes": [60, 420],
+      "lwReferenceTimesMinutes": [60, 480],
+      "hw": [-35, 10],
+      "lw": [0, -25],
+      "heights": [-0.4, -0.2, -0.3, -0.1],
+      "notes": "User-supplied Reeds table: Ardnave Point (NW Islay), corrections relative to Oban."
+    },
+    {
+      "id": "a73b84ef-2f72-4419-b52f-cf9a3eea9267",
+      "name": "Orsay Island",
+      "legacyId": "orsay-island",
+      "coordinates": [-6.5128886, 55.6737437],
+      "positionSource": {
+        "provider": "OpenStreetMap Nominatim",
+        "sourceId": "way/252380368",
+        "license": "ODbL-1.0",
+        "url": "https://www.openstreetmap.org/way/252380368",
+        "retrievedAt": "2026-08-18T00:00:00.000Z"
+      },
+      "hwReferenceTimesMinutes": [60, 420],
+      "lwReferenceTimesMinutes": [60, 480],
+      "hw": [-70, -70],
+      "lw": [-40, -40],
+      "heights": [-1.4, -0.6, -0.5, -0.2],
+      "notes": "User-supplied Reeds table: Orsay Island (SW Islay), corrections relative to Oban."
+    },
+    {
+      "id": "2a78bd38-1064-48a4-912b-bba8385a0741",
+      "name": "Bruichladdich",
+      "legacyId": "bruichladdich",
+      "coordinates": [-6.359715, 55.7638959],
+      "positionSource": {
+        "provider": "OpenStreetMap Nominatim",
+        "sourceId": "way/246173403",
+        "license": "ODbL-1.0",
+        "url": "https://www.openstreetmap.org/way/246173403",
+        "retrievedAt": "2026-08-18T00:00:00.000Z"
+      },
+      "hwReferenceTimesMinutes": [60, 420],
+      "lwReferenceTimesMinutes": [60, 480],
+      "hw": [-65, -35],
+      "lw": [-70, -70],
+      "heights": [-1.8, -1.3, -0.4, 0.3],
+      "notes": "User-supplied Reeds table: Bruichladdich (Islay, Loch Indaal), corrections relative to Oban."
+    },
+    {
+      "id": "a5337680-366b-4a60-b88d-c187312f4c49",
+      "name": "Port Askaig",
+      "legacyId": "port-askaig",
+      "coordinates": [-6.1166667, 55.85],
+      "positionSource": {
+        "provider": "Argyll and Bute Council",
+        "sourceId": "port-askaig-harbour-entrance",
+        "license": "public web reference",
+        "url": "https://www.argyll-bute.gov.uk/roads-and-travel/marine-services/port-askaig-pier",
+        "retrievedAt": "2026-08-18T00:00:00.000Z"
+      },
+      "hwReferenceTimesMinutes": [60, 420],
+      "lwReferenceTimesMinutes": [60, 480],
+      "hw": [-30, -35],
+      "lw": [-15, -25],
+      "heights": [-1.8, -1.3, -0.7, -0.2],
+      "notes": "User-supplied Reeds table: Port Askaig (Sound of Islay), corrections relative to Oban."
+    },
+    {
+      "id": "a162df13-40f5-4a8e-a8ff-c7d495929ed1",
+      "name": "Gigha Sound",
+      "legacyId": "gigha-sound",
+      "coordinates": [-5.6988254, 55.6810203],
+      "positionSource": {
+        "provider": "OpenStreetMap Nominatim",
+        "sourceId": "way/931756175",
+        "license": "ODbL-1.0",
+        "url": "https://www.openstreetmap.org/way/931756175",
+        "retrievedAt": "2026-08-18T00:00:00.000Z"
+      },
+      "hwReferenceTimesMinutes": [60, 420],
+      "lwReferenceTimesMinutes": [60, 480],
+      "hw": [-290, -130],
+      "lw": [-90, -250],
+      "heights": [-2.8, -1.9, -1.3, -0.4],
+      "notes": "User-supplied Reeds table: Gigha Sound (Sound of Jura), corrections relative to Oban."
+    },
+    {
+      "id": "9f185284-11e2-4849-9bf6-89410efaef67",
+      "name": "Machrihanish",
+      "legacyId": "machrihanish",
+      "coordinates": [-5.7325251, 55.423354],
+      "positionSource": {
+        "provider": "OpenStreetMap Nominatim",
+        "sourceId": "node/335425727",
+        "license": "ODbL-1.0",
+        "url": "https://www.openstreetmap.org/node/335425727",
+        "retrievedAt": "2026-08-18T00:00:00.000Z"
+      },
+      "hwReferenceTimesMinutes": [60, 420],
+      "lwReferenceTimesMinutes": [60, 480],
+      "hw": [-320, -230],
+      "lw": [-220, -340],
+      "meanRangeM": 0.5,
+      "notes": "User-supplied Reeds table gives time corrections and mean range 0.5 m, but not the four height differences needed for chart-datum predictions. Retained as incomplete and excluded from tide calculation."
     },
     {
       "id": "3d1309a3-1a5a-4a29-b337-536224ffb1da",

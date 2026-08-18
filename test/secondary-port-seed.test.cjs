@@ -2,7 +2,7 @@
 
 const assert = require("node:assert/strict");
 const test = require("node:test");
-const { mergeSecondaryPortSeed } = require("../plugin/secondary-port-seed.cjs");
+const { isSupersededBundledCorrection, mergeSecondaryPortSeed } = require("../plugin/secondary-port-seed.cjs");
 
 test("secondary-port seed enriches existing locations and adds positioned ports", () => {
 	const base = { schema: "org.ajrm.marine.location-seed/v1", locations: [{
@@ -27,4 +27,32 @@ test("secondary-port seed enriches existing locations and adds positioned ports"
 	assert.deepEqual(existing.properties.tide.secondaryPortCorrections.highWaterTimeOffsets[1], { referenceTimeMinutes: 360, offsetMinutes: 2 });
 	assert.equal(existing.properties.tide.secondaryPortCorrections.parentReferenceLevels, undefined);
 	assert.deepEqual(merged.locations.find(({ id }) => id === "new").feature.geometry.coordinates, [-6, 55]);
+});
+
+test("keeps an incomplete mean-range-only port visible but not prediction-capable", () => {
+	const merged = mergeSecondaryPortSeed({ schema: "org.ajrm.marine.location-seed/v1", locations: [] }, {
+		schema: "org.ajrm.marine.secondary-port-seed/v1", standardPortId: "standard",
+		locations: [{
+			id: "incomplete", name: "Incomplete", legacyId: "incomplete", coordinates: [-6, 55],
+			hwReferenceTimesMinutes: [60, 420], lwReferenceTimesMinutes: [60, 480],
+			hw: [-320, -230], lw: [-220, -340], meanRangeM: 0.5,
+		}],
+	});
+	const tide = merged.locations[0].properties.tide;
+	assert.equal(tide.secondaryPortCorrections, undefined);
+	assert.equal(tide.secondaryPortSourceData.status, "incomplete");
+	assert.equal(tide.secondaryPortSourceData.meanRangeM, 0.5);
+	assert.deepEqual(tide.secondaryPortSourceData.missing, ["heightDifferencesM"]);
+});
+
+test("recognises only the exact superseded Port Ellen correction", () => {
+	const old = {
+		legacyId: "port-ellen",
+		notes: "HW Oban -0530 at springs, -0050 at neaps. LW time not supplied.",
+		highWaterTimeOffsets: [{ referenceTimeMinutes: 0, offsetMinutes: -330 }, { referenceTimeMinutes: 360, offsetMinutes: -50 }],
+		lowWaterTimeOffsets: [{ referenceTimeMinutes: 0, offsetMinutes: 0 }, { referenceTimeMinutes: 360, offsetMinutes: 0 }],
+		heightDifferencesM: { mhws: -3.1, mhwn: -2.1, mlwn: -1.3, mlws: -0.4 },
+	};
+	assert.equal(isSupersededBundledCorrection(old, { legacyId: "port-ellen" }), true);
+	assert.equal(isSupersededBundledCorrection({ ...old, notes: "User edited" }, { legacyId: "port-ellen" }), false);
 });

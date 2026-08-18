@@ -1,5 +1,10 @@
 # AJRM Marine Location Editor
 
+Version `0.6.20` corrects Port Ellen from the supplied Reeds table and adds the
+other Oban secondary ports shown on that page. Machrihanish is retained as an
+incomplete secondary-port record because the page supplies times and mean
+range, but not enough height data for chart-datum predictions.
+
 Version `0.6.19` keeps Save Location, Undo Changes, History and Delete together
 on one compact action row so the primary editor controls remain visually
 connected.
@@ -139,8 +144,10 @@ This is consistent with the [ADMIRALTY Tide Tables description](https://www.admi
 and the layout of UKHO's official [secondary-port time and height difference table](https://assets.admiralty.co.uk/public/documents/2024-05/5613.pdf).
 The calculation deliberately keeps time and height interpolation independent.
 
-The bundled migration includes Tobermory, Cuan Sound, Port Ellen, Craignure,
-Loch Melfort and Seil Sound. Apart from positions explicitly
+The bundled migration includes Tobermory, Cuan Sound, Port Ellen, Scalasaig,
+Glengarrisdale Bay, Craighouse, Rubha a’ Mhail, Ardnave Point, Orsay Island,
+Bruichladdich, Port Askaig, Gigha Sound, Machrihanish, Craignure, Loch Melfort
+and Seil Sound. Apart from positions explicitly
 printed in a supplied source, their planning positions and migrated constants
 must be checked against current licensed sources.
 

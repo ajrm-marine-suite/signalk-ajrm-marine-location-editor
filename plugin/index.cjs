@@ -24,7 +24,7 @@ const { createUkhoTideProvider } = require("./tide-provider.cjs");
 const { createTideResolver } = require("./tide-resolver.cjs");
 const { createAnchoringAssistant } = require("./anchoring-assistance.cjs");
 const { createWeatherService } = require("./weather-service.cjs");
-const { mergeSecondaryPortSeed } = require("./secondary-port-seed.cjs");
+const { isSupersededBundledCorrection, mergeSecondaryPortSeed } = require("./secondary-port-seed.cjs");
 const { mergeGateConstantsSeed } = require("./gate-constants-seed.cjs");
 
 const STATUS_CONTRACT = "ajrm-marine-location-editor-status-v1";
@@ -756,11 +756,13 @@ module.exports = function ajrmMarineLocationEditor(app) {
 			corrections.legacyId === "loch-melfort" &&
 			currentCorrections?.legacyId === "loch-melfort" &&
 			String(currentCorrections.notes || "").startsWith("HW approximately Oban -0045");
+		const replacesSupersededBundledCorrection =
+			isSupersededBundledCorrection(currentCorrections, corrections);
 		const currentCoordinates = current.feature?.geometry?.coordinates;
 		const replacesProvisionalGeometry = replacesProvisionalLochMelfort &&
 			current.feature?.geometry?.type === "Point" &&
 			Number(currentCoordinates?.[0]) === -5.588 && Number(currentCoordinates?.[1]) === 56.246;
-		if (currentCorrections && !replacesProvisionalLochMelfort) return false;
+		if (currentCorrections && !replacesProvisionalLochMelfort && !replacesSupersededBundledCorrection) return false;
 		const provenanceSources = [...(current.properties?.provenance?.sources || [])];
 		for (const source of seed.properties?.provenance?.sources || []) {
 			if (!provenanceSources.some((value) => value.sourceId === source.sourceId && value.url === source.url)) provenanceSources.push(source);

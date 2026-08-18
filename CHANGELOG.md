@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.6.20 - 2026-08-18
+
+- Correct Port Ellen's HW and LW reference columns from the supplied Reeds
+  table and migrate only the exact earlier incomplete bundled record.
+- Add Scalasaig, Glengarrisdale Bay, Craighouse, Rubha a’ Mhail, Ardnave Point,
+  Orsay Island, Bruichladdich, Port Askaig and Gigha Sound as Oban secondary
+  ports with source-recorded positions and corrections.
+- Retain Machrihanish's published time corrections and 0.5 m mean range as an
+  explicitly incomplete secondary-port record; it is excluded from prediction
+  until absolute height differences are available.
+
 ## 0.6.19 - 2026-08-18
 
 - Keep the four primary Location Editor actions on one compact row.

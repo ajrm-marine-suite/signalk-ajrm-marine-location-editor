@@ -19,9 +19,9 @@ function response() {
 	};
 }
 
-async function fixture(t) {
-	const directory = await fs.mkdtemp(path.join(os.tmpdir(), "ajrm-location-plugin-"));
-	t.after(() => fs.rm(directory, { recursive: true, force: true }));
+async function fixture(t, options = {}) {
+	const directory = options.directory || await fs.mkdtemp(path.join(os.tmpdir(), "ajrm-location-plugin-"));
+	if (!options.directory) t.after(() => fs.rm(directory, { recursive: true, force: true }));
 	const messages = [];
 	const regions = {};
 	const app = {
@@ -100,6 +100,7 @@ test("a fresh catalogue receives the sourced West Scotland seed without publishi
 	const portEllen = result.body.locations.find((location) => location.name === "Port Ellen");
 	const lochMelfort = result.body.locations.find((location) => location.name === "Loch Melfort");
 	const seilSound = result.body.locations.find((location) => location.name === "Seil Sound");
+	const machrihanish = result.body.locations.find((location) => location.name === "Machrihanish");
 	assert.ok(corryvreckan?.types.includes("tidalGate"));
 	assert.equal(corryvreckan.properties.provenance.reviewStatus, "sourceChecked");
 	assert.ok(stornoway?.types.includes("tidalObservationStation"));
@@ -107,10 +108,59 @@ test("a fresh catalogue receives the sourced West Scotland seed without publishi
 	assert.equal(tobermory.properties.tide.secondaryPortCorrections.legacyId, "tobermory");
 	assert.equal(tobermory.properties.tide.secondaryPortCorrections.parentReferenceLevels, undefined);
 	assert.equal(portEllen.properties.tide.secondaryPortCorrections.highWaterTimeOffsets[0].offsetMinutes, -330);
+	assert.deepEqual(portEllen.properties.tide.secondaryPortCorrections.lowWaterTimeOffsets, [
+		{ referenceTimeMinutes: 60, offsetMinutes: -45 },
+		{ referenceTimeMinutes: 480, offsetMinutes: -330 },
+	]);
 	assert.deepEqual(lochMelfort.properties.tide.secondaryPortCorrections.highWaterTimeOffsets[0], { referenceTimeMinutes: 60, offsetMinutes: -55 });
 	assert.deepEqual(lochMelfort.properties.tide.secondaryPortCorrections.lowWaterTimeOffsets[1], { referenceTimeMinutes: 480, offsetMinutes: -35 });
 	assert.ok(seilSound?.types.includes("tidalSecondaryPort"));
+	for (const name of ["Scalasaig", "Glengarrisdale Bay", "Craighouse moorings", "Rubha a’ Mhail", "Ardnave Point", "Orsay Island", "Bruichladdich", "Port Askaig", "Gigha Sound"]) {
+		assert.ok(result.body.locations.find((location) => location.name === name)?.properties.tide.secondaryPortCorrections, `${name} correction missing`);
+	}
+	assert.ok(machrihanish.types.includes("tidalSecondaryPort"));
+	assert.equal(machrihanish.properties.tide.secondaryPortCorrections, undefined);
+	assert.equal(machrihanish.properties.tide.secondaryPortSourceData.meanRangeM, 0.5);
 	assert.equal(Object.keys(app.regions).length, 0);
+	await plugin.stop();
+});
+
+test("the exact incomplete bundled Port Ellen record is corrected on upgrade", async (t) => {
+	const directory = await fs.mkdtemp(path.join(os.tmpdir(), "ajrm-port-ellen-upgrade-"));
+	t.after(() => fs.rm(directory, { recursive: true, force: true }));
+	const id = "47a24a27-bd5f-4db6-a6f9-a5c975364a72";
+	const catalog = emptyCatalog();
+	catalog.locations[id] = normalizeLocation({
+		id, revision: 1, createdAt: "2026-08-18T00:00:00.000Z", updatedAt: "2026-08-18T00:00:00.000Z",
+		lastEditId: crypto.randomUUID(), name: "Port Ellen", types: ["tidalSecondaryPort"],
+		feature: { type: "Feature", properties: {}, geometry: { type: "Point", coordinates: [-6.1895944, 55.6272692] } },
+		properties: {
+			tide: {
+				parentLocationRef: "/resources/locations/e0e5661f-1675-4dbb-8fa0-ea8566c62ef4",
+				secondaryPortCorrections: {
+					contract: "ajrm-secondary-port-corrections-v4", timeOffsetPeriodMinutes: 720,
+					legacyId: "port-ellen", standardPortName: "Oban",
+					highWaterTimeOffsets: [{ referenceTimeMinutes: 0, offsetMinutes: -330 }, { referenceTimeMinutes: 360, offsetMinutes: -50 }],
+					lowWaterTimeOffsets: [{ referenceTimeMinutes: 0, offsetMinutes: 0 }, { referenceTimeMinutes: 360, offsetMinutes: 0 }],
+					heightDifferencesM: { mhws: -3.1, mhwn: -2.1, mlwn: -1.3, mlws: -0.4 },
+					notes: "HW Oban -0530 at springs, -0050 at neaps. LW time not supplied.",
+				},
+			},
+			provenance: {
+				reviewStatus: "imported", warning: "Old bundled record",
+				sources: [{ provider: "AJRM migration", sourceId: "marine-planning-secondary:port-ellen", url: "https://github.com/ajrm-marine-suite/signalk-ajrm-marine-planning" }],
+			},
+		},
+	});
+	await fs.writeFile(path.join(directory, "locations.json"), `${JSON.stringify(catalog, null, 2)}\n`);
+	const { call, plugin } = await fixture(t, { directory });
+	const result = await call("GET", "/locations", { query: { workspace: "all" } });
+	const portEllen = result.body.locations.find((location) => location.id === id);
+	assert.deepEqual(portEllen.properties.tide.secondaryPortCorrections.lowWaterTimeOffsets, [
+		{ referenceTimeMinutes: 60, offsetMinutes: -45 },
+		{ referenceTimeMinutes: 480, offsetMinutes: -330 },
+	]);
+	assert.equal(portEllen.revision, 2);
 	await plugin.stop();
 });
 

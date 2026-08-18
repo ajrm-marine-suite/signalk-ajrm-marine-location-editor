@@ -7,6 +7,7 @@ const {
 	interpolateCircular,
 	migrateSecondaryPortCorrections,
 } = require("../plugin/secondary-port-corrections.cjs");
+const { mergeSecondaryPortSeed } = require("../plugin/secondary-port-seed.cjs");
 
 test("compacts duplicated v2 points to a Reeds-style 12-hour cycle", () => {
 	const result = migrateSecondaryPortCorrections({
@@ -98,4 +99,23 @@ test("applies the stated Loch Melfort HW/LW time and height corrections", () => 
 	assert.equal(result.events[1].at, "2026-08-18T07:25:00.000Z");
 	assert.ok(Math.abs(result.events[1].heightM - 0.6) < 1e-9);
 	assert.deepEqual(result.referenceLevels, { mhws: 2.8, mhwn: 2.1, mlwn: 1.3, mlws: 0.6 });
+});
+
+test("applies the corrected Port Ellen Reeds columns at their stated reference times", () => {
+	const seed = require("../defaults/secondary-port-locations.json");
+	const merged = mergeSecondaryPortSeed(
+		{ schema: "org.ajrm.marine.location-seed/v1", locations: [] },
+		{ ...seed, locations: seed.locations.filter(({ name }) => name === "Port Ellen") },
+	);
+	const correction = merged.locations.find(({ name }) => name === "Port Ellen")
+		.properties.tide.secondaryPortCorrections;
+	const parentLevels = { mhws: 4, mhwn: 2.9, mlwn: 1.8, mlws: 0.7 };
+	const corrected = (event) => applySecondaryPortCorrections([event], correction, parentLevels);
+
+	assert.equal(corrected({ at: "2026-08-18T01:00:00Z", type: "high", heightM: 4 }).events[0].at, "2026-08-17T19:30:00.000Z");
+	assert.equal(corrected({ at: "2026-08-18T07:00:00Z", type: "high", heightM: 2.9 }).events[0].at, "2026-08-18T06:10:00.000Z");
+	assert.equal(corrected({ at: "2026-08-18T01:00:00Z", type: "low", heightM: 1.8 }).events[0].at, "2026-08-18T00:15:00.000Z");
+	assert.equal(corrected({ at: "2026-08-18T08:00:00Z", type: "low", heightM: 0.7 }).events[0].at, "2026-08-18T02:30:00.000Z");
+	assert.deepEqual(corrected({ at: "2026-08-18T13:00:00Z", type: "high", heightM: 4 }).referenceLevels,
+		{ mhws: 0.9, mhwn: 0.8, mlwn: 0.5, mlws: 0.3 });
 });

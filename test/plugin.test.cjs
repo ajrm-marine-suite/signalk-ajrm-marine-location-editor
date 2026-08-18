@@ -10,6 +10,7 @@ const crypto = require("node:crypto");
 const test = require("node:test");
 const createPlugin = require("../plugin/index.cjs");
 const { emptyCatalog, normalizeLocation } = require("../plugin/location-model.cjs");
+const { mergeSecondaryPortSeed } = require("../plugin/secondary-port-seed.cjs");
 
 function response() {
 	return {
@@ -131,6 +132,42 @@ test("a fresh catalogue receives the sourced West Scotland seed without publishi
 	assert.equal(soay.properties.tide.secondaryPortCorrections, undefined);
 	assert.equal(soay.properties.tide.secondaryPortSourceData.status, "incomplete");
 	assert.equal(Object.keys(app.regions).length, 0);
+	await plugin.stop();
+});
+
+test("a shared source page cannot cross-apply one secondary port's correction to another", async (t) => {
+	const directory = await fs.mkdtemp(path.join(os.tmpdir(), "ajrm-location-shared-source-repair-"));
+	t.after(() => fs.rm(directory, { recursive: true, force: true }));
+	const obanSeed = require("../defaults/secondary-port-locations.json");
+	const westScotlandSeed = require("../defaults/west-scotland-locations.json");
+	const merged = mergeSecondaryPortSeed(westScotlandSeed, obanSeed);
+	const machrihanish = merged.locations.find((location) => location.name === "Machrihanish");
+	const portEllen = merged.locations.find((location) => location.name === "Port Ellen");
+	const id = crypto.randomUUID();
+	const catalog = emptyCatalog();
+	catalog.locations[id] = normalizeLocation({
+		...structuredClone(machrihanish),
+		id,
+		revision: 2,
+		createdAt: "2026-08-18T20:00:00.000Z",
+		updatedAt: "2026-08-18T21:00:00.000Z",
+		lastEditId: crypto.randomUUID(),
+		properties: {
+			...structuredClone(machrihanish.properties),
+			tide: {
+				...structuredClone(machrihanish.properties.tide),
+				secondaryPortCorrections: structuredClone(portEllen.properties.tide.secondaryPortCorrections),
+			},
+		},
+	});
+	await fs.writeFile(path.join(directory, "locations.json"), `${JSON.stringify(catalog, null, 2)}\n`);
+	const { call, plugin } = await fixture(t, { directory });
+	const result = await call("GET", "/locations", { query: { workspace: "all" } });
+	assert.equal(result.statusCode, 200);
+	const repaired = result.body.locations.find((location) => location.id === id);
+	assert.equal(repaired.properties.tide.secondaryPortCorrections, undefined);
+	assert.equal(repaired.properties.tide.secondaryPortSourceData.legacyId, "machrihanish");
+	assert.equal(result.body.locations.filter((location) => location.name === "Machrihanish").length, 1);
 	await plugin.stop();
 });
 

@@ -724,6 +724,8 @@ module.exports = function ajrmMarineLocationEditor(app) {
 			throw new Error("Bundled West Scotland location seed is invalid.");
 		}
 		const current = await store.list();
+		const byId = new Map(current.map((location) => [location.id, location]));
+		const byName = new Map(current.map((location) => [normalizedLocationName(location.name), location]));
 		const bySource = new Map();
 		for (const location of current) {
 			for (const source of locationSourceKeys(location)) bySource.set(source, location);
@@ -731,7 +733,9 @@ module.exports = function ajrmMarineLocationEditor(app) {
 		const candidates = [];
 		for (const value of bundledLocationSeed.locations) {
 			const seed = normalizeLocation(value);
-			const sourceMatch = locationSourceKeys(seed).map((key) => bySource.get(key)).find(Boolean);
+			const sourceMatch = byId.get(seed.id) ||
+				locationSourceKeys(seed).map((key) => bySource.get(key)).find(Boolean) ||
+				byName.get(normalizedLocationName(seed.name));
 			if (sourceMatch) {
 				if (await enrichBundledSecondaryPort(sourceMatch, seed)) continue;
 				if (await enrichBundledGateConstants(sourceMatch, seed)) continue;
@@ -754,30 +758,50 @@ module.exports = function ajrmMarineLocationEditor(app) {
 
 	async function enrichBundledSecondaryPort(current, seed) {
 		const corrections = seed.properties?.tide?.secondaryPortCorrections;
-		if (!corrections) return false;
+		const sourceData = seed.properties?.tide?.secondaryPortSourceData;
+		if (!corrections && !sourceData) return false;
 		const currentCorrections = current.properties?.tide?.secondaryPortCorrections;
+		const currentSourceData = current.properties?.tide?.secondaryPortSourceData;
 		const replacesProvisionalLochMelfort =
-			corrections.legacyId === "loch-melfort" &&
+			corrections?.legacyId === "loch-melfort" &&
 			currentCorrections?.legacyId === "loch-melfort" &&
 			String(currentCorrections.notes || "").startsWith("HW approximately Oban -0045");
 		const replacesSupersededBundledCorrection =
 			isSupersededBundledCorrection(currentCorrections, corrections);
+		const replacesMisappliedBundledCorrection = Boolean(
+			currentCorrections && sourceData?.legacyId &&
+			currentCorrections.legacyId !== sourceData.legacyId &&
+			bundledLocationSeed.locations.some((location) =>
+				normalizedLocationName(location.name) !== normalizedLocationName(seed.name) &&
+				JSON.stringify(location.properties?.tide?.secondaryPortCorrections) === JSON.stringify(currentCorrections),
+			),
+		);
 		const currentCoordinates = current.feature?.geometry?.coordinates;
 		const replacesProvisionalGeometry = replacesProvisionalLochMelfort &&
 			current.feature?.geometry?.type === "Point" &&
 			Number(currentCoordinates?.[0]) === -5.588 && Number(currentCoordinates?.[1]) === 56.246;
-		if (currentCorrections && !replacesProvisionalLochMelfort && !replacesSupersededBundledCorrection) return false;
+		if (
+			currentCorrections && !replacesProvisionalLochMelfort &&
+			!replacesSupersededBundledCorrection && !replacesMisappliedBundledCorrection
+		) return false;
+		if (
+			!corrections && !replacesMisappliedBundledCorrection &&
+			JSON.stringify(currentSourceData) === JSON.stringify(sourceData)
+		) return false;
 		const provenanceSources = [...(current.properties?.provenance?.sources || [])];
 		for (const source of seed.properties?.provenance?.sources || []) {
 			if (!provenanceSources.some((value) => value.sourceId === source.sourceId && value.url === source.url)) provenanceSources.push(source);
 		}
+		const tide = { ...current.properties?.tide, ...seed.properties.tide };
+		if (replacesMisappliedBundledCorrection && !corrections) delete tide.secondaryPortCorrections;
+		if (corrections) delete tide.secondaryPortSourceData;
 		await store.set(current.id, {
 			...current,
 			feature: replacesProvisionalGeometry ? structuredClone(seed.feature) : current.feature,
 			types: [...new Set([...current.types, "tidalSecondaryPort"])],
 			properties: {
 				...current.properties,
-				tide: { ...current.properties?.tide, ...seed.properties.tide },
+				tide,
 				tidalGate: current.properties?.tidalGate || structuredClone(seed.properties?.tidalGate),
 				provenance: {
 					...seed.properties.provenance,
@@ -824,7 +848,9 @@ module.exports = function ajrmMarineLocationEditor(app) {
 	function locationSourceKeys(location) {
 		const values = [
 			location.feature?.properties?.["ajrmMarine:sourceRef"],
-			...(location.properties?.provenance?.sources || []).map((source) => source.sourceId),
+			...(location.properties?.provenance?.sources || [])
+				.map((source) => source.sourceId)
+				.filter((sourceId) => String(sourceId || "").startsWith("marine-planning-secondary:")),
 		];
 		return [...new Set(values.filter(Boolean).map((value) => String(value).replace(/^openstreetmap:/i, "")))];
 	}

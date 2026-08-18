@@ -1,5 +1,10 @@
 # AJRM Marine Location Editor
 
+Version `0.6.22` fixes the v0.6.21 startup migration failure caused by several
+secondary ports legitimately citing the same almanac page. Catalogue records
+are preserved, migration is idempotent, and the known cross-applied bundled
+correction is repaired automatically without moving user-edited geometry.
+
 Version `0.6.21` adds 33 complete Ullapool and Stornoway secondary ports from
 the supplied Reeds tables. Soay (Camus nan Gall) is retained as an incomplete
 record because its MLWN and MLWS height differences are printed as ND.

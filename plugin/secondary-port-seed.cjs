@@ -63,6 +63,7 @@ function incompleteSourceData(entry, defaults) {
 	return {
 		contract: "ajrm-secondary-port-source-data-v1",
 		status: "incomplete",
+		legacyId: entry.legacyId,
 		timeOffsetPeriodMinutes: Number(entry.timeOffsetPeriodMinutes || defaults.timeOffsetPeriodMinutes || REEDS_PERIOD_MINUTES),
 		highWaterTimeOffsets: points(entry.hwReferenceTimesMinutes || defaults.hwReferenceTimesMinutes || DEFAULT_REFERENCE_TIMES, entry.hw),
 		lowWaterTimeOffsets: points(entry.lwReferenceTimesMinutes || defaults.lwReferenceTimesMinutes || DEFAULT_REFERENCE_TIMES, entry.lw),
@@ -82,7 +83,7 @@ function correctionProvenance(entry, existing, defaults) {
 		retrievedAt: "2026-08-18T00:00:00.000Z",
 	};
 	const sources = [...(existing?.sources || [])];
-	for (const candidate of [entry.dataSource || defaults.dataSource || source, entry.positionSource || defaults.positionDataSource]) {
+	for (const candidate of [source, entry.dataSource || defaults.dataSource, entry.positionSource || defaults.positionDataSource]) {
 		if (candidate && !sources.some((value) => value.sourceId === candidate.sourceId)) sources.push(candidate);
 	}
 	return {

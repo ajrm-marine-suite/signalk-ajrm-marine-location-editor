@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.6.22 - 2026-08-18
+
+- Fix an upgrade failure caused by treating a shared almanac page as a unique
+  location identity. Existing locations remain matched by stable record ID,
+  record-specific source ID or unique name.
+- Repair the one possible cross-applied bundled correction without replacing
+  user geometry or deleting catalogue history.
+- Give incomplete secondary-port source records stable identities so repeated
+  startup migration is idempotent.
+
 ## 0.6.21 - 2026-08-18
 
 - Add 16 Ullapool and 18 Stornoway secondary-port source records from the

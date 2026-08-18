@@ -1,5 +1,9 @@
 # AJRM Marine Location Editor
 
+Version `0.5.1` clarifies that Location Editor owns assisted Anchored-profile
+selection only; evidence-based automatic release is owned by AJRM Marine
+Traffic.
+
 > **Public beta disclaimer:** User-defined locations supplement, but do not
 > replace, official charts, Notices to Mariners, pilotage, a proper lookout or
 > the skipper's judgement. The authors do not accept responsibility for loss
@@ -43,8 +47,10 @@ actually dropped to retain the accurate position and depth below keel.
 
 Trusted automation is deliberately double opt-in: enable it in Signal K plugin
 settings and mark the individual anchorage/mooring as trusted in Location
-Editor. Motion never automatically leaves Anchored; only an explicit skipper
-profile action can do that.
+Editor. Location Editor itself never infers un-anchoring from a location
+change. AJRM Marine Traffic may separately release Anchored after its
+configured sustained speed test or, when Display has a manual anchor mark,
+its sustained anchor-radius test.
 
 ## Shared Tide Resolver
 
@@ -168,7 +174,7 @@ before a large import or merge.
 
 ```bash
 cd ~/.signalk
-npm install git+https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor.git#v0.5.0 --omit=dev --no-package-lock
+npm install git+https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor.git#v0.5.1 --omit=dev --no-package-lock
 sudo systemctl restart signalk
 ```
 

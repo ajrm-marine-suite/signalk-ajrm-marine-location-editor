@@ -4,9 +4,9 @@
  */
 
 import * as MapCore from "./ajrm-map-core.mjs?v=0.7.5";
-import { displayTypesForWorkspace, filterLocations, groupLocations } from "./location-browser.mjs?v=0.5.0";
-import { geometryNudgeNm, holdAcceleration } from "./geometry-motion.mjs?v=0.5.0";
-import { bindPressRepeat } from "./press-repeat.mjs?v=0.5.0";
+import { displayTypesForWorkspace, filterLocations, groupLocations } from "./location-browser.mjs?v=0.5.1";
+import { geometryNudgeNm, holdAcceleration } from "./geometry-motion.mjs?v=0.5.1";
+import { bindPressRepeat } from "./press-repeat.mjs?v=0.5.1";
 
 const apiBase = "/plugins/signalk-ajrm-marine-location-editor";
 const resourcePrefix = "/resources/locations/";

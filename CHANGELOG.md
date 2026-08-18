@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.5.1 - 2026-08-18
+
+- Clarifies that assisted anchoring selects Anchored, while Traffic owns evidence-based release.
+
 ## 0.5.0 - 2026-08-18
 
 - Add backend stationary-at-anchorage/mooring detection and publish its full

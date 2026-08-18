@@ -1,6 +1,6 @@
 /**
  * Detects a stationary vessel at an anchorage or mooring and manages an
- * evidence-backed Anchored-profile suggestion without inferring un-anchoring.
+ * evidence-backed Anchored-profile suggestion; release remains Traffic's responsibility.
  */
 
 const crypto = require("node:crypto");

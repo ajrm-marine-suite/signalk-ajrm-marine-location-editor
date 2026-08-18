@@ -32,7 +32,7 @@ function secondaryPort(name, longitude) {
 	return value;
 }
 
-test("selection follows explicit, region-assigned, same-region-nearest and pinned order", () => {
+test("selection follows region-assigned, same-region-nearest and pinned order", () => {
 	const assigned = predictionPort("Assigned", -5.4);
 	const nearest = predictionPort("Nearest", -5.05);
 	const other = predictionPort("Other", -4);
@@ -42,27 +42,16 @@ test("selection follows explicit, region-assigned, same-region-nearest and pinne
 	}, { tideLocationRef: `${LOCATION_REF_PREFIX}${assigned.id}` });
 	nearest.properties.tideRegionRef = `${LOCATION_REF_PREFIX}${region.id}`;
 	other.properties.tideRegionRef = `${LOCATION_REF_PREFIX}${region.id}`;
-	const anchorage = location("Anchorage", ["anchorage"], {
-		type: "Polygon",
-		coordinates: [[[-5.2, 55.9], [-4.9, 55.9], [-4.9, 56.1], [-5.2, 56.1], [-5.2, 55.9]]],
-	}, { tideLocationRef: `${LOCATION_REF_PREFIX}${nearest.id}` });
-	let result = selectTidePort([assigned, nearest, other, region, anchorage], {
-		position: { longitude: -5, latitude: 56 }, contextLocationId: anchorage.id,
-	});
-	assert.equal(result.port.id, nearest.id);
-	assert.equal(result.reason, "explicitTideLocationRef");
-
-	delete anchorage.properties.tideLocationRef;
-	result = selectTidePort([assigned, nearest, other, region, anchorage], { position: { longitude: -5, latitude: 56 } });
+	let result = selectTidePort([assigned, nearest, other, region], { position: { longitude: -5, latitude: 56 } });
 	assert.equal(result.port.id, assigned.id);
 	assert.equal(result.reason, "containingRegionAssignment");
 
 	delete region.properties.tideLocationRef;
-	result = selectTidePort([assigned, nearest, other, region, anchorage], { position: { longitude: -5, latitude: 56 } });
+	result = selectTidePort([assigned, nearest, other, region], { position: { longitude: -5, latitude: 56 } });
 	assert.equal(result.port.id, nearest.id);
 	assert.equal(result.reason, "nearestPortInTidalRegion");
 
-	result = selectTidePort([assigned, nearest, other, region, anchorage], {
+	result = selectTidePort([assigned, nearest, other, region], {
 		position: { longitude: -5, latitude: 56 }, pinnedPortId: other.id,
 	});
 	assert.equal(result.port.id, other.id);
@@ -72,11 +61,13 @@ test("selection follows explicit, region-assigned, same-region-nearest and pinne
 
 test("invalid pins are exposed and never suppress a valid automatic selection", () => {
 	const port = predictionPort("Port", -5);
-	const context = location("Place", ["anchorage"], point(-5, 56), { tideLocationRef: `${LOCATION_REF_PREFIX}${port.id}` });
-	const result = selectTidePort([port, context], { contextLocationId: context.id, pinnedPortId: crypto.randomUUID() });
+	const region = location("Region", ["tidalRegion"], {
+		type: "Polygon", coordinates: [[[-5.5, 55.5], [-4.5, 55.5], [-4.5, 56.5], [-5.5, 56.5], [-5.5, 55.5]]],
+	}, { tideLocationRef: `${LOCATION_REF_PREFIX}${port.id}` });
+	const result = selectTidePort([port, region], { position: { longitude: -5, latitude: 56 }, pinnedPortId: crypto.randomUUID() });
 	assert.equal(result.port.id, port.id);
 	assert.equal(result.pinValid, false);
-	assert.equal(result.reason, "explicitTideLocationRef");
+	assert.equal(result.reason, "containingRegionAssignment");
 });
 
 test("nearest secondary recommendation stays inside the containing tidal region", () => {
@@ -94,4 +85,35 @@ test("nearest secondary recommendation stays inside the containing tidal region"
 	assert.equal(result.tidalRegion.id, region.id);
 	assert.equal(result.reason, "nearestSecondaryPortInTidalRegion");
 	assert.equal(Number.isFinite(result.distanceM), true);
+});
+
+test("the most specific containing tidal region overrides its broader parent", () => {
+	const broadPort = predictionPort("Oban", -5.5);
+	const localPort = secondaryPort("Local secondary", -5.05);
+	const broad = location("Broad Oban region", ["tidalRegion"], {
+		type: "Polygon",
+		coordinates: [[[-6, 55], [-4, 55], [-4, 57], [-6, 57], [-6, 55]]],
+	}, { tideLocationRef: `${LOCATION_REF_PREFIX}${broadPort.id}` });
+	const local = location("Local secondary region", ["tidalRegion"], {
+		type: "Polygon",
+		coordinates: [[[-5.2, 55.8], [-4.8, 55.8], [-4.8, 56.2], [-5.2, 56.2], [-5.2, 55.8]]],
+	}, {
+		tideLocationRef: `${LOCATION_REF_PREFIX}${localPort.id}`,
+		tideRegionRef: `${LOCATION_REF_PREFIX}${broad.id}`,
+	});
+	const result = selectTidePort([broadPort, localPort, broad, local], {
+		position: { longitude: -5, latitude: 56 },
+	});
+	assert.equal(result.port.id, localPort.id);
+	assert.equal(result.tidalRegion.id, local.id);
+	assert.equal(result.reason, "containingRegionAssignment");
+
+	delete local.properties.tideLocationRef;
+	localPort.properties.tideRegionRef = `${LOCATION_REF_PREFIX}${local.id}`;
+	const nearestResult = selectTidePort([broadPort, localPort, broad, local], {
+		position: { longitude: -5, latitude: 56 },
+	});
+	assert.equal(nearestResult.port.id, localPort.id);
+	assert.equal(nearestResult.tidalRegion.id, local.id);
+	assert.equal(nearestResult.reason, "nearestPortInTidalRegion");
 });

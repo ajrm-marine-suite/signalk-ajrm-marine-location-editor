@@ -69,18 +69,19 @@ test("validates complete secondary-port correction tables", () => {
 	const corrections = {
 		contract: "ajrm-secondary-port-corrections-v2",
 		standardPortName: "Oban",
-		parentReferenceLevels: { mhws: 4, mhwn: 2.9, mlwn: 1.8, mlws: 0.7 },
 		highWaterTimeOffsets: [{ referenceTimeMinutes: 60, offsetMinutes: 20 }],
 		lowWaterTimeOffsets: [{ referenceTimeMinutes: 90, offsetMinutes: 20 }],
 		heightDifferencesM: { mhws: 0.5, mhwn: 0.6, mlwn: 0.1, mlws: 0.2 },
 	};
-	const secondary = location({ types: ["tidalSecondaryPort"], properties: { tide: { secondaryPortCorrections: corrections } } });
-	assert.equal(secondary.properties.tide.secondaryPortCorrections.contract, "ajrm-secondary-port-corrections-v3");
+	const parentLocationRef = `/resources/locations/${crypto.randomUUID()}`;
+	const secondary = location({ types: ["tidalSecondaryPort"], properties: { tide: { parentLocationRef, secondaryPortCorrections: corrections } } });
+	assert.equal(secondary.properties.tide.secondaryPortCorrections.contract, "ajrm-secondary-port-corrections-v4");
+	assert.equal(secondary.properties.tide.secondaryPortCorrections.parentReferenceLevels, undefined);
 	assert.equal(secondary.properties.tide.secondaryPortCorrections.timeOffsetPeriodMinutes, 720);
 	assert.equal(secondary.properties.tide.secondaryPortCorrections.heightDifferencesM.mhws, 0.5);
 	assert.throws(() => location({
 		types: ["tidalSecondaryPort"],
-		properties: { tide: { secondaryPortCorrections: { ...corrections, highWaterTimeOffsets: [{ referenceTimeMinutes: 60, offsetMinutes: 2000 }] } } },
+		properties: { tide: { parentLocationRef, secondaryPortCorrections: { ...corrections, highWaterTimeOffsets: [{ referenceTimeMinutes: 60, offsetMinutes: 2000 }] } } },
 	}), /HW time correction point 1 offset must be a number between -1440 and 1440/);
 });
 

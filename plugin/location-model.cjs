@@ -4,7 +4,7 @@
 
 const crypto = require("node:crypto");
 const {
-	CONTRACT_V3: SECONDARY_PORT_CORRECTION_CONTRACT,
+	CONTRACT_V4: SECONDARY_PORT_CORRECTION_CONTRACT,
 	migrateSecondaryPortCorrections,
 } = require("./secondary-port-corrections.cjs");
 
@@ -185,6 +185,9 @@ function validateLocation(location) {
 	}
 	assertReference(properties.tideLocationRef, "Tide location reference");
 	assertReference(properties.tideRegionRef, "Tidal region reference");
+	if (properties.tideLocationRef && !location.types.includes("tidalRegion")) {
+		throw new Error("Only a tidal region can assign a prediction port.");
+	}
 	if (properties.tideLocationRef?.endsWith(`/${location.id}`)) {
 		throw new Error("A location cannot use itself as its tidal location.");
 	}
@@ -254,13 +257,6 @@ function validateLocation(location) {
 			assertText(corrections.legacyId, "Secondary-port legacy id", { max: 100 });
 			assertText(corrections.standardPortName, "Secondary-port standard port name", { max: 200 });
 			assertText(corrections.migratedFromContract, "Migrated correction contract", { max: 100 });
-			if (!corrections.parentReferenceLevels || typeof corrections.parentReferenceLevels !== "object" || Array.isArray(corrections.parentReferenceLevels)) {
-				throw new Error("Parent-port reference levels are required.");
-			}
-			for (const key of ["mhws", "mhwn", "mlwn", "mlws"]) {
-				if (corrections.parentReferenceLevels[key] == null || corrections.parentReferenceLevels[key] === "") throw new Error(`Parent-port ${key.toUpperCase()} is required.`);
-				validateNumber(corrections.parentReferenceLevels[key], `Parent-port ${key.toUpperCase()}`, { minimum: -100, maximum: 100 });
-			}
 		}
 	}
 	if (location.types.includes("tidalSecondaryPort") && properties.tide?.secondaryPortCorrections) {

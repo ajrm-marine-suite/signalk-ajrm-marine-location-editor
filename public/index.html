@@ -6,7 +6,7 @@
 		<title>AJRM Marine Location Editor</title>
 		<link rel="stylesheet" href="./leaflet.css">
 		<link rel="stylesheet" href="./ajrm-map-core.css?v=0.7.5">
-		<link rel="stylesheet" href="./styles.css?v=0.6.13">
+		<link rel="stylesheet" href="./styles.css?v=0.6.14">
 	</head>
 	<body>
 		<div id="map" class="map" aria-label="Marine location chart"></div>
@@ -92,14 +92,14 @@
 				<button id="openGeometry" type="button">Edit Geometry</button>
 			</div>
 
-			<label id="profileRegionField" class="choice-row profile-region-choice">
+			<label id="profileRegionField" class="choice-row profile-region-choice" hidden>
 				<input id="publishAsHarbourRegion" type="checkbox">
 				<span>Use this area for automatic Harbour profile switching</span>
 			</label>
-			<details class="editor-details">
+			<details id="tideRelationships" class="editor-details" hidden>
 				<summary>Tide relationships</summary>
-				<label>Tidal location used here<select id="tideLocationRef"><option value="">Automatic / none assigned</option></select></label>
-				<label>Tidal region<select id="tideRegionRef"><option value="">None assigned</option></select></label>
+				<label id="tideAssignmentField" hidden>Prediction port for this region<select id="tideLocationRef"><option value="">None assigned</option></select></label>
+				<label id="tideRegionField"><span id="tideRegionLabel">Tidal region</span><select id="tideRegionRef"><option value="">None assigned</option></select></label>
 			</details>
 
 			<section id="anchorageFields" class="conditional-section" hidden>
@@ -159,7 +159,6 @@
 					<div class="reeds-table-scroll"><table class="reeds-table reeds-height-table">
 						<thead><tr><th></th><th>MHWS</th><th>MHWN</th><th>MLWN</th><th>MLWS</th></tr></thead>
 						<tbody>
-							<tr><th>Parent port (m)</th><td><input id="secondaryStandardMhws" type="number" step="0.1"></td><td><input id="secondaryStandardMhwn" type="number" step="0.1"></td><td><input id="secondaryStandardMlwn" type="number" step="0.1"></td><td><input id="secondaryStandardMlws" type="number" step="0.1"></td></tr>
 							<tr><th>Difference (m)</th><td><input id="secondaryDiffMhws" type="number" step="0.1"></td><td><input id="secondaryDiffMhwn" type="number" step="0.1"></td><td><input id="secondaryDiffMlwn" type="number" step="0.1"></td><td><input id="secondaryDiffMlws" type="number" step="0.1"></td></tr>
 						</tbody>
 					</table></div>
@@ -303,6 +302,6 @@
 		<div id="status" class="status" role="status"></div>
 		<script src="./leaflet.js"></script>
 		<script src="./protomaps-leaflet.js"></script>
-		<script type="module" src="./app.js?v=0.6.13"></script>
+		<script type="module" src="./app.js?v=0.6.14"></script>
 	</body>
 </html>

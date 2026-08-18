@@ -650,7 +650,7 @@ module.exports = function ajrmMarineLocationEditor(app) {
 		const locations = catalogLocations || new Map((await store.list()).map((entry) => [entry.id, entry]));
 		locations.set(location.id, location);
 		for (const [label, reference, allowedTypes] of [
-			["Tidal location", location.properties.tideLocationRef, ["tidalStandardPort", "tidalSecondaryPort"]],
+			["Tidal-region prediction port", location.properties.tideLocationRef, ["tidalStandardPort", "tidalSecondaryPort"]],
 			["Tidal region", location.properties.tideRegionRef, ["tidalRegion"]],
 			["Parent tidal location", location.properties.tide?.parentLocationRef, ["tidalStandardPort", "tidalSecondaryPort"]],
 			["Tidal-gate standard port", location.properties.tidalGate?.standardPortRef, ["tidalStandardPort"]],
@@ -671,6 +671,15 @@ module.exports = function ajrmMarineLocationEditor(app) {
 			visited.add(parentId);
 			if (visited.size > 12) throw new Error("Secondary-port parent chain is too deep.");
 			reference = locations.get(parentId)?.properties?.tide?.parentLocationRef;
+		}
+		const visitedRegions = new Set([location.id]);
+		reference = location.types.includes("tidalRegion") ? location.properties.tideRegionRef : null;
+		while (reference) {
+			const parentId = reference.split("/").at(-1);
+			if (visitedRegions.has(parentId)) throw new Error("Tidal-region parent references must not contain a cycle.");
+			visitedRegions.add(parentId);
+			if (visitedRegions.size > 12) throw new Error("Tidal-region hierarchy is too deep.");
+			reference = locations.get(parentId)?.properties?.tideRegionRef;
 		}
 	}
 

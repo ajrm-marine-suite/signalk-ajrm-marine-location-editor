@@ -1,5 +1,13 @@
 # AJRM Marine Location Editor
 
+Version `0.6.14` separates tidal geography from tidal prediction data. A
+tidal-region polygon may select its prediction port and may itself belong to a
+broader parent region; automatic resolution chooses the most specific
+containing region before falling back through broader regions. Harbour-profile
+switching is offered only for harbour, marina, anchorage or mooring areas.
+Secondary ports now store only their linked parent and published differences;
+the parent's MHWS/MHWN/MLWN/MLWS values come from the parent record.
+
 Version `0.6.13` shortens and clarifies location editing. Coordinate and
 polygon entry now live entirely in the separate Geometry panel, while tidal
 fields are divided by location class: standard ports show prediction-source,
@@ -77,20 +85,35 @@ and onboard testing. It stores:
 - tidal observation stations, kept distinct from prediction stations;
 - hazards, avoidance areas, no-anchoring areas, waiting areas and preferred
   channels;
-- links from places to tidal locations.
+- hierarchical links between tidal regions and prediction ports.
 
 For a `tidalSecondaryPort`, select its immediate parent tidal port and enter
-the parent port's MHWS/MHWN/MLWN/MLWS levels. For each HW and LW column, enter
-both the almanac's printed reference time and the correction in minutes, then
-enter the four height corrections and source notes. Marine Planning reads
-fully corrected events from Location Editor; it no longer maintains or applies
-a second copy. A parent may itself be a secondary port where an almanac uses
+the almanac's printed HW and LW reference times, their time differences, the
+four height differences and source notes. Do not copy the parent's mean levels:
+they belong to the parent standard-port record. Marine Planning reads fully
+corrected events from Location Editor; it no longer maintains or applies a
+second copy. A parent may itself be a secondary port where an almanac uses
 sub-ports; the resolver follows that chain and rejects missing or cyclic
 relationships. Almanac clock times are stored as explicit UT minute-of-day
 values and resolved events remain canonical UTC instants.
 
-The bundled migration includes Bucklers Hard, Tobermory, Cuan Sound, Port
-Ellen, Craignure, Loch Melfort and Seil Sound. Apart from positions explicitly
+The calculation follows the structure of the published secondary-port table:
+
+- for each parent HW or LW event, linearly interpolate the applicable time
+  difference from the separately printed HW or LW time columns, then add it to
+  the parent event time;
+- for HW height, interpolate (or extrapolate) the height difference between
+  the parent's MHWN and MHWS levels; for LW height, do the same between MLWN
+  and MLWS; then add that difference to the parent event height;
+- derive the child's mean levels by adding the four published height
+  differences to the parent's stored mean levels.
+
+This is consistent with the [ADMIRALTY Tide Tables description](https://www.admiralty.co.uk/publications/publications-and-reference-guides/admiralty-tide-tables)
+and the layout of UKHO's official [secondary-port time and height difference table](https://assets.admiralty.co.uk/public/documents/2024-05/5613.pdf).
+The calculation deliberately keeps time and height interpolation independent.
+
+The bundled migration includes Tobermory, Cuan Sound, Port Ellen, Craignure,
+Loch Melfort and Seil Sound. Apart from positions explicitly
 printed in a supplied source, their planning positions and migrated constants
 must be checked against current licensed sources.
 
@@ -141,9 +164,15 @@ Capture and the planners. It also publishes the standard Signal K paths
 
 The automatic candidate is selected in this order:
 
-1. the place's explicit **Tidal location used here**;
-2. the tidal port assigned to the containing tidal-region polygon;
-3. the nearest configured prediction port assigned to that same region.
+1. the prediction port assigned to the most specific containing tidal-region
+   polygon;
+2. the nearest configured prediction port belonging to that region;
+3. the same two checks in each broader containing/parent region.
+
+Region hierarchy is explicit: a small local tidal region can select a
+secondary port and name a broader region whose standard port remains the
+fallback. When overlapping regions have no explicit parent link, the smaller
+polygon is treated as more specific.
 
 A valid manually pinned port then overrides that candidate. The projection
 retains the automatic port and reason so the override remains auditable. A

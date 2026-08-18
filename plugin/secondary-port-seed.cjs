@@ -4,7 +4,7 @@
  */
 
 const LOCATION_REF_PREFIX = "/resources/locations/";
-const { CONTRACT_V3: CORRECTION_CONTRACT, REEDS_PERIOD_MINUTES } = require("./secondary-port-corrections.cjs");
+const { CONTRACT_V4: CORRECTION_CONTRACT, REEDS_PERIOD_MINUTES } = require("./secondary-port-corrections.cjs");
 const DEFAULT_REFERENCE_TIMES = [0, 360];
 const LEVELS = ["mhws", "mhwn", "mlwn", "mlws"];
 
@@ -22,7 +22,6 @@ function correction(entry, defaults) {
 		timeOffsetPeriodMinutes: Number(entry.timeOffsetPeriodMinutes || defaults.timeOffsetPeriodMinutes || REEDS_PERIOD_MINUTES),
 		legacyId: entry.legacyId,
 		standardPortName: entry.standardPortName || defaults.standardPortName,
-		parentReferenceLevels: entry.parentReferenceLevels || entry.standardReferenceLevels || defaults.standardReferenceLevels,
 		highWaterTimeOffsets: points(entry.hwReferenceTimesMinutes || DEFAULT_REFERENCE_TIMES, entry.hw),
 		lowWaterTimeOffsets: points(entry.lwReferenceTimesMinutes || DEFAULT_REFERENCE_TIMES, entry.lw),
 		heightDifferencesM: keyed(LEVELS, entry.heights),

@@ -2,7 +2,6 @@
   "schema": "org.ajrm.marine.secondary-port-seed/v1",
   "standardPortId": "e0e5661f-1675-4dbb-8fa0-ea8566c62ef4",
   "standardPortName": "Oban",
-  "standardReferenceLevels": { "mhws": 4.0, "mhwn": 2.9, "mlwn": 1.8, "mlws": 0.7 },
   "locations": [
     {
       "id": "2e0eb500-8f1f-4c5c-85ab-391b0b7945d0",
@@ -65,21 +64,6 @@
       "lw": [-40, -15],
       "heights": [-1.3, -0.9, -0.7, -0.3],
       "notes": "User-supplied Reeds almanac page 9.8.19: corrections relative to Oban. Position is an approximate open-data centre for Seil Sound and should be checked on the chart."
-    },
-    {
-      "id": "29bdf6ae-922e-486a-b9b3-8c1ca88a7624",
-      "name": "Bucklers Hard",
-      "legacyId": "bucklers-hard",
-      "coordinates": [-1.422, 50.8],
-      "standardPortName": "Portsmouth",
-      "standardReferenceLevels": { "mhws": 4.7, "mhwn": 3.8, "mlwn": 1.5, "mlws": 0.8 },
-      "timeOffsetPeriodMinutes": 1440,
-      "hwReferenceTimesMinutes": [0, 360, 720, 1080],
-      "lwReferenceTimesMinutes": [0, 360, 720, 1080],
-      "hw": [-40, -10, 0, -10],
-      "lw": [50, 110, 70, 110],
-      "heights": [-1, -0.8, -0.3, -0.3],
-      "notes": "Example migrated from Marine Planning. Standard port Portsmouth. Position is an approximate planning marker and must be checked."
     }
   ]
 }

@@ -843,6 +843,12 @@ legend {
 	width: auto;
 }
 
+.profile-region-choice[hidden],
+.editor-details[hidden],
+#tideAssignmentField[hidden] {
+	display: none;
+}
+
 .harbour-list-section {
 	padding-top: 8px;
 	border-top: 1px solid #e2e8f0;

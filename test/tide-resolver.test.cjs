@@ -73,7 +73,6 @@ test("resolves an explicitly requested secondary port through its standard paren
 			parentLocationRef: `/resources/locations/${station.id}`,
 			secondaryPortCorrections: {
 				contract: "ajrm-secondary-port-corrections-v2",
-				parentReferenceLevels: { mhws: 4, mhwn: 2.9, mlwn: 1.8, mlws: 0.7 },
 				highWaterTimeOffsets: [{ referenceTimeMinutes: 0, offsetMinutes: 30 }],
 				lowWaterTimeOffsets: [{ referenceTimeMinutes: 0, offsetMinutes: 10 }],
 				heightDifferencesM: { mhws: -1, mhwn: -0.5, mlwn: -0.2, mlws: 0 },

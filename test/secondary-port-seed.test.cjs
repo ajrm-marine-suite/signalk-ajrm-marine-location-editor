@@ -12,7 +12,6 @@ test("secondary-port seed enriches existing locations and adds positioned ports"
 	}] };
 	const secondary = {
 		schema: "org.ajrm.marine.secondary-port-seed/v1", standardPortId: "standard",
-		standardReferenceLevels: { mhws: 4, mhwn: 2.9, mlwn: 1.8, mlws: 0.7 },
 		locations: [
 			{ id: "existing", name: "Existing", legacyId: "existing", hw: [1, 2], lw: [5, 6], heights: [0.1, 0.2, 0.3, 0.4] },
 			{ id: "new", name: "New", legacyId: "new", coordinates: [-6, 55], hw: [0, 0, 0, 0], lw: [0, 0, 0, 0], heights: [0, 0, 0, 0] },
@@ -23,9 +22,9 @@ test("secondary-port seed enriches existing locations and adds positioned ports"
 	const existing = merged.locations.find(({ id }) => id === "existing");
 	assert.deepEqual(existing.types, ["marina", "tidalSecondaryPort"]);
 	assert.equal(existing.properties.tide.parentLocationRef, "/resources/locations/standard");
-	assert.equal(existing.properties.tide.secondaryPortCorrections.contract, "ajrm-secondary-port-corrections-v3");
+	assert.equal(existing.properties.tide.secondaryPortCorrections.contract, "ajrm-secondary-port-corrections-v4");
 	assert.equal(existing.properties.tide.secondaryPortCorrections.timeOffsetPeriodMinutes, 720);
 	assert.deepEqual(existing.properties.tide.secondaryPortCorrections.highWaterTimeOffsets[1], { referenceTimeMinutes: 360, offsetMinutes: 2 });
-	assert.equal(existing.properties.tide.secondaryPortCorrections.parentReferenceLevels.mhwn, 2.9);
+	assert.equal(existing.properties.tide.secondaryPortCorrections.parentReferenceLevels, undefined);
 	assert.deepEqual(merged.locations.find(({ id }) => id === "new").feature.geometry.coordinates, [-6, 55]);
 });

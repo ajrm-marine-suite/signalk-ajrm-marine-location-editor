@@ -1,13 +1,16 @@
 /**
  * Defines, migrates and applies secondary-port corrections. Reeds prints most
  * time corrections as two standard-port times twelve hours apart sharing one
- * difference. Contract v3 stores that repeating 12-hour pattern directly,
- * while retaining a 24-hour period only for genuinely non-repeating imports.
+ * difference. Contract v4 stores that repeating 12-hour pattern directly and
+ * takes reference levels from the linked parent port instead of duplicating
+ * them in every child record. A 24-hour period is retained only for genuinely
+ * non-repeating imports.
  */
 
 const CONTRACT_V1 = "ajrm-secondary-port-corrections-v1";
 const CONTRACT_V2 = "ajrm-secondary-port-corrections-v2";
 const CONTRACT_V3 = "ajrm-secondary-port-corrections-v3";
+const CONTRACT_V4 = "ajrm-secondary-port-corrections-v4";
 const REEDS_PERIOD_MINUTES = 720;
 const DAY_MINUTES = 1440;
 const LEVEL_KEYS = Object.freeze(["mhws", "mhwn", "mlwn", "mlws"]);
@@ -47,7 +50,7 @@ function compactRepeatingPoints(points, periodMinutes = REEDS_PERIOD_MINUTES) {
 
 function migrateSecondaryPortCorrections(value) {
 	if (!value || typeof value !== "object" || Array.isArray(value)) return value;
-	if (value.contract === CONTRACT_V3) return structuredClone(value);
+	if (value.contract === CONTRACT_V4) return structuredClone(value);
 	let source = structuredClone(value);
 	const migratedFromContract = source.contract;
 	if (source.contract === CONTRACT_V1) {
@@ -62,17 +65,25 @@ function migrateSecondaryPortCorrections(value) {
 		delete source.hwTimeOffsetsMinutes;
 		delete source.lwTimeOffsetsMinutes;
 	}
-	if (source.contract !== CONTRACT_V2) return structuredClone(value);
-	const compactHigh = compactRepeatingPoints(source.highWaterTimeOffsets);
-	const compactLow = compactRepeatingPoints(source.lowWaterTimeOffsets);
-	const repeating = Boolean(compactHigh && compactLow);
+	if (source.contract === CONTRACT_V2) {
+		const compactHigh = compactRepeatingPoints(source.highWaterTimeOffsets);
+		const compactLow = compactRepeatingPoints(source.lowWaterTimeOffsets);
+		const repeating = Boolean(compactHigh && compactLow);
+		source = {
+			...source,
+			contract: CONTRACT_V3,
+			timeOffsetPeriodMinutes: repeating ? REEDS_PERIOD_MINUTES : DAY_MINUTES,
+			highWaterTimeOffsets: repeating ? compactHigh : structuredClone(source.highWaterTimeOffsets),
+			lowWaterTimeOffsets: repeating ? compactLow : structuredClone(source.lowWaterTimeOffsets),
+			migratedFromContract,
+		};
+	}
+	if (source.contract !== CONTRACT_V3) return structuredClone(value);
+	const { parentReferenceLevels, standardReferenceLevels, ...withoutDuplicatedLevels } = source;
 	return {
-		...source,
-		contract: CONTRACT_V3,
-		timeOffsetPeriodMinutes: repeating ? REEDS_PERIOD_MINUTES : DAY_MINUTES,
-		highWaterTimeOffsets: repeating ? compactHigh : structuredClone(source.highWaterTimeOffsets),
-		lowWaterTimeOffsets: repeating ? compactLow : structuredClone(source.lowWaterTimeOffsets),
-		migratedFromContract,
+		...withoutDuplicatedLevels,
+		contract: CONTRACT_V4,
+		migratedFromContract: source.migratedFromContract || CONTRACT_V3,
 	};
 }
 
@@ -127,8 +138,9 @@ function correctedReferenceLevels(parentLevels, differences) {
 
 function applySecondaryPortCorrections(events, correctionValue, parentLevels) {
 	const correction = migrateSecondaryPortCorrections(correctionValue);
-	if (correction?.contract !== CONTRACT_V3) throw new Error("Secondary-port corrections use an unsupported contract.");
-	const levels = parentLevels || correction.parentReferenceLevels;
+	if (correction?.contract !== CONTRACT_V4) throw new Error("Secondary-port corrections use an unsupported contract.");
+	const levels = parentLevels;
+	if (!levels) throw new Error("The linked parent port has no MHWS/MHWN/MLWN/MLWS reference levels.");
 	const periodMinutes = Number(correction.timeOffsetPeriodMinutes || REEDS_PERIOD_MINUTES);
 	const correctedEvents = events.map((event) => {
 		if (!event?.at || !["high", "low"].includes(event.type)) return structuredClone(event);
@@ -155,6 +167,7 @@ module.exports = {
 	CONTRACT_V1,
 	CONTRACT_V2,
 	CONTRACT_V3,
+	CONTRACT_V4,
 	DAY_MINUTES,
 	REEDS_PERIOD_MINUTES,
 	LEVEL_KEYS,

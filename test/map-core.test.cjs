@@ -47,8 +47,8 @@ test("map page uses the standard left-side controls with zoom first", () => {
   const app = fs.readFileSync(path.join(root, "public/app.js"), "utf8");
   const css = fs.readFileSync(path.join(root, "public/styles.css"), "utf8");
 	assert.match(html, /ajrm-map-core\.css\?v=0\.7\.5/);
-	assert.match(html, /type="module" src="\.\/app\.js\?v=0\.6\.13"/);
-	assert.match(html, /styles\.css\?v=0\.6\.13/);
+	assert.match(html, /type="module" src="\.\/app\.js\?v=0\.6\.14"/);
+	assert.match(html, /styles\.css\?v=0\.6\.14/);
 	assert.match(html, /id="chartCycleStatus" class="ajrm-map-chart-cycle-status"[^>]+hidden/);
   assert.match(app, /zoomControl:\s*true/);
   assert.match(app, /MapCore\.createChartSelectorControl/);
@@ -113,8 +113,13 @@ test("tidal location fields are separated by port class", () => {
 	assert.doesNotMatch(standard, /id="parentLocationRef"/);
 	assert.match(secondary, /id="parentLocationRef"/);
 	assert.match(secondary, /id="secondaryDiffMhws"/);
+	assert.doesNotMatch(secondary, /id="secondaryStandardMhws"|Parent port \(m\)/);
 	assert.doesNotMatch(secondary, /id="tideProviderId"/);
+	assert.match(html, /id="tideAssignmentField" hidden>Prediction port for this region/);
+	assert.match(html, /id="tideRegionLabel">Tidal region/);
+	assert.doesNotMatch(html, /Tidal location used here/);
 	assert.match(app, /standardPortFields\.hidden = !types\.includes\("tidalStandardPort"\)/);
+	assert.match(app, /harbourProfileArea = profileEligible && elements\.geometryType\.value === "Polygon"/);
 	assert.match(app, /if \(types\.includes\("tidalStandardPort"\)\)[\s\S]*Object\.assign\(properties\.tide/);
 	assert.match(css, /\.reeds-table input\s*\{[^}]*min-width:\s*76px/s);
 	assert.match(css, /\.reeds-height-table\s*\{[^}]*min-width:\s*520px/s);

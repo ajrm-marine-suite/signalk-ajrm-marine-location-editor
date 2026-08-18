@@ -21,7 +21,8 @@ test("compacts duplicated v2 points to a Reeds-style 12-hour cycle", () => {
 			{ referenceTimeMinutes: 780, offsetMinutes: -40 }, { referenceTimeMinutes: 1200, offsetMinutes: -35 },
 		],
 	});
-	assert.equal(result.contract, "ajrm-secondary-port-corrections-v3");
+	assert.equal(result.contract, "ajrm-secondary-port-corrections-v4");
+	assert.equal(result.parentReferenceLevels, undefined);
 	assert.equal(result.timeOffsetPeriodMinutes, 720);
 	assert.deepEqual(result.highWaterTimeOffsets, [
 		{ referenceTimeMinutes: 60, offsetMinutes: -55 },
@@ -74,10 +75,10 @@ test("preserves a Reeds pair stated in the 1300-to-0100 order", () => {
 });
 
 test("applies the stated Loch Melfort HW/LW time and height corrections", () => {
+	const parentLevels = { mhws: 4, mhwn: 2.9, mlwn: 1.8, mlws: 0.7 };
 	const correction = {
-		contract: "ajrm-secondary-port-corrections-v3",
+		contract: "ajrm-secondary-port-corrections-v4",
 		timeOffsetPeriodMinutes: 720,
-		parentReferenceLevels: { mhws: 4, mhwn: 2.9, mlwn: 1.8, mlws: 0.7 },
 		highWaterTimeOffsets: [
 			{ referenceTimeMinutes: 60, offsetMinutes: -55 },
 			{ referenceTimeMinutes: 420, offsetMinutes: -25 },
@@ -91,7 +92,7 @@ test("applies the stated Loch Melfort HW/LW time and height corrections", () => 
 	const result = applySecondaryPortCorrections([
 		{ at: "2026-08-18T01:00:00Z", type: "high", heightM: 4 },
 		{ at: "2026-08-18T08:00:00Z", type: "low", heightM: 0.7 },
-	], correction);
+	], correction, parentLevels);
 	assert.equal(result.events[0].at, "2026-08-18T00:05:00.000Z");
 	assert.equal(result.events[0].heightM, 2.8);
 	assert.equal(result.events[1].at, "2026-08-18T07:25:00.000Z");

@@ -105,7 +105,7 @@ test("a fresh catalogue receives the sourced West Scotland seed without publishi
 	assert.ok(stornoway?.types.includes("tidalObservationStation"));
 	assert.ok(tobermory?.types.includes("tidalSecondaryPort"));
 	assert.equal(tobermory.properties.tide.secondaryPortCorrections.legacyId, "tobermory");
-	assert.equal(tobermory.properties.tide.secondaryPortCorrections.parentReferenceLevels.mhws, 4);
+	assert.equal(tobermory.properties.tide.secondaryPortCorrections.parentReferenceLevels, undefined);
 	assert.equal(portEllen.properties.tide.secondaryPortCorrections.highWaterTimeOffsets[0].offsetMinutes, -330);
 	assert.deepEqual(lochMelfort.properties.tide.secondaryPortCorrections.highWaterTimeOffsets[0], { referenceTimeMinutes: 60, offsetMinutes: -55 });
 	assert.deepEqual(lochMelfort.properties.tide.secondaryPortCorrections.lowWaterTimeOffsets[1], { referenceTimeMinutes: 480, offsetMinutes: -35 });

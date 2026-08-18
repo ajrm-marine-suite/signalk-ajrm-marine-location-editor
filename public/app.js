@@ -44,10 +44,9 @@ const elements = Object.fromEntries([
 	"newLocation", "refreshLocations", "locationSearch", "displayTypeChoices", "showAllTypes",
 	"hideAllTypes", "mapAreaOnly", "locationName", "description", "typeChoices",
 	"geometryType", "setPoint", "openGeometry", "pointEditor", "polygonEditor", "point",
-	"points", "profileRegionField", "publishAsHarbourRegion", "tideLocationRef", "tideRegionRef", "anchorageFields", "seabed", "chartedDepthM",
+	"points", "profileRegionField", "publishAsHarbourRegion", "tideRelationships", "tideAssignmentField", "tideRegionField", "tideRegionLabel", "tideLocationRef", "tideRegionRef", "anchorageFields", "seabed", "chartedDepthM",
 	"detectionRadiusM", "trustedAutomation", "anchorageNotes", "tideFields", "standardPortFields", "tideProviderId", "tideProvider", "tideStationId", "tideStationName",
 	"parentLocationRef", "tideDatum", "tideMhws", "tideMhwn", "tideMlwn", "tideMlws", "secondaryPortFields",
-	"secondaryStandardMhws", "secondaryStandardMhwn", "secondaryStandardMlwn", "secondaryStandardMlws",
 	"secondaryTimePeriod", "secondaryLegacyPattern", "secondaryHwPair1", "secondaryHwPair2", "secondaryLwPair1", "secondaryLwPair2",
 	...secondaryPointIndexes.flatMap((index) => [`secondaryHwTime${index}`, `secondaryHwOffset${index}`]),
 	...secondaryPointIndexes.flatMap((index) => [`secondaryLwTime${index}`, `secondaryLwOffset${index}`]),
@@ -210,10 +209,15 @@ function applyWorkspaceDisplayTypes() {
 function updateConditionalFields() {
 	const types = checkedTypes();
 	const profileEligible = types.some((type) => ["harbour", "anchorage", "mooring", "marina"].includes(type));
-	elements.profileRegionField.hidden = !profileEligible;
-	if (!profileEligible) elements.publishAsHarbourRegion.checked = false;
+	const harbourProfileArea = profileEligible && elements.geometryType.value === "Polygon";
+	const tidalRegion = types.includes("tidalRegion");
+	elements.profileRegionField.hidden = !harbourProfileArea;
+	if (!harbourProfileArea) elements.publishAsHarbourRegion.checked = false;
+	elements.tideRelationships.hidden = !types.some((type) => tideTypes.has(type));
+	elements.tideAssignmentField.hidden = !tidalRegion;
+	elements.tideRegionLabel.textContent = tidalRegion ? "Parent tidal region" : "Tidal region";
 	elements.anchorageFields.hidden = !types.some((type) => anchorageTypes.has(type));
-	elements.tideFields.hidden = !types.some((type) => tideTypes.has(type));
+	elements.tideFields.hidden = !types.some((type) => ["tidalStandardPort", "tidalSecondaryPort", "tidalGate"].includes(type));
 	elements.standardPortFields.hidden = !types.includes("tidalStandardPort");
 	elements.secondaryPortFields.hidden = !types.includes("tidalSecondaryPort");
 	elements.tidalGateFields.hidden = !types.includes("tidalGate");
@@ -330,7 +334,7 @@ function fillSelect(select, choices, selected, emptyLabel) {
 
 function refreshReferences(location = selectedLocation()) {
 	const tidal = locations.filter((entry) => entry.types.some((type) => predictionPortTypes.has(type)) && entry.id !== location?.id);
-	fillSelect(elements.tideLocationRef, tidal.map((entry) => ({ value: entry.id, label: entry.name })), resourceId(location?.properties?.tideLocationRef), "Automatic / none assigned");
+	fillSelect(elements.tideLocationRef, tidal.map((entry) => ({ value: entry.id, label: entry.name })), resourceId(location?.properties?.tideLocationRef), "None assigned");
 	const regions = locations.filter((entry) => entry.types.includes("tidalRegion") && entry.id !== location?.id);
 	fillSelect(elements.tideRegionRef, regions.map((entry) => ({ value: entry.id, label: entry.name })), resourceId(location?.properties?.tideRegionRef), "None assigned");
 	const parentPorts = locations.filter((entry) => entry.types.some((type) => predictionPortTypes.has(type)) && entry.id !== location?.id);
@@ -353,7 +357,7 @@ function resetEditor() {
 	const center = map?.getCenter() || { lat: 55.8, lng: -5.2 };
 	elements.point.value = `${center.lat.toFixed(6)}, ${(center.lng ?? center.lon).toFixed(6)}`;
 	elements.points.value = "";
-	for (const id of ["seabed", "chartedDepthM", "detectionRadiusM", "anchorageNotes", "tideProviderId", "tideProvider", "tideStationId", "tideStationName", "tideDatum", "tideMhws", "tideMhwn", "tideMlwn", "tideMlws", "secondaryStandardMhws", "secondaryStandardMhwn", "secondaryStandardMlwn", "secondaryStandardMlws", ...secondaryPointIndexes.flatMap((index) => [`secondaryHwTime${index}`, `secondaryHwOffset${index}`, `secondaryLwTime${index}`, `secondaryLwOffset${index}`]), "secondaryDiffMhws", "secondaryDiffMhwn", "secondaryDiffMlwn", "secondaryDiffMlws", "secondaryPortNotes", "hazardReason", "hazardClearanceM"]) elements[id].value = "";
+	for (const id of ["seabed", "chartedDepthM", "detectionRadiusM", "anchorageNotes", "tideProviderId", "tideProvider", "tideStationId", "tideStationName", "tideDatum", "tideMhws", "tideMhwn", "tideMlwn", "tideMlws", ...secondaryPointIndexes.flatMap((index) => [`secondaryHwTime${index}`, `secondaryHwOffset${index}`, `secondaryLwTime${index}`, `secondaryLwOffset${index}`]), "secondaryDiffMhws", "secondaryDiffMhwn", "secondaryDiffMlwn", "secondaryDiffMlws", "secondaryPortNotes", "hazardReason", "hazardClearanceM"]) elements[id].value = "";
 	for (const id of ["gateFloodSet", "gateEbbSet", "gateSpringPeak", "gateNeapPeak", "gateFloodSpringAfter", "gateFloodNeapAfter", "gateFloodSpringSlack", "gateFloodNeapSlack", "gateEbbSpringAfter", "gateEbbNeapAfter", "gateEbbSpringSlack", "gateEbbNeapSlack", "gateSource"]) elements[id].value = "";
 	elements.trustedAutomation.checked = false;
 	updateSecondaryTimeLayout(720);
@@ -404,9 +408,6 @@ function selectLocation(id, fit = false, revealEditor = false) {
 	elements.tideMlws.value = properties.tide?.referenceLevels?.mlws ?? "";
 	const corrections = properties.tide?.secondaryPortCorrections || {};
 	updateSecondaryTimeLayout(Number(corrections.timeOffsetPeriodMinutes || 720));
-	for (const [id, key] of [["secondaryStandardMhws", "mhws"], ["secondaryStandardMhwn", "mhwn"], ["secondaryStandardMlwn", "mlwn"], ["secondaryStandardMlws", "mlws"]]) {
-		elements[id].value = corrections.parentReferenceLevels?.[key] ?? corrections.standardReferenceLevels?.[key] ?? "";
-	}
 	for (const [prefix, points] of [["Hw", corrections.highWaterTimeOffsets], ["Lw", corrections.lowWaterTimeOffsets]]) {
 		secondaryPointIndexes.forEach((index, pointIndex) => {
 			const point = points?.[pointIndex];
@@ -454,8 +455,8 @@ function buildLocation() {
 		? { provenance: structuredClone(current.properties.provenance) }
 		: {};
 	if (elements.publishAsHarbourRegion.checked) properties.publishAsHarbourRegion = true;
-	if (elements.tideLocationRef.value) properties.tideLocationRef = `${resourcePrefix}${elements.tideLocationRef.value}`;
-	if (elements.tideRegionRef.value) properties.tideRegionRef = `${resourcePrefix}${elements.tideRegionRef.value}`;
+	if (types.includes("tidalRegion") && elements.tideLocationRef.value) properties.tideLocationRef = `${resourcePrefix}${elements.tideLocationRef.value}`;
+	if (types.some((type) => tideTypes.has(type)) && elements.tideRegionRef.value) properties.tideRegionRef = `${resourcePrefix}${elements.tideRegionRef.value}`;
 	if (types.some((type) => anchorageTypes.has(type))) {
 		properties.anchorage = {
 			seabed: elements.seabed.value.trim() || undefined,
@@ -493,11 +494,10 @@ function buildLocation() {
 			const lowWaterTimeOffsets = correctionPoints("Lw");
 			if (!highWaterTimeOffsets.length || !lowWaterTimeOffsets.length) throw new Error("Enter at least one HW and one LW correction point.");
 			properties.tide.secondaryPortCorrections = {
-				contract: "ajrm-secondary-port-corrections-v3",
+				contract: "ajrm-secondary-port-corrections-v4",
 				timeOffsetPeriodMinutes: Number(elements.secondaryTimePeriod.value || 720),
 				legacyId: current?.properties?.tide?.secondaryPortCorrections?.legacyId,
 				standardPortName: current?.properties?.tide?.secondaryPortCorrections?.standardPortName,
-				parentReferenceLevels: numericGroup([["mhws", "secondaryStandardMhws"], ["mhwn", "secondaryStandardMhwn"], ["mlwn", "secondaryStandardMlwn"], ["mlws", "secondaryStandardMlws"]]),
 				highWaterTimeOffsets,
 				lowWaterTimeOffsets,
 				heightDifferencesM: numericGroup([["mhws", "secondaryDiffMhws"], ["mhwn", "secondaryDiffMhwn"], ["mlwn", "secondaryDiffMlwn"], ["mlws", "secondaryDiffMlws"]]),

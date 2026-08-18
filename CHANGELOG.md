@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.6.14 - 2026-08-18
+
+- Restrict automatic Harbour-profile switching to harbour, marina, anchorage
+  or mooring polygons.
+- Replace the generic tidal-location relationship with a prediction-port
+  assignment shown only on tidal regions.
+- Support nested tidal regions and prefer the deepest/smallest containing
+  region before falling back through broader regions.
+- Remove duplicated parent MHWS/MHWN/MLWN/MLWS entry from secondary ports and
+  migrate corrections to the parent-linked v4 contract.
+- Remove the unresolvable Bucklers Hard example from the West Scotland seed.
+
 ## 0.6.13 - 2026-08-18
 
 - Move point coordinates and polygon points from the main location drawer to

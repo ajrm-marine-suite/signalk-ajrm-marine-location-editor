@@ -17,6 +17,7 @@ const {
 	normalizeLocation,
 	representativePosition,
 } = require("./location-model.cjs");
+const { nearestSecondaryPort } = require("./tide-selection.cjs");
 const { createLocationStore } = require("./location-store.cjs");
 const { prepareLocationImport } = require("./harbour-editor-import.cjs");
 const { createUkhoTideProvider } = require("./tide-provider.cjs");
@@ -223,6 +224,10 @@ module.exports = function ajrmMarineLocationEditor(app) {
 			contract: "ajrm-marine-tides-service-v1",
 			configured: Boolean(options.ukhoApiKey),
 			status: async (request = {}) => { await initializationPromise; return resolveTide(request); },
+			recommendSecondary: async (request = {}) => {
+				await initializationPromise;
+				return nearestSecondaryPort(await store.list(), request);
+			},
 			pin: async (portId) => {
 				await initializationPromise;
 				await tideResolver.setPinnedPort(portId);

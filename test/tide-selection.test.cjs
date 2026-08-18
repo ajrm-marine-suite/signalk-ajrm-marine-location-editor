@@ -6,7 +6,7 @@ const assert = require("node:assert/strict");
 const crypto = require("node:crypto");
 const test = require("node:test");
 const { normalizeLocation } = require("../plugin/location-model.cjs");
-const { LOCATION_REF_PREFIX, selectTidePort } = require("../plugin/tide-selection.cjs");
+const { LOCATION_REF_PREFIX, nearestSecondaryPort, selectTidePort } = require("../plugin/tide-selection.cjs");
 
 function location(name, types, geometry, properties = {}) {
 	return normalizeLocation({ id: crypto.randomUUID(), name, types, feature: { type: "Feature", properties: {}, geometry }, properties });
@@ -20,6 +20,16 @@ function predictionPort(name, longitude) {
 	return location(name, ["tidalStandardPort"], point(longitude, 56), {
 		tide: { providerId: "ukhoTidalEvents", stationId: name.toLowerCase(), stationName: name, datum: "Chart Datum" },
 	});
+}
+
+function secondaryPort(name, longitude) {
+	const value = predictionPort(name, longitude);
+	value.types = ["tidalSecondaryPort"];
+	value.properties.tide = {
+		parentLocationRef: `${LOCATION_REF_PREFIX}${crypto.randomUUID()}`,
+		secondaryPortCorrections: { contract: "ajrm-secondary-port-corrections-v2" },
+	};
+	return value;
 }
 
 test("selection follows explicit, region-assigned, same-region-nearest and pinned order", () => {
@@ -67,4 +77,21 @@ test("invalid pins are exposed and never suppress a valid automatic selection", 
 	assert.equal(result.port.id, port.id);
 	assert.equal(result.pinValid, false);
 	assert.equal(result.reason, "explicitTideLocationRef");
+});
+
+test("nearest secondary recommendation stays inside the containing tidal region", () => {
+	const region = location("Region", ["tidalRegion"], {
+		type: "Polygon",
+		coordinates: [[[-5.5, 55.5], [-4.5, 55.5], [-4.5, 56.5], [-5.5, 56.5], [-5.5, 55.5]]],
+	});
+	const near = secondaryPort("Near", -5.05);
+	const far = secondaryPort("Far", -5.4);
+	const outside = secondaryPort("Outside", -4.4);
+	const result = nearestSecondaryPort([region, near, far, outside], {
+		position: { longitude: -5, latitude: 56 },
+	});
+	assert.equal(result.port.id, near.id);
+	assert.equal(result.tidalRegion.id, region.id);
+	assert.equal(result.reason, "nearestSecondaryPortInTidalRegion");
+	assert.equal(Number.isFinite(result.distanceM), true);
 });

@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.6.11 - 2026-08-18
+
+- Add a shared nearest-secondary-port recommendation constrained to the
+  vessel's containing tidal region.
+- Honour explicit tidal-region links and spatially include legacy unlinked
+  secondary ports whose geometry lies in that region.
+
 ## 0.6.10 - 2026-08-18
 
 - Replace fixed 0000/0600/1200/1800 secondary-port columns with explicit,

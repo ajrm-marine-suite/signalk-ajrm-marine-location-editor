@@ -3,7 +3,7 @@
  * fetching data; manual pins override but do not conceal the automatic choice.
  */
 
-const { nearestLocations } = require("./location-model.cjs");
+const { nearestLocations, representativePosition } = require("./location-model.cjs");
 
 const LOCATION_REF_PREFIX = "/resources/locations/";
 const PREDICTION_PORT_TYPES = new Set(["tidalStandardPort", "tidalSecondaryPort"]);
@@ -44,6 +44,32 @@ function containsPosition(location, position) {
 function containingLocations(locations, position) {
 	if (!Number.isFinite(position?.latitude) || !Number.isFinite(position?.longitude)) return [];
 	return locations.filter((location) => containsPosition(location, position));
+}
+
+/**
+ * Finds the closest usable secondary port in the vessel's containing tidal
+ * region. Explicit region links win; unlinked legacy records are accepted
+ * when their own geometry lies in that same region.
+ */
+function nearestSecondaryPort(locations, { position } = {}) {
+	const tidalRegion = containingLocations(locations, position)
+		.find((location) => location.types.includes("tidalRegion")) || null;
+	if (!tidalRegion) return { port: null, tidalRegion: null, reason: "outsideTidalRegion" };
+	const regionReference = `${LOCATION_REF_PREFIX}${tidalRegion.id}`;
+	const eligible = locations.filter((location) => {
+		if (!location.types?.includes("tidalSecondaryPort") || !isPredictionPort(location)) return false;
+		if (location.properties?.tideRegionRef === regionReference) return true;
+		if (location.properties?.tideRegionRef) return false;
+		const locationPosition = representativePosition(location);
+		return Boolean(locationPosition && containsPosition(tidalRegion, locationPosition));
+	});
+	const port = nearestLocations(eligible, position, { limit: 1 })[0] || null;
+	return {
+		port,
+		tidalRegion,
+		reason: port ? "nearestSecondaryPortInTidalRegion" : "noSecondaryPortInTidalRegion",
+		distanceM: port?.distanceM ?? null,
+	};
 }
 
 function candidateFromReference(reference, byId) {
@@ -108,5 +134,6 @@ module.exports = {
 	LOCATION_REF_PREFIX,
 	containsPosition,
 	isPredictionPort,
+	nearestSecondaryPort,
 	selectTidePort,
 };

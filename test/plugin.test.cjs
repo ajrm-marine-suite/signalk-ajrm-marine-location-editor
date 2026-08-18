@@ -219,6 +219,7 @@ test("lifecycle exposes the spatial service and retracts status on stop", async 
 	const { app, messages, plugin } = await fixture(t);
 	assert.equal(app.ajrmMarineLocations.contract, "ajrm-marine-locations-service-v1");
 	assert.equal(app.ajrmMarineTides.contract, "ajrm-marine-tides-service-v1");
+	assert.equal(typeof app.ajrmMarineTides.recommendSecondary, "function");
 	assert.equal(app.ajrmMarineAnchoring.contract, "ajrm-marine-anchoring-service-v1");
 	assert.equal(app.ajrmMarineLocationDiagnostics.contract, "ajrm-marine-location-diagnostics-v1");
 	assert.equal(globalThis[Symbol.for("mcdonaldajr.ajrmMarineLocations")], app.ajrmMarineLocations);

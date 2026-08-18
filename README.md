@@ -1,5 +1,10 @@
 # AJRM Marine Location Editor
 
+Version `0.6.11` adds a shared recommendation for the nearest usable secondary
+port inside the vessel's containing tidal region. It respects explicit region
+links and spatially classifies older unlinked secondary-port records, allowing
+planning consumers to offer a consistent nearby-port action.
+
 Version `0.6.10` replaces the fixed secondary-port clock columns with the
 `ajrm-secondary-port-corrections-v2` contract. Each HW and LW correction now
 stores the reference time printed in the almanac, so tables beginning at 0100,

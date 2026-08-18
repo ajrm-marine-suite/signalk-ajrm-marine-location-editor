@@ -1,5 +1,8 @@
 # AJRM Marine Location Editor
 
+Version `0.6.17` draws new and unsaved location geometry in bright red so its
+circle or polygon remains conspicuous against chart colours.
+
 Version `0.6.16` makes creation of a secondary port an explicit standard-port
 correction workflow. Selecting the secondary-port classification immediately
 opens its Reeds table in a wider editor, and standard-port and secondary-port

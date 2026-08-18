@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.6.17 - 2026-08-18
+
+- Replace the yellow new/unsaved geometry preview with bright red for stronger
+  contrast against chart backgrounds.
+
 ## 0.6.16 - 2026-08-18
 
 - Reveal and scroll to the secondary-port form immediately when its

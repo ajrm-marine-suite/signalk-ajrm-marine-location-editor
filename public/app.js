@@ -14,6 +14,7 @@ const resourcePrefix = "/resources/locations/";
 const storagePrefix = "ajrmMarineLocationEditor";
 const chartLayerZIndex = 650;
 const seamarkLayerZIndex = 750;
+const unsavedGeometryColor = "#ff2d2d";
 const typeDefinitions = {
 	anchorage: ["Anchorage", "places", "#16a34a"],
 	mooring: ["Mooring", "places", "#0d9488"],
@@ -644,8 +645,8 @@ function renderPreview() {
 	if (!geometryPreviewDirty) return;
 	try {
 		const geometry = geometryFromEditor();
-		if (geometry.type === "Point") L.circleMarker([geometry.coordinates[1], geometry.coordinates[0]], { radius: 9, color: "#facc15", weight: 4, fillOpacity: 0.2 }).addTo(previewLayer);
-		else L.polygon(geometry.coordinates[0].map(([lon, lat]) => [lat, lon]), { color: "#facc15", weight: 4, fillOpacity: 0.08 }).addTo(previewLayer);
+		if (geometry.type === "Point") L.circleMarker([geometry.coordinates[1], geometry.coordinates[0]], { radius: 9, color: unsavedGeometryColor, weight: 4, fillOpacity: 0.2 }).addTo(previewLayer);
+		else L.polygon(geometry.coordinates[0].map(([lon, lat]) => [lat, lon]), { color: unsavedGeometryColor, weight: 4, fillOpacity: 0.08 }).addTo(previewLayer);
 	} catch { /* Incomplete edits are expected while typing. */ }
 }
 

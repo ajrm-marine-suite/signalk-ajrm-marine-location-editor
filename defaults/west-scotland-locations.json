@@ -2,9 +2,50 @@
   "schema": "org.ajrm.marine.location-seed/v1",
   "region": "West Scotland",
   "generatedAt": "2026-08-12T00:00:00.000Z",
-  "locationCount": 86,
+  "locationCount": 87,
   "licenceNote": "Each location records its source and licence. OSM-derived records are ODbL 1.0; Environment Agency records are OGL 3.0. Editorial references are links used only for corroboration.",
   "locations": [
+    {
+      "id": "9077fa0a-658e-49f7-b006-86767a605d86",
+      "name": "West Scotland tidal planning region",
+      "description": "Broad initial planning region assigning the Oban prediction port to West Scotland. This is a service-selection area, not a claim that tidal behaviour is uniform across it; add more precise regions and ports where appropriate.",
+      "types": [
+        "tidalRegion"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {},
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [-8.5, 54.5],
+              [-3.5, 54.5],
+              [-3.5, 59.5],
+              [-8.5, 59.5],
+              [-8.5, 54.5]
+            ]
+          ]
+        }
+      },
+      "properties": {
+        "tideLocationRef": "/resources/locations/e0e5661f-1675-4dbb-8fa0-ea8566c62ef4",
+        "provenance": {
+          "reviewStatus": "imported",
+          "warning": "Broad AJRM service-selection region only. It does not model tidal regimes or replace selection of a suitable official reference port.",
+          "sources": [
+            {
+              "provider": "AJRM Marine shared-tide migration",
+              "sourceId": "west-scotland-oban-selection-v1",
+              "license": "AGPL-3.0-or-later",
+              "url": "https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor",
+              "retrievedAt": "2026-08-18T00:00:00.000Z"
+            }
+          ]
+        },
+        "schema": "org.ajrm.marine.location/v1"
+      }
+    },
     {
       "id": "e0e5661f-1675-4dbb-8fa0-ea8566c62ef4",
       "name": "Oban tidal prediction port",
@@ -26,7 +67,7 @@
       "properties": {
         "tide": {
           "provider": "UK Hydrographic Office Tidal API",
-          "providerId": "0372",
+          "providerId": "ukhoTidalEvents",
           "stationId": "0372",
           "stationName": "Oban",
           "datum": "UKHO station datum"

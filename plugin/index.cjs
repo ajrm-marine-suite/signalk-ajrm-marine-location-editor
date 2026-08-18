@@ -203,17 +203,18 @@ module.exports = function ajrmMarineLocationEditor(app) {
 		app.ajrmMarineTides = Object.freeze({
 			contract: "ajrm-marine-tides-service-v1",
 			configured: Boolean(options.ukhoApiKey),
-			status: async (request = {}) => resolveTide(request),
+			status: async (request = {}) => { await initializationPromise; return resolveTide(request); },
 			pin: async (portId) => {
+				await initializationPromise;
 				await tideResolver.setPinnedPort(portId);
 				return resolveTide({ force: false });
 			},
-			refresh: async (request = {}) => resolveTide({ ...request, force: true }),
+			refresh: async (request = {}) => { await initializationPromise; return resolveTide({ ...request, force: true }); },
 		});
 		app.ajrmMarineWeather = Object.freeze({
 			contract: "ajrm-marine-weather-service-v1",
-			status: async (request = {}) => resolveWeather(request),
-			refresh: async (request = {}) => resolveWeather({ ...request, force: true }),
+			status: async (request = {}) => { await initializationPromise; return resolveWeather(request); },
+			refresh: async (request = {}) => { await initializationPromise; return resolveWeather({ ...request, force: true }); },
 		});
 		app.ajrmMarineAnchoring = Object.freeze({
 			contract: "ajrm-marine-anchoring-service-v1",
@@ -923,7 +924,7 @@ module.exports = function ajrmMarineLocationEditor(app) {
 			...request,
 			position: request.position || latestPosition,
 		});
-		const result = request.force || request.contextLocationId
+		const result = request.force || request.contextLocationId || request.position || request.includeEvents
 			? await execute()
 			: await (tideResolution || (tideResolution = execute().finally(() => { tideResolution = null; })));
 		latestTide = result;

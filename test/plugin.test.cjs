@@ -170,9 +170,11 @@ test("lifecycle exposes the spatial service and retracts status on stop", async 
 	assert.equal(app.ajrmMarineTides.contract, "ajrm-marine-tides-service-v1");
 	assert.equal(app.ajrmMarineAnchoring.contract, "ajrm-marine-anchoring-service-v1");
 	assert.equal(app.ajrmMarineAnchoring.status().contract, "ajrm-marine-anchoring-assistance-v1");
-	const tide = await app.ajrmMarineTides.status();
+	const tide = await app.ajrmMarineTides.status({ position: { latitude: 56.27224, longitude: -5.637656 } });
 	assert.equal(tide.contract, "ajrm-marine-tide-resolver-v1");
 	assert.equal(tide.valid, false);
+	assert.equal(tide.selectedPort.name, "Oban tidal prediction port");
+	assert.equal(tide.selection.reason, "containingRegionAssignment");
 	await plugin.stop();
 	assert.equal(app.ajrmMarineLocations, undefined);
 	assert.equal(app.ajrmMarineTides, undefined);

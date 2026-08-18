@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.6.1 - 2026-08-18
+
+- Add a deliberately broad, explicitly-labelled West Scotland tidal planning
+  region assigned to the provisional Oban prediction-port record. This lets a
+  fresh catalogue follow the documented containing-region selection rule
+  without introducing an unsafe global-nearest-port fallback or requiring a
+  manual pin.
+- Make the in-process tide and weather services wait for catalogue
+  initialization, preventing early-start consumers from seeing a transient
+  empty catalogue.
+- Keep an explicit position/context tide request separate from the coalesced
+  background own-vessel refresh, so a planner cannot receive an unrelated
+  no-position result during startup.
+
 ## 0.6.0 - 2026-08-18
 
 - Add the shared `ajrm-marine-weather-service-v1` contract for planners and

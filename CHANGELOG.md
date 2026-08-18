@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.6.7 - 2026-08-18
+
+- Return to the Select Location drawer when closing an editor that was opened
+  from that drawer.
+- Preserve direct map/editor-toolbar behaviour: those editors still close to
+  the map instead of inventing a selection-history step.
+
 ## 0.6.6 - 2026-08-18
 
 - Store editable MHWS, MHWN, MLWN and MLWS station reference levels with tidal

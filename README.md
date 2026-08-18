@@ -1,5 +1,9 @@
 # AJRM Marine Location Editor
 
+Version `0.6.7` restores the selection workflow after editing: closing an
+editor opened from **Select Location** returns to the location selector rather
+than dropping the user back to the map.
+
 Version `0.6.6` stores optional MHWS, MHWN, MLWN and MLWS reference levels
 with each tidal prediction port and publishes them through the shared Tide
 Resolver. Existing unedited bundled ports are upgraded automatically.

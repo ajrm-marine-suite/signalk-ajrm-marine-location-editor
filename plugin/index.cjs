@@ -24,6 +24,7 @@ const { createTideResolver } = require("./tide-resolver.cjs");
 const { createAnchoringAssistant } = require("./anchoring-assistance.cjs");
 const { createWeatherService } = require("./weather-service.cjs");
 const { mergeSecondaryPortSeed } = require("./secondary-port-seed.cjs");
+const { mergeGateConstantsSeed } = require("./gate-constants-seed.cjs");
 
 const STATUS_CONTRACT = "ajrm-marine-location-editor-status-v1";
 const SERVICE_REGISTRIES = Object.freeze({
@@ -48,7 +49,13 @@ const bundledWestScotlandSeed = JSON.parse(
 const bundledSecondaryPortSeed = JSON.parse(
 	fs.readFileSync(path.join(__dirname, "..", "defaults", "secondary-port-locations.json"), "utf8"),
 );
-const bundledLocationSeed = mergeSecondaryPortSeed(bundledWestScotlandSeed, bundledSecondaryPortSeed);
+const bundledGateSeed = JSON.parse(
+	fs.readFileSync(path.join(__dirname, "..", "defaults", "tidal-gate-locations.json"), "utf8"),
+);
+const bundledLocationSeed = mergeGateConstantsSeed(
+	mergeSecondaryPortSeed(bundledWestScotlandSeed, bundledSecondaryPortSeed),
+	bundledGateSeed,
+);
 
 function normalizeResources(value) {
 	if (!value) return [];
@@ -640,6 +647,7 @@ module.exports = function ajrmMarineLocationEditor(app) {
 			["Tidal location", location.properties.tideLocationRef, ["tidalStandardPort", "tidalSecondaryPort"]],
 			["Tidal region", location.properties.tideRegionRef, ["tidalRegion"]],
 			["Parent tidal location", location.properties.tide?.parentLocationRef, ["tidalStandardPort"]],
+			["Tidal-gate standard port", location.properties.tidalGate?.standardPortRef, ["tidalStandardPort"]],
 		]) {
 			if (!reference) continue;
 			const id = reference.split("/").at(-1);
@@ -698,6 +706,7 @@ module.exports = function ajrmMarineLocationEditor(app) {
 			const sourceMatch = locationSourceKeys(seed).map((key) => bySource.get(key)).find(Boolean);
 			if (sourceMatch) {
 				if (await enrichBundledSecondaryPort(sourceMatch, seed)) continue;
+				if (await enrichBundledGateConstants(sourceMatch, seed)) continue;
 				await enrichUneditedBundledTideReferenceLevels(sourceMatch, seed);
 				await enrichUneditedMigration(sourceMatch, seed);
 				continue;
@@ -705,6 +714,7 @@ module.exports = function ajrmMarineLocationEditor(app) {
 			const nearbyMatch = current.find((location) => locationsDescribeSamePlace(location, seed));
 			if (nearbyMatch) {
 				if (await enrichBundledSecondaryPort(nearbyMatch, seed)) continue;
+				if (await enrichBundledGateConstants(nearbyMatch, seed)) continue;
 				await enrichUneditedBundledTideReferenceLevels(nearbyMatch, seed);
 				await enrichUneditedMigration(nearbyMatch, seed);
 				continue;
@@ -727,6 +737,7 @@ module.exports = function ajrmMarineLocationEditor(app) {
 			properties: {
 				...current.properties,
 				tide: { ...current.properties?.tide, ...seed.properties.tide },
+				tidalGate: current.properties?.tidalGate || structuredClone(seed.properties?.tidalGate),
 				provenance: {
 					...seed.properties.provenance,
 					...current.properties?.provenance,
@@ -736,6 +747,20 @@ module.exports = function ajrmMarineLocationEditor(app) {
 		}, {
 			expectedRevision: current.revision,
 			editedBy: "Bundled secondary-port migration",
+		});
+		return true;
+	}
+
+	async function enrichBundledGateConstants(current, seed) {
+		const constants = seed.properties?.tidalGate;
+		if (!constants || current.properties?.tidalGate) return false;
+		await store.set(current.id, {
+			...current,
+			types: [...new Set([...current.types, "tidalGate"])],
+			properties: { ...current.properties, tidalGate: structuredClone(constants) },
+		}, {
+			expectedRevision: current.revision,
+			editedBy: "Bundled tidal-gate constants migration",
 		});
 		return true;
 	}

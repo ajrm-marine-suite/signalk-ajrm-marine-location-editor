@@ -2,7 +2,7 @@
   "schema": "org.ajrm.marine.location-seed/v1",
   "region": "West Scotland",
   "generatedAt": "2026-08-12T00:00:00.000Z",
-  "locationCount": 87,
+  "locationCount": 89,
   "licenceNote": "Each location records its source and licence. OSM-derived records are ODbL 1.0; Environment Agency records are OGL 3.0. Editorial references are links used only for corroboration.",
   "locations": [
     {
@@ -90,6 +90,72 @@
               "retrievedAt": "2026-08-18T00:00:00.000Z"
             }
           ]
+        },
+        "schema": "org.ajrm.marine.location/v1"
+      }
+    },
+    {
+      "id": "f31d48a1-d625-4a93-a9c2-b54fc6cad308",
+      "name": "Stornoway tidal prediction port",
+      "description": "UKHO standard prediction port for Stornoway.",
+      "types": ["tidalStandardPort"],
+      "feature": {
+        "type": "Feature",
+        "properties": {},
+        "geometry": { "type": "Point", "coordinates": [-6.383333, 58.2] }
+      },
+      "properties": {
+        "tide": {
+          "provider": "UK Hydrographic Office Tidal API",
+          "providerId": "ukhoTidalEvents",
+          "stationId": "0308",
+          "stationName": "Stornoway",
+          "datum": "UKHO station datum",
+          "referenceLevels": { "mhws": 4.8, "mhwn": 3.7, "mlwn": 2.0, "mlws": 0.7 }
+        },
+        "provenance": {
+          "reviewStatus": "sourceChecked",
+          "warning": "Official predictions remain subject to UKHO service terms and should be checked for operational use.",
+          "sources": [{
+            "provider": "ADMIRALTY UK Tidal API and official secondary-port table 5616",
+            "sourceId": "0308",
+            "license": "UKHO service terms apply",
+            "url": "https://www.admiralty.co.uk/access-data/tidal-data",
+            "retrievedAt": "2026-08-18T00:00:00.000Z"
+          }]
+        },
+        "schema": "org.ajrm.marine.location/v1"
+      }
+    },
+    {
+      "id": "24c0305b-8e6a-4ed7-98a1-809b9bab0334",
+      "name": "Ullapool tidal prediction port",
+      "description": "UKHO standard prediction port for Ullapool.",
+      "types": ["tidalStandardPort"],
+      "feature": {
+        "type": "Feature",
+        "properties": {},
+        "geometry": { "type": "Point", "coordinates": [-5.15, 57.9] }
+      },
+      "properties": {
+        "tide": {
+          "provider": "UK Hydrographic Office Tidal API",
+          "providerId": "ukhoTidalEvents",
+          "stationId": "0334",
+          "stationName": "Ullapool",
+          "datum": "UKHO station datum",
+          "referenceLevels": { "mhws": 5.2, "mhwn": 3.9, "mlwn": 2.1, "mlws": 0.7 }
+        },
+        "provenance": {
+          "reviewStatus": "sourceChecked",
+          "warning": "Official predictions remain subject to UKHO service terms and should be checked for operational use.",
+          "sources": [{
+            "provider": "ADMIRALTY UK Tidal API and official secondary-port table 5616",
+            "sourceId": "0334",
+            "license": "UKHO service terms apply",
+            "url": "https://www.admiralty.co.uk/access-data/tidal-data",
+            "retrievedAt": "2026-08-18T00:00:00.000Z"
+          }]
         },
         "schema": "org.ajrm.marine.location/v1"
       }

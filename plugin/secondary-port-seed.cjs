@@ -16,7 +16,7 @@ function correction(entry, defaults) {
 	return {
 		contract: CORRECTION_CONTRACT,
 		legacyId: entry.legacyId,
-		standardPortName: entry.standardPortName || "Oban",
+		standardPortName: entry.standardPortName || defaults.standardPortName,
 		standardReferenceLevels: entry.standardReferenceLevels || defaults.standardReferenceLevels,
 		hwTimeOffsetsMinutes: keyed(TIMES, entry.hw),
 		lwTimeOffsetsMinutes: keyed(TIMES, entry.lw),

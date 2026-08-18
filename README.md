@@ -1,5 +1,11 @@
 # AJRM Marine Location Editor
 
+Version `0.6.9` also makes Location Editor the single owner of tidal-gate
+passage constants. All 15 datasets formerly bundled in Gate Passage Planner
+are migrated into versioned `tidalGate` locations, editable only here. The
+bundled standard prediction ports now include Oban, Stornoway (`0308`) and
+Ullapool (`0334`) with their reference levels.
+
 Version `0.6.8` makes Location Editor the single owner of secondary-port
 setup. It stores the standard-port reference levels, HW/LW time corrections,
 height corrections and source notes needed by Marine Planning. Existing
@@ -51,6 +57,11 @@ reads these values from Location Editor; it no longer maintains a second copy.
 The bundled migration includes Bucklers Hard, Tobermory, Cuan Sound, Port
 Ellen, Craignure and Loch Melfort. Their positions and migrated constants are
 planning data that must be checked against current licensed sources.
+
+For a `tidalGate`, select its reference standard port and maintain the flood
+and ebb sets, spring/neap peak rates, start offsets, slack durations and source
+notes in the **Tidal-gate constants** section. Gate Passage Planner consumes
+this data read-only.
 
 The map defaults to **All Locations**, displaying migrated harbours and every
 other stored location. Its location browser supports text search, grouped

@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.6.9 - 2026-08-18
+
+- Add UKHO standard prediction ports Stornoway `0308` and Ullapool `0334`
+  with official MHWS/MHWN/MLWN/MLWS reference levels.
+- Become the sole owner and editor of all 15 migrated tidal-gate passage
+  datasets, including their standard-port relationship, timing, stream-rate,
+  slack and source fields.
+- Upgrade matching existing locations without moving their user-edited
+  geometry and add missing positioned gate records with migration provenance.
+
 ## 0.6.8 - 2026-08-18
 
 - Make Location Editor authoritative for secondary-port correction setup.

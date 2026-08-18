@@ -242,6 +242,24 @@ function validateLocation(location) {
 			throw new Error("A secondary port needs a parent standard port.");
 		}
 	}
+	if (properties.tidalGate != null) {
+		const gate = properties.tidalGate;
+		if (!location.types.includes("tidalGate") || typeof gate !== "object" || Array.isArray(gate)) {
+			throw new Error("Tidal-gate constants require the tidalGate location type.");
+		}
+		if (gate.contract !== "ajrm-tidal-gate-constants-v1") throw new Error("Tidal-gate constants use an unsupported contract.");
+		assertReference(gate.standardPortRef, "Tidal-gate standard-port reference");
+		assertText(gate.floodSet, "Flood set", { max: 20 });
+		assertText(gate.ebbSet, "Ebb set", { max: 20 });
+		assertText(gate.source, "Tidal-gate source", { max: 4000 });
+		for (const [key, label] of [["springPeakFlowKnots", "Spring peak flow"], ["neapPeakFlowKnots", "Neap peak flow"]]) {
+			if (gate[key] != null) validateNumber(gate[key], label, { minimum: 0, maximum: 30 });
+		}
+		for (const key of ["floodSpringAfter", "floodNeapAfter", "floodSpringSlack", "floodNeapSlack", "ebbSpringAfter", "ebbNeapAfter", "ebbSpringSlack", "ebbNeapSlack"]) {
+			assertText(gate[key], key, { max: 20 });
+			if (gate[key] && !/^-?\d{1,3}:\d{2}:\d{2}$/.test(gate[key])) throw new Error(`${key} must use h:mm:ss.`);
+		}
+	}
 	if (properties.anchorage != null) {
 		if (typeof properties.anchorage !== "object" || Array.isArray(properties.anchorage)) {
 			throw new Error("Anchorage details must be an object.");

@@ -50,6 +50,9 @@ const elements = Object.fromEntries([
 	"secondaryHw0000", "secondaryHw0600", "secondaryHw1200", "secondaryHw1800",
 	"secondaryLw0000", "secondaryLw0600", "secondaryLw1200", "secondaryLw1800",
 	"secondaryDiffMhws", "secondaryDiffMhwn", "secondaryDiffMlwn", "secondaryDiffMlws", "secondaryPortNotes",
+	"tidalGateFields", "gateStandardPortRef", "gateFloodSet", "gateEbbSet", "gateSpringPeak", "gateNeapPeak",
+	"gateFloodSpringAfter", "gateFloodNeapAfter", "gateFloodSpringSlack", "gateFloodNeapSlack",
+	"gateEbbSpringAfter", "gateEbbNeapAfter", "gateEbbSpringSlack", "gateEbbNeapSlack", "gateSource",
 	"hazardFields", "hazardSeverity", "hazardReason",
 	"hazardClearanceM", "hazardApplications", "saveLocation", "undoLocation", "deleteLocation", "showHistory",
 	"locationId", "locationListTitle", "locationList", "historyDialog", "historySummary",
@@ -210,6 +213,7 @@ function updateConditionalFields() {
 	elements.anchorageFields.hidden = !types.some((type) => anchorageTypes.has(type));
 	elements.tideFields.hidden = !types.some((type) => tideTypes.has(type));
 	elements.secondaryPortFields.hidden = !types.includes("tidalSecondaryPort");
+	elements.tidalGateFields.hidden = !types.includes("tidalGate");
 	elements.hazardFields.hidden = !types.some((type) => hazardTypes.has(type));
 	elements.pointEditor.hidden = elements.geometryType.value !== "Point";
 	elements.polygonEditor.hidden = elements.geometryType.value !== "Polygon";
@@ -271,6 +275,7 @@ function refreshReferences(location = selectedLocation()) {
 	fillSelect(elements.tideRegionRef, regions.map((entry) => ({ value: entry.id, label: entry.name })), resourceId(location?.properties?.tideRegionRef), "None assigned");
 	const standardPorts = locations.filter((entry) => entry.types.includes("tidalStandardPort") && entry.id !== location?.id);
 	fillSelect(elements.parentLocationRef, standardPorts.map((entry) => ({ value: entry.id, label: entry.name })), resourceId(location?.properties?.tide?.parentLocationRef), "None");
+	fillSelect(elements.gateStandardPortRef, standardPorts.map((entry) => ({ value: entry.id, label: entry.name })), resourceId(location?.properties?.tidalGate?.standardPortRef), "None");
 }
 
 function resetEditor() {
@@ -285,6 +290,7 @@ function resetEditor() {
 	elements.point.value = `${center.lat.toFixed(6)}, ${(center.lng ?? center.lon).toFixed(6)}`;
 	elements.points.value = "";
 	for (const id of ["seabed", "chartedDepthM", "detectionRadiusM", "anchorageNotes", "tideProviderId", "tideProvider", "tideStationId", "tideStationName", "tideDatum", "tideMhws", "tideMhwn", "tideMlwn", "tideMlws", "secondaryStandardMhws", "secondaryStandardMhwn", "secondaryStandardMlwn", "secondaryStandardMlws", "secondaryHw0000", "secondaryHw0600", "secondaryHw1200", "secondaryHw1800", "secondaryLw0000", "secondaryLw0600", "secondaryLw1200", "secondaryLw1800", "secondaryDiffMhws", "secondaryDiffMhwn", "secondaryDiffMlwn", "secondaryDiffMlws", "secondaryPortNotes", "hazardReason", "hazardClearanceM"]) elements[id].value = "";
+	for (const id of ["gateFloodSet", "gateEbbSet", "gateSpringPeak", "gateNeapPeak", "gateFloodSpringAfter", "gateFloodNeapAfter", "gateFloodSpringSlack", "gateFloodNeapSlack", "gateEbbSpringAfter", "gateEbbNeapAfter", "gateEbbSpringSlack", "gateEbbNeapSlack", "gateSource"]) elements[id].value = "";
 	elements.trustedAutomation.checked = false;
 	elements.hazardSeverity.value = "advisory";
 	elements.publishAsHarbourRegion.checked = false;
@@ -344,6 +350,8 @@ function selectLocation(id, fit = false, revealEditor = false) {
 		["secondaryDiffMlwn", "heightDifferencesM", "mlwn"], ["secondaryDiffMlws", "heightDifferencesM", "mlws"],
 	]) elements[id].value = corrections[group]?.[key] ?? "";
 	elements.secondaryPortNotes.value = corrections.notes || "";
+	const gate = properties.tidalGate || {};
+	for (const [id, key] of [["gateFloodSet", "floodSet"], ["gateEbbSet", "ebbSet"], ["gateSpringPeak", "springPeakFlowKnots"], ["gateNeapPeak", "neapPeakFlowKnots"], ["gateFloodSpringAfter", "floodSpringAfter"], ["gateFloodNeapAfter", "floodNeapAfter"], ["gateFloodSpringSlack", "floodSpringSlack"], ["gateFloodNeapSlack", "floodNeapSlack"], ["gateEbbSpringAfter", "ebbSpringAfter"], ["gateEbbNeapAfter", "ebbNeapAfter"], ["gateEbbSpringSlack", "ebbSpringSlack"], ["gateEbbNeapSlack", "ebbNeapSlack"], ["gateSource", "source"]]) elements[id].value = gate[key] ?? "";
 	elements.hazardSeverity.value = properties.hazard?.severity || "advisory";
 	elements.hazardReason.value = properties.hazard?.reason || "";
 	elements.hazardClearanceM.value = properties.hazard?.clearanceM ?? "";
@@ -418,7 +426,23 @@ function buildLocation() {
 			};
 		}
 	}
+	if (types.includes("tidalGate")) {
+		const text = (id) => elements[id].value.trim();
+		const numeric = (id) => elements[id].value === "" ? null : Number(elements[id].value);
+		properties.tidalGate = {
+			contract: "ajrm-tidal-gate-constants-v1",
+			standardPortRef: elements.gateStandardPortRef.value ? `${resourcePrefix}${elements.gateStandardPortRef.value}` : undefined,
+			floodSet: text("gateFloodSet"), ebbSet: text("gateEbbSet"),
+			springPeakFlowKnots: numeric("gateSpringPeak"), neapPeakFlowKnots: numeric("gateNeapPeak"),
+			floodSpringAfter: text("gateFloodSpringAfter"), floodNeapAfter: text("gateFloodNeapAfter"),
+			floodSpringSlack: text("gateFloodSpringSlack"), floodNeapSlack: text("gateFloodNeapSlack"),
+			ebbSpringAfter: text("gateEbbSpringAfter"), ebbNeapAfter: text("gateEbbNeapAfter"),
+			ebbSpringSlack: text("gateEbbSpringSlack"), ebbNeapSlack: text("gateEbbNeapSlack"),
+			source: text("gateSource"),
+		};
+	}
 	if (types.some((type) => hazardTypes.has(type))) {
+		// Hazard fields are independent of the tidal-gate contract above.
 		properties.hazard = {
 			severity: elements.hazardSeverity.value,
 			reason: elements.hazardReason.value.trim() || undefined,

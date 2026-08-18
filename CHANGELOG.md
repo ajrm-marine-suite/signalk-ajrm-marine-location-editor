@@ -1,5 +1,21 @@
 # Changelog
 
+## 0.4.0 - 2026-08-18
+
+- Add the shared `ajrm-marine-tide-resolver-v1` backend contract and publish its
+  rich provenance/freshness projection plus standard Signal K tide paths.
+- Select an explicit place reference first, then a containing tidal-region
+  assignment, then the nearest suitable port in that region; allow a persisted
+  manual pin without concealing the automatic candidate.
+- Add versioned tidal-region relationships and explicit provider identifiers
+  to the Location Editor model and UI.
+- Add UKHO high/low-water retrieval, current-height interpolation and
+  fresh/stale/expired handling. Respect UKHO terms by keeping Discovery data
+  memory-only and permitting durable cache only for configured Foundation or
+  Premium subscriptions.
+- Expose tide status, manual pin/clear and refresh through authenticated HTTP
+  routes and the in-process `app.ajrmMarineTides` service.
+
 ## 0.3.8 - 2026-08-18
 
 - Selecting a workspace now selects its relevant **Show on chart** types and

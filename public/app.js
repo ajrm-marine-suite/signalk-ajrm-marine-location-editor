@@ -4,9 +4,9 @@
  */
 
 import * as MapCore from "./ajrm-map-core.mjs?v=0.7.5";
-import { displayTypesForWorkspace, filterLocations, groupLocations } from "./location-browser.mjs?v=0.3.8";
-import { geometryNudgeNm, holdAcceleration } from "./geometry-motion.mjs?v=0.3.8";
-import { bindPressRepeat } from "./press-repeat.mjs?v=0.3.8";
+import { displayTypesForWorkspace, filterLocations, groupLocations } from "./location-browser.mjs?v=0.4.0";
+import { geometryNudgeNm, holdAcceleration } from "./geometry-motion.mjs?v=0.4.0";
+import { bindPressRepeat } from "./press-repeat.mjs?v=0.4.0";
 
 const apiBase = "/plugins/signalk-ajrm-marine-location-editor";
 const resourcePrefix = "/resources/locations/";
@@ -21,6 +21,7 @@ const typeDefinitions = {
 	tidalStandardPort: ["Tidal standard port", "tides", "#0891b2"],
 	tidalSecondaryPort: ["Tidal secondary port", "tides", "#06b6d4"],
 	tidalObservationStation: ["Tidal observation station", "tides", "#0e7490"],
+	tidalRegion: ["Tidal region", "tides", "#155e75"],
 	tidalGate: ["Tidal gate", "tides", "#7c3aed"],
 	hazard: ["Hazard", "hazards", "#dc2626"],
 	avoidanceArea: ["Avoidance area", "hazards", "#ef4444"],
@@ -29,7 +30,8 @@ const typeDefinitions = {
 	preferredChannel: ["Preferred channel", "hazards", "#2563eb"],
 	pointOfInterest: ["Point of interest", "places", "#64748b"],
 };
-const tideTypes = new Set(["tidalStandardPort", "tidalSecondaryPort", "tidalObservationStation", "tidalGate"]);
+const tideTypes = new Set(["tidalStandardPort", "tidalSecondaryPort", "tidalObservationStation", "tidalRegion", "tidalGate"]);
+const predictionPortTypes = new Set(["tidalStandardPort", "tidalSecondaryPort"]);
 const anchorageTypes = new Set(["anchorage", "mooring"]);
 const hazardTypes = new Set(["hazard", "avoidanceArea", "noAnchoringArea", "waitingArea", "preferredChannel"]);
 const hazardApplicationChoices = ["display", "routePlanning", "proximityWarning", "anchorPlanning"];
@@ -40,8 +42,8 @@ const elements = Object.fromEntries([
 	"newLocation", "refreshLocations", "locationSearch", "displayTypeChoices", "showAllTypes",
 	"hideAllTypes", "mapAreaOnly", "locationName", "description", "typeChoices",
 	"geometryType", "setPoint", "openGeometry", "pointEditor", "polygonEditor", "point",
-	"points", "profileRegionField", "publishAsHarbourRegion", "tideLocationRef", "anchorageFields", "seabed", "chartedDepthM",
-	"anchorageNotes", "tideFields", "tideProvider", "tideStationId", "tideStationName",
+	"points", "profileRegionField", "publishAsHarbourRegion", "tideLocationRef", "tideRegionRef", "anchorageFields", "seabed", "chartedDepthM",
+	"anchorageNotes", "tideFields", "tideProviderId", "tideProvider", "tideStationId", "tideStationName",
 	"parentLocationRef", "tideDatum", "hazardFields", "hazardSeverity", "hazardReason",
 	"hazardClearanceM", "hazardApplications", "saveLocation", "undoLocation", "deleteLocation", "showHistory",
 	"locationId", "locationListTitle", "locationList", "historyDialog", "historySummary",
@@ -255,8 +257,10 @@ function fillSelect(select, choices, selected, emptyLabel) {
 }
 
 function refreshReferences(location = selectedLocation()) {
-	const tidal = locations.filter((entry) => entry.types.some((type) => tideTypes.has(type)) && entry.id !== location?.id);
+	const tidal = locations.filter((entry) => entry.types.some((type) => predictionPortTypes.has(type)) && entry.id !== location?.id);
 	fillSelect(elements.tideLocationRef, tidal.map((entry) => ({ value: entry.id, label: entry.name })), resourceId(location?.properties?.tideLocationRef), "Automatic / none assigned");
+	const regions = locations.filter((entry) => entry.types.includes("tidalRegion") && entry.id !== location?.id);
+	fillSelect(elements.tideRegionRef, regions.map((entry) => ({ value: entry.id, label: entry.name })), resourceId(location?.properties?.tideRegionRef), "None assigned");
 	const standardPorts = locations.filter((entry) => entry.types.includes("tidalStandardPort") && entry.id !== location?.id);
 	fillSelect(elements.parentLocationRef, standardPorts.map((entry) => ({ value: entry.id, label: entry.name })), resourceId(location?.properties?.tide?.parentLocationRef), "None");
 }
@@ -272,7 +276,7 @@ function resetEditor() {
 	const center = map?.getCenter() || { lat: 55.8, lng: -5.2 };
 	elements.point.value = `${center.lat.toFixed(6)}, ${(center.lng ?? center.lon).toFixed(6)}`;
 	elements.points.value = "";
-	for (const id of ["seabed", "chartedDepthM", "anchorageNotes", "tideProvider", "tideStationId", "tideStationName", "tideDatum", "hazardReason", "hazardClearanceM"]) elements[id].value = "";
+	for (const id of ["seabed", "chartedDepthM", "anchorageNotes", "tideProviderId", "tideProvider", "tideStationId", "tideStationName", "tideDatum", "hazardReason", "hazardClearanceM"]) elements[id].value = "";
 	elements.hazardSeverity.value = "advisory";
 	elements.publishAsHarbourRegion.checked = false;
 	elements.hazardApplications.querySelectorAll("input").forEach((input) => { input.checked = false; });
@@ -307,6 +311,7 @@ function selectLocation(id, fit = false, revealEditor = false) {
 	elements.seabed.value = properties.anchorage?.seabed || "";
 	elements.chartedDepthM.value = properties.anchorage?.chartedDepthM ?? "";
 	elements.anchorageNotes.value = properties.anchorage?.notes || "";
+	elements.tideProviderId.value = properties.tide?.providerId || "";
 	elements.tideProvider.value = properties.tide?.provider || "";
 	elements.tideStationId.value = properties.tide?.stationId || "";
 	elements.tideStationName.value = properties.tide?.stationName || "";
@@ -341,6 +346,7 @@ function buildLocation() {
 		: {};
 	if (elements.publishAsHarbourRegion.checked) properties.publishAsHarbourRegion = true;
 	if (elements.tideLocationRef.value) properties.tideLocationRef = `${resourcePrefix}${elements.tideLocationRef.value}`;
+	if (elements.tideRegionRef.value) properties.tideRegionRef = `${resourcePrefix}${elements.tideRegionRef.value}`;
 	if (types.some((type) => anchorageTypes.has(type))) {
 		properties.anchorage = {
 			seabed: elements.seabed.value.trim() || undefined,
@@ -350,6 +356,7 @@ function buildLocation() {
 	}
 	if (types.some((type) => tideTypes.has(type))) {
 		properties.tide = {
+			providerId: elements.tideProviderId.value || undefined,
 			provider: elements.tideProvider.value.trim() || undefined,
 			stationId: elements.tideStationId.value.trim() || undefined,
 			stationName: elements.tideStationName.value.trim() || undefined,

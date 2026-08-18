@@ -167,8 +167,13 @@ function harbourBody(name = "Versioned Harbour") {
 test("lifecycle exposes the spatial service and retracts status on stop", async (t) => {
 	const { app, messages, plugin } = await fixture(t);
 	assert.equal(app.ajrmMarineLocations.contract, "ajrm-marine-locations-service-v1");
+	assert.equal(app.ajrmMarineTides.contract, "ajrm-marine-tides-service-v1");
+	const tide = await app.ajrmMarineTides.status();
+	assert.equal(tide.contract, "ajrm-marine-tide-resolver-v1");
+	assert.equal(tide.valid, false);
 	await plugin.stop();
 	assert.equal(app.ajrmMarineLocations, undefined);
+	assert.equal(app.ajrmMarineTides, undefined);
 	assert.equal(messages.at(-1).updates[0].values[0].value, null);
 });
 

@@ -2,8 +2,8 @@
   "openapi": "3.0.3",
   "info": {
     "title": "AJRM Marine Location Editor API",
-    "version": "0.3.8",
-    "description": "Versioned marine locations, relationships, import/export and nearest-location lookup."
+    "version": "0.4.0",
+    "description": "Versioned marine locations, relationships, shared tide resolution, import/export and nearest-location lookup."
   },
   "paths": {
     "/status": { "get": { "responses": { "200": { "description": "Plugin status" } } } },
@@ -17,6 +17,9 @@
     "/locations/{id}/history": { "get": { "parameters": [{ "$ref": "#/components/parameters/Id" }], "responses": { "200": { "description": "Immutable revision history" } } } },
     "/locations/{id}/restore": { "post": { "parameters": [{ "$ref": "#/components/parameters/Id" }], "responses": { "200": { "description": "Older snapshot restored as a new revision" } } } },
     "/nearest": { "get": { "responses": { "200": { "description": "Nearest matching locations" } } } },
+    "/tides/status": { "get": { "responses": { "200": { "description": "Resolved tidal port, current height, extremes, provenance and freshness" } } } },
+    "/tides/pin": { "post": { "responses": { "200": { "description": "Pin or clear a manual tidal-port override" } } } },
+    "/tides/refresh": { "post": { "responses": { "200": { "description": "Refresh the selected port and publish a new tide projection" } } } },
     "/local/export": { "get": { "responses": { "200": { "description": "Complete location catalogue" } } } },
     "/local/import": { "post": { "responses": { "200": { "description": "Location catalogue or Harbour Editor v1 export converted and used to replace the catalogue" } } } },
     "/local/merge": { "post": { "responses": { "200": { "description": "Location catalogue or Harbour Editor v1 export converted and merged per location by latest edit time" } } } },

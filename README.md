@@ -10,7 +10,7 @@ of **AJRM Marine Harbour Editor** and is intended to replace it after migration
 and onboard testing. It stores:
 
 - harbours, anchorages, moorings, marinas and points of interest;
-- tidal standard ports, secondary ports and tidal gates;
+- tidal standard ports, secondary ports, tidal regions and tidal gates;
 - tidal observation stations, kept distinct from prediction stations;
 - hazards, avoidance areas, no-anchoring areas, waiting areas and preferred
   channels;
@@ -24,9 +24,49 @@ Selecting a workspace selects only the chart types belonging to it. Geometry
 arrow movement follows the current chart zoom and accelerates gradually while
 an arrow is held.
 The separate **Classify this location** choices describe the record being
-edited and apply only when it is saved. Tide calculations,
-automatic profile selection and active hazard monitoring are deliberately not
-performed yet.
+edited and apply only when it is saved. The shared Tide Resolver now selects
+and publishes tidal predictions; automatic profile selection and active hazard
+monitoring are separate later stages.
+
+## Shared Tide Resolver
+
+The backend exposes `app.ajrmMarineTides` and
+`plugins.ajrmMarineLocations.tide` as the common tide contract for Display,
+Capture and the planners. It also publishes the standard Signal K paths
+`environment.tide.heightNow`, `heightHigh`, `heightLow`, `timeHigh` and
+`timeLow` when its result is valid.
+
+The automatic candidate is selected in this order:
+
+1. the place's explicit **Tidal location used here**;
+2. the tidal port assigned to the containing tidal-region polygon;
+3. the nearest configured prediction port assigned to that same region.
+
+A valid manually pinned port then overrides that candidate. The projection
+retains the automatic port and reason so the override remains auditable. A
+missing/deleted pin is reported and does not suppress a valid automatic
+selection.
+
+Prediction ports need an explicit provider identifier and station identifier;
+the resolver never guesses either from a name. Version 0.4 supports UKHO Tidal
+API high/low-water events and labels its present-height estimate as
+`cosine-between-extremes-v1`. The projection includes the selected station,
+datum, next high and low waters, trend, curve, fetch source, cache mode and
+fresh/stale/expired state. Expired data never produce a valid standard Signal K
+height.
+
+Configure the UKHO subscription key and its actual subscription tier in Signal
+K's plugin settings. UKHO states that Discovery-tier data must not be cached,
+so it remains memory-only. Foundation and Premium cache one shared station file
+on disk for offline fallback. The key remains in the Signal K backend and is
+never returned to browsers.
+
+Contains ADMIRALTY® tidal data:
+© Crown Copyright and database right.
+
+Tidal predictions and interpolation are planning aids, not a substitute for
+official current information or safe navigation. Verify datum, station,
+freshness and suitability for the intended use.
 
 ## Bundled West Scotland starter data
 
@@ -110,7 +150,7 @@ before a large import or merge.
 
 ```bash
 cd ~/.signalk
-npm install git+https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor.git#v0.3.8 --omit=dev --no-package-lock
+npm install git+https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor.git#v0.4.0 --omit=dev --no-package-lock
 sudo systemctl restart signalk
 ```
 
@@ -138,9 +178,10 @@ Settings provides versioned export, latest-edit merge, confirmed catalogue
 replacement and permanent purging of deleted records. Edits and purge require
 Signal K read/write or administrator access.
 
-Other plugins can use the in-process `app.ajrmMarineLocations` service to list,
-get or find nearby locations. The HTTP API and its OpenAPI document provide the
-same catalogue to browser applications.
+Other plugins can use `app.ajrmMarineLocations` to list, get or find nearby
+locations and `app.ajrmMarineTides` to resolve, pin or refresh the shared tide
+projection. The HTTP API and its OpenAPI document provide the same services to
+browser applications.
 
 ## Licence
 

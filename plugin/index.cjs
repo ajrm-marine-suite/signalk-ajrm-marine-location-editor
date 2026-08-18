@@ -19,9 +19,12 @@ const {
 } = require("./location-model.cjs");
 const { createLocationStore } = require("./location-store.cjs");
 const { prepareLocationImport } = require("./harbour-editor-import.cjs");
+const { createUkhoTideProvider } = require("./tide-provider.cjs");
+const { createTideResolver } = require("./tide-resolver.cjs");
 
 const STATUS_CONTRACT = "ajrm-marine-location-editor-status-v1";
 const STATUS_PATH = "plugins.ajrmMarineLocationEditor";
+const TIDE_PATH = "plugins.ajrmMarineLocations.tide";
 const MAX_IMPORT_LOCATIONS = 10000;
 
 const packageJson = JSON.parse(
@@ -71,8 +74,16 @@ module.exports = function ajrmMarineLocationEditor(app) {
 	let running = false;
 	let initializationPromise = Promise.resolve();
 	const pendingOperations = new Set();
+	let unsubscribes = [];
+	let tideTimer = null;
+	let tideDebounce = null;
+	let tideResolution = null;
+	let latestPosition = null;
+	let latestTide = null;
+	let options = {};
 	const dataDirectory = app.getDataDirPath?.() || path.join(process.cwd(), ".ajrm-location-editor");
 	const store = createLocationStore(path.join(dataDirectory, "locations.json"));
+	let tideResolver = null;
 	let lastStatus = {
 		contract: STATUS_CONTRACT,
 		contractVersion: 1,
@@ -89,12 +100,46 @@ module.exports = function ajrmMarineLocationEditor(app) {
 	plugin.name = "AJRM Marine Location Editor";
 	plugin.description =
 		"Manage marine places, tidal locations, hazards and avoidance areas";
-	plugin.schema = { type: "object", properties: {} };
+	plugin.schema = {
+		type: "object",
+		properties: {
+			tideResolverEnabled: { type: "boolean", title: "Enable shared tide resolver", default: true },
+			ukhoApiKey: { type: "string", title: "UKHO Tidal API subscription key", format: "password" },
+			ukhoSubscriptionTier: {
+				type: "string",
+				title: "UKHO subscription tier (controls whether caching is licensed)",
+				enum: ["discovery", "foundation", "premium"],
+				default: "discovery",
+			},
+			tideRefreshHours: { type: "number", title: "Refresh tidal events after (hours)", default: 24, minimum: 1, maximum: 168 },
+			tideExpiresHours: { type: "number", title: "Reject tidal data older than (hours)", default: 72, minimum: 2, maximum: 720 },
+		},
+	};
 	plugin.getOpenApi = () => openApi;
 
-	plugin.start = () => {
+	plugin.start = (configured = {}) => {
 		if (running) return;
 		running = true;
+		options = {
+			tideResolverEnabled: configured.tideResolverEnabled !== false,
+			ukhoApiKey: configured.ukhoApiKey || process.env.UKHO_API_KEY || "",
+			ukhoSubscriptionTier: configured.ukhoSubscriptionTier || "discovery",
+			tideRefreshHours: Number(configured.tideRefreshHours) || 24,
+			tideExpiresHours: Number(configured.tideExpiresHours) || 72,
+		};
+		const tideProvider = createUkhoTideProvider({
+			apiKey: options.ukhoApiKey,
+			subscriptionTier: options.ukhoSubscriptionTier,
+			refreshHours: options.tideRefreshHours,
+			cacheDirectory: path.join(dataDirectory, "tides"),
+		});
+		tideResolver = createTideResolver({
+			stateFile: path.join(dataDirectory, "tide-selection.json"),
+			listLocations: () => store.list(),
+			provider: tideProvider,
+			staleAfterHours: options.tideRefreshHours,
+			expiresAfterHours: Math.max(options.tideRefreshHours, options.tideExpiresHours),
+		});
 		app.ajrmMarineLocations = Object.freeze({
 			contract: "ajrm-marine-locations-service-v1",
 			list: async (options = {}) => {
@@ -110,8 +155,22 @@ module.exports = function ajrmMarineLocationEditor(app) {
 				return nearestLocations(await store.list(), position, options);
 			},
 		});
+		app.ajrmMarineTides = Object.freeze({
+			contract: "ajrm-marine-tides-service-v1",
+			status: async (request = {}) => resolveTide(request),
+			pin: async (portId) => {
+				await tideResolver.setPinnedPort(portId);
+				return resolveTide({ force: false });
+			},
+			refresh: async () => resolveTide({ force: true }),
+		});
 		app.setPluginStatus(`Started v${packageJson.version}`);
-		initializationPromise = trackOperation(initializeCatalogue().then(refreshStatus));
+		initializationPromise = trackOperation(initializeCatalogue().then(async (result) => {
+			await tideResolver.initialize();
+			startTideMonitoring();
+			await refreshStatus();
+			return result;
+		}));
 		initializationPromise.catch((error) => {
 			updateStatus({ error: error.message });
 			app.setPluginError?.(error.message);
@@ -120,10 +179,15 @@ module.exports = function ajrmMarineLocationEditor(app) {
 
 	plugin.stop = async () => {
 		running = false;
+		clearInterval(tideTimer);
+		clearTimeout(tideDebounce);
+		for (const unsubscribe of unsubscribes.splice(0)) unsubscribe?.();
 		await Promise.allSettled([...pendingOperations]);
 		delete app.ajrmMarineLocations;
+		delete app.ajrmMarineTides;
 		updateStatus({ enabled: false });
 		publishStatus(null);
+		publishTide(null);
 		delete app.ajrmMarineLocationEditorStatus;
 		app.setPluginStatus?.("Stopped");
 	};
@@ -138,6 +202,41 @@ module.exports = function ajrmMarineLocationEditor(app) {
 				res.status(500).json({ ...lastStatus, error: error.message });
 			}
 		});
+
+		router.get("/tides/status", async (req, res) => {
+			try {
+				assertRunning();
+				await initializationPromise;
+				res.json(await resolveTide({
+					contextLocationId: req.query?.locationId || undefined,
+				}));
+			} catch (error) {
+				res.status(400).json({ error: error.message });
+			}
+		});
+
+		router.post("/tides/pin", write(async (req, res) => {
+			try {
+				assertRunning();
+				await initializationPromise;
+				const portId = req.body?.portId || null;
+				if (portId && !isResourceId(portId)) throw new Error("Pinned tidal port id must be a UUIDv4.");
+				await tideResolver.setPinnedPort(portId);
+				res.json(await resolveTide());
+			} catch (error) {
+				res.status(400).json({ error: error.message });
+			}
+		}));
+
+		router.post("/tides/refresh", write(async (_req, res) => {
+			try {
+				assertRunning();
+				await initializationPromise;
+				res.json(await resolveTide({ force: true }));
+			} catch (error) {
+				res.status(400).json({ error: error.message });
+			}
+		}));
 
 		router.get("/locations", async (req, res) => {
 			try {
@@ -380,13 +479,18 @@ module.exports = function ajrmMarineLocationEditor(app) {
 
 	async function assertReferencesExist(location, catalogLocations = null) {
 		const locations = catalogLocations || new Map((await store.list()).map((entry) => [entry.id, entry]));
-		for (const [label, reference] of [
-			["Tidal location", location.properties.tideLocationRef],
-			["Parent tidal location", location.properties.tide?.parentLocationRef],
+		for (const [label, reference, allowedTypes] of [
+			["Tidal location", location.properties.tideLocationRef, ["tidalStandardPort", "tidalSecondaryPort"]],
+			["Tidal region", location.properties.tideRegionRef, ["tidalRegion"]],
+			["Parent tidal location", location.properties.tide?.parentLocationRef, ["tidalStandardPort"]],
 		]) {
 			if (!reference) continue;
 			const id = reference.split("/").at(-1);
-			if (!locations.has(id)) throw new Error(`${label} reference does not exist in this catalogue.`);
+			const target = locations.get(id);
+			if (!target) throw new Error(`${label} reference does not exist in this catalogue.`);
+			if (!target.types.some((type) => allowedTypes.includes(type))) {
+				throw new Error(`${label} reference points to an incompatible location type.`);
+			}
 		}
 	}
 
@@ -569,6 +673,7 @@ module.exports = function ajrmMarineLocationEditor(app) {
 		const suffix = `/resources/locations/${id}`;
 		const references = (await store.list()).filter((location) =>
 			location.properties.tideLocationRef === suffix ||
+			location.properties.tideRegionRef === suffix ||
 			location.properties.tide?.parentLocationRef === suffix,
 		);
 		if (references.length) {
@@ -586,6 +691,14 @@ module.exports = function ajrmMarineLocationEditor(app) {
 				(location) => location.properties.publishAsHarbourRegion,
 			).length,
 			typeCounts: typeCounts(locations),
+			tideResolver: latestTide ? {
+				enabled: options.tideResolverEnabled,
+				valid: latestTide.valid,
+				selectedPort: latestTide.selectedPort,
+				selectionReason: latestTide.selection?.reason,
+				freshness: latestTide.freshness,
+				error: latestTide.error,
+			} : { enabled: options.tideResolverEnabled, valid: false },
 			error: "",
 			updatedAt: new Date().toISOString(),
 		};
@@ -593,7 +706,107 @@ module.exports = function ajrmMarineLocationEditor(app) {
 
 	async function refreshStatus() {
 		if (!running) return lastStatus;
-		return updateStatus(await buildStatus());
+		const result = updateStatus(await buildStatus());
+		scheduleTideResolution();
+		return result;
+	}
+
+	function startTideMonitoring() {
+		latestPosition = normalizePosition(app.getSelfPath?.("navigation.position"));
+		publishTideMetadata();
+		if (app.subscriptionmanager?.subscribe) {
+			app.subscriptionmanager.subscribe(
+				{
+					context: "vessels.self",
+					subscribe: [{ path: "navigation.position", policy: "instant", format: "delta" }],
+				},
+				unsubscribes,
+				(error) => app.error?.(`[${plugin.id}] tide position subscription error: ${error}`),
+				handlePositionDelta,
+			);
+		}
+		tideTimer = setInterval(() => scheduleTideResolution(), 5 * 60 * 1000);
+		tideTimer.unref?.();
+		scheduleTideResolution(0);
+	}
+
+	function normalizePosition(value) {
+		const latitude = Number(value?.latitude);
+		const longitude = Number(value?.longitude);
+		return Number.isFinite(latitude) && Number.isFinite(longitude) &&
+			latitude >= -90 && latitude <= 90 && longitude >= -180 && longitude <= 180
+			? { latitude, longitude }
+			: null;
+	}
+
+	function handlePositionDelta(delta) {
+		for (const update of delta?.updates || []) {
+			for (const value of update.values || []) {
+				if (value.path !== "navigation.position") continue;
+				latestPosition = normalizePosition(value.value);
+				scheduleTideResolution();
+			}
+		}
+	}
+
+	function scheduleTideResolution(delay = 750) {
+		if (!running || !options.tideResolverEnabled || !tideResolver) return;
+		clearTimeout(tideDebounce);
+		tideDebounce = setTimeout(() => {
+			trackOperation(resolveTide()).catch((error) => app.error?.(`[${plugin.id}] tide resolver error: ${error.message}`));
+		}, delay);
+		tideDebounce.unref?.();
+	}
+
+	async function resolveTide(request = {}) {
+		if (!options.tideResolverEnabled) {
+			return {
+				contract: "ajrm-marine-tide-resolver-v1",
+				contractVersion: 1,
+				valid: false,
+				error: "Shared tide resolver is disabled.",
+			};
+		}
+		const execute = async () => tideResolver.resolve({
+			...request,
+			position: request.position || latestPosition,
+		});
+		const result = request.force || request.contextLocationId
+			? await execute()
+			: await (tideResolution || (tideResolution = execute().finally(() => { tideResolution = null; })));
+		latestTide = result;
+		publishTide(result);
+		return result;
+	}
+
+	function publishTideMetadata() {
+		app.handleMessage?.(plugin.id, {
+			updates: [{
+				meta: [{
+					path: TIDE_PATH,
+					value: { description: "Selected tidal port, provenance, freshness, extremes and derived current height." },
+				}],
+			}],
+		});
+	}
+
+	function publishTide(value) {
+		const valid = value?.valid === true;
+		app.handleMessage?.(plugin.id, {
+			context: "vessels.self",
+			updates: [{
+				source: { label: plugin.id },
+				timestamp: new Date().toISOString(),
+				values: [
+					{ path: TIDE_PATH, value },
+					{ path: "environment.tide.heightNow", value: valid ? value.heightNowM : null },
+					{ path: "environment.tide.heightHigh", value: valid ? value.nextHighWater?.heightM ?? null : null },
+					{ path: "environment.tide.timeHigh", value: valid ? value.nextHighWater?.at ?? null : null },
+					{ path: "environment.tide.heightLow", value: valid ? value.nextLowWater?.heightM ?? null : null },
+					{ path: "environment.tide.timeLow", value: valid ? value.nextLowWater?.at ?? null : null },
+				],
+			}],
+		});
 	}
 
 	function updateStatus(fields = {}) {

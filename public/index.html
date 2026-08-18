@@ -6,7 +6,7 @@
 		<title>AJRM Marine Location Editor</title>
 		<link rel="stylesheet" href="./leaflet.css">
 		<link rel="stylesheet" href="./ajrm-map-core.css?v=0.7.5">
-		<link rel="stylesheet" href="./styles.css?v=0.3.8">
+		<link rel="stylesheet" href="./styles.css?v=0.4.0">
 	</head>
 	<body>
 		<div id="map" class="map" aria-label="Marine location chart"></div>
@@ -116,6 +116,10 @@
 				Tidal location used here
 				<select id="tideLocationRef"><option value="">Automatic / none assigned</option></select>
 			</label>
+			<label>
+				Tidal region
+				<select id="tideRegionRef"><option value="">None assigned</option></select>
+			</label>
 
 			<section id="anchorageFields" class="conditional-section" hidden>
 				<h3>Anchorage details</h3>
@@ -126,7 +130,13 @@
 
 			<section id="tideFields" class="conditional-section" hidden>
 				<h3>Tidal location details</h3>
-				<label>Provider <input id="tideProvider" type="text" placeholder="ukho, neaps..."></label>
+				<label>Provider identifier
+					<select id="tideProviderId">
+						<option value="">Not a prediction source</option>
+						<option value="ukhoTidalEvents">UKHO Tidal API events</option>
+					</select>
+				</label>
+				<label>Provider label <input id="tideProvider" type="text" placeholder="UK Hydrographic Office"></label>
 				<label>Station identifier <input id="tideStationId" type="text"></label>
 				<label>Station name <input id="tideStationName" type="text"></label>
 				<label>Parent standard port <select id="parentLocationRef"><option value="">None</option></select></label>
@@ -238,6 +248,6 @@
 		<div id="status" class="status" role="status"></div>
 		<script src="./leaflet.js"></script>
 		<script src="./protomaps-leaflet.js"></script>
-		<script type="module" src="./app.js?v=0.3.8"></script>
+		<script type="module" src="./app.js?v=0.4.0"></script>
 	</body>
 </html>

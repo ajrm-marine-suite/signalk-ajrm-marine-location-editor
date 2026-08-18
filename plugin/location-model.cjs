@@ -18,6 +18,7 @@ const LOCATION_TYPES = Object.freeze([
 	"tidalStandardPort",
 	"tidalSecondaryPort",
 	"tidalObservationStation",
+	"tidalRegion",
 	"tidalGate",
 	"hazard",
 	"avoidanceArea",
@@ -29,7 +30,7 @@ const LOCATION_TYPES = Object.freeze([
 
 const WORKSPACES = Object.freeze({
 	places: ["harbour", "anchorage", "mooring", "marina", "pointOfInterest"],
-	tides: ["tidalStandardPort", "tidalSecondaryPort", "tidalObservationStation", "tidalGate"],
+	tides: ["tidalStandardPort", "tidalSecondaryPort", "tidalObservationStation", "tidalRegion", "tidalGate"],
 	hazards: ["hazard", "avoidanceArea", "noAnchoringArea", "waitingArea", "preferredChannel"],
 	all: LOCATION_TYPES,
 });
@@ -153,6 +154,9 @@ function validateLocation(location) {
 	}
 	if (location.feature?.type !== "Feature") throw new Error("Location feature must be GeoJSON Feature.");
 	validateGeometry(location.feature.geometry);
+	if (location.types.includes("tidalRegion") && location.feature.geometry.type !== "Polygon") {
+		throw new Error("A tidal region must use an area, not a point.");
+	}
 	const properties = location.properties;
 	if (!properties || typeof properties !== "object" || Array.isArray(properties)) {
 		throw new Error("Location properties are required.");
@@ -173,14 +177,19 @@ function validateLocation(location) {
 		throw new Error("Only a harbour, anchorage, mooring or marina can switch to the Harbour profile.");
 	}
 	assertReference(properties.tideLocationRef, "Tide location reference");
+	assertReference(properties.tideRegionRef, "Tidal region reference");
 	if (properties.tideLocationRef?.endsWith(`/${location.id}`)) {
 		throw new Error("A location cannot use itself as its tidal location.");
+	}
+	if (properties.tideRegionRef?.endsWith(`/${location.id}`)) {
+		throw new Error("A location cannot assign itself as its tidal region.");
 	}
 	if (properties.tide != null) {
 		if (typeof properties.tide !== "object" || Array.isArray(properties.tide)) {
 			throw new Error("Tide details must be an object.");
 		}
 		assertText(properties.tide.provider, "Tide provider", { max: 100 });
+		assertText(properties.tide.providerId, "Tide provider identifier", { max: 100 });
 		assertText(properties.tide.stationId, "Tide station id", { max: 200 });
 		assertText(properties.tide.stationName, "Tide station name", { max: 200 });
 		assertReference(properties.tide.parentLocationRef, "Parent tidal location reference");

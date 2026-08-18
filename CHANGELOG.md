@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.6.19 - 2026-08-18
+
+- Keep the four primary Location Editor actions on one compact row.
+
 ## 0.6.18 - 2026-08-18
 
 - Remove the expandable Tide relationships disclosure and show its applicable

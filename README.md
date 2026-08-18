@@ -1,5 +1,9 @@
 # AJRM Marine Location Editor
 
+Version `0.6.19` keeps Save Location, Undo Changes, History and Delete together
+on one compact action row so the primary editor controls remain visually
+connected.
+
 Version `0.6.18` removes the Tide relationships disclosure. Relevant tidal
 region and prediction-port selectors are always shown within Tidal location
 details, immediately above the role-specific fields. Relationship labels and

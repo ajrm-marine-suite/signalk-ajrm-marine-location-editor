@@ -47,8 +47,8 @@ test("map page uses the standard left-side controls with zoom first", () => {
   const app = fs.readFileSync(path.join(root, "public/app.js"), "utf8");
   const css = fs.readFileSync(path.join(root, "public/styles.css"), "utf8");
 	assert.match(html, /ajrm-map-core\.css\?v=0\.7\.5/);
-	assert.match(html, /type="module" src="\.\/app\.js\?v=0\.6\.18"/);
-	assert.match(html, /styles\.css\?v=0\.6\.18/);
+	assert.match(html, /type="module" src="\.\/app\.js\?v=0\.6\.19"/);
+	assert.match(html, /styles\.css\?v=0\.6\.19/);
 	assert.match(html, /id="chartCycleStatus" class="ajrm-map-chart-cycle-status"[^>]+hidden/);
   assert.match(app, /zoomControl:\s*true/);
   assert.match(app, /MapCore\.createChartSelectorControl/);
@@ -62,6 +62,8 @@ test("map page uses the standard left-side controls with zoom first", () => {
 	assert.match(html, /id="saveGeometry"[^>]*>Save Location</);
 	assert.match(html, /id="undoGeometry"[^>]*>Undo Changes</);
 	assert.match(html, /id="undoLocation"[^>]*>Undo Changes</);
+	assert.match(html, /class="drawer-section action-row location-action-row"/);
+	assert.match(css, /\.location-action-row\s*\{[^}]*grid-template-columns:\s*repeat\(4, minmax\(0, 1fr\)\)/s);
 	assert.match(app, /elements\.saveGeometry\.addEventListener\("click"/);
 	assert.match(app, /elements\.undoGeometry\.addEventListener\("click", undoChanges\)/);
 	assert.match(app, /function undoChanges\(\)[\s\S]*selectLocation\(selectedId\)[\s\S]*resetEditor\(\)/);

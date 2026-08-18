@@ -193,6 +193,17 @@ h3 {
 	flex-wrap: wrap;
 }
 
+.location-action-row {
+	display: grid;
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+	gap: 8px;
+}
+
+.location-action-row button {
+	min-width: 0;
+	padding-inline: 7px;
+}
+
 .drawer {
 	position: fixed;
 	top: 84px;

@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.6.2 - 2026-08-18
+
+- Expose a read-only in-process diagnostics snapshot for AJRM Marine Snapshot,
+  containing catalogue counts, the last resolved tide including its fetched
+  event series, the last fetched weather/marine hourly series, provenance,
+  freshness and anchoring-assistance state.
+- Include the full versioned location catalogue only when the diagnostic
+  consumer explicitly requests it, keeping ordinary support snapshots smaller.
+- Keep provider credentials out of the diagnostic contract.
+
 ## 0.6.1 - 2026-08-18
 
 - Add a deliberately broad, explicitly-labelled West Scotland tidal planning

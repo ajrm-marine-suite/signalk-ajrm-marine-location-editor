@@ -107,6 +107,13 @@ AJRM Marine Planning consumes this service instead of maintaining another
 forecast cache. Forecast data remain planning inputs which must be checked
 against current official forecasts and observed conditions.
 
+`app.ajrmMarineLocationDiagnostics` gives the suite's Snapshot plugin a
+non-mutating view of the last data already fetched by these services. It does
+not perform a network refresh. The normal form contains catalogue counts,
+full tidal events, full weather/marine hourly series and anchoring state; an
+explicit debug request can additionally include the full versioned catalogue.
+API keys are never part of this contract.
+
 ## Bundled West Scotland starter data
 
 On first start, the plugin adds a sourced West Scotland starter catalogue. It

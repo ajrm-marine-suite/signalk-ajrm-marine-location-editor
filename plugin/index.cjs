@@ -222,6 +222,37 @@ module.exports = function ajrmMarineLocationEditor(app) {
 			confirm: (suggestionId) => anchoringAssistant.confirm(suggestionId),
 			dismiss: (suggestionId) => anchoringAssistant.dismiss(suggestionId),
 		});
+		app.ajrmMarineLocationDiagnostics = Object.freeze({
+			contract: "ajrm-marine-location-diagnostics-v1",
+			snapshot: async (request = {}) => {
+				await initializationPromise;
+				const locations = await store.list();
+				const persistentTideCapturePermitted = ["foundation", "premium"]
+					.includes(String(options.ukhoSubscriptionTier || "").toLowerCase());
+				const tide = latestTide ? structuredClone(latestTide) : null;
+				return {
+					contract: "ajrm-marine-location-diagnostics-v1",
+					contractVersion: 1,
+					capturedAt: new Date().toISOString(),
+					catalogue: {
+						count: locations.length,
+						typeCounts: typeCounts(locations),
+						locations: request.includeLocations === true ? structuredClone(locations) : undefined,
+					},
+					tides: {
+						configured: Boolean(options.ukhoApiKey),
+						subscriptionTier: options.ukhoSubscriptionTier,
+						persistentCapturePermitted: persistentTideCapturePermitted,
+						latest: tide,
+					},
+					weather: {
+						enabled: options.weatherServiceEnabled,
+						latest: latestWeather ? structuredClone(latestWeather) : null,
+					},
+					anchoring: anchoringAssistant?.status?.() || null,
+				};
+			},
+		});
 		app.setPluginStatus(`Started v${packageJson.version}`);
 		initializationPromise = trackOperation(initializeCatalogue().then(async (result) => {
 			await tideResolver.initialize();
@@ -246,6 +277,7 @@ module.exports = function ajrmMarineLocationEditor(app) {
 		delete app.ajrmMarineTides;
 		delete app.ajrmMarineWeather;
 		delete app.ajrmMarineAnchoring;
+		delete app.ajrmMarineLocationDiagnostics;
 		updateStatus({ enabled: false });
 		publishStatus(null);
 		publishTide(null);

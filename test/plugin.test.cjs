@@ -169,7 +169,15 @@ test("lifecycle exposes the spatial service and retracts status on stop", async 
 	assert.equal(app.ajrmMarineLocations.contract, "ajrm-marine-locations-service-v1");
 	assert.equal(app.ajrmMarineTides.contract, "ajrm-marine-tides-service-v1");
 	assert.equal(app.ajrmMarineAnchoring.contract, "ajrm-marine-anchoring-service-v1");
+	assert.equal(app.ajrmMarineLocationDiagnostics.contract, "ajrm-marine-location-diagnostics-v1");
 	assert.equal(app.ajrmMarineAnchoring.status().contract, "ajrm-marine-anchoring-assistance-v1");
+	const diagnostics = await app.ajrmMarineLocationDiagnostics.snapshot();
+	assert.equal(diagnostics.catalogue.count > 0, true);
+	assert.equal(diagnostics.catalogue.locations, undefined);
+	assert.equal(diagnostics.tides.subscriptionTier, "discovery");
+	assert.equal(diagnostics.tides.persistentCapturePermitted, false);
+	const expandedDiagnostics = await app.ajrmMarineLocationDiagnostics.snapshot({ includeLocations: true });
+	assert.equal(expandedDiagnostics.catalogue.locations.length, diagnostics.catalogue.count);
 	const tide = await app.ajrmMarineTides.status({ position: { latitude: 56.27224, longitude: -5.637656 } });
 	assert.equal(tide.contract, "ajrm-marine-tide-resolver-v1");
 	assert.equal(tide.valid, false);
@@ -179,6 +187,7 @@ test("lifecycle exposes the spatial service and retracts status on stop", async 
 	assert.equal(app.ajrmMarineLocations, undefined);
 	assert.equal(app.ajrmMarineTides, undefined);
 	assert.equal(app.ajrmMarineAnchoring, undefined);
+	assert.equal(app.ajrmMarineLocationDiagnostics, undefined);
 	assert.equal(messages.at(-1).updates[0].values[0].value, null);
 });
 

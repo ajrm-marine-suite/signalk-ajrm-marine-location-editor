@@ -1,7 +1,7 @@
 # AJRM Marine Location Editor
 
-Version `0.6.26` corrects the Signal K Webapps icon URL and verifies that its
-declared `appIcon` resolves inside the served public webapp.
+Version `0.6.27` packages the icon at both Signal K consumer locations: the App
+Store package root and installed webapp public URL.
 
 Version `0.6.25` adds explicit circles, rectangles and true polygons to the
 Geometry editor. Rectangles have configurable width and height; polygons have
@@ -342,7 +342,7 @@ before a large import or merge.
 
 ```bash
 cd ~/.signalk
-npm install git+https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor.git#v0.6.26 --omit=dev --no-package-lock
+npm install git+https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor.git#v0.6.27 --omit=dev --no-package-lock
 sudo systemctl restart signalk
 ```
 

@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.6.27 - 2026-08-19
+
+- Package the Location Editor icon at both the npm root for App Store metadata
+  and the public webapp root for the installed Webapps catalogue.
+
 ## 0.6.26 - 2026-08-19
 
 - Correct the Signal K Webapps icon URL so it resolves at the public webapp

@@ -6,7 +6,7 @@
 		<title>AJRM Marine Location Editor</title>
 		<link rel="stylesheet" href="./leaflet.css">
 		<link rel="stylesheet" href="./ajrm-map-core.css?v=0.7.5">
-		<link rel="stylesheet" href="./styles.css?v=0.6.23">
+		<link rel="stylesheet" href="./styles.css?v=0.6.24">
 	</head>
 	<body>
 		<div id="map" class="map" aria-label="Marine location chart"></div>
@@ -93,7 +93,7 @@
 			</div>
 
 			<label id="profileRegionField" class="choice-row profile-region-choice" hidden>
-				<input id="publishAsHarbourRegion" type="checkbox">
+				<input id="automaticProfileArea" type="checkbox">
 				<span>Use this area for automatic Harbour profile switching</span>
 			</label>
 			<section id="anchorageFields" class="conditional-section" hidden>
@@ -265,7 +265,7 @@
 			</div>
 			<div class="drawer-section sync-panel">
 				<h3>Backup and transfer</h3>
-				<p>Export downloads the complete versioned catalogue. Merge retains unrelated locations. Replace Catalogue removes locations absent from the file. Both actions accept Location Editor catalogues and Harbour Editor v1 exports.</p>
+				<p>Export downloads the complete versioned catalogue. Merge retains unrelated locations. Replace Catalogue removes locations absent from the file. Both actions accept Location Editor catalogues.</p>
 				<div class="action-row">
 					<button id="mergeLocations" type="button">Merge</button>
 					<button id="importLocations" type="button">Replace Catalogue</button>
@@ -289,6 +289,6 @@
 		<div id="status" class="status" role="status"></div>
 		<script src="./leaflet.js"></script>
 		<script src="./protomaps-leaflet.js"></script>
-		<script type="module" src="./app.js?v=0.6.23"></script>
+		<script type="module" src="./app.js?v=0.6.24"></script>
 	</body>
 </html>

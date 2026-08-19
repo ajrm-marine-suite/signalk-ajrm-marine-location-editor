@@ -19,7 +19,7 @@ const {
 } = require("./location-model.cjs");
 const { nearestSecondaryPort } = require("./tide-selection.cjs");
 const { createLocationStore } = require("./location-store.cjs");
-const { prepareLocationImport } = require("./harbour-editor-import.cjs");
+const { prepareLocationImport } = require("./location-import.cjs");
 const { createUkhoTideProvider } = require("./tide-provider.cjs");
 const { createTideResolver } = require("./tide-resolver.cjs");
 const { createAnchoringAssistant } = require("./anchoring-assistance.cjs");
@@ -61,24 +61,6 @@ const bundledLocationSeed = mergeGateConstantsSeed(
 	bundledSecondaryPortSeeds.reduce(mergeSecondaryPortSeed, bundledWestScotlandSeed),
 	bundledGateSeed,
 );
-
-function normalizeResources(value) {
-	if (!value) return [];
-	if (Array.isArray(value)) {
-		return value.map((resource, index) => ({
-			...resource,
-			id: resource.id ?? resource.identifier ?? String(index),
-		}));
-	}
-	return Object.entries(value).map(([id, resource]) => ({
-		...(resource || {}),
-		id: resource?.id ?? resource?.identifier ?? id,
-	}));
-}
-
-function isHarbourRegion(region) {
-	return String(region?.name || "").toLowerCase().startsWith("harbour:");
-}
 
 function normalizedLocationName(value) {
 	return String(value || "").trim().replace(/\s+/g, " ").toLocaleLowerCase("en-GB");
@@ -222,6 +204,13 @@ module.exports = function ajrmMarineLocationEditor(app) {
 			nearest: async (position, options) => {
 				await initializationPromise;
 				return nearestLocations(await store.list(), position, options);
+			},
+			profileAreas: async () => {
+				await initializationPromise;
+				return (await store.list()).filter((location) =>
+					location.properties?.automaticProfileArea === true &&
+					location.feature?.geometry?.type === "Polygon",
+				);
 			},
 		});
 		app.ajrmMarineTides = Object.freeze({
@@ -458,7 +447,6 @@ module.exports = function ajrmMarineLocationEditor(app) {
 				await initializationPromise;
 				if (!isResourceId(req.params.id)) throw new Error("Location id must be a UUIDv4.");
 				const { expectedRevision, ...body } = req.body || {};
-				const previous = await store.get(req.params.id);
 				const location = normalizeLocation({ ...body, id: req.params.id });
 				await assertReferencesExist(location);
 				await assertUniqueLocationName(location);
@@ -466,7 +454,6 @@ module.exports = function ajrmMarineLocationEditor(app) {
 					expectedRevision,
 					editedBy: requestActor(req),
 				});
-				await publishHarbourChange(saved, previous);
 				await refreshStatus();
 				res.json({ ok: true, id: req.params.id, location: saved });
 			} catch (error) {
@@ -480,15 +467,11 @@ module.exports = function ajrmMarineLocationEditor(app) {
 				await initializationPromise;
 				if (!isResourceId(req.params.id)) throw new Error("Location id must be a UUIDv4.");
 				await assertNotReferenced(req.params.id);
-				const previous = await store.get(req.params.id);
 				const removed = await store.remove(req.params.id, {
 					expectedRevision: req.body?.expectedRevision ?? req.query?.expectedRevision,
 					editedBy: requestActor(req),
 				});
 				if (!removed) return res.status(404).json({ error: "Location was not found." });
-				if (previous?.properties.publishAsHarbourRegion) {
-					await app.resourcesApi?.deleteResource("regions", req.params.id);
-				}
 				await refreshStatus();
 				return res.json({ ok: true });
 			} catch (error) {
@@ -524,7 +507,6 @@ module.exports = function ajrmMarineLocationEditor(app) {
 						await assertUniqueLocationName(restored, locations);
 					},
 				});
-				await publishHarbourChange(location, null);
 				await refreshStatus();
 				res.json({ ok: true, location });
 			} catch (error) {
@@ -587,16 +569,13 @@ module.exports = function ajrmMarineLocationEditor(app) {
 				await validateCatalogReferences(incoming);
 				const previous = (await store.list()).length;
 				await store.replace(incoming, { tombstoneMissing: true, editedBy: "Catalogue replacement" });
-				await reconcileHarbourRegions();
 				await refreshStatus();
 				res.json({
 					ok: true,
 					imported: count,
 					replaced: previous,
 					format: prepared.format,
-					converted: prepared.converted,
 					log: [
-						...(prepared.converted ? [`Converted ${prepared.converted} Harbour Editor region(s) to versioned locations.`] : []),
 						`Imported ${count} location(s).`,
 						`Replaced ${previous} previous location(s).`,
 					],
@@ -616,13 +595,7 @@ module.exports = function ajrmMarineLocationEditor(app) {
 				if (Object.keys(incoming.locations).length > MAX_IMPORT_LOCATIONS) {
 					throw new Error(`Merge contains more than ${MAX_IMPORT_LOCATIONS} locations.`);
 				}
-				const result = prepared.format === "harbour-editor-v1"
-					? await store.mergeHarboursByName(incoming, {
-						validate: validateCatalogReferences,
-						editedBy: "Harbour Editor merge",
-					})
-					: await store.merge(incoming, { validate: validateCatalogReferences });
-				await reconcileHarbourRegions();
+				const result = await store.merge(incoming, { validate: validateCatalogReferences });
 				await refreshStatus();
 				res.json({
 					ok: result.conflicts.length === 0,
@@ -631,13 +604,7 @@ module.exports = function ajrmMarineLocationEditor(app) {
 					keptLocal: result.keptLocal,
 					conflicts: result.conflicts,
 					format: prepared.format,
-					converted: prepared.converted,
-					matchedByName: result.matchedByName || 0,
-					deduplicated: result.deduplicated || 0,
 					log: [
-						...(prepared.converted ? [`Converted ${prepared.converted} Harbour Editor region(s) to versioned locations.`] : []),
-						...(result.matchedByName ? [`Matched ${result.matchedByName} harbour(s) by name.`] : []),
-						...(result.deduplicated ? [`Removed ${result.deduplicated} duplicate harbour record(s).`] : []),
 						`Added ${result.added} new location(s).`,
 						`Accepted ${result.updated} newer imported edit(s).`,
 						`Kept ${result.keptLocal} newer or identical local edit(s).`,
@@ -700,20 +667,9 @@ module.exports = function ajrmMarineLocationEditor(app) {
 	}
 
 	async function initializeCatalogue() {
-		let migrated = [];
-		if (app.resourcesApi) {
-			const resources = normalizeResources(await app.resourcesApi.listResources("regions", {}));
-			const candidates = resources.filter(isHarbourRegion).map(legacyHarbourLocation);
-			migrated = await store.addMissing(candidates, {
-				editedBy: "Automatic Harbour Editor migration",
-			});
-		}
 		const seeded = await addBundledLocations();
-		await reconcileHarbourRegions();
-		app.debug?.(
-			`[${plugin.id}] Migrated ${migrated.length} Harbour region(s) and added ${seeded.length} bundled West Scotland location(s).`,
-		);
-		return { migrated: migrated.length, seeded: seeded.length };
+		app.debug?.(`[${plugin.id}] Added ${seeded.length} bundled location(s).`);
+		return { seeded: seeded.length };
 	}
 
 	async function addBundledLocations() {
@@ -740,7 +696,6 @@ module.exports = function ajrmMarineLocationEditor(app) {
 				if (await enrichBundledSecondaryPort(sourceMatch, seed)) continue;
 				if (await enrichBundledGateConstants(sourceMatch, seed)) continue;
 				await enrichUneditedBundledTideReferenceLevels(sourceMatch, seed);
-				await enrichUneditedMigration(sourceMatch, seed);
 				continue;
 			}
 			const nearbyMatch = current.find((location) => locationsDescribeSamePlace(location, seed));
@@ -748,7 +703,6 @@ module.exports = function ajrmMarineLocationEditor(app) {
 				if (await enrichBundledSecondaryPort(nearbyMatch, seed)) continue;
 				if (await enrichBundledGateConstants(nearbyMatch, seed)) continue;
 				await enrichUneditedBundledTideReferenceLevels(nearbyMatch, seed);
-				await enrichUneditedMigration(nearbyMatch, seed);
 				continue;
 			}
 			candidates.push(seed);
@@ -858,101 +812,13 @@ module.exports = function ajrmMarineLocationEditor(app) {
 	function locationsDescribeSamePlace(left, right) {
 		if (normalizedLocationName(left.name) !== normalizedLocationName(right.name)) return false;
 		const sharesType = left.types.some((type) => right.types.includes(type));
-		const upgradesMigratedHarbour =
-			left.properties.migratedFromSignalKRegion === true &&
-			left.types.includes("harbour") &&
-			right.types.some((type) => type !== "harbour");
-		if (!sharesType && !upgradesMigratedHarbour) return false;
+		if (!sharesType) return false;
 		const a = representativePosition(left);
 		const b = representativePosition(right);
 		if (!a || !b) return false;
 		const latitudeM = (a.latitude - b.latitude) * 111320;
 		const longitudeM = (a.longitude - b.longitude) * 111320 * Math.cos((a.latitude + b.latitude) * Math.PI / 360);
 		return Math.hypot(latitudeM, longitudeM) <= 500;
-	}
-
-	async function enrichUneditedMigration(current, seed) {
-		if (!current.properties.migratedFromSignalKRegion || current.revision !== 1) return;
-		const seedSpecificTypes = seed.types.filter((type) => type !== "harbour");
-		const types = current.types.includes("harbour") && seedSpecificTypes.length
-			? [...new Set(current.types.filter((type) => type !== "harbour").concat(seedSpecificTypes))]
-			: current.types;
-		const provenance = current.properties.provenance || seed.properties.provenance;
-		if (types === current.types && current.properties.provenance) return;
-		const saved = await store.set(current.id, {
-			...current,
-			types,
-			properties: { ...current.properties, provenance },
-		}, {
-			expectedRevision: current.revision,
-			editedBy: "Bundled open-data classification",
-		});
-		await publishHarbourChange(saved, current);
-	}
-
-	function legacyHarbourLocation(region) {
-		const declaredType = String(region.feature?.properties?.["ajrmMarine:type"] || "harbour");
-		const type = ["harbour", "anchorage", "mooring", "marina"].includes(declaredType)
-			? declaredType
-			: "harbour";
-		return normalizeLocation({
-			id: region.id,
-			name: String(region.name || "").replace(/^Harbour:\s*/i, "").trim(),
-			description: region.description || "",
-			types: [type],
-			feature: structuredClone(region.feature),
-			properties: {
-				publishAsHarbourRegion: true,
-				migratedFromSignalKRegion: true,
-			},
-		});
-	}
-
-	function harbourResource(location) {
-		return {
-			name: `Harbour: ${location.name}`,
-			description: location.description || "Harbour profile region managed by AJRM Marine Location Editor.",
-			feature: structuredClone(location.feature),
-		};
-	}
-
-	function harbourResourcesEqual(existing, expected) {
-		return (
-			existing?.name === expected.name &&
-			String(existing?.description || "") === String(expected.description || "") &&
-			JSON.stringify(existing?.feature) === JSON.stringify(expected.feature)
-		);
-	}
-
-	async function publishHarbourChange(location, previous) {
-		if (!app.resourcesApi) return;
-		if (location.properties.publishAsHarbourRegion) {
-			await app.resourcesApi.setResource("regions", location.id, harbourResource(location));
-		} else if (previous?.properties.publishAsHarbourRegion) {
-			await app.resourcesApi.deleteResource("regions", location.id);
-		}
-	}
-
-	async function reconcileHarbourRegions() {
-		if (!app.resourcesApi) return;
-		const locations = await store.list();
-		const desired = new Map(
-			locations
-				.filter((location) => location.properties.publishAsHarbourRegion)
-				.map((location) => [location.id, location]),
-		);
-		const existing = normalizeResources(await app.resourcesApi.listResources("regions", {}))
-			.filter(isHarbourRegion);
-		const existingById = new Map(existing.map((region) => [region.id, region]));
-		for (const location of desired.values()) {
-			const expected = harbourResource(location);
-			if (!harbourResourcesEqual(existingById.get(location.id), expected)) {
-				await app.resourcesApi.setResource("regions", location.id, expected);
-			}
-		}
-		for (const region of existing) {
-			if (!desired.has(region.id)) await app.resourcesApi.deleteResource("regions", region.id);
-		}
 	}
 
 	async function validateCatalogReferences(catalog) {
@@ -981,8 +847,8 @@ module.exports = function ajrmMarineLocationEditor(app) {
 			...lastStatus,
 			enabled: running,
 			locationCount: locations.length,
-			harbourRegionCount: locations.filter(
-				(location) => location.properties.publishAsHarbourRegion,
+			profileAreaCount: locations.filter(
+				(location) => location.properties.automaticProfileArea,
 			).length,
 			typeCounts: typeCounts(locations),
 			tideResolver: latestTide ? {

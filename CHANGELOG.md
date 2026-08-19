@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.6.24 - 2026-08-19
+
+- Make the versioned Locations catalogue the suite's only place and automatic
+  profile-area store.
+- Remove Harbour Editor import, Signal K `Harbour:` region discovery, dual
+  publication and normalized-name compatibility merging.
+- Expose profile areas directly through the shared Locations v1 service for
+  Display, Traffic, Snapshot and BITE.
+
 ## 0.6.23 - 2026-08-18
 
 - Keep broad tidal planning-region polygons visible without allowing their

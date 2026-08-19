@@ -45,7 +45,7 @@ const elements = Object.fromEntries([
 	"newLocation", "refreshLocations", "locationSearch", "displayTypeChoices", "showAllTypes",
 	"hideAllTypes", "mapAreaOnly", "locationName", "description", "typeChoices",
 	"geometryType", "setPoint", "openGeometry", "pointEditor", "polygonEditor", "point",
-	"points", "profileRegionField", "publishAsHarbourRegion", "tideRelationships", "tideAssignmentField", "tideRegionField", "tideRegionLabel", "tideLocationRef", "tideRegionRef", "anchorageFields", "seabed", "chartedDepthM",
+	"points", "profileRegionField", "automaticProfileArea", "tideRelationships", "tideAssignmentField", "tideRegionField", "tideRegionLabel", "tideLocationRef", "tideRegionRef", "anchorageFields", "seabed", "chartedDepthM",
 	"detectionRadiusM", "trustedAutomation", "anchorageNotes", "tideFields", "standardPortFields", "tideProviderId", "tideProvider", "tideStationId", "tideStationName",
 	"parentLocationRef", "tideDatum", "tideMhws", "tideMhwn", "tideMlwn", "tideMlws", "secondaryPortFields",
 	"secondaryTimePeriod", "secondaryLegacyPattern", "secondaryLegacyTable", "secondaryHwPair1", "secondaryHwPair2", "secondaryLwPair1", "secondaryLwPair2",
@@ -213,7 +213,7 @@ function updateConditionalFields() {
 	const harbourProfileArea = profileEligible && elements.geometryType.value === "Polygon";
 	const tidalRegion = types.includes("tidalRegion");
 	elements.profileRegionField.hidden = !harbourProfileArea;
-	if (!harbourProfileArea) elements.publishAsHarbourRegion.checked = false;
+	if (!harbourProfileArea) elements.automaticProfileArea.checked = false;
 	elements.tideRelationships.hidden = !types.some((type) => tideTypes.has(type));
 	elements.tideAssignmentField.hidden = !tidalRegion;
 	elements.tideRegionLabel.textContent = tidalRegion ? "Parent tidal region" : "Tidal region";
@@ -360,7 +360,7 @@ function resetEditor() {
 	elements.trustedAutomation.checked = false;
 	updateSecondaryTimeLayout(720);
 	elements.hazardSeverity.value = "advisory";
-	elements.publishAsHarbourRegion.checked = false;
+	elements.automaticProfileArea.checked = false;
 	elements.hazardApplications.querySelectorAll("input").forEach((input) => { input.checked = false; });
 	elements.selectedSummary.textContent = "New location";
 	elements.deleteLocation.disabled = true;
@@ -388,7 +388,7 @@ function selectLocation(id, fit = false, revealEditor = false) {
 		elements.points.value = formatPoints(ring.slice(0, -1).map(([lon, lat]) => ({ lat, lon })));
 	}
 	const properties = location.properties || {};
-	elements.publishAsHarbourRegion.checked = properties.publishAsHarbourRegion === true;
+	elements.automaticProfileArea.checked = properties.automaticProfileArea === true;
 	elements.seabed.value = properties.anchorage?.seabed || "";
 	elements.chartedDepthM.value = properties.anchorage?.chartedDepthM ?? "";
 	elements.detectionRadiusM.value = properties.anchorage?.detectionRadiusM ?? "";
@@ -449,7 +449,7 @@ function buildLocation() {
 	const properties = current?.properties?.provenance
 		? { provenance: structuredClone(current.properties.provenance) }
 		: {};
-	if (elements.publishAsHarbourRegion.checked) properties.publishAsHarbourRegion = true;
+	if (elements.automaticProfileArea.checked) properties.automaticProfileArea = true;
 	if (types.includes("tidalRegion") && elements.tideLocationRef.value) properties.tideLocationRef = `${resourcePrefix}${elements.tideLocationRef.value}`;
 	if (types.some((type) => tideTypes.has(type)) && elements.tideRegionRef.value) properties.tideRegionRef = `${resourcePrefix}${elements.tideRegionRef.value}`;
 	if (types.some((type) => anchorageTypes.has(type))) {
@@ -753,9 +753,8 @@ async function transfer(mode) {
 	const selected = await chooseJsonFile();
 	if (!selected) return;
 	const replacing = mode === "import";
-	const harbourExport = selected.payload?.schema == null && Number(selected.payload?.version) === 1 && Array.isArray(selected.payload?.regions);
-	const count = harbourExport ? selected.payload.regions.length : null;
-	const sourceDescription = harbourExport ? `${count} Harbour Editor region(s)` : "the selected versioned catalogue";
+	const count = Object.keys(selected.payload?.locations || {}).length;
+	const sourceDescription = `${count} versioned location(s)`;
 	const warning = replacing
 		? `Replace the entire Location Editor catalogue with ${sourceDescription}?\n\nExisting anchorages, tidal locations, hazards and other locations absent from the file will be deleted.`
 		: `Merge ${sourceDescription} into this catalogue?\n\nExisting anchorages and other unrelated locations will remain.`;

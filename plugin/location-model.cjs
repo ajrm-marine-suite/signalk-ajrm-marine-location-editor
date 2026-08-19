@@ -171,14 +171,14 @@ function validateLocation(location) {
 	if (properties.schema !== LOCATION_SCHEMA) {
 		throw new Error(`Location properties.schema must be ${LOCATION_SCHEMA}.`);
 	}
-	if (properties.publishAsHarbourRegion != null && typeof properties.publishAsHarbourRegion !== "boolean") {
-		throw new Error("publishAsHarbourRegion must be true or false.");
+	if (properties.automaticProfileArea != null && typeof properties.automaticProfileArea !== "boolean") {
+		throw new Error("automaticProfileArea must be true or false.");
 	}
-	if (properties.publishAsHarbourRegion && location.feature.geometry.type !== "Polygon") {
+	if (properties.automaticProfileArea && location.feature.geometry.type !== "Polygon") {
 		throw new Error("Automatic Harbour profile regions must use an area, not a point.");
 	}
 	if (
-		properties.publishAsHarbourRegion &&
+		properties.automaticProfileArea &&
 		!location.types.some((type) => ["harbour", "anchorage", "mooring", "marina"].includes(type))
 	) {
 		throw new Error("Only a harbour, anchorage, mooring or marina can switch to the Harbour profile.");
@@ -386,6 +386,9 @@ function normalizeLocation(input, { preserveId = true } = {}) {
 		...(location.properties || {}),
 		schema: LOCATION_SCHEMA,
 	};
+	// Upgrade the former Signal K-region publication flag into the Locations
+	// contract. Consumers use this explicit property directly; no region is
+	// created and no name-prefix compatibility is involved.
 	if (location.properties.tide?.secondaryPortCorrections) {
 		location.properties.tide.secondaryPortCorrections = migrateSecondaryPortCorrections(
 			location.properties.tide.secondaryPortCorrections,

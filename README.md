@@ -1,6 +1,7 @@
 # AJRM Marine Location Editor
 
-Version `0.6.23` prevents broad tidal planning-region polygons from masking
+Version `0.6.24` makes Locations the sole place and automatic profile-area
+contract while retaining versioned tidal planning regions without masking
 the individual locations drawn inside them. Regions remain visible and can be
 selected from the catalogue list.
 
@@ -121,9 +122,8 @@ Traffic.
 > the skipper's judgement. The authors do not accept responsibility for loss
 > or damage resulting from their use.
 
-A Signal K webapp for maintaining reusable marine knowledge. It is a superset
-of **AJRM Marine Harbour Editor** and is intended to replace it after migration
-and onboard testing. It stores:
+A Signal K webapp for maintaining reusable, versioned marine knowledge. It is
+the suite's only location catalogue and stores:
 
 - harbours, anchorages, moorings, marinas and points of interest;
 - tidal standard ports, secondary ports, tidal regions and tidal gates;
@@ -291,23 +291,12 @@ official charts, Notices to Mariners, tidal data and appropriate pilotage.
 `DATA-LICENCE.md` records the data attributions separately from the software
 licence.
 
-## Existing harbours and transition
+## Automatic profile areas
 
-On first start, Location Editor reads every existing Signal K region whose
-name begins `Harbour:` and copies it into the versioned catalogue. The stable
-region UUID, circle or polygon, name, description and explicit marina/harbour
-type are retained. The original Signal K resources are not removed.
-
-From then on, the Location Editor record is canonical. Saving a location with
-**Use this area for automatic Harbour profile switching** publishes the same
-UUID and geometry as a compatible `Harbour:` Signal K region, so existing
-Traffic automatic-profile behaviour continues to work. Unchecking it or
-deleting the location retracts that region; undo republishes it.
-
-During testing, keep Harbour Editor installed but make harbour changes in
-Location Editor. Once migration, editing and profile switching have been
-verified, Harbour Editor can be uninstalled without losing the versioned
-locations or the compatible runtime regions.
+Harbours, marinas, anchorages and moorings can be marked **Use this area for
+automatic Harbour profile switching**. Display and Traffic read these polygons
+directly from the shared Locations service. No duplicate Signal K region or
+name prefix is created or required.
 
 ## Versioning and sharing
 
@@ -327,12 +316,7 @@ different edit UUIDs is reported as a conflict and the local value is kept for
 manual review. Device clocks therefore need to be reasonably synchronized.
 **Replace Catalogue** is an explicit replacement. **Merge** retains unrelated
 locations and compares matching stable UUIDs by latest edit time. Both actions
-accept this app's versioned catalogue format and AJRM Marine Harbour Editor v1
-exports. Legacy `Harbour:` regions are converted into versioned locations and
-matched to existing locations by name (ignoring case and repeated whitespace),
-because the older exporter did not preserve stable IDs.
-The later explicit edit timestamp wins and any earlier duplicate records with
-that name are tombstoned. Location names are unique across the whole catalogue,
+accept this app's versioned catalogue format. Location names are unique across the whole catalogue,
 ignoring letter case and repeated whitespace, regardless of type or workspace.
 Replacement creates tombstones for omitted existing locations so bundled
 starter locations do not silently return after Signal K restarts.

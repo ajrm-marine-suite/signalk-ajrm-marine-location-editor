@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "AJRM Marine Location Editor API",
-    "version": "0.6.23",
+    "version": "0.6.24",
     "description": "Versioned marine locations, relationships, shared tide and weather resolution, assisted anchoring, import/export and nearest-location lookup."
   },
   "paths": {
@@ -26,8 +26,8 @@
     "/anchoring/confirm": { "post": { "responses": { "200": { "description": "Confirm the current suggestion and select Anchored" } } } },
     "/anchoring/dismiss": { "post": { "responses": { "200": { "description": "Dismiss the current suggestion until the vessel leaves or moves" } } } },
     "/local/export": { "get": { "responses": { "200": { "description": "Complete location catalogue" } } } },
-    "/local/import": { "post": { "responses": { "200": { "description": "Location catalogue or Harbour Editor v1 export converted and used to replace the catalogue" } } } },
-    "/local/merge": { "post": { "responses": { "200": { "description": "Location catalogue or Harbour Editor v1 export converted and merged per location by latest edit time" } } } },
+    "/local/import": { "post": { "responses": { "200": { "description": "Location catalogue used to replace the current catalogue" } } } },
+    "/local/merge": { "post": { "responses": { "200": { "description": "Location catalogue merged per location by latest edit time" } } } },
     "/local/purge-deleted": { "post": { "responses": { "200": { "description": "Confirmed permanent removal of all tombstones and their revision histories" } } } }
   },
   "components": {

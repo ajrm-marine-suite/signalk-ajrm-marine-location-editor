@@ -1,6 +1,7 @@
 # AJRM Marine Location Editor
 
-Version `0.6.29` makes the basemap-only chart-cycle step actually remove the
+Version `0.6.30` widens the responsive chart-cycle banner so long chart names
+remain readable. Version `0.6.29` makes the basemap-only chart-cycle step actually remove the
 automatic chart and keeps Save Location visibly depressed until saving
 completes. Version `0.6.28` updates chart cycling to include an explicit basemap-only step.
 Version `0.6.27` packages the icon at both Signal K consumer locations: the App
@@ -345,7 +346,7 @@ before a large import or merge.
 
 ```bash
 cd ~/.signalk
-npm install git+https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor.git#v0.6.29 --omit=dev --no-package-lock
+npm install git+https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor.git#v0.6.30 --omit=dev --no-package-lock
 sudo systemctl restart signalk
 ```
 

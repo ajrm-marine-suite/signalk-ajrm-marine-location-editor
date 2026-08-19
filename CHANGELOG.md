@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.6.30 - 2026-08-19
+
+- Update to shared map shell 0.7.11 so the centred chart-cycle banner has a
+  wider responsive text area.
+
 ## 0.6.29 - 2026-08-19
 
 - Preserve the chart controller's intentional empty selection so chart cycling

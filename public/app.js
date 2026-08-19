@@ -6,9 +6,10 @@
 import * as MapCore from "./ajrm-map-core.mjs?v=0.7.9";
 import { chartLocationInteractive, displayTypesForWorkspace, filterLocations, groupLocations } from "./location-browser.mjs?v=0.5.2";
 import { geometryNudgeNm, holdAcceleration } from "./geometry-motion.mjs?v=0.5.1";
-import { circlePoints, rectanglePoints, regularPolygonPoints } from "./geometry-shapes.mjs?v=0.6.28";
+import { circlePoints, rectanglePoints, regularPolygonPoints } from "./geometry-shapes.mjs?v=0.6.29";
 import { createEditorNavigationState } from "./panel-navigation.mjs?v=0.1.0";
 import { bindPressRepeat } from "./press-repeat.mjs?v=0.5.1";
+import { runWithPressedButton } from "./async-button-state.mjs?v=0.6.29";
 
 const apiBase = "/plugins/signalk-ajrm-marine-location-editor";
 const resourcePrefix = "/resources/locations/";
@@ -82,6 +83,7 @@ let autoChartLayer;
 let autoChartId;
 let autoChartList = [];
 let chartCycle;
+let saveLocationPromise = null;
 let toolbar;
 let baseLayers = {};
 let currentBaseLayer;
@@ -579,6 +581,15 @@ async function saveLocation() {
 	showStatus(`Saved revision ${result.location.revision}.`);
 }
 
+function saveLocationFrom(button) {
+	return runWithPressedButton(button, async () => {
+		if (!saveLocationPromise) {
+			saveLocationPromise = saveLocation().finally(() => { saveLocationPromise = null; });
+		}
+		return saveLocationPromise;
+	});
+}
+
 function undoChanges() {
 	if (selectedId && locations.some((location) => location.id === selectedId)) {
 		selectLocation(selectedId);
@@ -829,7 +840,9 @@ function setOverlay(layer, enabled, key) {
 }
 function updateAutoChart() {
 	if (!map?.hasLayer(autoChartGroup)) return;
-	const chart = chartCycle?.choose(autoChartList, map) ?? MapCore.chooseChart(autoChartList, map);
+	const chart = chartCycle
+		? chartCycle.choose(autoChartList, map)
+		: MapCore.chooseChart(autoChartList, map);
 	if (!chart) { autoChartGroup.clearLayers(); autoChartId = null; return; }
 	if (chart.__autoChartId === autoChartId && autoChartLayer) return keepLayersOnTop();
 	autoChartGroup.clearLayers();
@@ -1009,7 +1022,7 @@ function bindEvents() {
 	elements.closeSelector.addEventListener("click", () => { elements.selectorDrawer.classList.remove("open"); syncPanels(); });
 	elements.closeEditor.addEventListener("click", closeEditorPanel);
 	elements.closeSettings.addEventListener("click", () => { elements.settingsDrawer.classList.remove("open"); syncPanels(); });
-	elements.saveLocation.addEventListener("click", () => saveLocation().catch((error) => showStatus(error.message, true)));
+	elements.saveLocation.addEventListener("click", () => saveLocationFrom(elements.saveLocation).catch((error) => showStatus(error.message, true)));
 	elements.undoLocation.addEventListener("click", undoChanges);
 	elements.deleteLocation.addEventListener("click", () => deleteLocation().catch((error) => showStatus(error.message, true)));
 	elements.showHistory.addEventListener("click", () => showHistory().catch((error) => showStatus(error.message, true)));
@@ -1019,7 +1032,7 @@ function bindEvents() {
 	elements.mergeLocations.addEventListener("click", () => transfer("merge").catch((error) => showStatus(error.message, true)));
 	elements.purgeDeleted.addEventListener("click", () => purgeDeletedLocations().catch((error) => showStatus(error.message, true)));
 	elements.makeShape.addEventListener("click", () => { try { makeSelectedShape(); } catch (error) { showStatus(error.message, true); } });
-	elements.saveGeometry.addEventListener("click", () => saveLocation().catch((error) => showStatus(error.message, true)));
+	elements.saveGeometry.addEventListener("click", () => saveLocationFrom(elements.saveGeometry).catch((error) => showStatus(error.message, true)));
 	elements.undoGeometry.addEventListener("click", undoChanges);
 	elements.applyRadius.addEventListener("click", () => changeGeometry());
 	elements.decreaseRadius.addEventListener("click", () => changeGeometry(-0.01));

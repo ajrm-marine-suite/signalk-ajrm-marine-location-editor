@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.6.29 - 2026-08-19
+
+- Preserve the chart controller's intentional empty selection so chart cycling
+  genuinely exposes the basemap-only step.
+- Keep both **Save Location** actions visibly depressed and disabled until the
+  asynchronous save and catalogue reload have completed.
+
 ## 0.6.28 - 2026-08-19
 
 - Update to shared map shell 0.7.9 so chart cycling includes an explicit

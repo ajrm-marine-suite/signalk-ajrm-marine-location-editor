@@ -47,12 +47,14 @@ test("map page uses the standard left-side controls with zoom first", () => {
   const app = fs.readFileSync(path.join(root, "public/app.js"), "utf8");
   const css = fs.readFileSync(path.join(root, "public/styles.css"), "utf8");
 	assert.match(html, /ajrm-map-core\.css\?v=0\.7\.9/);
-	assert.match(html, /type="module" src="\.\/app\.js\?v=0\.6\.28"/);
-	assert.match(html, /styles\.css\?v=0\.6\.28/);
+	assert.match(html, /type="module" src="\.\/app\.js\?v=0\.6\.29"/);
+	assert.match(html, /styles\.css\?v=0\.6\.29/);
 	assert.match(html, /id="chartCycleStatus" class="ajrm-map-chart-cycle-status"[^>]+hidden/);
   assert.match(app, /zoomControl:\s*true/);
   assert.match(app, /MapCore\.createChartSelectorControl/);
 	assert.match(app, /MapCore\.createChartCycleControl/);
+	assert.match(app, /chartCycle\s*\?\s*chartCycle\.choose\(autoChartList, map\)\s*:\s*MapCore\.chooseChart/);
+	assert.doesNotMatch(app, /chartCycle\?\.choose\([^\n]+\)\s*\?\?/);
 	assert.match(fs.readFileSync(path.join(root, "public/ajrm-map-core.mjs"), "utf8"), /No Auto chart — basemap shown/);
 	assert.match(app, /isEnabled:\s*\(\)\s*=>\s*map\.hasLayer\(autoChartGroup\)/);
 	assert.match(app, /MapCore\.labelLeafletZoomControls\(map\)/);
@@ -65,7 +67,8 @@ test("map page uses the standard left-side controls with zoom first", () => {
 	assert.match(html, /id="undoLocation"[^>]*>Undo Changes</);
 	assert.match(html, /class="drawer-section action-row location-action-row"/);
 	assert.match(css, /\.location-action-row\s*\{[^}]*grid-template-columns:\s*repeat\(4, minmax\(0, 1fr\)\)/s);
-	assert.match(app, /elements\.saveGeometry\.addEventListener\("click"/);
+	assert.match(app, /elements\.saveGeometry\.addEventListener\("click", \(\) => saveLocationFrom\(elements\.saveGeometry\)/);
+	assert.match(css, /button\.is-working,\s*button\.is-working:disabled\s*\{[^}]*transform:\s*translateY\(4px\)/s);
 	assert.match(app, /elements\.undoGeometry\.addEventListener\("click", undoChanges\)/);
 	assert.match(app, /function undoChanges\(\)[\s\S]*selectLocation\(selectedId\)[\s\S]*resetEditor\(\)/);
 	assert.match(app, /bindPressRepeat\(elements\.nudgeNorth/);

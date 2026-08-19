@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.6.28 - 2026-08-19
+
+- Update to shared map shell 0.7.9 so chart cycling includes an explicit
+  basemap-only step before returning to automatic selection.
+
 ## 0.6.27 - 2026-08-19
 
 - Package the Location Editor icon at both the npm root for App Store metadata

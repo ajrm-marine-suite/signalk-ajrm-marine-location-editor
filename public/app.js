@@ -3,10 +3,10 @@
  * and renders workspace-filtered places, tidal references and safety areas.
  */
 
-import * as MapCore from "./ajrm-map-core.mjs?v=0.7.5";
+import * as MapCore from "./ajrm-map-core.mjs?v=0.7.9";
 import { chartLocationInteractive, displayTypesForWorkspace, filterLocations, groupLocations } from "./location-browser.mjs?v=0.5.2";
 import { geometryNudgeNm, holdAcceleration } from "./geometry-motion.mjs?v=0.5.1";
-import { circlePoints, rectanglePoints, regularPolygonPoints } from "./geometry-shapes.mjs?v=0.6.27";
+import { circlePoints, rectanglePoints, regularPolygonPoints } from "./geometry-shapes.mjs?v=0.6.28";
 import { createEditorNavigationState } from "./panel-navigation.mjs?v=0.1.0";
 import { bindPressRepeat } from "./press-repeat.mjs?v=0.5.1";
 

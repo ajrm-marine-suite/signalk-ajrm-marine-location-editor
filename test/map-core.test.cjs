@@ -46,13 +46,14 @@ test("map page uses the standard left-side controls with zoom first", () => {
   const html = fs.readFileSync(path.join(root, "public/index.html"), "utf8");
   const app = fs.readFileSync(path.join(root, "public/app.js"), "utf8");
   const css = fs.readFileSync(path.join(root, "public/styles.css"), "utf8");
-	assert.match(html, /ajrm-map-core\.css\?v=0\.7\.5/);
-	assert.match(html, /type="module" src="\.\/app\.js\?v=0\.6\.27"/);
-	assert.match(html, /styles\.css\?v=0\.6\.27/);
+	assert.match(html, /ajrm-map-core\.css\?v=0\.7\.9/);
+	assert.match(html, /type="module" src="\.\/app\.js\?v=0\.6\.28"/);
+	assert.match(html, /styles\.css\?v=0\.6\.28/);
 	assert.match(html, /id="chartCycleStatus" class="ajrm-map-chart-cycle-status"[^>]+hidden/);
   assert.match(app, /zoomControl:\s*true/);
   assert.match(app, /MapCore\.createChartSelectorControl/);
 	assert.match(app, /MapCore\.createChartCycleControl/);
+	assert.match(fs.readFileSync(path.join(root, "public/ajrm-map-core.mjs"), "utf8"), /No Auto chart — basemap shown/);
 	assert.match(app, /isEnabled:\s*\(\)\s*=>\s*map\.hasLayer\(autoChartGroup\)/);
 	assert.match(app, /MapCore\.labelLeafletZoomControls\(map\)/);
 	assert.match(app, /statusElement:\s*elements\.chartCycleStatus/);

@@ -1,6 +1,6 @@
 {
   "name": "signalk-ajrm-marine-location-editor",
-  "version": "0.6.25",
+  "version": "0.6.26",
   "description": "Signal K editor and local catalogue for marine places, tidal locations, hazards and avoidance areas.",
   "keywords": [
     "signalk-node-server-plugin",
@@ -27,7 +27,7 @@
   "signalk-plugin-enabled-by-default": true,
   "signalk": {
     "displayName": "AJRM Marine Location Editor",
-    "appIcon": "./public/icon-120.png"
+    "appIcon": "./icon-120.png"
   },
   "repository": {
     "type": "git",

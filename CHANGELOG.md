@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.6.26 - 2026-08-19
+
+- Correct the Signal K Webapps icon URL so it resolves at the public webapp
+  root rather than the nonexistent `public/public` path.
+- Add a regression test for the declared `appIcon` and served asset.
+
 ## 0.6.25 - 2026-08-19
 
 - Add explicit Point, Circle, Rectangle and Polygon editing modes while

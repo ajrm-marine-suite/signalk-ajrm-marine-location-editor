@@ -1,9 +1,13 @@
 # AJRM Marine Location Editor
 
-Version `0.6.24` makes Locations the sole place and automatic profile-area
-contract while retaining versioned tidal planning regions without masking
-the individual locations drawn inside them. Regions remain visible and can be
-selected from the catalogue list.
+Version `0.6.25` adds explicit circles, rectangles and true polygons to the
+Geometry editor. Rectangles have configurable width and height; polygons have
+3-32 generated vertices; rectangles and polygons expose numbered draggable
+points on the chart. Storage remains ordinary interoperable GeoJSON polygons.
+
+Version `0.6.24` made Locations the sole place and automatic profile-area
+contract while retaining versioned tidal planning regions without masking the
+individual locations drawn inside them.
 
 Version `0.6.22` fixes the v0.6.21 startup migration failure caused by several
 secondary ports legitimately citing the same almanac page. Catalogue records
@@ -349,12 +353,15 @@ Open **AJRM Marine Location Editor** from the Signal K app list.
    **New Location**. The pencil toolbar button reopens the current editor.
 3. Enter a name and select one or more location types. Geometry and fields for
    anchorages, tides and hazards appear only in the editor.
-4. Store a point at the map centre, enter a polygon, or generate a circle.
+4. Store a point at the map centre, or create a circle, rectangle or regular
+   polygon. Set rectangle dimensions or polygon vertex count, press **Make
+   Shape at Map Centre**, then drag its numbered red points into place. The
+   coordinate list remains available for exact edits.
 5. Add optional anchorage, tide, hazard and relationship details. Imported
    source and review metadata remains part of the stored record and exports,
    without adding a read-only provenance footer to the editing form.
 6. For a harbour-profile area, select a harbour, anchorage, mooring or marina
-   type, use polygon/circle geometry, and tick **Use this area for automatic
+   type, use any area geometry, and tick **Use this area for automatic
    Harbour profile switching**.
 7. Press **Save Location**, or **Undo Changes** to discard the draft and return
    to the last saved location.

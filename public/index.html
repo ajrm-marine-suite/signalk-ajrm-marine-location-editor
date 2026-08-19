@@ -6,7 +6,7 @@
 		<title>AJRM Marine Location Editor</title>
 		<link rel="stylesheet" href="./leaflet.css">
 		<link rel="stylesheet" href="./ajrm-map-core.css?v=0.7.5">
-		<link rel="stylesheet" href="./styles.css?v=0.6.24">
+		<link rel="stylesheet" href="./styles.css?v=0.6.25">
 	</head>
 	<body>
 		<div id="map" class="map" aria-label="Marine location chart"></div>
@@ -220,19 +220,29 @@
 
 		<section id="geometryControls" class="floating-panel" aria-label="Geometry editing controls">
 			<div id="geometryControlsHandle" class="floating-panel-header">
-				<div><h2>Edit Geometry</h2><p>Coordinates, polygon points and circle controls</p></div>
+				<div><h2>Edit Geometry</h2><p>Points, circles, rectangles and draggable polygons</p></div>
 				<button id="closeGeometry" type="button" class="icon-button" aria-label="Close geometry controls">×</button>
 			</div>
 			<div class="geometry-data-fields">
 				<label>Geometry type
 					<select id="geometryType">
 						<option value="Point">Point</option>
-						<option value="Polygon">Area or circle</option>
+						<option value="Circle">Circle</option>
+						<option value="Rectangle">Rectangle</option>
+						<option value="Polygon">Polygon</option>
 					</select>
 				</label>
 				<button id="setPoint" type="button">Set Point at Map Centre</button>
 				<label id="pointEditor">Position — latitude, longitude<input id="point" type="text" inputmode="decimal" placeholder="56.200000, -5.500000"></label>
-				<label id="polygonEditor" class="points-editor" hidden>Polygon points — latitude, longitude<textarea id="points" spellcheck="false" rows="6" placeholder="56.20, -5.50&#10;56.21, -5.49&#10;56.19, -5.48"></textarea></label>
+				<label id="polygonEditor" class="points-editor" hidden>Area vertices — latitude, longitude<textarea id="points" spellcheck="false" rows="6" placeholder="56.20, -5.50&#10;56.21, -5.49&#10;56.19, -5.48"></textarea></label>
+				<div id="shapeBuilder" class="shape-builder" hidden>
+					<label id="circleRadiusField">Circle radius (NM)<input id="radiusNm" type="number" min="0.01" step="0.01" value="0.2"></label>
+					<label id="rectangleWidthField" hidden>Rectangle width (NM)<input id="rectangleWidthNm" type="number" min="0.01" step="0.01" value="0.4"></label>
+					<label id="rectangleHeightField" hidden>Rectangle height (NM)<input id="rectangleHeightNm" type="number" min="0.01" step="0.01" value="0.3"></label>
+					<label id="polygonPointCountField" hidden>Polygon points<input id="polygonPointCount" type="number" min="3" max="32" step="1" value="6"></label>
+					<button id="makeShape" type="button">Make Shape at Map Centre</button>
+				</div>
+				<p id="vertexHelp" class="field-help" hidden>Drag the red numbered points on the chart, or edit the coordinates above.</p>
 			</div>
 			<div class="edit-grid">
 				<div class="nudge-panel" aria-label="Move geometry">
@@ -246,9 +256,7 @@
 					<button id="nudgeSouth" type="button" aria-label="Move south">↓</button>
 				</div>
 				<div class="radius-control">
-					<label>Circle radius (NM)<input id="radiusNm" type="number" min="0.01" step="0.01" value="0.2"></label>
-					<button id="makeCircle" type="button">Make Circle</button>
-					<button id="applyRadius" type="button">Apply Radius</button>
+					<button id="applyRadius" type="button">Apply Circle Radius</button>
 					<p class="field-help">Movement and radius changes are previews until the location is saved.</p>
 					<div class="action-row">
 						<button id="saveGeometry" type="button" class="primary">Save Location</button>
@@ -289,6 +297,6 @@
 		<div id="status" class="status" role="status"></div>
 		<script src="./leaflet.js"></script>
 		<script src="./protomaps-leaflet.js"></script>
-		<script type="module" src="./app.js?v=0.6.24"></script>
+		<script type="module" src="./app.js?v=0.6.25"></script>
 	</body>
 </html>

@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.6.25 - 2026-08-19
+
+- Add explicit Point, Circle, Rectangle and Polygon editing modes while
+  retaining simple interoperable GeoJSON Point/Polygon storage.
+- Generate regular polygons with 3-32 selectable vertices and rectangles with
+  configurable width and height.
+- Add numbered draggable vertex handles for rectangles and polygons, and
+  preserve an area's editor shape through later revisions.
+- Move existing area geometry without silently regenerating it as a circle.
+
 ## 0.6.24 - 2026-08-19
 
 - Make the versioned Locations catalogue the suite's only place and automatic

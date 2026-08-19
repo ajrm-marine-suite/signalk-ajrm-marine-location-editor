@@ -286,6 +286,35 @@ h3 {
 	gap: 10px;
 }
 
+.shape-builder {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(110px, 1fr));
+	gap: 8px;
+	align-items: end;
+}
+
+.shape-builder[hidden] { display: none; }
+
+.shape-builder button {
+	min-height: 42px;
+}
+
+.geometry-vertex {
+	display: grid;
+	place-items: center;
+	width: 24px;
+	height: 24px;
+	border: 3px solid #ffffff;
+	border-radius: 50%;
+	background: #ef1f1f;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.55);
+	color: #ffffff;
+	font: 800 11px/1 system-ui, sans-serif;
+	cursor: grab;
+}
+
+.geometry-vertex:active { cursor: grabbing; }
+
 .drawer-header {
 	display: flex;
 	align-items: start;
@@ -916,5 +945,9 @@ legend {
 
 	.edit-grid {
 		grid-template-columns: 1fr;
+	}
+
+	.shape-builder {
+		grid-template-columns: 1fr 1fr;
 	}
 }

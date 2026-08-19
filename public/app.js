@@ -6,6 +6,7 @@
 import * as MapCore from "./ajrm-map-core.mjs?v=0.7.5";
 import { chartLocationInteractive, displayTypesForWorkspace, filterLocations, groupLocations } from "./location-browser.mjs?v=0.5.2";
 import { geometryNudgeNm, holdAcceleration } from "./geometry-motion.mjs?v=0.5.1";
+import { circlePoints, rectanglePoints, regularPolygonPoints } from "./geometry-shapes.mjs?v=0.6.25";
 import { createEditorNavigationState } from "./panel-navigation.mjs?v=0.1.0";
 import { bindPressRepeat } from "./press-repeat.mjs?v=0.5.1";
 
@@ -45,7 +46,9 @@ const elements = Object.fromEntries([
 	"newLocation", "refreshLocations", "locationSearch", "displayTypeChoices", "showAllTypes",
 	"hideAllTypes", "mapAreaOnly", "locationName", "description", "typeChoices",
 	"geometryType", "setPoint", "openGeometry", "pointEditor", "polygonEditor", "point",
-	"points", "profileRegionField", "automaticProfileArea", "tideRelationships", "tideAssignmentField", "tideRegionField", "tideRegionLabel", "tideLocationRef", "tideRegionRef", "anchorageFields", "seabed", "chartedDepthM",
+	"points", "shapeBuilder", "circleRadiusField", "rectangleWidthField", "rectangleHeightField",
+	"polygonPointCountField", "rectangleWidthNm", "rectangleHeightNm", "polygonPointCount", "makeShape", "vertexHelp",
+	"profileRegionField", "automaticProfileArea", "tideRelationships", "tideAssignmentField", "tideRegionField", "tideRegionLabel", "tideLocationRef", "tideRegionRef", "anchorageFields", "seabed", "chartedDepthM",
 	"detectionRadiusM", "trustedAutomation", "anchorageNotes", "tideFields", "standardPortFields", "tideProviderId", "tideProvider", "tideStationId", "tideStationName",
 	"parentLocationRef", "tideDatum", "tideMhws", "tideMhwn", "tideMlwn", "tideMlws", "secondaryPortFields",
 	"secondaryTimePeriod", "secondaryLegacyPattern", "secondaryLegacyTable", "secondaryHwPair1", "secondaryHwPair2", "secondaryLwPair1", "secondaryLwPair2",
@@ -59,7 +62,7 @@ const elements = Object.fromEntries([
 	"hazardClearanceM", "hazardApplications", "saveLocation", "undoLocation", "deleteLocation", "showHistory",
 	"locationId", "locationListTitle", "locationList", "historyDialog", "historySummary",
 	"historyList", "closeHistory", "radiusNm", "decreaseRadius", "increaseRadius",
-	"applyRadius", "makeCircle", "saveGeometry", "undoGeometry", "nudgeNorth", "nudgeSouth", "nudgeWest", "nudgeEast",
+	"applyRadius", "saveGeometry", "undoGeometry", "nudgeNorth", "nudgeSouth", "nudgeWest", "nudgeEast",
 	"mergeLocations", "importLocations", "exportLocations", "locationImportFile", "syncMessages",
 	"deletedList", "purgeDeleted", "status", "chartCycleStatus",
 ].map((id) => [id, document.querySelector(`#${id}`)]));
@@ -210,7 +213,7 @@ function applyWorkspaceDisplayTypes() {
 function updateConditionalFields() {
 	const types = checkedTypes();
 	const profileEligible = types.some((type) => ["harbour", "anchorage", "mooring", "marina"].includes(type));
-	const harbourProfileArea = profileEligible && elements.geometryType.value === "Polygon";
+	const harbourProfileArea = profileEligible && elements.geometryType.value !== "Point";
 	const tidalRegion = types.includes("tidalRegion");
 	elements.profileRegionField.hidden = !harbourProfileArea;
 	if (!harbourProfileArea) elements.automaticProfileArea.checked = false;
@@ -225,7 +228,17 @@ function updateConditionalFields() {
 	elements.tidalGateFields.hidden = !types.includes("tidalGate");
 	elements.hazardFields.hidden = !types.some((type) => hazardTypes.has(type));
 	elements.pointEditor.hidden = elements.geometryType.value !== "Point";
-	elements.polygonEditor.hidden = elements.geometryType.value !== "Polygon";
+	const area = elements.geometryType.value !== "Point";
+	elements.polygonEditor.hidden = !area;
+	elements.shapeBuilder.hidden = !area;
+	elements.vertexHelp.hidden = !area || elements.geometryType.value === "Circle";
+	elements.circleRadiusField.hidden = elements.geometryType.value !== "Circle";
+	elements.rectangleWidthField.hidden = elements.geometryType.value !== "Rectangle";
+	elements.rectangleHeightField.hidden = elements.geometryType.value !== "Rectangle";
+	elements.polygonPointCountField.hidden = elements.geometryType.value !== "Polygon";
+	elements.applyRadius.hidden = elements.geometryType.value !== "Circle";
+	elements.decreaseRadius.disabled = elements.geometryType.value !== "Circle";
+	elements.increaseRadius.disabled = elements.geometryType.value !== "Circle";
 	renderPreview();
 }
 
@@ -308,13 +321,10 @@ function correctionPoints(prefix) {
 	}).filter(Boolean);
 }
 
-function makeCirclePoints(center, radiusNm, count = 40) {
-	const latRadius = radiusNm / 60;
-	const lonRadius = latRadius / Math.max(0.01, Math.cos(center.lat * Math.PI / 180));
-	return Array.from({ length: count }, (_, index) => {
-		const angle = index / count * Math.PI * 2;
-		return { lat: center.lat + Math.sin(angle) * latRadius, lon: center.lon + Math.cos(angle) * lonRadius };
-	});
+function editorShapeForLocation(location) {
+	if (location.feature.geometry.type === "Point") return "Point";
+	const shape = location.feature?.properties?.editorShape;
+	return ["Circle", "Rectangle", "Polygon"].includes(shape) ? shape : "Polygon";
 }
 
 function geometryFromEditor() {
@@ -379,13 +389,16 @@ function selectLocation(id, fit = false, revealEditor = false) {
 	elements.locationName.value = location.name;
 	elements.description.value = location.description || "";
 	elements.typeChoices.querySelectorAll("input").forEach((input) => { input.checked = location.types.includes(input.value); });
-	elements.geometryType.value = location.feature.geometry.type === "Point" ? "Point" : "Polygon";
+	elements.geometryType.value = editorShapeForLocation(location);
 	if (location.feature.geometry.type === "Point") {
 		const [lon, lat] = location.feature.geometry.coordinates;
 		elements.point.value = formatPoint({ lat, lon });
 	} else {
 		const ring = location.feature.geometry.coordinates[0];
 		elements.points.value = formatPoints(ring.slice(0, -1).map(([lon, lat]) => ({ lat, lon })));
+		if (elements.geometryType.value === "Polygon") {
+			elements.polygonPointCount.value = String(Math.max(3, Math.min(32, ring.length - 1)));
+		}
 	}
 	const properties = location.properties || {};
 	elements.automaticProfileArea.checked = properties.automaticProfileArea === true;
@@ -532,7 +545,10 @@ function buildLocation() {
 		types,
 		feature: {
 			type: "Feature",
-			properties: structuredClone(current?.feature?.properties || {}),
+			properties: {
+				...structuredClone(current?.feature?.properties || {}),
+				editorShape: elements.geometryType.value === "Point" ? undefined : elements.geometryType.value,
+			},
 			geometry: geometryFromEditor(),
 		},
 		properties,
@@ -648,8 +664,27 @@ function renderPreview() {
 	if (!geometryPreviewDirty) return;
 	try {
 		const geometry = geometryFromEditor();
-		if (geometry.type === "Point") L.circleMarker([geometry.coordinates[1], geometry.coordinates[0]], { radius: 9, color: unsavedGeometryColor, weight: 4, fillOpacity: 0.2 }).addTo(previewLayer);
-		else L.polygon(geometry.coordinates[0].map(([lon, lat]) => [lat, lon]), { color: unsavedGeometryColor, weight: 4, fillOpacity: 0.08 }).addTo(previewLayer);
+		if (geometry.type === "Point") {
+			L.circleMarker([geometry.coordinates[1], geometry.coordinates[0]], { radius: 9, color: unsavedGeometryColor, weight: 4, fillOpacity: 0.2 }).addTo(previewLayer);
+		} else {
+			const points = geometry.coordinates[0].slice(0, -1).map(([lon, lat]) => ({ lat, lon }));
+			const polygon = L.polygon(points.map(({ lat, lon }) => [lat, lon]), { color: unsavedGeometryColor, weight: 4, fillOpacity: 0.08 }).addTo(previewLayer);
+			if (elements.geometryType.value === "Circle") return;
+			points.forEach((point, index) => {
+				const marker = L.marker([point.lat, point.lon], {
+					draggable: true,
+					keyboard: false,
+					icon: L.divIcon({ className: "", html: `<span class="geometry-vertex">${index + 1}</span>`, iconSize: [24, 24], iconAnchor: [12, 12] }),
+				}).addTo(previewLayer);
+				marker.on("drag", () => {
+					const position = marker.getLatLng();
+					points[index] = { lat: position.lat, lon: position.lng };
+					polygon.setLatLngs(points.map(({ lat, lon }) => [lat, lon]));
+					elements.points.value = formatPoints(points);
+				});
+				marker.on("dragend", () => { geometryPreviewDirty = true; });
+			});
+		}
 	} catch { /* Incomplete edits are expected while typing. */ }
 }
 
@@ -867,12 +902,13 @@ function initMap() {
 	loadChartResources();
 }
 
-function changeCircle(deltaRadius = 0, northNm = 0, eastNm = 0) {
+function changeGeometry(deltaRadius = 0, northNm = 0, eastNm = 0) {
 	let center;
+	let points = [];
 	try {
 		if (elements.geometryType.value === "Point") center = parsePoint();
 		else {
-			const points = parsePoints();
+			points = parsePoints();
 			center = { lat: points.reduce((sum, point) => sum + point.lat, 0) / points.length, lon: points.reduce((sum, point) => sum + point.lon, 0) / points.length };
 		}
 	} catch { const mapCenter = map.getCenter(); center = { lat: mapCenter.lat, lon: mapCenter.lng }; }
@@ -880,9 +916,16 @@ function changeCircle(deltaRadius = 0, northNm = 0, eastNm = 0) {
 	center.lon += eastNm / (60 * Math.max(0.01, Math.cos(center.lat * Math.PI / 180)));
 	if (elements.geometryType.value === "Point") elements.point.value = formatPoint(center);
 	else {
-		const radius = Math.max(0.01, Number(elements.radiusNm.value || 0.2) + deltaRadius);
-		elements.radiusNm.value = radius.toFixed(2);
-		elements.points.value = formatPoints(makeCirclePoints(center, radius));
+		if (elements.geometryType.value === "Circle" && (deltaRadius !== 0 || (northNm === 0 && eastNm === 0))) {
+			const radius = Math.max(0.01, Number(elements.radiusNm.value || 0.2) + deltaRadius);
+			elements.radiusNm.value = radius.toFixed(2);
+			elements.points.value = formatPoints(circlePoints(center, radius));
+		} else {
+			elements.points.value = formatPoints(points.map((point) => ({
+				lat: point.lat + northNm / 60,
+				lon: point.lon + eastNm / (60 * Math.max(0.01, Math.cos(point.lat * Math.PI / 180))),
+			})));
+		}
 	}
 	geometryPreviewDirty = true;
 	renderPreview();
@@ -893,7 +936,31 @@ function nudgeGeometry(northDirection, eastDirection, context = {}) {
 	const stepNm = geometryNudgeNm(map.getZoom(), mapCenter.lat, {
 		multiplier: holdAcceleration(context.repeatCount),
 	});
-	changeCircle(0, northDirection * stepNm, eastDirection * stepNm);
+	changeGeometry(0, northDirection * stepNm, eastDirection * stepNm);
+}
+
+function makeSelectedShape() {
+	const center = map.getCenter();
+	const origin = { lat: center.lat, lon: center.lng };
+	let points;
+	if (elements.geometryType.value === "Circle") {
+		points = circlePoints(origin, Math.max(0.01, Number(elements.radiusNm.value || 0.2)));
+	} else if (elements.geometryType.value === "Rectangle") {
+		points = rectanglePoints(
+			origin,
+			Math.max(0.01, Number(elements.rectangleWidthNm.value || 0.4)),
+			Math.max(0.01, Number(elements.rectangleHeightNm.value || 0.3)),
+		);
+	} else if (elements.geometryType.value === "Polygon") {
+		const count = Math.max(3, Math.min(32, Math.round(Number(elements.polygonPointCount.value || 6))));
+		elements.polygonPointCount.value = String(count);
+		points = regularPolygonPoints(origin, Math.max(0.01, Number(elements.radiusNm.value || 0.2)), count);
+	} else {
+		throw new Error("Select Circle, Rectangle or Polygon first.");
+	}
+	elements.points.value = formatPoints(points);
+	geometryPreviewDirty = true;
+	renderPreview();
 }
 
 function bindEvents() {
@@ -930,7 +997,14 @@ function bindEvents() {
 	});
 	elements.refreshLocations.addEventListener("click", () => loadLocations().catch((error) => showStatus(error.message, true)));
 	elements.setPoint.addEventListener("click", () => { const center = map.getCenter(); geometryPreviewDirty = true; elements.geometryType.value = "Point"; elements.point.value = `${center.lat.toFixed(6)}, ${center.lng.toFixed(6)}`; updateConditionalFields(); });
-	elements.openGeometry.addEventListener("click", () => togglePanel(elements.geometryControls));
+	elements.openGeometry.addEventListener("click", () => {
+		const opening = !elements.geometryControls.classList.contains("open");
+		togglePanel(elements.geometryControls);
+		if (opening && elements.geometryType.value !== "Point") {
+			geometryPreviewDirty = true;
+			renderPreview();
+		}
+	});
 	elements.closeGeometry.addEventListener("click", () => { elements.geometryControls.classList.remove("open"); syncPanels(); });
 	elements.closeSelector.addEventListener("click", () => { elements.selectorDrawer.classList.remove("open"); syncPanels(); });
 	elements.closeEditor.addEventListener("click", closeEditorPanel);
@@ -944,12 +1018,12 @@ function bindEvents() {
 	elements.importLocations.addEventListener("click", () => transfer("import").catch((error) => showStatus(error.message, true)));
 	elements.mergeLocations.addEventListener("click", () => transfer("merge").catch((error) => showStatus(error.message, true)));
 	elements.purgeDeleted.addEventListener("click", () => purgeDeletedLocations().catch((error) => showStatus(error.message, true)));
-	elements.makeCircle.addEventListener("click", () => { const center = map.getCenter(); geometryPreviewDirty = true; elements.geometryType.value = "Polygon"; elements.points.value = formatPoints(makeCirclePoints({ lat: center.lat, lon: center.lng }, Number(elements.radiusNm.value || 0.2))); updateConditionalFields(); });
+	elements.makeShape.addEventListener("click", () => { try { makeSelectedShape(); } catch (error) { showStatus(error.message, true); } });
 	elements.saveGeometry.addEventListener("click", () => saveLocation().catch((error) => showStatus(error.message, true)));
 	elements.undoGeometry.addEventListener("click", undoChanges);
-	elements.applyRadius.addEventListener("click", () => changeCircle());
-	elements.decreaseRadius.addEventListener("click", () => changeCircle(-0.01));
-	elements.increaseRadius.addEventListener("click", () => changeCircle(0.01));
+	elements.applyRadius.addEventListener("click", () => changeGeometry());
+	elements.decreaseRadius.addEventListener("click", () => changeGeometry(-0.01));
+	elements.increaseRadius.addEventListener("click", () => changeGeometry(0.01));
 	bindPressRepeat(elements.nudgeNorth, (context) => nudgeGeometry(1, 0, context));
 	bindPressRepeat(elements.nudgeSouth, (context) => nudgeGeometry(-1, 0, context));
 	bindPressRepeat(elements.nudgeWest, (context) => nudgeGeometry(0, -1, context));

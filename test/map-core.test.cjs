@@ -47,8 +47,8 @@ test("map page uses the standard left-side controls with zoom first", () => {
   const app = fs.readFileSync(path.join(root, "public/app.js"), "utf8");
   const css = fs.readFileSync(path.join(root, "public/styles.css"), "utf8");
 	assert.match(html, /ajrm-map-core\.css\?v=0\.7\.5/);
-	assert.match(html, /type="module" src="\.\/app\.js\?v=0\.6\.24"/);
-	assert.match(html, /styles\.css\?v=0\.6\.24/);
+	assert.match(html, /type="module" src="\.\/app\.js\?v=0\.6\.25"/);
+	assert.match(html, /styles\.css\?v=0\.6\.25/);
 	assert.match(html, /id="chartCycleStatus" class="ajrm-map-chart-cycle-status"[^>]+hidden/);
   assert.match(app, /zoomControl:\s*true/);
   assert.match(app, /MapCore\.createChartSelectorControl/);
@@ -91,6 +91,7 @@ test("map page uses the standard left-side controls with zoom first", () => {
 test("location selection and editing use separate focused drawers", () => {
 	const root = path.resolve(__dirname, "..");
 	const html = fs.readFileSync(path.join(root, "public/index.html"), "utf8");
+	const app = fs.readFileSync(path.join(root, "public/app.js"), "utf8");
 	const selector = html.match(/<aside id="selectorDrawer"[\s\S]*?<\/aside>/)?.[0] || "";
 	const editor = html.match(/<aside id="editorDrawer"[\s\S]*?<\/aside>/)?.[0] || "";
 	const geometry = html.match(/<section id="geometryControls"[\s\S]*?<\/section>/)?.[0] || "";
@@ -102,6 +103,14 @@ test("location selection and editing use separate focused drawers", () => {
 	assert.match(geometry, /id="geometryType"/);
 	assert.match(geometry, /id="pointEditor"/);
 	assert.match(geometry, /id="polygonEditor"/);
+	for (const shape of ["Circle", "Rectangle", "Polygon"]) assert.match(geometry, new RegExp(`<option value="${shape}">${shape}</option>`));
+	assert.match(geometry, /id="rectangleWidthNm"/);
+	assert.match(geometry, /id="rectangleHeightNm"/);
+	assert.match(geometry, /id="polygonPointCount"[^>]*min="3"[^>]*max="32"/);
+	assert.match(app, /draggable: true/);
+	assert.match(app, /class=\"geometry-vertex\"/);
+	assert.match(app, /marker\.on\("drag"/);
+	assert.match(app, /editorShape:/);
 	assert.match(editor, /id="anchorageFields"/);
 	assert.match(editor, /id="tideFields"/);
 	assert.match(editor, /id="hazardFields"/);
@@ -141,7 +150,7 @@ test("tidal location fields are separated by port class", () => {
 	assert.doesNotMatch(html, /Tidal location used here/);
 	assert.match(app, /tideFields\.hidden = !types\.some\(\(type\) => tideTypes\.has\(type\)\)/);
 	assert.match(app, /standardPortFields\.hidden = !types\.includes\("tidalStandardPort"\)/);
-	assert.match(app, /harbourProfileArea = profileEligible && elements\.geometryType\.value === "Polygon"/);
+	assert.match(app, /harbourProfileArea = profileEligible && elements\.geometryType\.value !== "Point"/);
 	assert.match(app, /if \(types\.includes\("tidalStandardPort"\)\)[\s\S]*Object\.assign\(properties\.tide/);
 	assert.match(app, /elements\.secondaryLegacyTable\.hidden = !legacy/);
 	assert.match(app, /standardPorts\.map\(\(entry\) => \(\{ value: entry\.id, label: entry\.name \}\)\).*parentLocationRef/s);

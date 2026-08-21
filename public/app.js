@@ -4,7 +4,7 @@
  */
 
 import * as MapCore from "./ajrm-map-core.mjs?v=0.7.9";
-import { chartLocationInteractive, declutterTidalRegions, displayTypesForWorkspace, filterLocations, groupLocations } from "./location-browser.mjs?v=0.6.38";
+import { chartLocationInteractive, declutterTidalRegions, displayTypesForWorkspace, filterLocations, groupLocations } from "./location-browser.mjs?v=0.6.39";
 import { geometryNudgeNm, holdAcceleration } from "./geometry-motion.mjs?v=0.5.1";
 import { circlePoints, rectanglePoints, regularPolygonPoints } from "./geometry-shapes.mjs?v=0.6.29";
 import { createEditorNavigationState } from "./panel-navigation.mjs?v=0.1.0";
@@ -26,6 +26,7 @@ const typeDefinitions = {
 	tidalObservationStation: ["Tidal observation station", "tides", "#0e7490"],
 	tidalRegion: ["Tidal region", "tides", "#155e75"],
 	tidalGate: ["Tidal gate", "tides", "#7c3aed"],
+	weatherForecastLocation: ["Weather forecast location", "weather", "#f97316"],
 	hazard: ["Hazard", "hazards", "#dc2626"],
 	avoidanceArea: ["Avoidance area", "hazards", "#ef4444"],
 	noAnchoringArea: ["No anchoring area", "hazards", "#f97316"],
@@ -303,6 +304,11 @@ function resetEditor() {
 	elements.locationName.value = "";
 	elements.description.value = "";
 	elements.typeChoices.querySelectorAll("input").forEach((input) => { input.checked = false; });
+	const workspaceTypes = Object.entries(typeDefinitions).filter(([,definition]) => definition[1] === currentWorkspace());
+	if (workspaceTypes.length === 1) {
+		const input = elements.typeChoices.querySelector(`input[value="${workspaceTypes[0][0]}"]`);
+		if (input) input.checked = true;
+	}
 	elements.geometryType.value = "Point";
 	const center = map?.getCenter() || { lat: 55.8, lng: -5.2 };
 	elements.point.value = `${center.lat.toFixed(6)}, ${(center.lng ?? center.lon).toFixed(6)}`;

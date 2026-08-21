@@ -20,6 +20,7 @@ const LOCATION_TYPES = Object.freeze([
 	"tidalObservationStation",
 	"tidalRegion",
 	"tidalGate",
+	"weatherForecastLocation",
 	"hazard",
 	"avoidanceArea",
 	"noAnchoringArea",
@@ -31,6 +32,7 @@ const LOCATION_TYPES = Object.freeze([
 const WORKSPACES = Object.freeze({
 	places: ["harbour", "anchorage", "mooring", "marina", "pointOfInterest"],
 	tides: ["tidalStandardPort", "tidalSecondaryPort", "tidalObservationStation", "tidalRegion", "tidalGate"],
+	weather: ["weatherForecastLocation"],
 	hazards: ["hazard", "avoidanceArea", "noAnchoringArea", "waitingArea", "preferredChannel"],
 	all: LOCATION_TYPES,
 });
@@ -150,6 +152,9 @@ function validateLocation(location) {
 	validateGeometry(location.feature.geometry);
 	if (location.types.includes("tidalRegion") && location.feature.geometry.type !== "Polygon") {
 		throw new Error("A tidal region must use an area, not a point.");
+	}
+	if (location.types.includes("weatherForecastLocation") && location.feature.geometry.type !== "Point") {
+		throw new Error("A weather forecast location must use a point.");
 	}
 	const properties = location.properties;
 	if (!properties || typeof properties !== "object" || Array.isArray(properties)) {

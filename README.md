@@ -2,14 +2,21 @@
 
 Signal K spatial catalogue and chart editor for marine places, operational areas and hazards.
 
-Version 0.6.38 restores the canonical identifiers shared by the spatial and tidal catalogues:
-bundled locations are ordinary versioned seeds and external service properties
-remain opaque. Location Editor owns stable location identifiers, names, classifications, coordinates, geometry, anchorage details, hazards, revision history and merge/import/export. For a tidal-region polygon it also shows the serving tidal port and optional parent region, while saving that relationship through **AJRM Marine Tidal Database**, its single owner. At close chart scales, visible parent tidal regions are suppressed when a more-specific child is present; a deliberately selected parent remains visible with a strong outline.
+Location Editor owns stable location identifiers, names, classifications,
+coordinates, geometry, anchorage details, hazards, revision history and
+merge/import/export. Named weather forecast points are edited in the Weather
+workspace and consumed by Weather Database; Locations stores no forecast or
+provider data. For a tidal-region polygon it also shows the serving tidal port
+and optional parent region, while saving that relationship through **AJRM Marine
+Tidal Database**, its single owner. At close chart scales, visible parent tidal
+regions are suppressed when a more-specific child is present; a deliberately
+selected parent remains visible with a strong outline.
 
 ## Location classes
 
 - harbours, marinas, anchorages, moorings and points of interest;
 - tidal standard-port, secondary-port, observation-station, region and gate **locations** (classification and geometry only);
+- weather forecast locations, which provide named forecast coordinates to Weather Database without storing provider data;
 - hazards, avoidance/no-anchoring areas, waiting areas and preferred channels.
 
 Points, circles, rectangles and true polygons can be created and edited on the chart. Changes are revisioned and can be restored. Import replaces the catalogue; merge compares stable IDs and edit timestamps; purge permanently removes deleted tombstones after confirmation.
@@ -32,6 +39,6 @@ Saved locations supplement, and never replace, current official charts, publicat
 
 ```sh
 cd ~/.signalk
-npm install git+https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor.git#v0.6.38 --omit=dev --no-package-lock
+npm install git+https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor.git#v0.6.39 --omit=dev --no-package-lock
 sudo systemctl restart signalk
 ```

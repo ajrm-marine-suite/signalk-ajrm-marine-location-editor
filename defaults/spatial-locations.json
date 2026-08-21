@@ -14187,6 +14187,54 @@
           ]
         }
       }
+    },
+    {
+      "id": "39a80b1e-8012-4d41-b448-45cd26f147ee",
+      "name": "Cuan Sound weather forecast",
+      "description": "Named forecast point for weather and sea-state planning around Cuan Sound.",
+      "types": ["weatherForecastLocation"],
+      "feature": { "type": "Feature", "properties": {}, "geometry": { "type": "Point", "coordinates": [-5.6344967, 56.2700479] } },
+      "properties": {}
+    },
+    {
+      "id": "06538675-d5f6-471b-aa27-ae57c8b89581",
+      "name": "Mull of Kintyre weather forecast",
+      "description": "Named forecast point for weather and sea-state planning around the Mull of Kintyre.",
+      "types": ["weatherForecastLocation"],
+      "feature": { "type": "Feature", "properties": {}, "geometry": { "type": "Point", "coordinates": [-5.80149, 55.31067] } },
+      "properties": {}
+    },
+    {
+      "id": "d8a4ea4e-eeb2-4217-9d9b-d3240d9678bd",
+      "name": "Sound of Barra weather forecast",
+      "description": "Named forecast point for weather and sea-state planning around the Sound of Barra.",
+      "types": ["weatherForecastLocation"],
+      "feature": { "type": "Feature", "properties": {}, "geometry": { "type": "Point", "coordinates": [-7.3729461, 57.0703726] } },
+      "properties": {}
+    },
+    {
+      "id": "7948055e-5a57-4fbd-96c3-1d4f94b41ee4",
+      "name": "Sound of Harris weather forecast",
+      "description": "Named forecast point for weather and sea-state planning around the Sound of Harris.",
+      "types": ["weatherForecastLocation"],
+      "feature": { "type": "Feature", "properties": {}, "geometry": { "type": "Point", "coordinates": [-7.1399052, 57.7426797] } },
+      "properties": {}
+    },
+    {
+      "id": "2f9d6c62-906e-41bf-9526-012dcca0f154",
+      "name": "Kyle Rhea weather forecast",
+      "description": "Named forecast point for weather and sea-state planning around Kyle Rhea.",
+      "types": ["weatherForecastLocation"],
+      "feature": { "type": "Feature", "properties": {}, "geometry": { "type": "Point", "coordinates": [-5.6567278, 57.2404021] } },
+      "properties": {}
+    },
+    {
+      "id": "b37addc1-cc3a-49b5-9426-20e654611890",
+      "name": "Sound of Islay weather forecast",
+      "description": "Named forecast point for weather and sea-state planning around the Sound of Islay.",
+      "types": ["weatherForecastLocation"],
+      "feature": { "type": "Feature", "properties": {}, "geometry": { "type": "Point", "coordinates": [-6.0978156, 55.8526035] } },
+      "properties": {}
     }
   ]
 }

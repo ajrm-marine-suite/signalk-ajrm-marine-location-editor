@@ -47,8 +47,8 @@ test("map page uses the standard left-side controls with zoom first", () => {
   const app = fs.readFileSync(path.join(root, "public/app.js"), "utf8");
   const css = fs.readFileSync(path.join(root, "public/styles.css"), "utf8");
 	assert.match(html, /ajrm-map-core\.css\?v=0\.7\.11/);
-	assert.match(html, /type="module" src="\.\/app\.js\?v=0\.6\.38"/);
-	assert.match(html, /styles\.css\?v=0\.6\.38/);
+	assert.match(html, /type="module" src="\.\/app\.js\?v=0\.6\.39"/);
+	assert.match(html, /styles\.css\?v=0\.6\.39/);
 	assert.match(html, /id="chartCycleStatus" class="ajrm-map-chart-cycle-status"[^>]+hidden/);
   assert.match(app, /zoomControl:\s*true/);
   assert.match(app, /MapCore\.createChartSelectorControl/);
@@ -129,6 +129,9 @@ test("tidal classifications remain spatial while provider and correction control
 	const app = fs.readFileSync(path.join(root, "public/app.js"), "utf8");
 	assert.match(app, /tidalStandardPort: \["Tidal standard port"/);
 	assert.match(app, /tidalSecondaryPort: \["Tidal secondary port"/);
+	assert.match(app, /weatherForecastLocation: \["Weather forecast location", "weather"/);
+	assert.match(html, /<option value="weather">Weather Forecasts<\/option>/);
+	assert.match(app, /workspaceTypes\.length === 1/);
 	assert.doesNotMatch(html, /UKHO|Admiralty|secondaryCorrection|tideProviderId|parentLocationRef|tidalGateFields/);
 	assert.doesNotMatch(app, /ajrm-secondary-port|ukhoTidalEvents|heightDifferencesM|properties\.tidalGate/);
 });

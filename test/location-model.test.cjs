@@ -31,6 +31,20 @@ test("normalizes typed GeoJSON locations and assigns the contract schema", () =>
 	assert.equal(locationMatchesWorkspace(value, "tides"), false);
 });
 
+test("weather forecast locations belong to their own workspace", () => {
+	const value = location({
+		name: "Cuan Sound weather forecast",
+		types: ["weatherForecastLocation"],
+	});
+	assert.equal(locationMatchesWorkspace(value, "weather"), true);
+	assert.equal(locationMatchesWorkspace(value, "places"), false);
+	assert.throws(() => location({
+		name: "Area forecast",
+		types: ["weatherForecastLocation"],
+		feature: { type: "Feature", properties: {}, geometry: { type: "Polygon", coordinates: [[[-5, 55], [-5.1, 55], [-5.1, 55.1], [-5, 55]]] } },
+	}), /must use a point/);
+});
+
 test("rejects unknown types and unclosed areas", () => {
 	assert.throws(() => location({ types: ["imaginary"] }), /Unknown location type/);
 	assert.throws(() => location({

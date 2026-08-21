@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.6.39 — 2026-08-21
+
+- Add a Weather workspace and point-only weather forecast location class.
+- Seed six editable West Coast forecast points while keeping all provider data
+  and caches in Weather Database.
+
 ## 0.6.38 — 2026-08-21
 
 - Restore the canonical identifiers of nine existing tidal locations so the

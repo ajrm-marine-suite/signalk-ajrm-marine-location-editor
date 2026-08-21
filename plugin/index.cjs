@@ -555,7 +555,7 @@ module.exports = function ajrmMarineLocationEditor(app) {
 			if (nearbyMatch) continue;
 			candidates.push(seed);
 		}
-		return store.addMissing(candidates, { editedBy: "Bundled West Scotland open-data seed" });
+		return store.seedMissing(candidates, { editedBy: "Bundled West Scotland open-data seed" });
 	}
 
 	function locationsDescribeSamePlace(left, right) {

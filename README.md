@@ -2,7 +2,9 @@
 
 Signal K spatial catalogue and chart editor for marine places, operational areas and hazards.
 
-Version 0.6.36 retains the separation of spatial locations from tidal data while presenting a joined tidal-region editor. Location Editor owns stable location identifiers, names, classifications, coordinates, geometry, anchorage details, hazards, revision history and merge/import/export. For a tidal-region polygon it also shows the serving tidal port and optional parent region, while saving that relationship through **AJRM Marine Tidal Database**, its single owner. At close chart scales, visible parent tidal regions are suppressed when a more-specific child is present; a deliberately selected parent remains visible with a strong outline.
+Version 0.6.37 removes migration terminology from the current spatial store:
+bundled locations are ordinary versioned seeds and external service properties
+remain opaque. Version 0.6.37 removes staged-migration terminology and treats the bundled catalogue as ordinary seed data. Location Editor owns stable location identifiers, names, classifications, coordinates, geometry, anchorage details, hazards, revision history and merge/import/export. For a tidal-region polygon it also shows the serving tidal port and optional parent region, while saving that relationship through **AJRM Marine Tidal Database**, its single owner. At close chart scales, visible parent tidal regions are suppressed when a more-specific child is present; a deliberately selected parent remains visible with a strong outline.
 
 ## Location classes
 
@@ -30,6 +32,6 @@ Saved locations supplement, and never replace, current official charts, publicat
 
 ```sh
 cd ~/.signalk
-npm install git+https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor.git#v0.6.36 --omit=dev --no-package-lock
+npm install git+https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor.git#v0.6.37 --omit=dev --no-package-lock
 sudo systemctl restart signalk
 ```

@@ -37,12 +37,12 @@ test("each save creates an immutable revision and rejects stale saves", async (t
 	await assert.rejects(store.set(id, value("Stale"), { expectedRevision: 1 }), /changed after it was opened/);
 });
 
-test("bulk migration adds only previously unseen stable ids in one catalogue", async (t) => {
+test("bundled seeding adds only previously unseen stable ids in one catalogue", async (t) => {
 	const store = await fixture(t);
 	const first = { id: crypto.randomUUID(), ...value("Existing Harbour") };
 	const second = { id: crypto.randomUUID(), ...value("Second Harbour") };
-	assert.equal((await store.addMissing([first, second], { editedBy: "Harbour migration" })).length, 2);
-	assert.equal((await store.addMissing([{ ...first, name: "Must not overwrite" }])).length, 0);
+	assert.equal((await store.seedMissing([first, second], { editedBy: "Bundled seed" })).length, 2);
+	assert.equal((await store.seedMissing([{ ...first, name: "Must not overwrite" }])).length, 0);
 	assert.equal((await store.get(first.id)).name, "Existing Harbour");
 });
 
@@ -74,7 +74,7 @@ test("purge permanently removes deleted tombstones and their history only", asyn
 	assert.deepEqual(catalog.purgedIds, [deletedId]);
 	assert.equal(catalog.locations[activeId].name, "Active");
 	assert.equal(catalog.history[activeId].length, 1);
-	assert.equal((await store.addMissing([{ id: deletedId, ...value("Seed retry") }])).length, 0);
+	assert.equal((await store.seedMissing([{ id: deletedId, ...value("Seed retry") }])).length, 0);
 	await store.merge(olderExport);
 	assert.equal(await store.get(deletedId), null);
 	assert.equal(await store.purgeDeleted(), 0);
@@ -118,5 +118,5 @@ test("replacement tombstones omitted locations so bundled data cannot return", a
 	assert.equal(result.locations[retainedId].name, "Retain me");
 	assert.equal(result.tombstones[removedId].name, "Remove me");
 	assert.equal(result.history[removedId].at(-1).action, "delete");
-	assert.equal((await store.addMissing([{ id: removedId, ...value("Seed retry") }])).length, 0);
+	assert.equal((await store.seedMissing([{ id: removedId, ...value("Seed retry") }])).length, 0);
 });

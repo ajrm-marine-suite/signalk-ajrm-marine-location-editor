@@ -84,7 +84,7 @@ function createLocationStore(filePath) {
 				return location;
 			});
 		},
-		async addMissing(values, options = {}) {
+		async seedMissing(values, options = {}) {
 			return mutate(async (catalog) => {
 				const added = [];
 				const editedAt = new Date().toISOString();
@@ -103,7 +103,7 @@ function createLocationStore(filePath) {
 						editId,
 						revision: 1,
 						editedAt,
-						editedBy: String(options.editedBy || "migration"),
+						editedBy: String(options.editedBy || "bundled-seed"),
 						action: "create",
 						sourceCatalogId: catalog.catalogId,
 						snapshot: structuredClone(location),

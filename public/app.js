@@ -4,7 +4,7 @@
  */
 
 import * as MapCore from "./ajrm-map-core.mjs?v=0.7.9";
-import { chartLocationInteractive, declutterTidalRegions, displayTypesForWorkspace, filterLocations, groupLocations } from "./location-browser.mjs?v=0.6.36";
+import { chartLocationInteractive, declutterTidalRegions, displayTypesForWorkspace, filterLocations, groupLocations } from "./location-browser.mjs?v=0.6.37";
 import { geometryNudgeNm, holdAcceleration } from "./geometry-motion.mjs?v=0.5.1";
 import { circlePoints, rectanglePoints, regularPolygonPoints } from "./geometry-shapes.mjs?v=0.6.29";
 import { createEditorNavigationState } from "./panel-navigation.mjs?v=0.1.0";
@@ -378,8 +378,7 @@ function buildLocation() {
 	if (!types.length) throw new Error("Select at least one location type.");
 	const current = selectedLocation();
 	// Preserve extension properties owned by other services without interpreting
-	// them. This allows a staged migration while this editor changes only the
-	// spatial and location-specific fields it owns.
+	// them. This editor changes only spatial and location-specific fields.
 	const properties = structuredClone(current?.properties || {});
 	delete properties.automaticProfileArea;
 	delete properties.anchorage;

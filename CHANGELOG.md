@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.6.37 — 2026-08-21
+
+- Renames the internal bulk-add operation as bundled seeding and removes stale
+  staged-migration language from the current spatial editor.
+
 ## 0.6.36 — 2026-08-21
 
 - At close chart scales, hide broad tidal ancestors when a visible, more-specific child region is available, while retaining a deliberately selected parent.

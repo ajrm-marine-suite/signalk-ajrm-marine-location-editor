@@ -18,7 +18,7 @@ The plugin exposes:
 
 - `app.ajrmMarineLocations` / `Symbol.for("mcdonaldajr.ajrmMarineLocations")`, contract `ajrm-marine-locations-service-v1`;
 - `app.ajrmMarineAnchoring`, which provides confirmation-first stationary-at-anchorage assistance;
-- a temporary shared weather service pending migration to the planned standalone Weather Database app.
+- spatial location and anchoring services consumed by the standalone Tidal and Weather Database apps.
 
 It deliberately does **not** expose a tide service. Install AJRM Marine Tidal Database for tidal selection, provider configuration, corrections, calculations and offline cache management.
 

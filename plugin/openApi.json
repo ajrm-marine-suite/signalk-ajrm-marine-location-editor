@@ -2,8 +2,8 @@
   "openapi": "3.0.3",
   "info": {
     "title": "AJRM Marine Location Editor API",
-    "version": "0.6.32",
-    "description": "Versioned spatial marine locations, assisted anchoring, import/export and nearest-location lookup. Weather remains temporarily available pending its separate service migration."
+    "version": "0.6.33",
+    "description": "Versioned spatial marine locations, assisted anchoring, import/export and nearest-location lookup."
   },
   "paths": {
     "/status": { "get": { "responses": { "200": { "description": "Plugin status" } } } },
@@ -17,8 +17,6 @@
     "/locations/{id}/history": { "get": { "parameters": [{ "$ref": "#/components/parameters/Id" }], "responses": { "200": { "description": "Immutable revision history" } } } },
     "/locations/{id}/restore": { "post": { "parameters": [{ "$ref": "#/components/parameters/Id" }], "responses": { "200": { "description": "Older snapshot restored as a new revision" } } } },
     "/nearest": { "get": { "responses": { "200": { "description": "Nearest matching locations" } } } },
-    "/weather/status": { "get": { "responses": { "200": { "description": "Cached weather and marine forecast with explicit provenance and freshness" } } } },
-    "/weather/refresh": { "post": { "responses": { "200": { "description": "Refresh weather and marine forecasts for a location or position" } } } },
     "/anchoring/status": { "get": { "responses": { "200": { "description": "Stationary-at-location evidence and current anchoring suggestion/action state" } } } },
     "/anchoring/confirm": { "post": { "responses": { "200": { "description": "Confirm the current suggestion and select Anchored" } } } },
     "/anchoring/dismiss": { "post": { "responses": { "200": { "description": "Dismiss the current suggestion until the vessel leaves or moves" } } } },

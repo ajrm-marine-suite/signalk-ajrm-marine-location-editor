@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.6.33 — 2026-08-21
+
+- Remove the temporary Open-Meteo service and cache; AJRM Marine Weather Database now owns providers, forecasts and offline weather storage.
+- Keep Location Editor focused on spatial locations and assisted anchoring.
+
 ## 0.6.32
 
 - Make Location Editor a spatial catalogue only.

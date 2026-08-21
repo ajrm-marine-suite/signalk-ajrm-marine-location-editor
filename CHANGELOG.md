@@ -1,5 +1,23 @@
 # Changelog
 
+## 0.6.31 - 2026-08-21
+
+- Give secondary ports an explicit, mutually exclusive prediction source:
+  entered almanac corrections against a standard parent, or direct UKHO Tidal
+  API events for a verified secondary station.
+- Migrate structurally unambiguous existing secondary records onto the explicit
+  source contract and reject mixed API/correction records.
+- Import 47 new API-backed Scotland and Northern Ireland locations after
+  checking the workbook's requested names against the live UKHO station list;
+  retain 14 unresolved workbook rows in audit metadata without connecting them
+  to incorrect station IDs.
+- Add 100 editable `<port name> tidal area` polygons covering every bundled
+  standard/secondary port. The bounded Voronoi-style generation ensures the
+  specific area interiors do not overlap and records that local review remains
+  required.
+- Add regression tests for API-backed secondary resolution, source validation,
+  station mapping and generated-area topology.
+
 ## 0.6.30 - 2026-08-19
 
 - Update to shared map shell 0.7.11 so the centred chart-cycle banner has a

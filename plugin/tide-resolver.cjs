@@ -112,8 +112,11 @@ function createTideResolver(options) {
 		if (visited.has(port.id)) throw new Error("Secondary-port parent references contain a cycle.");
 		if (visited.size >= 12) throw new Error("Secondary-port parent chain is too deep.");
 		const nextVisited = new Set(visited).add(port.id);
-		const correction = port.properties?.tide?.secondaryPortCorrections;
-		if (correction) {
+		const tide = port.properties?.tide || {};
+		const secondary = port.types?.includes("tidalSecondaryPort");
+		if (secondary && tide.predictionSource === "enteredCorrections") {
+			const correction = tide.secondaryPortCorrections;
+			if (!correction) throw new Error(`Entered correction data for ${port.name} are incomplete.`);
 			const parentId = String(port.properties?.tide?.parentLocationRef || "").split("/").at(-1);
 			const parent = byId.get(parentId);
 			if (!parent) throw new Error(`Parent tidal location for ${port.name} was not found.`);
@@ -133,6 +136,9 @@ function createTideResolver(options) {
 					{ locationId: port.id, name: port.name, contract: correction.contract, parentLocationId: parent.id },
 				],
 			};
+		}
+		if (secondary && tide.predictionSource !== "ukhoTidalEvents") {
+			throw new Error(`Secondary-port prediction source for ${port.name} is not configured.`);
 		}
 		const providerData = await options.provider.get(port, request);
 		return {

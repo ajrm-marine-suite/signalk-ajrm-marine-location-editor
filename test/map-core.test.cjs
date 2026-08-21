@@ -47,8 +47,8 @@ test("map page uses the standard left-side controls with zoom first", () => {
   const app = fs.readFileSync(path.join(root, "public/app.js"), "utf8");
   const css = fs.readFileSync(path.join(root, "public/styles.css"), "utf8");
 	assert.match(html, /ajrm-map-core\.css\?v=0\.7\.11/);
-	assert.match(html, /type="module" src="\.\/app\.js\?v=0\.6\.30"/);
-	assert.match(html, /styles\.css\?v=0\.6\.30/);
+	assert.match(html, /type="module" src="\.\/app\.js\?v=0\.6\.31"/);
+	assert.match(html, /styles\.css\?v=0\.6\.31/);
 	assert.match(html, /id="chartCycleStatus" class="ajrm-map-chart-cycle-status"[^>]+hidden/);
   assert.match(app, /zoomControl:\s*true/);
   assert.match(app, /MapCore\.createChartSelectorControl/);
@@ -133,16 +133,17 @@ test("tidal location fields are separated by port class", () => {
 	assert.match(standard, /id="tideProviderId"/);
 	assert.match(standard, /id="tideStationId"/);
 	assert.doesNotMatch(standard, /id="parentLocationRef"/);
-	assert.match(secondary, /id="parentLocationRef"/);
-	assert.match(secondary, /Parent standard port/);
-	assert.match(secondary, /parentLocationRef" required/);
-	assert.match(secondary, /cannot be based on another secondary port/);
-	assert.match(secondary, /id="secondaryDiffMhws"/);
+	assert.match(html, /id="secondaryPredictionSource"/);
+	assert.match(html, /id="secondaryApiStationId"/);
+	assert.match(html, /id="parentLocationRef"/);
+	assert.match(html, /Parent standard port/);
+	assert.match(html, /cannot be based on another secondary port/);
+	assert.match(html, /id="secondaryDiffMhws"/);
 	for (const id of ["secondaryHwOffset1", "secondaryHwOffset2", "secondaryLwOffset1", "secondaryLwOffset2", "secondaryDiffMhws", "secondaryDiffMhwn", "secondaryDiffMlwn", "secondaryDiffMlws"]) {
 		assert.match(differenceRow, new RegExp(`id="${id}"`));
 	}
 	assert.doesNotMatch(differenceRow, /id="secondary(?:Hw|Lw)Time/);
-	assert.match(secondary, /id="secondaryLegacyTable"[^>]*hidden/);
+	assert.match(html, /id="secondaryLegacyTable"[^>]*hidden/);
 	assert.doesNotMatch(secondary, /Correction notes|id="secondaryPortNotes"/);
 	assert.doesNotMatch(html, /Sources and review|id="provenanceFields"/);
 	assert.doesNotMatch(secondary, /id="secondaryStandardMhws"|Parent port \(m\)/);
@@ -151,7 +152,7 @@ test("tidal location fields are separated by port class", () => {
 	assert.match(html, /id="tideRelationships" class="tide-relationship-fields" hidden/);
 	assert.match(html, /id="tideAssignmentField" class="inline-select-row" hidden><span>Prediction port for this region/);
 	assert.match(html, /id="tideRegionLabel">Tidal region/);
-	assert.match(secondary, /class="inline-select-row"><span>Parent standard port<\/span><select id="parentLocationRef"/);
+	assert.match(html, /class="inline-select-row"><span>Parent standard port<\/span><select id="parentLocationRef"/);
 	assert.doesNotMatch(html, /Tidal location used here/);
 	assert.match(app, /tideFields\.hidden = !types\.some\(\(type\) => tideTypes\.has\(type\)\)/);
 	assert.match(app, /standardPortFields\.hidden = !types\.includes\("tidalStandardPort"\)/);

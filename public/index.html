@@ -6,7 +6,7 @@
 		<title>AJRM Marine Location Editor</title>
 		<link rel="stylesheet" href="./leaflet.css">
 		<link rel="stylesheet" href="./ajrm-map-core.css?v=0.7.11">
-		<link rel="stylesheet" href="./styles.css?v=0.6.30">
+		<link rel="stylesheet" href="./styles.css?v=0.6.31">
 	</head>
 	<body>
 		<div id="map" class="map" aria-label="Marine location chart"></div>
@@ -131,13 +131,24 @@
 					</div>
 				</section>
 				<section id="secondaryPortFields" class="secondary-port-fields" hidden>
-					<h3>Secondary port based on a standard port</h3>
-					<label class="inline-select-row"><span>Parent standard port</span><select id="parentLocationRef" required><option value="">Select a standard port</option></select></label>
-					<p class="field-help">Select the standard port whose predictions the Reeds differences adjust. A secondary port cannot be based on another secondary port.</p>
-					<p class="field-help">Copy the table as printed in Reeds. Each standard-port time is paired with the time 12 hours later and therefore has one shared difference. Enter time differences as signed HHMM, for example <strong>-0055</strong> or <strong>+0020</strong>.</p>
-					<input id="secondaryTimePeriod" type="hidden" value="720">
-					<p id="secondaryLegacyPattern" class="field-help warning" hidden>This imported record has a non-repeating 24-hour pattern, so all four legacy rows are retained.</p>
-					<div class="reeds-table-scroll"><table id="secondaryCorrectionTable" class="reeds-table reeds-secondary-table">
+					<h3>Secondary-port prediction source</h3>
+					<label class="inline-select-row"><span>Source</span><select id="secondaryPredictionSource">
+						<option value="enteredCorrections">Entered time and height differences</option>
+						<option value="ukhoTidalEvents">Admiralty Tidal API station</option>
+					</select></label>
+					<section id="secondaryApiFields" class="source-specific-fields" hidden>
+						<p class="field-help">Use predictions returned directly for this secondary station by the configured Admiralty Tidal API subscription.</p>
+						<label>Admiralty station identifier <input id="secondaryApiStationId" type="text" required></label>
+						<label>Admiralty station name <input id="secondaryApiStationName" type="text"></label>
+						<label>Datum <input id="secondaryApiDatum" type="text" placeholder="Chart Datum"></label>
+					</section>
+					<section id="secondaryEnteredFields" class="source-specific-fields">
+						<label class="inline-select-row"><span>Parent standard port</span><select id="parentLocationRef"><option value="">Select a standard port</option></select></label>
+						<p class="field-help">Select the standard port whose entered differences are applied. A secondary port cannot be based on another secondary port.</p>
+						<p class="field-help">Copy the table as printed in Reeds. Each standard-port time is paired with the time 12 hours later and therefore has one shared difference. Enter time differences as signed HHMM, for example <strong>-0055</strong> or <strong>+0020</strong>.</p>
+						<input id="secondaryTimePeriod" type="hidden" value="720">
+						<p id="secondaryLegacyPattern" class="field-help warning" hidden>This imported record has a non-repeating 24-hour pattern, so all four legacy rows are retained.</p>
+						<div class="reeds-table-scroll"><table id="secondaryCorrectionTable" class="reeds-table reeds-secondary-table">
 						<thead>
 							<tr><th rowspan="2">Standard-port reference</th><th colspan="2">High Water</th><th colspan="2">Low Water</th><th colspan="4">Height differences (m)</th></tr>
 							<tr>
@@ -149,14 +160,15 @@
 							</tr>
 						</thead>
 						<tbody><tr id="secondaryDifferenceRow"><th>Difference</th><td><input id="secondaryHwOffset1" type="text" inputmode="numeric" placeholder="-0055"></td><td><input id="secondaryHwOffset2" type="text" inputmode="numeric" placeholder="-0025"></td><td><input id="secondaryLwOffset1" type="text" inputmode="numeric" placeholder="-0040"></td><td><input id="secondaryLwOffset2" type="text" inputmode="numeric" placeholder="-0035"></td><td><input id="secondaryDiffMhws" type="number" step="0.1"></td><td><input id="secondaryDiffMhwn" type="number" step="0.1"></td><td><input id="secondaryDiffMlwn" type="number" step="0.1"></td><td><input id="secondaryDiffMlws" type="number" step="0.1"></td></tr></tbody>
-					</table></div>
-					<div id="secondaryLegacyTable" class="reeds-table-scroll" hidden><table class="reeds-table reeds-legacy-table">
+						</table></div>
+						<div id="secondaryLegacyTable" class="reeds-table-scroll" hidden><table class="reeds-table reeds-legacy-table">
 						<thead><tr><th>Additional reference</th><th>HW time</th><th>HW difference</th><th>LW time</th><th>LW difference</th></tr></thead>
 						<tbody>
 							<tr><th>3</th><td><input id="secondaryHwTime3" type="time"></td><td><input id="secondaryHwOffset3" type="text" inputmode="numeric"></td><td><input id="secondaryLwTime3" type="time"></td><td><input id="secondaryLwOffset3" type="text" inputmode="numeric"></td></tr>
 							<tr><th>4</th><td><input id="secondaryHwTime4" type="time"></td><td><input id="secondaryHwOffset4" type="text" inputmode="numeric"></td><td><input id="secondaryLwTime4" type="time"></td><td><input id="secondaryLwOffset4" type="text" inputmode="numeric"></td></tr>
 						</tbody>
-					</table></div>
+						</table></div>
+					</section>
 				</section>
 				<section id="tidalGateFields" class="secondary-port-fields" hidden>
 					<h3>Tidal-gate constants</h3>
@@ -297,6 +309,6 @@
 		<div id="status" class="status" role="status"></div>
 		<script src="./leaflet.js"></script>
 		<script src="./protomaps-leaflet.js"></script>
-		<script type="module" src="./app.js?v=0.6.30"></script>
+		<script type="module" src="./app.js?v=0.6.31"></script>
 	</body>
 </html>

@@ -1,0 +1,2427 @@
+{
+  "schema": "org.ajrm.marine.location-seed/v1",
+  "generatedAt": "2026-08-21T00:00:00.000Z",
+  "requestedCount": 64,
+  "verifiedCount": 50,
+  "unresolved": [
+    {
+      "spreadsheetId": "0621",
+      "name": "Carlingford Bar",
+      "reason": "No same-name UKHO Tidal API station was present; the spreadsheet id identifies another station or returns 404."
+    },
+    {
+      "spreadsheetId": "0627",
+      "name": "Annalong",
+      "reason": "No same-name UKHO Tidal API station was present; the spreadsheet id identifies another station or returns 404."
+    },
+    {
+      "spreadsheetId": "0647",
+      "name": "Glenarm",
+      "reason": "No same-name UKHO Tidal API station was present; the spreadsheet id identifies another station or returns 404."
+    },
+    {
+      "spreadsheetId": "0359",
+      "name": "Fairlie",
+      "reason": "No same-name UKHO Tidal API station was present; the spreadsheet id identifies another station or returns 404."
+    },
+    {
+      "spreadsheetId": "0361",
+      "name": "Largs",
+      "reason": "No same-name UKHO Tidal API station was present; the spreadsheet id identifies another station or returns 404."
+    },
+    {
+      "spreadsheetId": "0369",
+      "name": "Dunoon",
+      "reason": "No same-name UKHO Tidal API station was present; the spreadsheet id identifies another station or returns 404."
+    },
+    {
+      "spreadsheetId": "0371",
+      "name": "Holy Loch",
+      "reason": "No same-name UKHO Tidal API station was present; the spreadsheet id identifies another station or returns 404."
+    },
+    {
+      "spreadsheetId": "0373",
+      "name": "Lochgilphead",
+      "reason": "No same-name UKHO Tidal API station was present; the spreadsheet id identifies another station or returns 404."
+    },
+    {
+      "spreadsheetId": "0389",
+      "name": "Luing (Cuan Sound Area)",
+      "reason": "No same-name UKHO Tidal API station was present; the spreadsheet id identifies another station or returns 404."
+    },
+    {
+      "spreadsheetId": "0391",
+      "name": "Craobh Haven",
+      "reason": "No same-name UKHO Tidal API station was present; the spreadsheet id identifies another station or returns 404."
+    },
+    {
+      "spreadsheetId": "0393",
+      "name": "Kerrera Sound",
+      "reason": "No same-name UKHO Tidal API station was present; the spreadsheet id identifies another station or returns 404."
+    },
+    {
+      "spreadsheetId": "0413",
+      "name": "Arisaig",
+      "reason": "No same-name UKHO Tidal API station was present; the spreadsheet id identifies another station or returns 404."
+    },
+    {
+      "spreadsheetId": "0417",
+      "name": "Armadale (Skye)",
+      "reason": "No same-name UKHO Tidal API station was present; the spreadsheet id identifies another station or returns 404."
+    },
+    {
+      "spreadsheetId": "0439",
+      "name": "East Loch Roag",
+      "reason": "No same-name UKHO Tidal API station was present; the spreadsheet id identifies another station or returns 404."
+    }
+  ],
+  "locations": [
+    {
+      "id": "7fe57a83-1868-4c69-b4a6-c8bcaad43c85",
+      "name": "Warrenpoint (Admiralty API)",
+      "description": "Admiralty Tidal API station verified by name against the live station catalogue. Spreadsheet id 0623 was not used because it did not identify this station in the API.",
+      "types": [
+        "tidalSecondaryPort"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "ukho-tidal-api:0628"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -6.25,
+            54.1
+          ]
+        }
+      },
+      "properties": {
+        "tide": {
+          "predictionSource": "ukhoTidalEvents",
+          "provider": "UK Hydrographic Office",
+          "providerId": "ukhoTidalEvents",
+          "stationId": "0628",
+          "stationName": "WARRENPOINT",
+          "datum": "Chart Datum"
+        },
+        "provenance": {
+          "reviewStatus": "sourceChecked",
+          "warning": "Tidal areas are machine-generated first-review boundaries and must be checked locally before operational use.",
+          "sources": [
+            {
+              "provider": "UK Hydrographic Office Tidal API",
+              "sourceId": "ukho-tidal-api:0628",
+              "url": "https://developer.admiralty.co.uk/products",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            },
+            {
+              "provider": "User-supplied EasyTide workbook",
+              "sourceId": "easytide-workbook:0623",
+              "url": "https://easytide.admiralty.co.uk/",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        },
+        "importRegion": "Northern Ireland"
+      }
+    },
+    {
+      "id": "2429f5e1-e52c-4fba-9609-362ecb283834",
+      "name": "Kilkeel (Admiralty API)",
+      "description": "Admiralty Tidal API station verified by name against the live station catalogue. Spreadsheet id 0625 was not used because it did not identify this station in the API.",
+      "types": [
+        "tidalSecondaryPort"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "ukho-tidal-api:0629"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -5.983333,
+            54.05
+          ]
+        }
+      },
+      "properties": {
+        "tide": {
+          "predictionSource": "ukhoTidalEvents",
+          "provider": "UK Hydrographic Office",
+          "providerId": "ukhoTidalEvents",
+          "stationId": "0629",
+          "stationName": "Kilkeel",
+          "datum": "Chart Datum"
+        },
+        "provenance": {
+          "reviewStatus": "sourceChecked",
+          "warning": "Tidal areas are machine-generated first-review boundaries and must be checked locally before operational use.",
+          "sources": [
+            {
+              "provider": "UK Hydrographic Office Tidal API",
+              "sourceId": "ukho-tidal-api:0629",
+              "url": "https://developer.admiralty.co.uk/products",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            },
+            {
+              "provider": "User-supplied EasyTide workbook",
+              "sourceId": "easytide-workbook:0625",
+              "url": "https://easytide.admiralty.co.uk/",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        },
+        "importRegion": "Northern Ireland"
+      }
+    },
+    {
+      "id": "d7c83c59-9d7b-4d4f-b146-a4824e6606fd",
+      "name": "Newcastle (Admiralty API)",
+      "description": "Admiralty Tidal API station verified by name against the live station catalogue. Spreadsheet id 0629 was not used because it did not identify this station in the API.",
+      "types": [
+        "tidalSecondaryPort"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "ukho-tidal-api:0630"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -5.883333,
+            54.2
+          ]
+        }
+      },
+      "properties": {
+        "tide": {
+          "predictionSource": "ukhoTidalEvents",
+          "provider": "UK Hydrographic Office",
+          "providerId": "ukhoTidalEvents",
+          "stationId": "0630",
+          "stationName": "Newcastle (N.Ireland)",
+          "datum": "Chart Datum"
+        },
+        "provenance": {
+          "reviewStatus": "sourceChecked",
+          "warning": "Tidal areas are machine-generated first-review boundaries and must be checked locally before operational use.",
+          "sources": [
+            {
+              "provider": "UK Hydrographic Office Tidal API",
+              "sourceId": "ukho-tidal-api:0630",
+              "url": "https://developer.admiralty.co.uk/products",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            },
+            {
+              "provider": "User-supplied EasyTide workbook",
+              "sourceId": "easytide-workbook:0629",
+              "url": "https://easytide.admiralty.co.uk/",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        },
+        "importRegion": "Northern Ireland"
+      }
+    },
+    {
+      "id": "e0fb7860-081f-44b4-899e-13f1e81b197c",
+      "name": "Ardglass (Admiralty API)",
+      "description": "Admiralty Tidal API station verified by name against the live station catalogue. Spreadsheet id 0631 was not used because it did not identify this station in the API.",
+      "types": [
+        "tidalSecondaryPort"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "ukho-tidal-api:0631"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -5.6,
+            54.266666
+          ]
+        }
+      },
+      "properties": {
+        "tide": {
+          "predictionSource": "ukhoTidalEvents",
+          "provider": "UK Hydrographic Office",
+          "providerId": "ukhoTidalEvents",
+          "stationId": "0631",
+          "stationName": "Ardglass",
+          "datum": "Chart Datum"
+        },
+        "provenance": {
+          "reviewStatus": "sourceChecked",
+          "warning": "Tidal areas are machine-generated first-review boundaries and must be checked locally before operational use.",
+          "sources": [
+            {
+              "provider": "UK Hydrographic Office Tidal API",
+              "sourceId": "ukho-tidal-api:0631",
+              "url": "https://developer.admiralty.co.uk/products",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            },
+            {
+              "provider": "User-supplied EasyTide workbook",
+              "sourceId": "easytide-workbook:0631",
+              "url": "https://easytide.admiralty.co.uk/",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        },
+        "importRegion": "Northern Ireland"
+      }
+    },
+    {
+      "id": "e1a684fd-275f-4dc0-97f2-915abd20c2c8",
+      "name": "Strangford Bar (Admiralty API)",
+      "description": "Admiralty Tidal API station verified by name against the live station catalogue. Spreadsheet id 0633 was not used because it did not identify this station in the API.",
+      "types": [
+        "tidalSecondaryPort"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "ukho-tidal-api:0633"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -5.55,
+            54.366666
+          ]
+        }
+      },
+      "properties": {
+        "tide": {
+          "predictionSource": "ukhoTidalEvents",
+          "provider": "UK Hydrographic Office",
+          "providerId": "ukhoTidalEvents",
+          "stationId": "0633",
+          "stationName": "Strangford",
+          "datum": "Chart Datum"
+        },
+        "provenance": {
+          "reviewStatus": "sourceChecked",
+          "warning": "Tidal areas are machine-generated first-review boundaries and must be checked locally before operational use.",
+          "sources": [
+            {
+              "provider": "UK Hydrographic Office Tidal API",
+              "sourceId": "ukho-tidal-api:0633",
+              "url": "https://developer.admiralty.co.uk/products",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            },
+            {
+              "provider": "User-supplied EasyTide workbook",
+              "sourceId": "easytide-workbook:0633",
+              "url": "https://easytide.admiralty.co.uk/",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        },
+        "importRegion": "Northern Ireland"
+      }
+    },
+    {
+      "id": "b35a17ff-a8a0-47a7-a7e7-8d61bc877260",
+      "name": "Killyleagh (Admiralty API)",
+      "description": "Admiralty Tidal API station verified by name against the live station catalogue. Spreadsheet id 0634 was not used because it did not identify this station in the API.",
+      "types": [
+        "tidalSecondaryPort"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "ukho-tidal-api:0634"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -5.65,
+            54.4
+          ]
+        }
+      },
+      "properties": {
+        "tide": {
+          "predictionSource": "ukhoTidalEvents",
+          "provider": "UK Hydrographic Office",
+          "providerId": "ukhoTidalEvents",
+          "stationId": "0634",
+          "stationName": "Killyleagh",
+          "datum": "Chart Datum"
+        },
+        "provenance": {
+          "reviewStatus": "sourceChecked",
+          "warning": "Tidal areas are machine-generated first-review boundaries and must be checked locally before operational use.",
+          "sources": [
+            {
+              "provider": "UK Hydrographic Office Tidal API",
+              "sourceId": "ukho-tidal-api:0634",
+              "url": "https://developer.admiralty.co.uk/products",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            },
+            {
+              "provider": "User-supplied EasyTide workbook",
+              "sourceId": "easytide-workbook:0634",
+              "url": "https://easytide.admiralty.co.uk/",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        },
+        "importRegion": "Northern Ireland"
+      }
+    },
+    {
+      "id": "de278673-36c8-4a81-9a2f-b589b5dab7d5",
+      "name": "South Rock (Admiralty API)",
+      "description": "Admiralty Tidal API station verified by name against the live station catalogue. Spreadsheet id 0635 was not used because it did not identify this station in the API.",
+      "types": [
+        "tidalSecondaryPort"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "ukho-tidal-api:0635"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -5.416666,
+            54.4
+          ]
+        }
+      },
+      "properties": {
+        "tide": {
+          "predictionSource": "ukhoTidalEvents",
+          "provider": "UK Hydrographic Office",
+          "providerId": "ukhoTidalEvents",
+          "stationId": "0635",
+          "stationName": "South Rock",
+          "datum": "Chart Datum"
+        },
+        "provenance": {
+          "reviewStatus": "sourceChecked",
+          "warning": "Tidal areas are machine-generated first-review boundaries and must be checked locally before operational use.",
+          "sources": [
+            {
+              "provider": "UK Hydrographic Office Tidal API",
+              "sourceId": "ukho-tidal-api:0635",
+              "url": "https://developer.admiralty.co.uk/products",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            },
+            {
+              "provider": "User-supplied EasyTide workbook",
+              "sourceId": "easytide-workbook:0635",
+              "url": "https://easytide.admiralty.co.uk/",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        },
+        "importRegion": "Northern Ireland"
+      }
+    },
+    {
+      "id": "193431e5-ce89-448c-8f1b-3ae1b5041a3f",
+      "name": "Donaghadee (Admiralty API)",
+      "description": "Admiralty Tidal API station verified by name against the live station catalogue. Spreadsheet id 0637 was not used because it did not identify this station in the API.",
+      "types": [
+        "tidalSecondaryPort"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "ukho-tidal-api:0637"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -5.533333,
+            54.65
+          ]
+        }
+      },
+      "properties": {
+        "tide": {
+          "predictionSource": "ukhoTidalEvents",
+          "provider": "UK Hydrographic Office",
+          "providerId": "ukhoTidalEvents",
+          "stationId": "0637",
+          "stationName": "Donaghadee",
+          "datum": "Chart Datum"
+        },
+        "provenance": {
+          "reviewStatus": "sourceChecked",
+          "warning": "Tidal areas are machine-generated first-review boundaries and must be checked locally before operational use.",
+          "sources": [
+            {
+              "provider": "UK Hydrographic Office Tidal API",
+              "sourceId": "ukho-tidal-api:0637",
+              "url": "https://developer.admiralty.co.uk/products",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            },
+            {
+              "provider": "User-supplied EasyTide workbook",
+              "sourceId": "easytide-workbook:0637",
+              "url": "https://easytide.admiralty.co.uk/",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        },
+        "importRegion": "Northern Ireland"
+      }
+    },
+    {
+      "id": "28ab841a-613d-482f-9795-4a551e24fbc4",
+      "name": "Bangor (Admiralty API)",
+      "description": "Admiralty Tidal API station verified by name against the live station catalogue. Spreadsheet id 0639 was not used because it did not identify this station in the API.",
+      "types": [
+        "tidalSecondaryPort"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "ukho-tidal-api:0637A"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -5.666666,
+            54.666666
+          ]
+        }
+      },
+      "properties": {
+        "tide": {
+          "predictionSource": "ukhoTidalEvents",
+          "provider": "UK Hydrographic Office",
+          "providerId": "ukhoTidalEvents",
+          "stationId": "0637A",
+          "stationName": "Bangor",
+          "datum": "Chart Datum"
+        },
+        "provenance": {
+          "reviewStatus": "sourceChecked",
+          "warning": "Tidal areas are machine-generated first-review boundaries and must be checked locally before operational use.",
+          "sources": [
+            {
+              "provider": "UK Hydrographic Office Tidal API",
+              "sourceId": "ukho-tidal-api:0637A",
+              "url": "https://developer.admiralty.co.uk/products",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            },
+            {
+              "provider": "User-supplied EasyTide workbook",
+              "sourceId": "easytide-workbook:0639",
+              "url": "https://easytide.admiralty.co.uk/",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        },
+        "importRegion": "Northern Ireland"
+      }
+    },
+    {
+      "id": "46aacb48-9fb0-41d7-8cb7-e0a98994e8e0",
+      "name": "Belfast (Admiralty API)",
+      "description": "Admiralty Tidal API station verified by name against the live station catalogue. Spreadsheet id 0641 was not used because it did not identify this station in the API.",
+      "types": [
+        "tidalStandardPort"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "ukho-tidal-api:0638"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -5.916666,
+            54.6
+          ]
+        }
+      },
+      "properties": {
+        "tide": {
+          "provider": "UK Hydrographic Office",
+          "providerId": "ukhoTidalEvents",
+          "stationId": "0638",
+          "stationName": "BELFAST",
+          "datum": "Chart Datum"
+        },
+        "provenance": {
+          "reviewStatus": "sourceChecked",
+          "warning": "Tidal areas are machine-generated first-review boundaries and must be checked locally before operational use.",
+          "sources": [
+            {
+              "provider": "UK Hydrographic Office Tidal API",
+              "sourceId": "ukho-tidal-api:0638",
+              "url": "https://developer.admiralty.co.uk/products",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            },
+            {
+              "provider": "User-supplied EasyTide workbook",
+              "sourceId": "easytide-workbook:0641",
+              "url": "https://easytide.admiralty.co.uk/",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        },
+        "importRegion": "Northern Ireland"
+      }
+    },
+    {
+      "id": "c1cabf4a-90c3-42d6-9bc6-2fbfc2ed78d0",
+      "name": "Carrickfergus (Admiralty API)",
+      "description": "Admiralty Tidal API station verified by name against the live station catalogue. Spreadsheet id 0643 was not used because it did not identify this station in the API.",
+      "types": [
+        "tidalSecondaryPort"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "ukho-tidal-api:0639"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -5.8,
+            54.716666
+          ]
+        }
+      },
+      "properties": {
+        "tide": {
+          "predictionSource": "ukhoTidalEvents",
+          "provider": "UK Hydrographic Office",
+          "providerId": "ukhoTidalEvents",
+          "stationId": "0639",
+          "stationName": "Carrickfergus",
+          "datum": "Chart Datum"
+        },
+        "provenance": {
+          "reviewStatus": "sourceChecked",
+          "warning": "Tidal areas are machine-generated first-review boundaries and must be checked locally before operational use.",
+          "sources": [
+            {
+              "provider": "UK Hydrographic Office Tidal API",
+              "sourceId": "ukho-tidal-api:0639",
+              "url": "https://developer.admiralty.co.uk/products",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            },
+            {
+              "provider": "User-supplied EasyTide workbook",
+              "sourceId": "easytide-workbook:0643",
+              "url": "https://easytide.admiralty.co.uk/",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        },
+        "importRegion": "Northern Ireland"
+      }
+    },
+    {
+      "id": "b30864b9-f9c6-4d06-8893-c459fd184838",
+      "name": "Larne (Admiralty API)",
+      "description": "Admiralty Tidal API station verified by name against the live station catalogue. Spreadsheet id 0645 was not used because it did not identify this station in the API.",
+      "types": [
+        "tidalSecondaryPort"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "ukho-tidal-api:0641"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -5.8,
+            54.85
+          ]
+        }
+      },
+      "properties": {
+        "tide": {
+          "predictionSource": "ukhoTidalEvents",
+          "provider": "UK Hydrographic Office",
+          "providerId": "ukhoTidalEvents",
+          "stationId": "0641",
+          "stationName": "LARNE",
+          "datum": "Chart Datum"
+        },
+        "provenance": {
+          "reviewStatus": "sourceChecked",
+          "warning": "Tidal areas are machine-generated first-review boundaries and must be checked locally before operational use.",
+          "sources": [
+            {
+              "provider": "UK Hydrographic Office Tidal API",
+              "sourceId": "ukho-tidal-api:0641",
+              "url": "https://developer.admiralty.co.uk/products",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            },
+            {
+              "provider": "User-supplied EasyTide workbook",
+              "sourceId": "easytide-workbook:0645",
+              "url": "https://easytide.admiralty.co.uk/",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        },
+        "importRegion": "Northern Ireland"
+      }
+    },
+    {
+      "id": "6d1a5e7e-1fc3-4b2e-a28c-61b8b9bdec41",
+      "name": "Red Bay (Admiralty API)",
+      "description": "Admiralty Tidal API station verified by name against the live station catalogue. Spreadsheet id 0649 was not used because it did not identify this station in the API.",
+      "types": [
+        "tidalSecondaryPort"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "ukho-tidal-api:0643"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -6.05,
+            55.066666
+          ]
+        }
+      },
+      "properties": {
+        "tide": {
+          "predictionSource": "ukhoTidalEvents",
+          "provider": "UK Hydrographic Office",
+          "providerId": "ukhoTidalEvents",
+          "stationId": "0643",
+          "stationName": "Red Bay",
+          "datum": "Chart Datum"
+        },
+        "provenance": {
+          "reviewStatus": "sourceChecked",
+          "warning": "Tidal areas are machine-generated first-review boundaries and must be checked locally before operational use.",
+          "sources": [
+            {
+              "provider": "UK Hydrographic Office Tidal API",
+              "sourceId": "ukho-tidal-api:0643",
+              "url": "https://developer.admiralty.co.uk/products",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            },
+            {
+              "provider": "User-supplied EasyTide workbook",
+              "sourceId": "easytide-workbook:0649",
+              "url": "https://easytide.admiralty.co.uk/",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        },
+        "importRegion": "Northern Ireland"
+      }
+    },
+    {
+      "id": "aa98a044-0478-49f3-9599-a3f8d851ef3e",
+      "name": "Portrush (Admiralty API)",
+      "description": "Admiralty Tidal API station verified by name against the live station catalogue. Spreadsheet id 0651 was not used because it did not identify this station in the API.",
+      "types": [
+        "tidalSecondaryPort"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "ukho-tidal-api:0652"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -6.666666,
+            55.2
+          ]
+        }
+      },
+      "properties": {
+        "tide": {
+          "predictionSource": "ukhoTidalEvents",
+          "provider": "UK Hydrographic Office",
+          "providerId": "ukhoTidalEvents",
+          "stationId": "0652",
+          "stationName": "Portrush",
+          "datum": "Chart Datum"
+        },
+        "provenance": {
+          "reviewStatus": "sourceChecked",
+          "warning": "Tidal areas are machine-generated first-review boundaries and must be checked locally before operational use.",
+          "sources": [
+            {
+              "provider": "UK Hydrographic Office Tidal API",
+              "sourceId": "ukho-tidal-api:0652",
+              "url": "https://developer.admiralty.co.uk/products",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            },
+            {
+              "provider": "User-supplied EasyTide workbook",
+              "sourceId": "easytide-workbook:0651",
+              "url": "https://easytide.admiralty.co.uk/",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        },
+        "importRegion": "Northern Ireland"
+      }
+    },
+    {
+      "id": "84a74a23-5b7d-42ec-8891-2853ab049b7d",
+      "name": "Coleraine (Admiralty API)",
+      "description": "Admiralty Tidal API station verified by name against the live station catalogue. Spreadsheet id 0653 was not used because it did not identify this station in the API.",
+      "types": [
+        "tidalSecondaryPort"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "ukho-tidal-api:0653"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -6.666666,
+            55.133333
+          ]
+        }
+      },
+      "properties": {
+        "tide": {
+          "predictionSource": "ukhoTidalEvents",
+          "provider": "UK Hydrographic Office",
+          "providerId": "ukhoTidalEvents",
+          "stationId": "0653",
+          "stationName": "Coleraine",
+          "datum": "Chart Datum"
+        },
+        "provenance": {
+          "reviewStatus": "sourceChecked",
+          "warning": "Tidal areas are machine-generated first-review boundaries and must be checked locally before operational use.",
+          "sources": [
+            {
+              "provider": "UK Hydrographic Office Tidal API",
+              "sourceId": "ukho-tidal-api:0653",
+              "url": "https://developer.admiralty.co.uk/products",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            },
+            {
+              "provider": "User-supplied EasyTide workbook",
+              "sourceId": "easytide-workbook:0653",
+              "url": "https://easytide.admiralty.co.uk/",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        },
+        "importRegion": "Northern Ireland"
+      }
+    },
+    {
+      "id": "b4e17d3f-e95a-4dc7-bd87-bed3eb707d8f",
+      "name": "Londonderry (Derry) (Admiralty API)",
+      "description": "Admiralty Tidal API station verified by name against the live station catalogue. Spreadsheet id 0655 was not used because it did not identify this station in the API.",
+      "types": [
+        "tidalSecondaryPort"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "ukho-tidal-api:0659"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -7.316666,
+            55
+          ]
+        }
+      },
+      "properties": {
+        "tide": {
+          "predictionSource": "ukhoTidalEvents",
+          "provider": "UK Hydrographic Office",
+          "providerId": "ukhoTidalEvents",
+          "stationId": "0659",
+          "stationName": "Londonderry",
+          "datum": "Chart Datum"
+        },
+        "provenance": {
+          "reviewStatus": "sourceChecked",
+          "warning": "Tidal areas are machine-generated first-review boundaries and must be checked locally before operational use.",
+          "sources": [
+            {
+              "provider": "UK Hydrographic Office Tidal API",
+              "sourceId": "ukho-tidal-api:0659",
+              "url": "https://developer.admiralty.co.uk/products",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            },
+            {
+              "provider": "User-supplied EasyTide workbook",
+              "sourceId": "easytide-workbook:0655",
+              "url": "https://easytide.admiralty.co.uk/",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        },
+        "importRegion": "Northern Ireland"
+      }
+    },
+    {
+      "id": "e569f23f-a5f4-4f27-a240-1a605a302d5b",
+      "name": "Kirkcudbright Bay (Admiralty API)",
+      "description": "Admiralty Tidal API station verified by name against the live station catalogue. Spreadsheet id 0341 was not used because it did not identify this station in the API.",
+      "types": [
+        "tidalSecondaryPort"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "ukho-tidal-api:0422A"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -4.066666,
+            54.8
+          ]
+        }
+      },
+      "properties": {
+        "tide": {
+          "predictionSource": "ukhoTidalEvents",
+          "provider": "UK Hydrographic Office",
+          "providerId": "ukhoTidalEvents",
+          "stationId": "0422A",
+          "stationName": "Kirkcudbright Bay",
+          "datum": "Chart Datum"
+        },
+        "provenance": {
+          "reviewStatus": "sourceChecked",
+          "warning": "Tidal areas are machine-generated first-review boundaries and must be checked locally before operational use.",
+          "sources": [
+            {
+              "provider": "UK Hydrographic Office Tidal API",
+              "sourceId": "ukho-tidal-api:0422A",
+              "url": "https://developer.admiralty.co.uk/products",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            },
+            {
+              "provider": "User-supplied EasyTide workbook",
+              "sourceId": "easytide-workbook:0341",
+              "url": "https://easytide.admiralty.co.uk/",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        },
+        "importRegion": "Firth of Clyde & SW Scotland"
+      }
+    },
+    {
+      "id": "8acdbf5f-642a-4ca0-acb5-fe148293a062",
+      "name": "Portpatrick (Admiralty API)",
+      "description": "Admiralty Tidal API station verified by name against the live station catalogue. Spreadsheet id 0345 was not used because it did not identify this station in the API.",
+      "types": [
+        "tidalSecondaryPort"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "ukho-tidal-api:0415"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -5.116666,
+            54.85
+          ]
+        }
+      },
+      "properties": {
+        "tide": {
+          "predictionSource": "ukhoTidalEvents",
+          "provider": "UK Hydrographic Office",
+          "providerId": "ukhoTidalEvents",
+          "stationId": "0415",
+          "stationName": "Portpatrick",
+          "datum": "Chart Datum"
+        },
+        "provenance": {
+          "reviewStatus": "sourceChecked",
+          "warning": "Tidal areas are machine-generated first-review boundaries and must be checked locally before operational use.",
+          "sources": [
+            {
+              "provider": "UK Hydrographic Office Tidal API",
+              "sourceId": "ukho-tidal-api:0415",
+              "url": "https://developer.admiralty.co.uk/products",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            },
+            {
+              "provider": "User-supplied EasyTide workbook",
+              "sourceId": "easytide-workbook:0345",
+              "url": "https://easytide.admiralty.co.uk/",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        },
+        "importRegion": "Firth of Clyde & SW Scotland"
+      }
+    },
+    {
+      "id": "81a974dc-8606-4385-8826-36c25028b100",
+      "name": "Girvan (Admiralty API)",
+      "description": "Admiralty Tidal API station verified by name against the live station catalogue. Spreadsheet id 0348 was not used because it did not identify this station in the API.",
+      "types": [
+        "tidalSecondaryPort"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "ukho-tidal-api:0414"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -4.866666,
+            55.25
+          ]
+        }
+      },
+      "properties": {
+        "tide": {
+          "predictionSource": "ukhoTidalEvents",
+          "provider": "UK Hydrographic Office",
+          "providerId": "ukhoTidalEvents",
+          "stationId": "0414",
+          "stationName": "Girvan",
+          "datum": "Chart Datum"
+        },
+        "provenance": {
+          "reviewStatus": "sourceChecked",
+          "warning": "Tidal areas are machine-generated first-review boundaries and must be checked locally before operational use.",
+          "sources": [
+            {
+              "provider": "UK Hydrographic Office Tidal API",
+              "sourceId": "ukho-tidal-api:0414",
+              "url": "https://developer.admiralty.co.uk/products",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            },
+            {
+              "provider": "User-supplied EasyTide workbook",
+              "sourceId": "easytide-workbook:0348",
+              "url": "https://easytide.admiralty.co.uk/",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        },
+        "importRegion": "Firth of Clyde & SW Scotland"
+      }
+    },
+    {
+      "id": "a3607c70-bfb8-4792-8b0e-3ecffd2f1826",
+      "name": "Ayr (Admiralty API)",
+      "description": "Admiralty Tidal API station verified by name against the live station catalogue. Spreadsheet id 0351 was not used because it did not identify this station in the API.",
+      "types": [
+        "tidalSecondaryPort"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "ukho-tidal-api:0413"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -4.65,
+            55.466666
+          ]
+        }
+      },
+      "properties": {
+        "tide": {
+          "predictionSource": "ukhoTidalEvents",
+          "provider": "UK Hydrographic Office",
+          "providerId": "ukhoTidalEvents",
+          "stationId": "0413",
+          "stationName": "Ayr",
+          "datum": "Chart Datum"
+        },
+        "provenance": {
+          "reviewStatus": "sourceChecked",
+          "warning": "Tidal areas are machine-generated first-review boundaries and must be checked locally before operational use.",
+          "sources": [
+            {
+              "provider": "UK Hydrographic Office Tidal API",
+              "sourceId": "ukho-tidal-api:0413",
+              "url": "https://developer.admiralty.co.uk/products",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            },
+            {
+              "provider": "User-supplied EasyTide workbook",
+              "sourceId": "easytide-workbook:0351",
+              "url": "https://easytide.admiralty.co.uk/",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        },
+        "importRegion": "Firth of Clyde & SW Scotland"
+      }
+    },
+    {
+      "id": "6795d6f1-940e-424f-a37e-87c111dc010c",
+      "name": "Troon (Admiralty API)",
+      "description": "Admiralty Tidal API station verified by name against the live station catalogue. Spreadsheet id 0353 was not used because it did not identify this station in the API.",
+      "types": [
+        "tidalSecondaryPort"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "ukho-tidal-api:0412"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -4.683333,
+            55.55
+          ]
+        }
+      },
+      "properties": {
+        "tide": {
+          "predictionSource": "ukhoTidalEvents",
+          "provider": "UK Hydrographic Office",
+          "providerId": "ukhoTidalEvents",
+          "stationId": "0412",
+          "stationName": "Troon",
+          "datum": "Chart Datum"
+        },
+        "provenance": {
+          "reviewStatus": "sourceChecked",
+          "warning": "Tidal areas are machine-generated first-review boundaries and must be checked locally before operational use.",
+          "sources": [
+            {
+              "provider": "UK Hydrographic Office Tidal API",
+              "sourceId": "ukho-tidal-api:0412",
+              "url": "https://developer.admiralty.co.uk/products",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            },
+            {
+              "provider": "User-supplied EasyTide workbook",
+              "sourceId": "easytide-workbook:0353",
+              "url": "https://easytide.admiralty.co.uk/",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        },
+        "importRegion": "Firth of Clyde & SW Scotland"
+      }
+    },
+    {
+      "id": "7a6e5154-5e6d-487e-9f89-4cabc5a1f60a",
+      "name": "Irvine (Admiralty API)",
+      "description": "Admiralty Tidal API station verified by name against the live station catalogue. Spreadsheet id 0355 was not used because it did not identify this station in the API.",
+      "types": [
+        "tidalSecondaryPort"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "ukho-tidal-api:0411"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -4.7,
+            55.6
+          ]
+        }
+      },
+      "properties": {
+        "tide": {
+          "predictionSource": "ukhoTidalEvents",
+          "provider": "UK Hydrographic Office",
+          "providerId": "ukhoTidalEvents",
+          "stationId": "0411",
+          "stationName": "Irvine",
+          "datum": "Chart Datum"
+        },
+        "provenance": {
+          "reviewStatus": "sourceChecked",
+          "warning": "Tidal areas are machine-generated first-review boundaries and must be checked locally before operational use.",
+          "sources": [
+            {
+              "provider": "UK Hydrographic Office Tidal API",
+              "sourceId": "ukho-tidal-api:0411",
+              "url": "https://developer.admiralty.co.uk/products",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            },
+            {
+              "provider": "User-supplied EasyTide workbook",
+              "sourceId": "easytide-workbook:0355",
+              "url": "https://easytide.admiralty.co.uk/",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        },
+        "importRegion": "Firth of Clyde & SW Scotland"
+      }
+    },
+    {
+      "id": "035ec744-8e5d-4c47-acea-22ffc3263371",
+      "name": "Ardrossan (Admiralty API)",
+      "description": "Admiralty Tidal API station verified by name against the live station catalogue. Spreadsheet id 0357 was not used because it did not identify this station in the API.",
+      "types": [
+        "tidalSecondaryPort"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "ukho-tidal-api:0410"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -4.816666,
+            55.633333
+          ]
+        }
+      },
+      "properties": {
+        "tide": {
+          "predictionSource": "ukhoTidalEvents",
+          "provider": "UK Hydrographic Office",
+          "providerId": "ukhoTidalEvents",
+          "stationId": "0410",
+          "stationName": "Ardrossan",
+          "datum": "Chart Datum"
+        },
+        "provenance": {
+          "reviewStatus": "sourceChecked",
+          "warning": "Tidal areas are machine-generated first-review boundaries and must be checked locally before operational use.",
+          "sources": [
+            {
+              "provider": "UK Hydrographic Office Tidal API",
+              "sourceId": "ukho-tidal-api:0410",
+              "url": "https://developer.admiralty.co.uk/products",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            },
+            {
+              "provider": "User-supplied EasyTide workbook",
+              "sourceId": "easytide-workbook:0357",
+              "url": "https://easytide.admiralty.co.uk/",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        },
+        "importRegion": "Firth of Clyde & SW Scotland"
+      }
+    },
+    {
+      "id": "be827e89-1128-42c3-9e1e-e89018d2d550",
+      "name": "Rothesay (Isle of Bute) (Admiralty API)",
+      "description": "Admiralty Tidal API station verified by name against the live station catalogue. Spreadsheet id 0363 was not used because it did not identify this station in the API.",
+      "types": [
+        "tidalSecondaryPort"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "ukho-tidal-api:0399"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -5.05,
+            55.833333
+          ]
+        }
+      },
+      "properties": {
+        "tide": {
+          "predictionSource": "ukhoTidalEvents",
+          "provider": "UK Hydrographic Office",
+          "providerId": "ukhoTidalEvents",
+          "stationId": "0399",
+          "stationName": "Rothesay Bay",
+          "datum": "Chart Datum"
+        },
+        "provenance": {
+          "reviewStatus": "sourceChecked",
+          "warning": "Tidal areas are machine-generated first-review boundaries and must be checked locally before operational use.",
+          "sources": [
+            {
+              "provider": "UK Hydrographic Office Tidal API",
+              "sourceId": "ukho-tidal-api:0399",
+              "url": "https://developer.admiralty.co.uk/products",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            },
+            {
+              "provider": "User-supplied EasyTide workbook",
+              "sourceId": "easytide-workbook:0363",
+              "url": "https://easytide.admiralty.co.uk/",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        },
+        "importRegion": "Firth of Clyde & SW Scotland"
+      }
+    },
+    {
+      "id": "29910eb5-6c47-4796-8af7-592742737562",
+      "name": "Greenock (Admiralty API)",
+      "description": "Admiralty Tidal API station verified by name against the live station catalogue. Spreadsheet id 0365 was not used because it did not identify this station in the API.",
+      "types": [
+        "tidalStandardPort"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "ukho-tidal-api:0404"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -4.766666,
+            55.95
+          ]
+        }
+      },
+      "properties": {
+        "tide": {
+          "provider": "UK Hydrographic Office",
+          "providerId": "ukhoTidalEvents",
+          "stationId": "0404",
+          "stationName": "GREENOCK",
+          "datum": "Chart Datum"
+        },
+        "provenance": {
+          "reviewStatus": "sourceChecked",
+          "warning": "Tidal areas are machine-generated first-review boundaries and must be checked locally before operational use.",
+          "sources": [
+            {
+              "provider": "UK Hydrographic Office Tidal API",
+              "sourceId": "ukho-tidal-api:0404",
+              "url": "https://developer.admiralty.co.uk/products",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            },
+            {
+              "provider": "User-supplied EasyTide workbook",
+              "sourceId": "easytide-workbook:0365",
+              "url": "https://easytide.admiralty.co.uk/",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        },
+        "importRegion": "Firth of Clyde & SW Scotland"
+      }
+    },
+    {
+      "id": "5e7b1024-0046-4e98-ae78-246d7ba82188",
+      "name": "Glasgow (Admiralty API)",
+      "description": "Admiralty Tidal API station verified by name against the live station catalogue. Spreadsheet id 0367 was not used because it did not identify this station in the API.",
+      "types": [
+        "tidalSecondaryPort"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "ukho-tidal-api:0407"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -4.266666,
+            55.85
+          ]
+        }
+      },
+      "properties": {
+        "tide": {
+          "predictionSource": "ukhoTidalEvents",
+          "provider": "UK Hydrographic Office",
+          "providerId": "ukhoTidalEvents",
+          "stationId": "0407",
+          "stationName": "GLASGOW",
+          "datum": "Chart Datum"
+        },
+        "provenance": {
+          "reviewStatus": "sourceChecked",
+          "warning": "Tidal areas are machine-generated first-review boundaries and must be checked locally before operational use.",
+          "sources": [
+            {
+              "provider": "UK Hydrographic Office Tidal API",
+              "sourceId": "ukho-tidal-api:0407",
+              "url": "https://developer.admiralty.co.uk/products",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            },
+            {
+              "provider": "User-supplied EasyTide workbook",
+              "sourceId": "easytide-workbook:0367",
+              "url": "https://easytide.admiralty.co.uk/",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        },
+        "importRegion": "Firth of Clyde & SW Scotland"
+      }
+    },
+    {
+      "id": "05c0964f-dccf-4310-af6d-399786441461",
+      "name": "Brodick (Isle of Arran) (Admiralty API)",
+      "description": "Admiralty Tidal API station verified by name against the live station catalogue. Spreadsheet id 0375 was not used because it did not identify this station in the API.",
+      "types": [
+        "tidalSecondaryPort"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "ukho-tidal-api:0408"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -5.133333,
+            55.583333
+          ]
+        }
+      },
+      "properties": {
+        "tide": {
+          "predictionSource": "ukhoTidalEvents",
+          "provider": "UK Hydrographic Office",
+          "providerId": "ukhoTidalEvents",
+          "stationId": "0408",
+          "stationName": "Brodick Bay",
+          "datum": "Chart Datum"
+        },
+        "provenance": {
+          "reviewStatus": "sourceChecked",
+          "warning": "Tidal areas are machine-generated first-review boundaries and must be checked locally before operational use.",
+          "sources": [
+            {
+              "provider": "UK Hydrographic Office Tidal API",
+              "sourceId": "ukho-tidal-api:0408",
+              "url": "https://developer.admiralty.co.uk/products",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            },
+            {
+              "provider": "User-supplied EasyTide workbook",
+              "sourceId": "easytide-workbook:0375",
+              "url": "https://easytide.admiralty.co.uk/",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        },
+        "importRegion": "Firth of Clyde & SW Scotland"
+      }
+    },
+    {
+      "id": "dcb3eba0-5097-4ea8-bba0-936969a5b567",
+      "name": "Campbeltown (Admiralty API)",
+      "description": "Admiralty Tidal API station verified by name against the live station catalogue. Spreadsheet id 0377 was not used because it did not identify this station in the API.",
+      "types": [
+        "tidalSecondaryPort"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "ukho-tidal-api:0393"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -5.6,
+            55.416666
+          ]
+        }
+      },
+      "properties": {
+        "tide": {
+          "predictionSource": "ukhoTidalEvents",
+          "provider": "UK Hydrographic Office",
+          "providerId": "ukhoTidalEvents",
+          "stationId": "0393",
+          "stationName": "CAMPBELTOWN",
+          "datum": "Chart Datum"
+        },
+        "provenance": {
+          "reviewStatus": "sourceChecked",
+          "warning": "Tidal areas are machine-generated first-review boundaries and must be checked locally before operational use.",
+          "sources": [
+            {
+              "provider": "UK Hydrographic Office Tidal API",
+              "sourceId": "ukho-tidal-api:0393",
+              "url": "https://developer.admiralty.co.uk/products",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            },
+            {
+              "provider": "User-supplied EasyTide workbook",
+              "sourceId": "easytide-workbook:0377",
+              "url": "https://easytide.admiralty.co.uk/",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        },
+        "importRegion": "Firth of Clyde & SW Scotland"
+      }
+    },
+    {
+      "id": "f9532193-12f6-4734-a1e8-f0368882321d",
+      "name": "Port Ellen (Islay) (Admiralty API)",
+      "description": "Admiralty Tidal API station verified by name against the live station catalogue. Spreadsheet id 0381 was not used because it did not identify this station in the API.",
+      "types": [
+        "tidalSecondaryPort"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "ukho-tidal-api:0381"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -6.183333,
+            55.633333
+          ]
+        }
+      },
+      "properties": {
+        "tide": {
+          "predictionSource": "ukhoTidalEvents",
+          "provider": "UK Hydrographic Office",
+          "providerId": "ukhoTidalEvents",
+          "stationId": "0381",
+          "stationName": "Port Ellen",
+          "datum": "Chart Datum"
+        },
+        "provenance": {
+          "reviewStatus": "sourceChecked",
+          "warning": "Tidal areas are machine-generated first-review boundaries and must be checked locally before operational use.",
+          "sources": [
+            {
+              "provider": "UK Hydrographic Office Tidal API",
+              "sourceId": "ukho-tidal-api:0381",
+              "url": "https://developer.admiralty.co.uk/products",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            },
+            {
+              "provider": "User-supplied EasyTide workbook",
+              "sourceId": "easytide-workbook:0381",
+              "url": "https://easytide.admiralty.co.uk/",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        },
+        "importRegion": "SW Highlands & Inner Hebrides"
+      }
+    },
+    {
+      "id": "9b95ee38-19ca-49e8-abb8-b63c4041bcaf",
+      "name": "Craighouse (Jura) (Admiralty API)",
+      "description": "Admiralty Tidal API station verified by name against the live station catalogue. Spreadsheet id 0383 was not used because it did not identify this station in the API.",
+      "types": [
+        "tidalSecondaryPort"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "ukho-tidal-api:0383"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -5.95,
+            55.833333
+          ]
+        }
+      },
+      "properties": {
+        "tide": {
+          "predictionSource": "ukhoTidalEvents",
+          "provider": "UK Hydrographic Office",
+          "providerId": "ukhoTidalEvents",
+          "stationId": "0383",
+          "stationName": "Craighouse",
+          "datum": "Chart Datum"
+        },
+        "provenance": {
+          "reviewStatus": "sourceChecked",
+          "warning": "Tidal areas are machine-generated first-review boundaries and must be checked locally before operational use.",
+          "sources": [
+            {
+              "provider": "UK Hydrographic Office Tidal API",
+              "sourceId": "ukho-tidal-api:0383",
+              "url": "https://developer.admiralty.co.uk/products",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            },
+            {
+              "provider": "User-supplied EasyTide workbook",
+              "sourceId": "easytide-workbook:0383",
+              "url": "https://easytide.admiralty.co.uk/",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        },
+        "importRegion": "SW Highlands & Inner Hebrides"
+      }
+    },
+    {
+      "id": "2a4c4964-a33d-4bf9-92ae-52f7a71860b8",
+      "name": "Port Askaig (Islay) (Admiralty API)",
+      "description": "Admiralty Tidal API station verified by name against the live station catalogue. Spreadsheet id 0385 was not used because it did not identify this station in the API.",
+      "types": [
+        "tidalSecondaryPort"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "ukho-tidal-api:0382"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -6.105,
+            55.848333
+          ]
+        }
+      },
+      "properties": {
+        "tide": {
+          "predictionSource": "ukhoTidalEvents",
+          "provider": "UK Hydrographic Office",
+          "providerId": "ukhoTidalEvents",
+          "stationId": "0382",
+          "stationName": "Port Askaig",
+          "datum": "Chart Datum"
+        },
+        "provenance": {
+          "reviewStatus": "sourceChecked",
+          "warning": "Tidal areas are machine-generated first-review boundaries and must be checked locally before operational use.",
+          "sources": [
+            {
+              "provider": "UK Hydrographic Office Tidal API",
+              "sourceId": "ukho-tidal-api:0382",
+              "url": "https://developer.admiralty.co.uk/products",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            },
+            {
+              "provider": "User-supplied EasyTide workbook",
+              "sourceId": "easytide-workbook:0385",
+              "url": "https://easytide.admiralty.co.uk/",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        },
+        "importRegion": "SW Highlands & Inner Hebrides"
+      }
+    },
+    {
+      "id": "0fe40e8a-7ab4-4ef8-88f3-0ac3ba191e15",
+      "name": "Carsaig Bay / Crinan (Admiralty API)",
+      "description": "Admiralty Tidal API station verified by name against the live station catalogue. Spreadsheet id 0387 was not used because it did not identify this station in the API.",
+      "types": [
+        "tidalSecondaryPort"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "ukho-tidal-api:0387"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -5.633333,
+            56.033333
+          ]
+        }
+      },
+      "properties": {
+        "tide": {
+          "predictionSource": "ukhoTidalEvents",
+          "provider": "UK Hydrographic Office",
+          "providerId": "ukhoTidalEvents",
+          "stationId": "0387",
+          "stationName": "Carsaig Bay",
+          "datum": "Chart Datum"
+        },
+        "provenance": {
+          "reviewStatus": "sourceChecked",
+          "warning": "Tidal areas are machine-generated first-review boundaries and must be checked locally before operational use.",
+          "sources": [
+            {
+              "provider": "UK Hydrographic Office Tidal API",
+              "sourceId": "ukho-tidal-api:0387",
+              "url": "https://developer.admiralty.co.uk/products",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            },
+            {
+              "provider": "User-supplied EasyTide workbook",
+              "sourceId": "easytide-workbook:0387",
+              "url": "https://easytide.admiralty.co.uk/",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        },
+        "importRegion": "SW Highlands & Inner Hebrides"
+      }
+    },
+    {
+      "id": "db2501af-50b5-47ae-bc66-476e6a20d88d",
+      "name": "Dunstaffnage (Admiralty API)",
+      "description": "Admiralty Tidal API station verified by name against the live station catalogue. Spreadsheet id 0397 was not used because it did not identify this station in the API.",
+      "types": [
+        "tidalSecondaryPort"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "ukho-tidal-api:0371"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -5.433333,
+            56.45
+          ]
+        }
+      },
+      "properties": {
+        "tide": {
+          "predictionSource": "ukhoTidalEvents",
+          "provider": "UK Hydrographic Office",
+          "providerId": "ukhoTidalEvents",
+          "stationId": "0371",
+          "stationName": "Dunstaffnage Bay",
+          "datum": "Chart Datum"
+        },
+        "provenance": {
+          "reviewStatus": "sourceChecked",
+          "warning": "Tidal areas are machine-generated first-review boundaries and must be checked locally before operational use.",
+          "sources": [
+            {
+              "provider": "UK Hydrographic Office Tidal API",
+              "sourceId": "ukho-tidal-api:0371",
+              "url": "https://developer.admiralty.co.uk/products",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            },
+            {
+              "provider": "User-supplied EasyTide workbook",
+              "sourceId": "easytide-workbook:0397",
+              "url": "https://easytide.admiralty.co.uk/",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        },
+        "importRegion": "SW Highlands & Inner Hebrides"
+      }
+    },
+    {
+      "id": "0b1155f1-da85-4463-8afd-ffe3f6259ccb",
+      "name": "Lochaline (Admiralty API)",
+      "description": "Admiralty Tidal API station verified by name against the live station catalogue. Spreadsheet id 0399 was not used because it did not identify this station in the API.",
+      "types": [
+        "tidalSecondaryPort"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "ukho-tidal-api:0365"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -5.766666,
+            56.533333
+          ]
+        }
+      },
+      "properties": {
+        "tide": {
+          "predictionSource": "ukhoTidalEvents",
+          "provider": "UK Hydrographic Office",
+          "providerId": "ukhoTidalEvents",
+          "stationId": "0365",
+          "stationName": "Loch Aline",
+          "datum": "Chart Datum"
+        },
+        "provenance": {
+          "reviewStatus": "sourceChecked",
+          "warning": "Tidal areas are machine-generated first-review boundaries and must be checked locally before operational use.",
+          "sources": [
+            {
+              "provider": "UK Hydrographic Office Tidal API",
+              "sourceId": "ukho-tidal-api:0365",
+              "url": "https://developer.admiralty.co.uk/products",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            },
+            {
+              "provider": "User-supplied EasyTide workbook",
+              "sourceId": "easytide-workbook:0399",
+              "url": "https://easytide.admiralty.co.uk/",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        },
+        "importRegion": "SW Highlands & Inner Hebrides"
+      }
+    },
+    {
+      "id": "ac1c6581-7c04-4d70-b75c-2877ca47aff9",
+      "name": "Tobermory (Isle of Mull) (Admiralty API)",
+      "description": "Admiralty Tidal API station verified by name against the live station catalogue. Spreadsheet id 0401 was not used because it did not identify this station in the API.",
+      "types": [
+        "tidalSecondaryPort"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "ukho-tidal-api:0364"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -6.066666,
+            56.616666
+          ]
+        }
+      },
+      "properties": {
+        "tide": {
+          "predictionSource": "ukhoTidalEvents",
+          "provider": "UK Hydrographic Office",
+          "providerId": "ukhoTidalEvents",
+          "stationId": "0364",
+          "stationName": "Tobermory",
+          "datum": "Chart Datum"
+        },
+        "provenance": {
+          "reviewStatus": "sourceChecked",
+          "warning": "Tidal areas are machine-generated first-review boundaries and must be checked locally before operational use.",
+          "sources": [
+            {
+              "provider": "UK Hydrographic Office Tidal API",
+              "sourceId": "ukho-tidal-api:0364",
+              "url": "https://developer.admiralty.co.uk/products",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            },
+            {
+              "provider": "User-supplied EasyTide workbook",
+              "sourceId": "easytide-workbook:0401",
+              "url": "https://easytide.admiralty.co.uk/",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        },
+        "importRegion": "SW Highlands & Inner Hebrides"
+      }
+    },
+    {
+      "id": "d25f0fbe-c2b3-4a5b-a65e-a00e7db70487",
+      "name": "Coll (Arinagour) (Admiralty API)",
+      "description": "Admiralty Tidal API station verified by name against the live station catalogue. Spreadsheet id 0403 was not used because it did not identify this station in the API.",
+      "types": [
+        "tidalSecondaryPort"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "ukho-tidal-api:0356"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -6.516666,
+            56.616666
+          ]
+        }
+      },
+      "properties": {
+        "tide": {
+          "predictionSource": "ukhoTidalEvents",
+          "provider": "UK Hydrographic Office",
+          "providerId": "ukhoTidalEvents",
+          "stationId": "0356",
+          "stationName": "Loch Eatharna",
+          "datum": "Chart Datum"
+        },
+        "provenance": {
+          "reviewStatus": "sourceChecked",
+          "warning": "Tidal areas are machine-generated first-review boundaries and must be checked locally before operational use.",
+          "sources": [
+            {
+              "provider": "UK Hydrographic Office Tidal API",
+              "sourceId": "ukho-tidal-api:0356",
+              "url": "https://developer.admiralty.co.uk/products",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            },
+            {
+              "provider": "User-supplied EasyTide workbook",
+              "sourceId": "easytide-workbook:0403",
+              "url": "https://easytide.admiralty.co.uk/",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        },
+        "importRegion": "SW Highlands & Inner Hebrides"
+      }
+    },
+    {
+      "id": "6284abd7-b3f1-4abc-992d-3ae4178dea94",
+      "name": "Tiree (Scarinish) (Admiralty API)",
+      "description": "Admiralty Tidal API station verified by name against the live station catalogue. Spreadsheet id 0405 was not used because it did not identify this station in the API.",
+      "types": [
+        "tidalSecondaryPort"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "ukho-tidal-api:0357"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -6.8,
+            56.516666
+          ]
+        }
+      },
+      "properties": {
+        "tide": {
+          "predictionSource": "ukhoTidalEvents",
+          "provider": "UK Hydrographic Office",
+          "providerId": "ukhoTidalEvents",
+          "stationId": "0357",
+          "stationName": "Gott Bay",
+          "datum": "Chart Datum"
+        },
+        "provenance": {
+          "reviewStatus": "sourceChecked",
+          "warning": "Tidal areas are machine-generated first-review boundaries and must be checked locally before operational use.",
+          "sources": [
+            {
+              "provider": "UK Hydrographic Office Tidal API",
+              "sourceId": "ukho-tidal-api:0357",
+              "url": "https://developer.admiralty.co.uk/products",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            },
+            {
+              "provider": "User-supplied EasyTide workbook",
+              "sourceId": "easytide-workbook:0405",
+              "url": "https://easytide.admiralty.co.uk/",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        },
+        "importRegion": "SW Highlands & Inner Hebrides"
+      }
+    },
+    {
+      "id": "bfaf0c0d-5d8a-461d-b6f0-13d33815131b",
+      "name": "Corpach / Fort William (Admiralty API)",
+      "description": "Admiralty Tidal API station verified by name against the live station catalogue. Spreadsheet id 0409 was not used because it did not identify this station in the API.",
+      "types": [
+        "tidalStandardPort"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "ukho-tidal-api:0368"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -5.116666,
+            56.85
+          ]
+        }
+      },
+      "properties": {
+        "tide": {
+          "provider": "UK Hydrographic Office",
+          "providerId": "ukhoTidalEvents",
+          "stationId": "0368",
+          "stationName": "Corpach",
+          "datum": "Chart Datum"
+        },
+        "provenance": {
+          "reviewStatus": "sourceChecked",
+          "warning": "Tidal areas are machine-generated first-review boundaries and must be checked locally before operational use.",
+          "sources": [
+            {
+              "provider": "UK Hydrographic Office Tidal API",
+              "sourceId": "ukho-tidal-api:0368",
+              "url": "https://developer.admiralty.co.uk/products",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            },
+            {
+              "provider": "User-supplied EasyTide workbook",
+              "sourceId": "easytide-workbook:0409",
+              "url": "https://easytide.admiralty.co.uk/",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        },
+        "importRegion": "NW Highlands & Skye"
+      }
+    },
+    {
+      "id": "e13058fd-e1b6-476f-b2cb-e1b6852c4fbb",
+      "name": "Mallaig (Admiralty API)",
+      "description": "Admiralty Tidal API station verified by name against the live station catalogue. Spreadsheet id 0415 was not used because it did not identify this station in the API.",
+      "types": [
+        "tidalSecondaryPort"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "ukho-tidal-api:0353A"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -5.833333,
+            57
+          ]
+        }
+      },
+      "properties": {
+        "tide": {
+          "predictionSource": "ukhoTidalEvents",
+          "provider": "UK Hydrographic Office",
+          "providerId": "ukhoTidalEvents",
+          "stationId": "0353A",
+          "stationName": "Mallaig",
+          "datum": "Chart Datum"
+        },
+        "provenance": {
+          "reviewStatus": "sourceChecked",
+          "warning": "Tidal areas are machine-generated first-review boundaries and must be checked locally before operational use.",
+          "sources": [
+            {
+              "provider": "UK Hydrographic Office Tidal API",
+              "sourceId": "ukho-tidal-api:0353A",
+              "url": "https://developer.admiralty.co.uk/products",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            },
+            {
+              "provider": "User-supplied EasyTide workbook",
+              "sourceId": "easytide-workbook:0415",
+              "url": "https://easytide.admiralty.co.uk/",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        },
+        "importRegion": "NW Highlands & Skye"
+      }
+    },
+    {
+      "id": "22a0c155-39f1-49ca-b517-ce8637e6abd0",
+      "name": "Kyle of Lochalsh (Admiralty API)",
+      "description": "Admiralty Tidal API station verified by name against the live station catalogue. Spreadsheet id 0419 was not used because it did not identify this station in the API.",
+      "types": [
+        "tidalSecondaryPort"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "ukho-tidal-api:0349"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -5.716666,
+            57.283333
+          ]
+        }
+      },
+      "properties": {
+        "tide": {
+          "predictionSource": "ukhoTidalEvents",
+          "provider": "UK Hydrographic Office",
+          "providerId": "ukhoTidalEvents",
+          "stationId": "0349",
+          "stationName": "Kyle Of Lochalsh",
+          "datum": "Chart Datum"
+        },
+        "provenance": {
+          "reviewStatus": "sourceChecked",
+          "warning": "Tidal areas are machine-generated first-review boundaries and must be checked locally before operational use.",
+          "sources": [
+            {
+              "provider": "UK Hydrographic Office Tidal API",
+              "sourceId": "ukho-tidal-api:0349",
+              "url": "https://developer.admiralty.co.uk/products",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            },
+            {
+              "provider": "User-supplied EasyTide workbook",
+              "sourceId": "easytide-workbook:0419",
+              "url": "https://easytide.admiralty.co.uk/",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        },
+        "importRegion": "NW Highlands & Skye"
+      }
+    },
+    {
+      "id": "242f35ec-cbba-4262-a9d6-acdb661d6dfa",
+      "name": "Portree (Skye) (Admiralty API)",
+      "description": "Admiralty Tidal API station verified by name against the live station catalogue. Spreadsheet id 0421 was not used because it did not identify this station in the API.",
+      "types": [
+        "tidalSecondaryPort"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "ukho-tidal-api:0342"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -6.183333,
+            57.4
+          ]
+        }
+      },
+      "properties": {
+        "tide": {
+          "predictionSource": "ukhoTidalEvents",
+          "provider": "UK Hydrographic Office",
+          "providerId": "ukhoTidalEvents",
+          "stationId": "0342",
+          "stationName": "Portree",
+          "datum": "Chart Datum"
+        },
+        "provenance": {
+          "reviewStatus": "sourceChecked",
+          "warning": "Tidal areas are machine-generated first-review boundaries and must be checked locally before operational use.",
+          "sources": [
+            {
+              "provider": "UK Hydrographic Office Tidal API",
+              "sourceId": "ukho-tidal-api:0342",
+              "url": "https://developer.admiralty.co.uk/products",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            },
+            {
+              "provider": "User-supplied EasyTide workbook",
+              "sourceId": "easytide-workbook:0421",
+              "url": "https://easytide.admiralty.co.uk/",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        },
+        "importRegion": "NW Highlands & Skye"
+      }
+    },
+    {
+      "id": "8efd6901-e6b9-4886-84e8-62b45be6aaa3",
+      "name": "Gairloch (Admiralty API)",
+      "description": "Admiralty Tidal API station verified by name against the live station catalogue. Spreadsheet id 0423 was not used because it did not identify this station in the API.",
+      "types": [
+        "tidalSecondaryPort"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "ukho-tidal-api:0337"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -5.683333,
+            57.716666
+          ]
+        }
+      },
+      "properties": {
+        "tide": {
+          "predictionSource": "ukhoTidalEvents",
+          "provider": "UK Hydrographic Office",
+          "providerId": "ukhoTidalEvents",
+          "stationId": "0337",
+          "stationName": "Gairloch",
+          "datum": "Chart Datum"
+        },
+        "provenance": {
+          "reviewStatus": "sourceChecked",
+          "warning": "Tidal areas are machine-generated first-review boundaries and must be checked locally before operational use.",
+          "sources": [
+            {
+              "provider": "UK Hydrographic Office Tidal API",
+              "sourceId": "ukho-tidal-api:0337",
+              "url": "https://developer.admiralty.co.uk/products",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            },
+            {
+              "provider": "User-supplied EasyTide workbook",
+              "sourceId": "easytide-workbook:0423",
+              "url": "https://easytide.admiralty.co.uk/",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        },
+        "importRegion": "NW Highlands & Skye"
+      }
+    },
+    {
+      "id": "530764db-1055-439e-87b9-7da04fff02af",
+      "name": "Lochinver (Admiralty API)",
+      "description": "Admiralty Tidal API station verified by name against the live station catalogue. Spreadsheet id 0427 was not used because it did not identify this station in the API.",
+      "types": [
+        "tidalSecondaryPort"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "ukho-tidal-api:0332"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -5.3,
+            58.15
+          ]
+        }
+      },
+      "properties": {
+        "tide": {
+          "predictionSource": "ukhoTidalEvents",
+          "provider": "UK Hydrographic Office",
+          "providerId": "ukhoTidalEvents",
+          "stationId": "0332",
+          "stationName": "Loch Inver",
+          "datum": "Chart Datum"
+        },
+        "provenance": {
+          "reviewStatus": "sourceChecked",
+          "warning": "Tidal areas are machine-generated first-review boundaries and must be checked locally before operational use.",
+          "sources": [
+            {
+              "provider": "UK Hydrographic Office Tidal API",
+              "sourceId": "ukho-tidal-api:0332",
+              "url": "https://developer.admiralty.co.uk/products",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            },
+            {
+              "provider": "User-supplied EasyTide workbook",
+              "sourceId": "easytide-workbook:0427",
+              "url": "https://easytide.admiralty.co.uk/",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        },
+        "importRegion": "NW Highlands & Skye"
+      }
+    },
+    {
+      "id": "97cef556-cef3-4b14-bb50-6108720b9ae5",
+      "name": "Kinlochbervie (Admiralty API)",
+      "description": "Admiralty Tidal API station verified by name against the live station catalogue. Spreadsheet id 0429 was not used because it did not identify this station in the API.",
+      "types": [
+        "tidalSecondaryPort"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "ukho-tidal-api:0327"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -5.05,
+            58.45
+          ]
+        }
+      },
+      "properties": {
+        "tide": {
+          "predictionSource": "ukhoTidalEvents",
+          "provider": "UK Hydrographic Office",
+          "providerId": "ukhoTidalEvents",
+          "stationId": "0327",
+          "stationName": "Kinlochbervie",
+          "datum": "Chart Datum"
+        },
+        "provenance": {
+          "reviewStatus": "sourceChecked",
+          "warning": "Tidal areas are machine-generated first-review boundaries and must be checked locally before operational use.",
+          "sources": [
+            {
+              "provider": "UK Hydrographic Office Tidal API",
+              "sourceId": "ukho-tidal-api:0327",
+              "url": "https://developer.admiralty.co.uk/products",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            },
+            {
+              "provider": "User-supplied EasyTide workbook",
+              "sourceId": "easytide-workbook:0429",
+              "url": "https://easytide.admiralty.co.uk/",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        },
+        "importRegion": "NW Highlands & Skye"
+      }
+    },
+    {
+      "id": "bd222f14-4196-4022-befc-6e5ef51a2416",
+      "name": "Castlebay (Barra) (Admiralty API)",
+      "description": "Admiralty Tidal API station verified by name against the live station catalogue. Spreadsheet id 0431 was not used because it did not identify this station in the API.",
+      "types": [
+        "tidalSecondaryPort"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "ukho-tidal-api:0314A"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -7.483333,
+            56.95
+          ]
+        }
+      },
+      "properties": {
+        "tide": {
+          "predictionSource": "ukhoTidalEvents",
+          "provider": "UK Hydrographic Office",
+          "providerId": "ukhoTidalEvents",
+          "stationId": "0314A",
+          "stationName": "Castlebay",
+          "datum": "Chart Datum"
+        },
+        "provenance": {
+          "reviewStatus": "sourceChecked",
+          "warning": "Tidal areas are machine-generated first-review boundaries and must be checked locally before operational use.",
+          "sources": [
+            {
+              "provider": "UK Hydrographic Office Tidal API",
+              "sourceId": "ukho-tidal-api:0314A",
+              "url": "https://developer.admiralty.co.uk/products",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            },
+            {
+              "provider": "User-supplied EasyTide workbook",
+              "sourceId": "easytide-workbook:0431",
+              "url": "https://easytide.admiralty.co.uk/",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        },
+        "importRegion": "Outer Hebrides"
+      }
+    },
+    {
+      "id": "b84bd3ef-afb0-431a-a981-b2551d9dac4d",
+      "name": "Lochmaddy (North Uist) (Admiralty API)",
+      "description": "Admiralty Tidal API station verified by name against the live station catalogue. Spreadsheet id 0433 was not used because it did not identify this station in the API.",
+      "types": [
+        "tidalSecondaryPort"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "ukho-tidal-api:0311"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -7.15,
+            57.6
+          ]
+        }
+      },
+      "properties": {
+        "tide": {
+          "predictionSource": "ukhoTidalEvents",
+          "provider": "UK Hydrographic Office",
+          "providerId": "ukhoTidalEvents",
+          "stationId": "0311",
+          "stationName": "Lochmaddy",
+          "datum": "Chart Datum"
+        },
+        "provenance": {
+          "reviewStatus": "sourceChecked",
+          "warning": "Tidal areas are machine-generated first-review boundaries and must be checked locally before operational use.",
+          "sources": [
+            {
+              "provider": "UK Hydrographic Office Tidal API",
+              "sourceId": "ukho-tidal-api:0311",
+              "url": "https://developer.admiralty.co.uk/products",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            },
+            {
+              "provider": "User-supplied EasyTide workbook",
+              "sourceId": "easytide-workbook:0433",
+              "url": "https://easytide.admiralty.co.uk/",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        },
+        "importRegion": "Outer Hebrides"
+      }
+    },
+    {
+      "id": "1a1b77d7-a7eb-478f-abd3-ef3841f689cd",
+      "name": "Tarbert (Harris) (Admiralty API)",
+      "description": "Admiralty Tidal API station verified by name against the live station catalogue. Spreadsheet id 0435 was not used because it did not identify this station in the API.",
+      "types": [
+        "tidalSecondaryPort"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "ukho-tidal-api:0310"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -6.8,
+            57.9
+          ]
+        }
+      },
+      "properties": {
+        "tide": {
+          "predictionSource": "ukhoTidalEvents",
+          "provider": "UK Hydrographic Office",
+          "providerId": "ukhoTidalEvents",
+          "stationId": "0310",
+          "stationName": "East Loch Tarbert, Outer Hebrides",
+          "datum": "Chart Datum"
+        },
+        "provenance": {
+          "reviewStatus": "sourceChecked",
+          "warning": "Tidal areas are machine-generated first-review boundaries and must be checked locally before operational use.",
+          "sources": [
+            {
+              "provider": "UK Hydrographic Office Tidal API",
+              "sourceId": "ukho-tidal-api:0310",
+              "url": "https://developer.admiralty.co.uk/products",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            },
+            {
+              "provider": "User-supplied EasyTide workbook",
+              "sourceId": "easytide-workbook:0435",
+              "url": "https://easytide.admiralty.co.uk/",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        },
+        "importRegion": "Outer Hebrides"
+      }
+    }
+  ]
+}

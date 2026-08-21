@@ -18,6 +18,15 @@ Contains Environment Agency tide-gauge metadata made available under the
 Required attribution: “This uses Environment Agency tide gauge data from the
 real-time data API (Beta).”
 
+## ADMIRALTY Tidal API station records
+
+`defaults/admiralty-api-ports.json` contains selected UK Hydrographic Office
+station identifiers, names and positions checked against the ADMIRALTY Tidal
+API catalogue. Tidal predictions fetched at runtime remain subject to the
+user's ADMIRALTY subscription and terms. The generated tidal-area polygons are
+AJRM review aids derived from those positions; they are not UKHO tidal-area
+boundaries and must be checked locally before use.
+
 ## Editorial corroboration links
 
 Welcome Anchorages and other published references are linked only to show where

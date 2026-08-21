@@ -59,6 +59,11 @@ const PROVENANCE_REVIEW_STATUSES = Object.freeze([
 	"onboardVerified",
 ]);
 
+const SECONDARY_PORT_PREDICTION_SOURCES = Object.freeze([
+	"enteredCorrections",
+	"ukhoTidalEvents",
+]);
+
 function isResourceId(value) {
 	return RESOURCE_ID_PATTERN.test(String(value || ""));
 }
@@ -202,6 +207,12 @@ function validateLocation(location) {
 		assertText(properties.tide.providerId, "Tide provider identifier", { max: 100 });
 		assertText(properties.tide.stationId, "Tide station id", { max: 200 });
 		assertText(properties.tide.stationName, "Tide station name", { max: 200 });
+		if (
+			properties.tide.predictionSource != null &&
+			!SECONDARY_PORT_PREDICTION_SOURCES.includes(properties.tide.predictionSource)
+		) {
+			throw new Error("Secondary-port prediction source is invalid.");
+		}
 		assertReference(properties.tide.parentLocationRef, "Parent tidal location reference");
 		assertText(properties.tide.datum, "Tide datum", { max: 100 });
 		if (properties.tide.referenceLevels != null) {
@@ -259,9 +270,29 @@ function validateLocation(location) {
 			assertText(corrections.migratedFromContract, "Migrated correction contract", { max: 100 });
 		}
 	}
-	if (location.types.includes("tidalSecondaryPort") && properties.tide?.secondaryPortCorrections) {
-		if (!properties.tide.parentLocationRef && !properties.tide.secondaryPortCorrections.standardPortName) {
-			throw new Error("A secondary port needs a parent standard port.");
+	if (location.types.includes("tidalSecondaryPort")) {
+		const tide = properties.tide || {};
+		if (!SECONDARY_PORT_PREDICTION_SOURCES.includes(tide.predictionSource)) {
+			throw new Error("A secondary port needs an explicit prediction source.");
+		}
+		if (tide.predictionSource === "enteredCorrections") {
+			if (!tide.secondaryPortCorrections && tide.secondaryPortSourceData?.status !== "incomplete") {
+				throw new Error("Entered secondary-port data are required.");
+			}
+			if (!tide.parentLocationRef && !tide.secondaryPortCorrections?.standardPortName) {
+				throw new Error("A secondary port using entered data needs a parent standard port.");
+			}
+			if (tide.providerId || tide.stationId) {
+				throw new Error("An entered-data secondary port must not also select an API station.");
+			}
+		}
+		if (tide.predictionSource === "ukhoTidalEvents") {
+			if (tide.providerId !== "ukhoTidalEvents" || !tide.stationId) {
+				throw new Error("An Admiralty API secondary port needs a UKHO station identifier.");
+			}
+			if (tide.secondaryPortCorrections || tide.parentLocationRef) {
+				throw new Error("An Admiralty API secondary port must not also contain entered corrections.");
+			}
 		}
 	}
 	if (properties.tidalGate != null) {
@@ -386,6 +417,13 @@ function normalizeLocation(input, { preserveId = true } = {}) {
 		...(location.properties || {}),
 		schema: LOCATION_SCHEMA,
 	};
+	// Migrate old, structurally unambiguous secondary records onto the explicit
+	// source contract. Runtime selection never guesses between mechanisms.
+	if (location.types.includes("tidalSecondaryPort") && location.properties.tide) {
+		const tide = location.properties.tide;
+		if (!tide.predictionSource && (tide.secondaryPortCorrections || tide.secondaryPortSourceData)) tide.predictionSource = "enteredCorrections";
+		if (!tide.predictionSource && tide.providerId === "ukhoTidalEvents" && tide.stationId) tide.predictionSource = "ukhoTidalEvents";
+	}
 	// Upgrade the former Signal K-region publication flag into the Locations
 	// contract. Consumers use this explicit property directly; no region is
 	// created and no name-prefix compatibility is involved.
@@ -592,6 +630,7 @@ module.exports = {
 	HAZARD_SEVERITIES,
 	LOCATION_SCHEMA,
 	LOCATION_TYPES,
+	SECONDARY_PORT_PREDICTION_SOURCES,
 	WORKSPACES,
 	emptyCatalog,
 	isResourceId,

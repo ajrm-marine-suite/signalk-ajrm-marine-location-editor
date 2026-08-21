@@ -52,6 +52,7 @@ const elements = Object.fromEntries([
 	"profileRegionField", "automaticProfileArea", "tideRelationships", "tideAssignmentField", "tideRegionField", "tideRegionLabel", "tideLocationRef", "tideRegionRef", "anchorageFields", "seabed", "chartedDepthM",
 	"detectionRadiusM", "trustedAutomation", "anchorageNotes", "tideFields", "standardPortFields", "tideProviderId", "tideProvider", "tideStationId", "tideStationName",
 	"parentLocationRef", "tideDatum", "tideMhws", "tideMhwn", "tideMlwn", "tideMlws", "secondaryPortFields",
+	"secondaryPredictionSource", "secondaryEnteredFields", "secondaryApiFields", "secondaryApiStationId", "secondaryApiStationName", "secondaryApiDatum",
 	"secondaryTimePeriod", "secondaryLegacyPattern", "secondaryLegacyTable", "secondaryHwPair1", "secondaryHwPair2", "secondaryLwPair1", "secondaryLwPair2",
 	...secondaryPointIndexes.flatMap((index) => [`secondaryHwTime${index}`, `secondaryHwOffset${index}`]),
 	...secondaryPointIndexes.flatMap((index) => [`secondaryLwTime${index}`, `secondaryLwOffset${index}`]),
@@ -226,6 +227,9 @@ function updateConditionalFields() {
 	elements.tideFields.hidden = !types.some((type) => tideTypes.has(type));
 	elements.standardPortFields.hidden = !types.includes("tidalStandardPort");
 	elements.secondaryPortFields.hidden = !types.includes("tidalSecondaryPort");
+	const apiSecondary = elements.secondaryPredictionSource.value === "ukhoTidalEvents";
+	elements.secondaryEnteredFields.hidden = apiSecondary;
+	elements.secondaryApiFields.hidden = !apiSecondary;
 	elements.editorDrawer.classList.toggle("secondary-port-editor", types.includes("tidalSecondaryPort"));
 	elements.tidalGateFields.hidden = !types.includes("tidalGate");
 	elements.hazardFields.hidden = !types.some((type) => hazardTypes.has(type));
@@ -367,7 +371,8 @@ function resetEditor() {
 	const center = map?.getCenter() || { lat: 55.8, lng: -5.2 };
 	elements.point.value = `${center.lat.toFixed(6)}, ${(center.lng ?? center.lon).toFixed(6)}`;
 	elements.points.value = "";
-	for (const id of ["seabed", "chartedDepthM", "detectionRadiusM", "anchorageNotes", "tideProviderId", "tideProvider", "tideStationId", "tideStationName", "tideDatum", "tideMhws", "tideMhwn", "tideMlwn", "tideMlws", ...secondaryPointIndexes.flatMap((index) => [`secondaryHwTime${index}`, `secondaryHwOffset${index}`, `secondaryLwTime${index}`, `secondaryLwOffset${index}`]), "secondaryDiffMhws", "secondaryDiffMhwn", "secondaryDiffMlwn", "secondaryDiffMlws", "hazardReason", "hazardClearanceM"]) elements[id].value = "";
+	for (const id of ["seabed", "chartedDepthM", "detectionRadiusM", "anchorageNotes", "tideProviderId", "tideProvider", "tideStationId", "tideStationName", "tideDatum", "tideMhws", "tideMhwn", "tideMlwn", "tideMlws", "secondaryApiStationId", "secondaryApiStationName", "secondaryApiDatum", ...secondaryPointIndexes.flatMap((index) => [`secondaryHwTime${index}`, `secondaryHwOffset${index}`, `secondaryLwTime${index}`, `secondaryLwOffset${index}`]), "secondaryDiffMhws", "secondaryDiffMhwn", "secondaryDiffMlwn", "secondaryDiffMlws", "hazardReason", "hazardClearanceM"]) elements[id].value = "";
+	elements.secondaryPredictionSource.value = "enteredCorrections";
 	for (const id of ["gateFloodSet", "gateEbbSet", "gateSpringPeak", "gateNeapPeak", "gateFloodSpringAfter", "gateFloodNeapAfter", "gateFloodSpringSlack", "gateFloodNeapSlack", "gateEbbSpringAfter", "gateEbbNeapAfter", "gateEbbSpringSlack", "gateEbbNeapSlack", "gateSource"]) elements[id].value = "";
 	elements.trustedAutomation.checked = false;
 	updateSecondaryTimeLayout(720);
@@ -418,6 +423,11 @@ function selectLocation(id, fit = false, revealEditor = false) {
 	elements.tideMhwn.value = properties.tide?.referenceLevels?.mhwn ?? "";
 	elements.tideMlwn.value = properties.tide?.referenceLevels?.mlwn ?? "";
 	elements.tideMlws.value = properties.tide?.referenceLevels?.mlws ?? "";
+	elements.secondaryPredictionSource.value = properties.tide?.predictionSource ||
+		(properties.tide?.providerId === "ukhoTidalEvents" && properties.tide?.stationId ? "ukhoTidalEvents" : "enteredCorrections");
+	elements.secondaryApiStationId.value = elements.secondaryPredictionSource.value === "ukhoTidalEvents" ? properties.tide?.stationId || "" : "";
+	elements.secondaryApiStationName.value = elements.secondaryPredictionSource.value === "ukhoTidalEvents" ? properties.tide?.stationName || "" : "";
+	elements.secondaryApiDatum.value = elements.secondaryPredictionSource.value === "ukhoTidalEvents" ? properties.tide?.datum || "" : "";
 	const corrections = properties.tide?.secondaryPortCorrections || {};
 	updateSecondaryTimeLayout(Number(corrections.timeOffsetPeriodMinutes || 720));
 	for (const [prefix, points] of [["Hw", corrections.highWaterTimeOffsets], ["Lw", corrections.lowWaterTimeOffsets]]) {
@@ -493,27 +503,37 @@ function buildLocation() {
 			});
 		}
 		if (types.includes("tidalSecondaryPort")) {
-			if (!elements.parentLocationRef.value) throw new Error("Select the parent standard port for this secondary port.");
-			properties.tide.parentLocationRef = elements.parentLocationRef.value
-				? `${resourcePrefix}${elements.parentLocationRef.value}`
-				: undefined;
-			const numericGroup = (entries) => Object.fromEntries(entries.map(([key, id]) => {
-				if (elements[id].value === "") throw new Error("Complete every secondary-port correction field; use zero where there is no correction.");
-				return [key, Number(elements[id].value)];
-			}));
-			const highWaterTimeOffsets = correctionPoints("Hw");
-			const lowWaterTimeOffsets = correctionPoints("Lw");
-			if (!highWaterTimeOffsets.length || !lowWaterTimeOffsets.length) throw new Error("Enter at least one HW and one LW correction point.");
-			properties.tide.secondaryPortCorrections = {
-				contract: "ajrm-secondary-port-corrections-v4",
-				timeOffsetPeriodMinutes: Number(elements.secondaryTimePeriod.value || 720),
-				legacyId: current?.properties?.tide?.secondaryPortCorrections?.legacyId,
-				standardPortName: current?.properties?.tide?.secondaryPortCorrections?.standardPortName,
-				highWaterTimeOffsets,
-				lowWaterTimeOffsets,
-				heightDifferencesM: numericGroup([["mhws", "secondaryDiffMhws"], ["mhwn", "secondaryDiffMhwn"], ["mlwn", "secondaryDiffMlwn"], ["mlws", "secondaryDiffMlws"]]),
-				notes: current?.properties?.tide?.secondaryPortCorrections?.notes,
-			};
+			properties.tide.predictionSource = elements.secondaryPredictionSource.value;
+			if (elements.secondaryPredictionSource.value === "ukhoTidalEvents") {
+				if (!elements.secondaryApiStationId.value.trim()) throw new Error("Enter the Admiralty station identifier for this secondary port.");
+				Object.assign(properties.tide, {
+					providerId: "ukhoTidalEvents",
+					provider: "UK Hydrographic Office",
+					stationId: elements.secondaryApiStationId.value.trim(),
+					stationName: elements.secondaryApiStationName.value.trim() || name,
+					datum: elements.secondaryApiDatum.value.trim() || "Chart Datum",
+				});
+			} else {
+				if (!elements.parentLocationRef.value) throw new Error("Select the parent standard port for this secondary port.");
+				properties.tide.parentLocationRef = `${resourcePrefix}${elements.parentLocationRef.value}`;
+				const numericGroup = (entries) => Object.fromEntries(entries.map(([key, id]) => {
+					if (elements[id].value === "") throw new Error("Complete every secondary-port correction field; use zero where there is no correction.");
+					return [key, Number(elements[id].value)];
+				}));
+				const highWaterTimeOffsets = correctionPoints("Hw");
+				const lowWaterTimeOffsets = correctionPoints("Lw");
+				if (!highWaterTimeOffsets.length || !lowWaterTimeOffsets.length) throw new Error("Enter at least one HW and one LW correction point.");
+				properties.tide.secondaryPortCorrections = {
+					contract: "ajrm-secondary-port-corrections-v4",
+					timeOffsetPeriodMinutes: Number(elements.secondaryTimePeriod.value || 720),
+					legacyId: current?.properties?.tide?.secondaryPortCorrections?.legacyId,
+					standardPortName: current?.properties?.tide?.secondaryPortCorrections?.standardPortName,
+					highWaterTimeOffsets,
+					lowWaterTimeOffsets,
+					heightDifferencesM: numericGroup([["mhws", "secondaryDiffMhws"], ["mhwn", "secondaryDiffMhwn"], ["mlwn", "secondaryDiffMlwn"], ["mlws", "secondaryDiffMlws"]]),
+					notes: current?.properties?.tide?.secondaryPortCorrections?.notes,
+				};
+			}
 		}
 	}
 	if (types.includes("tidalGate")) {
@@ -980,6 +1000,7 @@ function bindEvents() {
 	for (const prefix of ["Hw", "Lw"]) {
 		for (const index of [1, 2]) elements[`secondary${prefix}Time${index}`].addEventListener("input", () => updateSecondaryTimeLayout());
 	}
+	elements.secondaryPredictionSource.addEventListener("change", updateConditionalFields);
 	elements.typeChoices.addEventListener("change", (event) => {
 		if (event.target.matches('input[value="tidalStandardPort"]:checked')) {
 			elements.typeChoices.querySelector('input[value="tidalSecondaryPort"]').checked = false;

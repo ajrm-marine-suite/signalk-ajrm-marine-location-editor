@@ -57,10 +57,24 @@ const bundledSecondaryPortSeeds = [
 const bundledGateSeed = JSON.parse(
 	fs.readFileSync(path.join(__dirname, "..", "defaults", "tidal-gate-locations.json"), "utf8"),
 );
-const bundledLocationSeed = mergeGateConstantsSeed(
+const bundledAdmiraltyPortSeed = JSON.parse(
+	fs.readFileSync(path.join(__dirname, "..", "defaults", "admiralty-api-ports.json"), "utf8"),
+);
+const bundledTidalAreaSeed = JSON.parse(
+	fs.readFileSync(path.join(__dirname, "..", "defaults", "tidal-port-areas.json"), "utf8"),
+);
+const baseBundledLocationSeed = mergeGateConstantsSeed(
 	bundledSecondaryPortSeeds.reduce(mergeSecondaryPortSeed, bundledWestScotlandSeed),
 	bundledGateSeed,
 );
+const bundledLocationSeed = {
+	...baseBundledLocationSeed,
+	locations: [
+		...baseBundledLocationSeed.locations,
+		...bundledAdmiraltyPortSeed.locations,
+		...bundledTidalAreaSeed.locations,
+	],
+};
 
 function normalizedLocationName(value) {
 	return String(value || "").trim().replace(/\s+/g, " ").toLocaleLowerCase("en-GB");
@@ -687,12 +701,19 @@ module.exports = function ajrmMarineLocationEditor(app) {
 			for (const source of locationSourceKeys(location)) bySource.set(source, location);
 		}
 		const candidates = [];
+		const bundledIdToCatalogId = new Map();
 		for (const value of bundledLocationSeed.locations) {
 			const seed = normalizeLocation(value);
+			const assignedPortId = String(seed.properties?.tideLocationRef || "").split("/").at(-1);
+			const mappedPortId = bundledIdToCatalogId.get(assignedPortId);
+			if (mappedPortId && mappedPortId !== assignedPortId) {
+				seed.properties.tideLocationRef = `/resources/locations/${mappedPortId}`;
+			}
 			const sourceMatch = byId.get(seed.id) ||
 				locationSourceKeys(seed).map((key) => bySource.get(key)).find(Boolean) ||
 				byName.get(normalizedLocationName(seed.name));
 			if (sourceMatch) {
+				bundledIdToCatalogId.set(seed.id, sourceMatch.id);
 				if (await enrichBundledSecondaryPort(sourceMatch, seed)) continue;
 				if (await enrichBundledGateConstants(sourceMatch, seed)) continue;
 				await enrichUneditedBundledTideReferenceLevels(sourceMatch, seed);
@@ -700,11 +721,13 @@ module.exports = function ajrmMarineLocationEditor(app) {
 			}
 			const nearbyMatch = current.find((location) => locationsDescribeSamePlace(location, seed));
 			if (nearbyMatch) {
+				bundledIdToCatalogId.set(seed.id, nearbyMatch.id);
 				if (await enrichBundledSecondaryPort(nearbyMatch, seed)) continue;
 				if (await enrichBundledGateConstants(nearbyMatch, seed)) continue;
 				await enrichUneditedBundledTideReferenceLevels(nearbyMatch, seed);
 				continue;
 			}
+			bundledIdToCatalogId.set(seed.id, seed.id);
 			candidates.push(seed);
 		}
 		return store.addMissing(candidates, { editedBy: "Bundled West Scotland open-data seed" });

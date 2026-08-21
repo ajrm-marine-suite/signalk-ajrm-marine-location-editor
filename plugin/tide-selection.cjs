@@ -15,12 +15,17 @@ function referenceId(reference) {
 
 function isPredictionPort(location) {
 	const tide = location?.properties?.tide;
-	const correctedSecondary = location?.types?.includes("tidalSecondaryPort") &&
+	const secondary = location?.types?.includes("tidalSecondaryPort");
+	const correctedSecondary = secondary && tide?.predictionSource === "enteredCorrections" &&
 		["ajrm-secondary-port-corrections-v2", "ajrm-secondary-port-corrections-v3", "ajrm-secondary-port-corrections-v4"].includes(tide?.secondaryPortCorrections?.contract) &&
 		Boolean(tide.parentLocationRef);
+	const apiSecondary = secondary && tide?.predictionSource === "ukhoTidalEvents" &&
+		tide?.providerId === "ukhoTidalEvents" && Boolean(tide.stationId);
+	const apiStandard = location?.types?.includes("tidalStandardPort") &&
+		Boolean(tide?.providerId && tide?.stationId);
 	return Boolean(
 		location?.types?.some((type) => PREDICTION_PORT_TYPES.has(type)) &&
-		((tide?.providerId && tide?.stationId) || correctedSecondary),
+		(apiStandard || apiSecondary || correctedSecondary),
 	);
 }
 

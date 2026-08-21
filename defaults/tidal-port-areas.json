@@ -1,0 +1,6455 @@
+{
+  "schema": "org.ajrm.marine.location-seed/v1",
+  "generatedAt": "2026-08-21T00:00:00.000Z",
+  "method": "30-km bounded planar Voronoi cells; duplicate coordinates receive deterministic 25-m virtual-site offsets",
+  "locations": [
+    {
+      "id": "f297596a-4959-47ff-b665-18ac2cb74924",
+      "name": "Oban tidal prediction port tidal area",
+      "description": "Machine-generated non-overlapping first-review tidal area. Adjust its polygon in Location Editor to match local tidal geography.",
+      "types": [
+        "tidalRegion"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "generated-tidal-area:e0e5661f-1675-4dbb-8fa0-ea8566c62ef4",
+          "editorShape": "Polygon"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                -4.992067,
+                56.242407
+              ],
+              [
+                -4.992067,
+                56.276529
+              ],
+              [
+                -5.567978,
+                56.469253
+              ],
+              [
+                -5.633446,
+                56.387983
+              ],
+              [
+                -5.322736,
+                56.293142
+              ],
+              [
+                -5.002383,
+                56.237468
+              ],
+              [
+                -4.992067,
+                56.242407
+              ]
+            ]
+          ]
+        }
+      },
+      "properties": {
+        "tideLocationRef": "/resources/locations/e0e5661f-1675-4dbb-8fa0-ea8566c62ef4",
+        "provenance": {
+          "reviewStatus": "imported",
+          "warning": "Machine-generated Voronoi-style boundary; review and edit before operational use.",
+          "sources": [
+            {
+              "provider": "AJRM Marine Location Editor area generator",
+              "sourceId": "generated-tidal-area:e0e5661f-1675-4dbb-8fa0-ea8566c62ef4",
+              "url": "https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "682c132d-cc1c-4dfb-92c0-469f7844aead",
+      "name": "Stornoway tidal prediction port tidal area",
+      "description": "Machine-generated non-overlapping first-review tidal area. Adjust its polygon in Location Editor to match local tidal geography.",
+      "types": [
+        "tidalRegion"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "generated-tidal-area:f31d48a1-d625-4a93-a9c2-b54fc6cad308",
+          "editorShape": "Polygon"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                -6.000441,
+                58.034498
+              ],
+              [
+                -5.9014,
+                58.102781
+              ],
+              [
+                -5.9014,
+                58.469493
+              ],
+              [
+                -6.419164,
+                58.469493
+              ],
+              [
+                -6.642785,
+                58.144058
+              ],
+              [
+                -6.000441,
+                58.034498
+              ]
+            ]
+          ]
+        }
+      },
+      "properties": {
+        "tideLocationRef": "/resources/locations/f31d48a1-d625-4a93-a9c2-b54fc6cad308",
+        "provenance": {
+          "reviewStatus": "imported",
+          "warning": "Machine-generated Voronoi-style boundary; review and edit before operational use.",
+          "sources": [
+            {
+              "provider": "AJRM Marine Location Editor area generator",
+              "sourceId": "generated-tidal-area:f31d48a1-d625-4a93-a9c2-b54fc6cad308",
+              "url": "https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "937c30db-cbfe-4cbb-9da7-2644d44b3714",
+      "name": "Ullapool tidal prediction port tidal area",
+      "description": "Machine-generated non-overlapping first-review tidal area. Adjust its polygon in Location Editor to match local tidal geography.",
+      "types": [
+        "tidalRegion"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "generated-tidal-area:24c0305b-8e6a-4ed7-98a1-809b9bab0334",
+          "editorShape": "Polygon"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                -5.204027,
+                57.630507
+              ],
+              [
+                -4.668067,
+                57.630507
+              ],
+              [
+                -4.668067,
+                58.078519
+              ],
+              [
+                -4.743287,
+                58.076919
+              ],
+              [
+                -5.180574,
+                58.027847
+              ],
+              [
+                -5.389267,
+                57.873509
+              ],
+              [
+                -5.356845,
+                57.753916
+              ],
+              [
+                -5.320278,
+                57.720653
+              ],
+              [
+                -5.230564,
+                57.641516
+              ],
+              [
+                -5.204027,
+                57.630507
+              ]
+            ]
+          ]
+        }
+      },
+      "properties": {
+        "tideLocationRef": "/resources/locations/24c0305b-8e6a-4ed7-98a1-809b9bab0334",
+        "provenance": {
+          "reviewStatus": "imported",
+          "warning": "Machine-generated Voronoi-style boundary; review and edit before operational use.",
+          "sources": [
+            {
+              "provider": "AJRM Marine Location Editor area generator",
+              "sourceId": "generated-tidal-area:24c0305b-8e6a-4ed7-98a1-809b9bab0334",
+              "url": "https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "40e21510-f64b-4506-87df-e1e49f834840",
+      "name": "Cala Loch Baghasdail tidal area",
+      "description": "Machine-generated non-overlapping first-review tidal area. Adjust its polygon in Location Editor to match local tidal geography.",
+      "types": [
+        "tidalRegion"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "generated-tidal-area:bd73410e-54ac-4f4c-a5ae-8700a6fe3a7a",
+          "editorShape": "Polygon"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                -6.815103,
+                56.924981
+              ],
+              [
+                -6.815103,
+                57.188716
+              ],
+              [
+                -6.840874,
+                57.226677
+              ],
+              [
+                -7.753321,
+                57.252563
+              ],
+              [
+                -7.778969,
+                57.244097
+              ],
+              [
+                -7.778969,
+                57.228073
+              ],
+              [
+                -6.860193,
+                56.90432
+              ],
+              [
+                -6.815103,
+                56.924981
+              ]
+            ]
+          ]
+        }
+      },
+      "properties": {
+        "tideLocationRef": "/resources/locations/bd73410e-54ac-4f4c-a5ae-8700a6fe3a7a",
+        "provenance": {
+          "reviewStatus": "imported",
+          "warning": "Machine-generated Voronoi-style boundary; review and edit before operational use.",
+          "sources": [
+            {
+              "provider": "AJRM Marine Location Editor area generator",
+              "sourceId": "generated-tidal-area:bd73410e-54ac-4f4c-a5ae-8700a6fe3a7a",
+              "url": "https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "af59f5f8-da73-4d83-9bdb-e67650f54203",
+      "name": "Castlebay tidal area",
+      "description": "Machine-generated non-overlapping first-review tidal area. Adjust its polygon in Location Editor to match local tidal geography.",
+      "types": [
+        "tidalRegion"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "generated-tidal-area:431ca630-05a7-40df-990f-88dee6c4e902",
+          "editorShape": "Polygon"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                -7.428734,
+                56.978257
+              ],
+              [
+                -7.971562,
+                57.098661
+              ],
+              [
+                -7.971562,
+                56.971399
+              ],
+              [
+                -7.635193,
+                56.885025
+              ],
+              [
+                -7.428734,
+                56.978257
+              ]
+            ]
+          ]
+        }
+      },
+      "properties": {
+        "tideLocationRef": "/resources/locations/431ca630-05a7-40df-990f-88dee6c4e902",
+        "provenance": {
+          "reviewStatus": "imported",
+          "warning": "Machine-generated Voronoi-style boundary; review and edit before operational use.",
+          "sources": [
+            {
+              "provider": "AJRM Marine Location Editor area generator",
+              "sourceId": "generated-tidal-area:431ca630-05a7-40df-990f-88dee6c4e902",
+              "url": "https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "a33728a4-5e40-47cf-a1cb-932c4677f5f6",
+      "name": "Craighouse moorings tidal area",
+      "description": "Machine-generated non-overlapping first-review tidal area. Adjust its polygon in Location Editor to match local tidal geography.",
+      "types": [
+        "tidalRegion"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "generated-tidal-area:d451e2d0-2402-4d9a-98b5-bf5e27722cd3",
+          "editorShape": "Polygon"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                -5.871492,
+                55.973911
+              ],
+              [
+                -6.010439,
+                55.899158
+              ],
+              [
+                -6.020306,
+                55.864079
+              ],
+              [
+                -5.798954,
+                55.770305
+              ],
+              [
+                -5.631916,
+                55.855191
+              ],
+              [
+                -5.871492,
+                55.973911
+              ]
+            ]
+          ]
+        }
+      },
+      "properties": {
+        "tideLocationRef": "/resources/locations/d451e2d0-2402-4d9a-98b5-bf5e27722cd3",
+        "provenance": {
+          "reviewStatus": "imported",
+          "warning": "Machine-generated Voronoi-style boundary; review and edit before operational use.",
+          "sources": [
+            {
+              "provider": "AJRM Marine Location Editor area generator",
+              "sourceId": "generated-tidal-area:d451e2d0-2402-4d9a-98b5-bf5e27722cd3",
+              "url": "https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "8889a579-1cf6-4ca3-a217-6413a6d4921a",
+      "name": "Cuan Sound tidal area",
+      "description": "Machine-generated non-overlapping first-review tidal area. Adjust its polygon in Location Editor to match local tidal geography.",
+      "types": [
+        "tidalRegion"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "generated-tidal-area:0b9ecfef-3260-4f1e-a41f-5f2fdf7dfbec",
+          "editorShape": "Polygon"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                -5.751578,
+                56.361232
+              ],
+              [
+                -6.09032,
+                56.322989
+              ],
+              [
+                -6.059412,
+                56.296506
+              ],
+              [
+                -5.692642,
+                56.18567
+              ],
+              [
+                -5.582627,
+                56.270983
+              ],
+              [
+                -5.751578,
+                56.361232
+              ]
+            ]
+          ]
+        }
+      },
+      "properties": {
+        "tideLocationRef": "/resources/locations/0b9ecfef-3260-4f1e-a41f-5f2fdf7dfbec",
+        "provenance": {
+          "reviewStatus": "imported",
+          "warning": "Machine-generated Voronoi-style boundary; review and edit before operational use.",
+          "sources": [
+            {
+              "provider": "AJRM Marine Location Editor area generator",
+              "sourceId": "generated-tidal-area:0b9ecfef-3260-4f1e-a41f-5f2fdf7dfbec",
+              "url": "https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "4f0ef199-6c3a-4392-80fe-331b819378be",
+      "name": "Gairloch Harbour tidal area",
+      "description": "Machine-generated non-overlapping first-review tidal area. Adjust its polygon in Location Editor to match local tidal geography.",
+      "types": [
+        "tidalRegion"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "generated-tidal-area:ca205cec-6a47-497b-aa44-2637b9a6be0d",
+          "editorShape": "Polygon"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                -5.230564,
+                57.641516
+              ],
+              [
+                -5.320278,
+                57.720653
+              ],
+              [
+                -5.919474,
+                57.709438
+              ],
+              [
+                -5.771983,
+                57.611368
+              ],
+              [
+                -5.230564,
+                57.641516
+              ]
+            ]
+          ]
+        }
+      },
+      "properties": {
+        "tideLocationRef": "/resources/locations/ca205cec-6a47-497b-aa44-2637b9a6be0d",
+        "provenance": {
+          "reviewStatus": "imported",
+          "warning": "Machine-generated Voronoi-style boundary; review and edit before operational use.",
+          "sources": [
+            {
+              "provider": "AJRM Marine Location Editor area generator",
+              "sourceId": "generated-tidal-area:ca205cec-6a47-497b-aa44-2637b9a6be0d",
+              "url": "https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "66caea2a-d70d-4d5f-8e5b-851b7469cf5b",
+      "name": "Lochmaddy tidal area",
+      "description": "Machine-generated non-overlapping first-review tidal area. Adjust its polygon in Location Editor to match local tidal geography.",
+      "types": [
+        "tidalRegion"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "generated-tidal-area:1aba3e08-af55-4ae4-8751-de3da98501d6",
+          "editorShape": "Polygon"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                -7.282029,
+                57.702598
+              ],
+              [
+                -7.345497,
+                57.577681
+              ],
+              [
+                -7.158134,
+                57.469677
+              ],
+              [
+                -6.984451,
+                57.432565
+              ],
+              [
+                -6.972619,
+                57.449519
+              ],
+              [
+                -7.282029,
+                57.702598
+              ]
+            ]
+          ]
+        }
+      },
+      "properties": {
+        "tideLocationRef": "/resources/locations/1aba3e08-af55-4ae4-8751-de3da98501d6",
+        "provenance": {
+          "reviewStatus": "imported",
+          "warning": "Machine-generated Voronoi-style boundary; review and edit before operational use.",
+          "sources": [
+            {
+              "provider": "AJRM Marine Location Editor area generator",
+              "sourceId": "generated-tidal-area:1aba3e08-af55-4ae4-8751-de3da98501d6",
+              "url": "https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "d3d5aea4-6027-43b7-a7a8-d73132da322d",
+      "name": "Portree Harbour tidal area",
+      "description": "Machine-generated non-overlapping first-review tidal area. Adjust its polygon in Location Editor to match local tidal geography.",
+      "types": [
+        "tidalRegion"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "generated-tidal-area:d8398a12-ada8-4c05-b2f6-30082a9b5743",
+          "editorShape": "Polygon"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                -5.963016,
+                57.447425
+              ],
+              [
+                -6.168194,
+                57.53417
+              ],
+              [
+                -6.396672,
+                57.465361
+              ],
+              [
+                -6.307942,
+                57.383063
+              ],
+              [
+                -5.963016,
+                57.447425
+              ]
+            ]
+          ]
+        }
+      },
+      "properties": {
+        "tideLocationRef": "/resources/locations/d8398a12-ada8-4c05-b2f6-30082a9b5743",
+        "provenance": {
+          "reviewStatus": "imported",
+          "warning": "Machine-generated Voronoi-style boundary; review and edit before operational use.",
+          "sources": [
+            {
+              "provider": "AJRM Marine Location Editor area generator",
+              "sourceId": "generated-tidal-area:d8398a12-ada8-4c05-b2f6-30082a9b5743",
+              "url": "https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "e0c56c5d-9ea8-4b5a-9223-9e6307ab8ad2",
+      "name": "Scalasaig tidal area",
+      "description": "Machine-generated non-overlapping first-review tidal area. Adjust its polygon in Location Editor to match local tidal geography.",
+      "types": [
+        "tidalRegion"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "generated-tidal-area:b3012c64-b3e1-4ecd-996a-100650300093",
+          "editorShape": "Polygon"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                -5.966247,
+                56.030875
+              ],
+              [
+                -6.059412,
+                56.296506
+              ],
+              [
+                -6.09032,
+                56.322989
+              ],
+              [
+                -6.13012,
+                56.337845
+              ],
+              [
+                -6.376737,
+                56.337845
+              ],
+              [
+                -6.395981,
+                56.334228
+              ],
+              [
+                -6.6691,
+                56.217485
+              ],
+              [
+                -6.6691,
+                56.081843
+              ],
+              [
+                -6.276146,
+                55.984124
+              ],
+              [
+                -5.966247,
+                56.030875
+              ]
+            ]
+          ]
+        }
+      },
+      "properties": {
+        "tideLocationRef": "/resources/locations/b3012c64-b3e1-4ecd-996a-100650300093",
+        "provenance": {
+          "reviewStatus": "imported",
+          "warning": "Machine-generated Voronoi-style boundary; review and edit before operational use.",
+          "sources": [
+            {
+              "provider": "AJRM Marine Location Editor area generator",
+              "sourceId": "generated-tidal-area:b3012c64-b3e1-4ecd-996a-100650300093",
+              "url": "https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "f1452c77-7f3c-4176-a87f-10d0c4bc1e1d",
+      "name": "Tobermory tidal area",
+      "description": "Machine-generated non-overlapping first-review tidal area. Adjust its polygon in Location Editor to match local tidal geography.",
+      "types": [
+        "tidalRegion"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "generated-tidal-area:2e0eb500-8f1f-4c5c-85ab-391b0b7945d0",
+          "editorShape": "Polygon"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                -5.881015,
+                56.615132
+              ],
+              [
+                -5.738085,
+                56.769432
+              ],
+              [
+                -6.283487,
+                56.874111
+              ],
+              [
+                -6.297903,
+                56.872843
+              ],
+              [
+                -6.291666,
+                56.622406
+              ],
+              [
+                -5.881015,
+                56.615132
+              ]
+            ]
+          ]
+        }
+      },
+      "properties": {
+        "tideLocationRef": "/resources/locations/2e0eb500-8f1f-4c5c-85ab-391b0b7945d0",
+        "provenance": {
+          "reviewStatus": "imported",
+          "warning": "Machine-generated Voronoi-style boundary; review and edit before operational use.",
+          "sources": [
+            {
+              "provider": "AJRM Marine Location Editor area generator",
+              "sourceId": "generated-tidal-area:2e0eb500-8f1f-4c5c-85ab-391b0b7945d0",
+              "url": "https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "31f59b1f-7739-4b75-b1ed-975c30785984",
+      "name": "Port Ellen tidal area",
+      "description": "Machine-generated non-overlapping first-review tidal area. Adjust its polygon in Location Editor to match local tidal geography.",
+      "types": [
+        "tidalRegion"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "generated-tidal-area:47a24a27-bd5f-4db6-a6f9-a5c975364a72",
+          "editorShape": "Polygon"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                -6.268143,
+                55.357776
+              ],
+              [
+                -6.200089,
+                55.357776
+              ],
+              [
+                -5.929598,
+                55.547363
+              ],
+              [
+                -6.326331,
+                55.675462
+              ],
+              [
+                -6.342699,
+                55.669089
+              ],
+              [
+                -6.45571,
+                55.423264
+              ],
+              [
+                -6.268143,
+                55.357776
+              ]
+            ]
+          ]
+        }
+      },
+      "properties": {
+        "tideLocationRef": "/resources/locations/47a24a27-bd5f-4db6-a6f9-a5c975364a72",
+        "provenance": {
+          "reviewStatus": "imported",
+          "warning": "Machine-generated Voronoi-style boundary; review and edit before operational use.",
+          "sources": [
+            {
+              "provider": "AJRM Marine Location Editor area generator",
+              "sourceId": "generated-tidal-area:47a24a27-bd5f-4db6-a6f9-a5c975364a72",
+              "url": "https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "904a5198-407d-4ccc-955b-52ef22b69ce1",
+      "name": "Glengarrisdale Bay tidal area",
+      "description": "Machine-generated non-overlapping first-review tidal area. Adjust its polygon in Location Editor to match local tidal geography.",
+      "types": [
+        "tidalRegion"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "generated-tidal-area:10b62f70-ef91-4ad5-ac6f-3685d7bc5e77",
+          "editorShape": "Polygon"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                -5.602387,
+                56.138426
+              ],
+              [
+                -5.692642,
+                56.18567
+              ],
+              [
+                -6.059412,
+                56.296506
+              ],
+              [
+                -5.966247,
+                56.030875
+              ],
+              [
+                -5.871779,
+                55.974365
+              ],
+              [
+                -5.602387,
+                56.138426
+              ]
+            ]
+          ]
+        }
+      },
+      "properties": {
+        "tideLocationRef": "/resources/locations/10b62f70-ef91-4ad5-ac6f-3685d7bc5e77",
+        "provenance": {
+          "reviewStatus": "imported",
+          "warning": "Machine-generated Voronoi-style boundary; review and edit before operational use.",
+          "sources": [
+            {
+              "provider": "AJRM Marine Location Editor area generator",
+              "sourceId": "generated-tidal-area:10b62f70-ef91-4ad5-ac6f-3685d7bc5e77",
+              "url": "https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "f85677de-ba0b-446e-8415-825231bb225e",
+      "name": "Rubha a’ Mhail tidal area",
+      "description": "Machine-generated non-overlapping first-review tidal area. Adjust its polygon in Location Editor to match local tidal geography.",
+      "types": [
+        "tidalRegion"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "generated-tidal-area:27ca7bf5-0129-4130-9a81-4dfb70ca2e07",
+          "editorShape": "Polygon"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                -6.010439,
+                55.899158
+              ],
+              [
+                -5.871492,
+                55.973911
+              ],
+              [
+                -5.871779,
+                55.974365
+              ],
+              [
+                -5.966247,
+                56.030875
+              ],
+              [
+                -6.276146,
+                55.984124
+              ],
+              [
+                -6.209864,
+                55.890959
+              ],
+              [
+                -6.090389,
+                55.893908
+              ],
+              [
+                -6.010439,
+                55.899158
+              ]
+            ]
+          ]
+        }
+      },
+      "properties": {
+        "tideLocationRef": "/resources/locations/27ca7bf5-0129-4130-9a81-4dfb70ca2e07",
+        "provenance": {
+          "reviewStatus": "imported",
+          "warning": "Machine-generated Voronoi-style boundary; review and edit before operational use.",
+          "sources": [
+            {
+              "provider": "AJRM Marine Location Editor area generator",
+              "sourceId": "generated-tidal-area:27ca7bf5-0129-4130-9a81-4dfb70ca2e07",
+              "url": "https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "35d909ed-271e-4e56-b2b4-a795f9517a7e",
+      "name": "Ardnave Point tidal area",
+      "description": "Machine-generated non-overlapping first-review tidal area. Adjust its polygon in Location Editor to match local tidal geography.",
+      "types": [
+        "tidalRegion"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "generated-tidal-area:7b6408f4-c1f5-4caf-a3e8-7f1690360e71",
+          "editorShape": "Polygon"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                -6.209864,
+                55.890959
+              ],
+              [
+                -6.276146,
+                55.984124
+              ],
+              [
+                -6.810331,
+                56.116965
+              ],
+              [
+                -6.810331,
+                55.885843
+              ],
+              [
+                -6.690936,
+                55.854104
+              ],
+              [
+                -6.25335,
+                55.820328
+              ],
+              [
+                -6.209864,
+                55.890959
+              ]
+            ]
+          ]
+        }
+      },
+      "properties": {
+        "tideLocationRef": "/resources/locations/7b6408f4-c1f5-4caf-a3e8-7f1690360e71",
+        "provenance": {
+          "reviewStatus": "imported",
+          "warning": "Machine-generated Voronoi-style boundary; review and edit before operational use.",
+          "sources": [
+            {
+              "provider": "AJRM Marine Location Editor area generator",
+              "sourceId": "generated-tidal-area:7b6408f4-c1f5-4caf-a3e8-7f1690360e71",
+              "url": "https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "1b3ae003-dab9-4a74-bbdb-e9167b3a43ab",
+      "name": "Orsay Island tidal area",
+      "description": "Machine-generated non-overlapping first-review tidal area. Adjust its polygon in Location Editor to match local tidal geography.",
+      "types": [
+        "tidalRegion"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "generated-tidal-area:a73b84ef-2f72-4419-b52f-cf9a3eea9267",
+          "editorShape": "Polygon"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                -6.45571,
+                55.423264
+              ],
+              [
+                -6.342699,
+                55.669089
+              ],
+              [
+                -6.690936,
+                55.854104
+              ],
+              [
+                -6.994821,
+                55.934885
+              ],
+              [
+                -6.994821,
+                55.477984
+              ],
+              [
+                -6.45571,
+                55.423264
+              ]
+            ]
+          ]
+        }
+      },
+      "properties": {
+        "tideLocationRef": "/resources/locations/a73b84ef-2f72-4419-b52f-cf9a3eea9267",
+        "provenance": {
+          "reviewStatus": "imported",
+          "warning": "Machine-generated Voronoi-style boundary; review and edit before operational use.",
+          "sources": [
+            {
+              "provider": "AJRM Marine Location Editor area generator",
+              "sourceId": "generated-tidal-area:a73b84ef-2f72-4419-b52f-cf9a3eea9267",
+              "url": "https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "a2d1e95b-0d5a-429f-8269-884b1549b6d0",
+      "name": "Bruichladdich tidal area",
+      "description": "Machine-generated non-overlapping first-review tidal area. Adjust its polygon in Location Editor to match local tidal geography.",
+      "types": [
+        "tidalRegion"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "generated-tidal-area:2a78bd38-1064-48a4-912b-bba8385a0741",
+          "editorShape": "Polygon"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                -6.342699,
+                55.669089
+              ],
+              [
+                -6.326331,
+                55.675462
+              ],
+              [
+                -6.165972,
+                55.743203
+              ],
+              [
+                -6.25335,
+                55.820328
+              ],
+              [
+                -6.690936,
+                55.854104
+              ],
+              [
+                -6.342699,
+                55.669089
+              ]
+            ]
+          ]
+        }
+      },
+      "properties": {
+        "tideLocationRef": "/resources/locations/2a78bd38-1064-48a4-912b-bba8385a0741",
+        "provenance": {
+          "reviewStatus": "imported",
+          "warning": "Machine-generated Voronoi-style boundary; review and edit before operational use.",
+          "sources": [
+            {
+              "provider": "AJRM Marine Location Editor area generator",
+              "sourceId": "generated-tidal-area:2a78bd38-1064-48a4-912b-bba8385a0741",
+              "url": "https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "84e394e7-986c-4d8a-845f-75ac76ea48a7",
+      "name": "Port Askaig tidal area",
+      "description": "Machine-generated non-overlapping first-review tidal area. Adjust its polygon in Location Editor to match local tidal geography.",
+      "types": [
+        "tidalRegion"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "generated-tidal-area:a5337680-366b-4a60-b88d-c187312f4c49",
+          "editorShape": "Polygon"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                -6.090389,
+                55.893908
+              ],
+              [
+                -6.209864,
+                55.890959
+              ],
+              [
+                -6.25335,
+                55.820328
+              ],
+              [
+                -6.165972,
+                55.743203
+              ],
+              [
+                -6.159536,
+                55.742584
+              ],
+              [
+                -6.090389,
+                55.893908
+              ]
+            ]
+          ]
+        }
+      },
+      "properties": {
+        "tideLocationRef": "/resources/locations/a5337680-366b-4a60-b88d-c187312f4c49",
+        "provenance": {
+          "reviewStatus": "imported",
+          "warning": "Machine-generated Voronoi-style boundary; review and edit before operational use.",
+          "sources": [
+            {
+              "provider": "AJRM Marine Location Editor area generator",
+              "sourceId": "generated-tidal-area:a5337680-366b-4a60-b88d-c187312f4c49",
+              "url": "https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "6a763058-9930-4e17-a954-8ded8bdc344d",
+      "name": "Gigha Sound tidal area",
+      "description": "Machine-generated non-overlapping first-review tidal area. Adjust its polygon in Location Editor to match local tidal geography.",
+      "types": [
+        "tidalRegion"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "generated-tidal-area:a162df13-40f5-4a8e-a8ff-c7d495929ed1",
+          "editorShape": "Polygon"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                -5.631916,
+                55.855191
+              ],
+              [
+                -5.798954,
+                55.770305
+              ],
+              [
+                -5.951868,
+                55.691453
+              ],
+              [
+                -5.910541,
+                55.560157
+              ],
+              [
+                -5.645394,
+                55.549313
+              ],
+              [
+                -5.449186,
+                55.572249
+              ],
+              [
+                -5.358634,
+                55.73616
+              ],
+              [
+                -5.439603,
+                55.844012
+              ],
+              [
+                -5.631916,
+                55.855191
+              ]
+            ]
+          ]
+        }
+      },
+      "properties": {
+        "tideLocationRef": "/resources/locations/a162df13-40f5-4a8e-a8ff-c7d495929ed1",
+        "provenance": {
+          "reviewStatus": "imported",
+          "warning": "Machine-generated Voronoi-style boundary; review and edit before operational use.",
+          "sources": [
+            {
+              "provider": "AJRM Marine Location Editor area generator",
+              "sourceId": "generated-tidal-area:a162df13-40f5-4a8e-a8ff-c7d495929ed1",
+              "url": "https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "fc6c4d1b-a50f-4188-b3bf-8d4caef3eb0c",
+      "name": "Machrihanish tidal area",
+      "description": "Machine-generated non-overlapping first-review tidal area. Adjust its polygon in Location Editor to match local tidal geography.",
+      "types": [
+        "tidalRegion"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "generated-tidal-area:9f185284-11e2-4849-9bf6-89410efaef67",
+          "editorShape": "Polygon"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                -5.645394,
+                55.549313
+              ],
+              [
+                -5.910541,
+                55.560157
+              ],
+              [
+                -5.929598,
+                55.547363
+              ],
+              [
+                -6.214458,
+                55.347705
+              ],
+              [
+                -6.214458,
+                55.334962
+              ],
+              [
+                -5.702964,
+                55.192603
+              ],
+              [
+                -5.645394,
+                55.549313
+              ]
+            ]
+          ]
+        }
+      },
+      "properties": {
+        "tideLocationRef": "/resources/locations/9f185284-11e2-4849-9bf6-89410efaef67",
+        "provenance": {
+          "reviewStatus": "imported",
+          "warning": "Machine-generated Voronoi-style boundary; review and edit before operational use.",
+          "sources": [
+            {
+              "provider": "AJRM Marine Location Editor area generator",
+              "sourceId": "generated-tidal-area:9f185284-11e2-4849-9bf6-89410efaef67",
+              "url": "https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "be8dd820-e2b0-45bb-9037-9861eec6f1bd",
+      "name": "Sound of Mull (Craignure) tidal area",
+      "description": "Machine-generated non-overlapping first-review tidal area. Adjust its polygon in Location Editor to match local tidal geography.",
+      "types": [
+        "tidalRegion"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "generated-tidal-area:3d1309a3-1a5a-4a29-b337-536224ffb1da",
+          "editorShape": "Polygon"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                -5.633446,
+                56.387983
+              ],
+              [
+                -5.567978,
+                56.469253
+              ],
+              [
+                -5.546343,
+                56.55878
+              ],
+              [
+                -6.069655,
+                56.402777
+              ],
+              [
+                -6.146159,
+                56.343831
+              ],
+              [
+                -6.09032,
+                56.322989
+              ],
+              [
+                -5.751578,
+                56.361232
+              ],
+              [
+                -5.633446,
+                56.387983
+              ]
+            ]
+          ]
+        }
+      },
+      "properties": {
+        "tideLocationRef": "/resources/locations/3d1309a3-1a5a-4a29-b337-536224ffb1da",
+        "provenance": {
+          "reviewStatus": "imported",
+          "warning": "Machine-generated Voronoi-style boundary; review and edit before operational use.",
+          "sources": [
+            {
+              "provider": "AJRM Marine Location Editor area generator",
+              "sourceId": "generated-tidal-area:3d1309a3-1a5a-4a29-b337-536224ffb1da",
+              "url": "https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "77316bb8-4da3-445f-9969-a3a77b8c936e",
+      "name": "Loch Melfort tidal area",
+      "description": "Machine-generated non-overlapping first-review tidal area. Adjust its polygon in Location Editor to match local tidal geography.",
+      "types": [
+        "tidalRegion"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "generated-tidal-area:20c6ef3c-3eb1-4563-af18-ac0eeb8f75e4",
+          "editorShape": "Polygon"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                -5.085901,
+                56.166099
+              ],
+              [
+                -5.085901,
+                56.251982
+              ],
+              [
+                -5.322736,
+                56.293142
+              ],
+              [
+                -5.582627,
+                56.270983
+              ],
+              [
+                -5.692642,
+                56.18567
+              ],
+              [
+                -5.602387,
+                56.138426
+              ],
+              [
+                -5.167912,
+                56.096017
+              ],
+              [
+                -5.085901,
+                56.166099
+              ]
+            ]
+          ]
+        }
+      },
+      "properties": {
+        "tideLocationRef": "/resources/locations/20c6ef3c-3eb1-4563-af18-ac0eeb8f75e4",
+        "provenance": {
+          "reviewStatus": "imported",
+          "warning": "Machine-generated Voronoi-style boundary; review and edit before operational use.",
+          "sources": [
+            {
+              "provider": "AJRM Marine Location Editor area generator",
+              "sourceId": "generated-tidal-area:20c6ef3c-3eb1-4563-af18-ac0eeb8f75e4",
+              "url": "https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "9febffc5-2af1-4fb6-8be8-82b1937ff803",
+      "name": "Seil Sound tidal area",
+      "description": "Machine-generated non-overlapping first-review tidal area. Adjust its polygon in Location Editor to match local tidal geography.",
+      "types": [
+        "tidalRegion"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "generated-tidal-area:c00865d1-dc0b-4aa9-884a-41c5a2d84beb",
+          "editorShape": "Polygon"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                -5.322736,
+                56.293142
+              ],
+              [
+                -5.633446,
+                56.387983
+              ],
+              [
+                -5.751578,
+                56.361232
+              ],
+              [
+                -5.582627,
+                56.270983
+              ],
+              [
+                -5.322736,
+                56.293142
+              ]
+            ]
+          ]
+        }
+      },
+      "properties": {
+        "tideLocationRef": "/resources/locations/c00865d1-dc0b-4aa9-884a-41c5a2d84beb",
+        "provenance": {
+          "reviewStatus": "imported",
+          "warning": "Machine-generated Voronoi-style boundary; review and edit before operational use.",
+          "sources": [
+            {
+              "provider": "AJRM Marine Location Editor area generator",
+              "sourceId": "generated-tidal-area:c00865d1-dc0b-4aa9-884a-41c5a2d84beb",
+              "url": "https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "6d3be9f3-99fa-4b3d-85da-a3cecccccc53",
+      "name": "Plockton tidal area",
+      "description": "Machine-generated non-overlapping first-review tidal area. Adjust its polygon in Location Editor to match local tidal geography.",
+      "types": [
+        "tidalRegion"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "generated-tidal-area:f61940aa-fb71-4232-b345-ee4ce1178e43",
+          "editorShape": "Polygon"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                -5.236028,
+                57.144877
+              ],
+              [
+                -5.169961,
+                57.167531
+              ],
+              [
+                -5.169961,
+                57.428897
+              ],
+              [
+                -5.874703,
+                57.431636
+              ],
+              [
+                -5.89775,
+                57.422351
+              ],
+              [
+                -5.908448,
+                57.393638
+              ],
+              [
+                -5.236028,
+                57.144877
+              ]
+            ]
+          ]
+        }
+      },
+      "properties": {
+        "tideLocationRef": "/resources/locations/f61940aa-fb71-4232-b345-ee4ce1178e43",
+        "provenance": {
+          "reviewStatus": "imported",
+          "warning": "Machine-generated Voronoi-style boundary; review and edit before operational use.",
+          "sources": [
+            {
+              "provider": "AJRM Marine Location Editor area generator",
+              "sourceId": "generated-tidal-area:f61940aa-fb71-4232-b345-ee4ce1178e43",
+              "url": "https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "5a77fb35-ec57-442f-b332-cbbaa38a3d29",
+      "name": "Shieldaig tidal area",
+      "description": "Machine-generated non-overlapping first-review tidal area. Adjust its polygon in Location Editor to match local tidal geography.",
+      "types": [
+        "tidalRegion"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "generated-tidal-area:9d44165c-d37f-4214-93e1-b665574344c3",
+          "editorShape": "Polygon"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                -5.167657,
+                57.428888
+              ],
+              [
+                -5.167657,
+                57.615418
+              ],
+              [
+                -5.230564,
+                57.641516
+              ],
+              [
+                -5.771983,
+                57.611368
+              ],
+              [
+                -5.874703,
+                57.431636
+              ],
+              [
+                -5.167657,
+                57.428888
+              ]
+            ]
+          ]
+        }
+      },
+      "properties": {
+        "tideLocationRef": "/resources/locations/9d44165c-d37f-4214-93e1-b665574344c3",
+        "provenance": {
+          "reviewStatus": "imported",
+          "warning": "Machine-generated Voronoi-style boundary; review and edit before operational use.",
+          "sources": [
+            {
+              "provider": "AJRM Marine Location Editor area generator",
+              "sourceId": "generated-tidal-area:9d44165c-d37f-4214-93e1-b665574344c3",
+              "url": "https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "80a8d021-badf-4a14-80fe-57e6faba6e24",
+      "name": "Loch a’ Bhraige tidal area",
+      "description": "Machine-generated non-overlapping first-review tidal area. Adjust its polygon in Location Editor to match local tidal geography.",
+      "types": [
+        "tidalRegion"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "generated-tidal-area:ff57f0fb-e423-45f2-80f7-a57dfba3e9dd",
+          "editorShape": "Polygon"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                -5.771983,
+                57.611368
+              ],
+              [
+                -5.919474,
+                57.709438
+              ],
+              [
+                -6.119268,
+                57.836702
+              ],
+              [
+                -6.139766,
+                57.829072
+              ],
+              [
+                -6.168194,
+                57.53417
+              ],
+              [
+                -5.963016,
+                57.447425
+              ],
+              [
+                -5.89775,
+                57.422351
+              ],
+              [
+                -5.874703,
+                57.431636
+              ],
+              [
+                -5.771983,
+                57.611368
+              ]
+            ]
+          ]
+        }
+      },
+      "properties": {
+        "tideLocationRef": "/resources/locations/ff57f0fb-e423-45f2-80f7-a57dfba3e9dd",
+        "provenance": {
+          "reviewStatus": "imported",
+          "warning": "Machine-generated Voronoi-style boundary; review and edit before operational use.",
+          "sources": [
+            {
+              "provider": "AJRM Marine Location Editor area generator",
+              "sourceId": "generated-tidal-area:ff57f0fb-e423-45f2-80f7-a57dfba3e9dd",
+              "url": "https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "216625c1-13f9-4d6e-bedb-ce33730c0295",
+      "name": "Loch Snizort (Uig Bay) tidal area",
+      "description": "Machine-generated non-overlapping first-review tidal area. Adjust its polygon in Location Editor to match local tidal geography.",
+      "types": [
+        "tidalRegion"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "generated-tidal-area:d0fd245d-a636-4fc5-b32a-69973b7b1216",
+          "editorShape": "Polygon"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                -6.689246,
+                57.696555
+              ],
+              [
+                -6.428418,
+                57.467087
+              ],
+              [
+                -6.396672,
+                57.465361
+              ],
+              [
+                -6.168194,
+                57.53417
+              ],
+              [
+                -6.139766,
+                57.829072
+              ],
+              [
+                -6.454483,
+                57.801363
+              ],
+              [
+                -6.689246,
+                57.696555
+              ]
+            ]
+          ]
+        }
+      },
+      "properties": {
+        "tideLocationRef": "/resources/locations/d0fd245d-a636-4fc5-b32a-69973b7b1216",
+        "provenance": {
+          "reviewStatus": "imported",
+          "warning": "Machine-generated Voronoi-style boundary; review and edit before operational use.",
+          "sources": [
+            {
+              "provider": "AJRM Marine Location Editor area generator",
+              "sourceId": "generated-tidal-area:d0fd245d-a636-4fc5-b32a-69973b7b1216",
+              "url": "https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "c4d8cc0a-299b-4c5e-a720-70bbb742eebf",
+      "name": "Loch Dunvegan tidal area",
+      "description": "Machine-generated non-overlapping first-review tidal area. Adjust its polygon in Location Editor to match local tidal geography.",
+      "types": [
+        "tidalRegion"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "generated-tidal-area:deebd206-b3e2-4f63-b7e7-d56a227f9a70",
+          "editorShape": "Polygon"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                -6.428418,
+                57.467087
+              ],
+              [
+                -6.689246,
+                57.696555
+              ],
+              [
+                -6.800432,
+                57.684445
+              ],
+              [
+                -6.972619,
+                57.449519
+              ],
+              [
+                -6.984451,
+                57.432565
+              ],
+              [
+                -6.975706,
+                57.41658
+              ],
+              [
+                -6.841618,
+                57.250702
+              ],
+              [
+                -6.428418,
+                57.467087
+              ]
+            ]
+          ]
+        }
+      },
+      "properties": {
+        "tideLocationRef": "/resources/locations/deebd206-b3e2-4f63-b7e7-d56a227f9a70",
+        "provenance": {
+          "reviewStatus": "imported",
+          "warning": "Machine-generated Voronoi-style boundary; review and edit before operational use.",
+          "sources": [
+            {
+              "provider": "AJRM Marine Location Editor area generator",
+              "sourceId": "generated-tidal-area:deebd206-b3e2-4f63-b7e7-d56a227f9a70",
+              "url": "https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "d40e8993-21b1-400c-a24f-9edbe6d34ffc",
+      "name": "Loch Harport tidal area",
+      "description": "Machine-generated non-overlapping first-review tidal area. Adjust its polygon in Location Editor to match local tidal geography.",
+      "types": [
+        "tidalRegion"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "generated-tidal-area:a263f943-80b3-4bee-bbc5-5c49f3ee76ed",
+          "editorShape": "Polygon"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                -6.307942,
+                57.383063
+              ],
+              [
+                -6.396672,
+                57.465361
+              ],
+              [
+                -6.428418,
+                57.467087
+              ],
+              [
+                -6.841618,
+                57.250702
+              ],
+              [
+                -6.840874,
+                57.226677
+              ],
+              [
+                -6.756162,
+                57.101895
+              ],
+              [
+                -6.21434,
+                57.27713
+              ],
+              [
+                -6.307942,
+                57.383063
+              ]
+            ]
+          ]
+        }
+      },
+      "properties": {
+        "tideLocationRef": "/resources/locations/a263f943-80b3-4bee-bbc5-5c49f3ee76ed",
+        "provenance": {
+          "reviewStatus": "imported",
+          "warning": "Machine-generated Voronoi-style boundary; review and edit before operational use.",
+          "sources": [
+            {
+              "provider": "AJRM Marine Location Editor area generator",
+              "sourceId": "generated-tidal-area:a263f943-80b3-4bee-bbc5-5c49f3ee76ed",
+              "url": "https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "5f85fb21-f9ab-49fe-a373-aadf28393fb9",
+      "name": "Soay (Camus nan Gall) tidal area",
+      "description": "Machine-generated non-overlapping first-review tidal area. Adjust its polygon in Location Editor to match local tidal geography.",
+      "types": [
+        "tidalRegion"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "generated-tidal-area:58e0499b-5c60-4e8b-8054-0e51843e363a",
+          "editorShape": "Polygon"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                -6.359093,
+                56.883554
+              ],
+              [
+                -6.271422,
+                56.883554
+              ],
+              [
+                -5.918096,
+                57.160091
+              ],
+              [
+                -6.008489,
+                57.268509
+              ],
+              [
+                -6.21434,
+                57.27713
+              ],
+              [
+                -6.698338,
+                57.120596
+              ],
+              [
+                -6.698338,
+                56.942937
+              ],
+              [
+                -6.359093,
+                56.883554
+              ]
+            ]
+          ]
+        }
+      },
+      "properties": {
+        "tideLocationRef": "/resources/locations/58e0499b-5c60-4e8b-8054-0e51843e363a",
+        "provenance": {
+          "reviewStatus": "imported",
+          "warning": "Machine-generated Voronoi-style boundary; review and edit before operational use.",
+          "sources": [
+            {
+              "provider": "AJRM Marine Location Editor area generator",
+              "sourceId": "generated-tidal-area:58e0499b-5c60-4e8b-8054-0e51843e363a",
+              "url": "https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "22abf375-16dc-44b1-9699-2d0cfb5a4b29",
+      "name": "Loch Laxford tidal area",
+      "description": "Machine-generated non-overlapping first-review tidal area. Adjust its polygon in Location Editor to match local tidal geography.",
+      "types": [
+        "tidalRegion"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "generated-tidal-area:dcf945cf-cc97-4f30-8a51-e80930bfce12",
+          "editorShape": "Polygon"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                -4.591136,
+                58.214594
+              ],
+              [
+                -4.591136,
+                58.358719
+              ],
+              [
+                -5.192595,
+                58.442211
+              ],
+              [
+                -5.548712,
+                58.48258
+              ],
+              [
+                -4.597998,
+                58.215916
+              ],
+              [
+                -4.591136,
+                58.214594
+              ]
+            ]
+          ]
+        }
+      },
+      "properties": {
+        "tideLocationRef": "/resources/locations/dcf945cf-cc97-4f30-8a51-e80930bfce12",
+        "provenance": {
+          "reviewStatus": "imported",
+          "warning": "Machine-generated Voronoi-style boundary; review and edit before operational use.",
+          "sources": [
+            {
+              "provider": "AJRM Marine Location Editor area generator",
+              "sourceId": "generated-tidal-area:dcf945cf-cc97-4f30-8a51-e80930bfce12",
+              "url": "https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "2caebaa4-15d2-4cfc-adab-9746919406e7",
+      "name": "Badcall Bay tidal area",
+      "description": "Machine-generated non-overlapping first-review tidal area. Adjust its polygon in Location Editor to match local tidal geography.",
+      "types": [
+        "tidalRegion"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "generated-tidal-area:9c103f21-bb09-49d5-8485-2e9204e65bc8",
+          "editorShape": "Polygon"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                -4.661181,
+                58.222921
+              ],
+              [
+                -4.661181,
+                58.233638
+              ],
+              [
+                -5.548712,
+                58.48258
+              ],
+              [
+                -5.625046,
+                58.498509
+              ],
+              [
+                -5.625046,
+                58.351447
+              ],
+              [
+                -5.503178,
+                58.316268
+              ],
+              [
+                -4.661181,
+                58.222921
+              ]
+            ]
+          ]
+        }
+      },
+      "properties": {
+        "tideLocationRef": "/resources/locations/9c103f21-bb09-49d5-8485-2e9204e65bc8",
+        "provenance": {
+          "reviewStatus": "imported",
+          "warning": "Machine-generated Voronoi-style boundary; review and edit before operational use.",
+          "sources": [
+            {
+              "provider": "AJRM Marine Location Editor area generator",
+              "sourceId": "generated-tidal-area:9c103f21-bb09-49d5-8485-2e9204e65bc8",
+              "url": "https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "8d9d839f-beb0-4e89-a257-08f170a02613",
+      "name": "Loch Nedd tidal area",
+      "description": "Machine-generated non-overlapping first-review tidal area. Adjust its polygon in Location Editor to match local tidal geography.",
+      "types": [
+        "tidalRegion"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "generated-tidal-area:8f65cb00-2a01-4048-8b65-9ff6195015ae",
+          "editorShape": "Polygon"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                -4.690926,
+                58.078033
+              ],
+              [
+                -4.690926,
+                58.226218
+              ],
+              [
+                -5.503178,
+                58.316268
+              ],
+              [
+                -5.278151,
+                58.212301
+              ],
+              [
+                -4.743287,
+                58.076919
+              ],
+              [
+                -4.690926,
+                58.078033
+              ]
+            ]
+          ]
+        }
+      },
+      "properties": {
+        "tideLocationRef": "/resources/locations/8f65cb00-2a01-4048-8b65-9ff6195015ae",
+        "provenance": {
+          "reviewStatus": "imported",
+          "warning": "Machine-generated Voronoi-style boundary; review and edit before operational use.",
+          "sources": [
+            {
+              "provider": "AJRM Marine Location Editor area generator",
+              "sourceId": "generated-tidal-area:8f65cb00-2a01-4048-8b65-9ff6195015ae",
+              "url": "https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "edd186da-5b5f-4640-b8b4-8aea23c8efac",
+      "name": "Loch Inver tidal area",
+      "description": "Machine-generated non-overlapping first-review tidal area. Adjust its polygon in Location Editor to match local tidal geography.",
+      "types": [
+        "tidalRegion"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "generated-tidal-area:3f47e2bb-faf3-4c1c-bbc4-051f73834128",
+          "editorShape": "Polygon"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                -4.758645,
+                58.075196
+              ],
+              [
+                -4.758645,
+                58.080806
+              ],
+              [
+                -5.278151,
+                58.212301
+              ],
+              [
+                -5.25809,
+                58.056389
+              ],
+              [
+                -5.180574,
+                58.027847
+              ],
+              [
+                -4.758645,
+                58.075196
+              ]
+            ]
+          ]
+        }
+      },
+      "properties": {
+        "tideLocationRef": "/resources/locations/3f47e2bb-faf3-4c1c-bbc4-051f73834128",
+        "provenance": {
+          "reviewStatus": "imported",
+          "warning": "Machine-generated Voronoi-style boundary; review and edit before operational use.",
+          "sources": [
+            {
+              "provider": "AJRM Marine Location Editor area generator",
+              "sourceId": "generated-tidal-area:3f47e2bb-faf3-4c1c-bbc4-051f73834128",
+              "url": "https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "58937fc5-e9d4-4f64-9e07-2bc75f957941",
+      "name": "Summer Isles (Tanera Mòr) tidal area",
+      "description": "Machine-generated non-overlapping first-review tidal area. Adjust its polygon in Location Editor to match local tidal geography.",
+      "types": [
+        "tidalRegion"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "generated-tidal-area:77cd79ab-ffa1-4753-903f-711557c55af5",
+          "editorShape": "Polygon"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                -5.389267,
+                57.873509
+              ],
+              [
+                -5.180574,
+                58.027847
+              ],
+              [
+                -5.25809,
+                58.056389
+              ],
+              [
+                -5.838422,
+                58.196979
+              ],
+              [
+                -5.890814,
+                58.113195
+              ],
+              [
+                -5.890814,
+                58.106131
+              ],
+              [
+                -5.389267,
+                57.873509
+              ]
+            ]
+          ]
+        }
+      },
+      "properties": {
+        "tideLocationRef": "/resources/locations/77cd79ab-ffa1-4753-903f-711557c55af5",
+        "provenance": {
+          "reviewStatus": "imported",
+          "warning": "Machine-generated Voronoi-style boundary; review and edit before operational use.",
+          "sources": [
+            {
+              "provider": "AJRM Marine Location Editor area generator",
+              "sourceId": "generated-tidal-area:77cd79ab-ffa1-4753-903f-711557c55af5",
+              "url": "https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "cf016cb0-71ed-49d6-b514-49bad2c04f3f",
+      "name": "Loch Ewe (Mellon Charles) tidal area",
+      "description": "Machine-generated non-overlapping first-review tidal area. Adjust its polygon in Location Editor to match local tidal geography.",
+      "types": [
+        "tidalRegion"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "generated-tidal-area:f3d5c25c-c044-426e-a08f-ce17a8343493",
+          "editorShape": "Polygon"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                -5.356845,
+                57.753916
+              ],
+              [
+                -5.389267,
+                57.873509
+              ],
+              [
+                -5.894238,
+                58.107719
+              ],
+              [
+                -6.000441,
+                58.034498
+              ],
+              [
+                -6.113758,
+                57.842945
+              ],
+              [
+                -6.113758,
+                57.839475
+              ],
+              [
+                -5.356845,
+                57.753916
+              ]
+            ]
+          ]
+        }
+      },
+      "properties": {
+        "tideLocationRef": "/resources/locations/f3d5c25c-c044-426e-a08f-ce17a8343493",
+        "provenance": {
+          "reviewStatus": "imported",
+          "warning": "Machine-generated Voronoi-style boundary; review and edit before operational use.",
+          "sources": [
+            {
+              "provider": "AJRM Marine Location Editor area generator",
+              "sourceId": "generated-tidal-area:f3d5c25c-c044-426e-a08f-ce17a8343493",
+              "url": "https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "634ec8e9-7182-428d-8f20-131d21f3de14",
+      "name": "Loch Bervie tidal area",
+      "description": "Machine-generated non-overlapping first-review tidal area. Adjust its polygon in Location Editor to match local tidal geography.",
+      "types": [
+        "tidalRegion"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "generated-tidal-area:21d80c4d-c95d-44cc-b451-4df506891a52",
+          "editorShape": "Polygon"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                -4.569807,
+                58.491534
+              ],
+              [
+                -4.569807,
+                58.726363
+              ],
+              [
+                -5.533673,
+                58.726363
+              ],
+              [
+                -5.533673,
+                58.480875
+              ],
+              [
+                -5.192595,
+                58.442211
+              ],
+              [
+                -4.569807,
+                58.491534
+              ]
+            ]
+          ]
+        }
+      },
+      "properties": {
+        "tideLocationRef": "/resources/locations/21d80c4d-c95d-44cc-b451-4df506891a52",
+        "provenance": {
+          "reviewStatus": "imported",
+          "warning": "Machine-generated Voronoi-style boundary; review and edit before operational use.",
+          "sources": [
+            {
+              "provider": "AJRM Marine Location Editor area generator",
+              "sourceId": "generated-tidal-area:21d80c4d-c95d-44cc-b451-4df506891a52",
+              "url": "https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "ead30bce-29db-4ac8-bbba-d704c1fcd7e9",
+      "name": "Scolpaig tidal area",
+      "description": "Machine-generated non-overlapping first-review tidal area. Adjust its polygon in Location Editor to match local tidal geography.",
+      "types": [
+        "tidalRegion"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "generated-tidal-area:04af8b5c-ac18-4df0-b2a2-5ed3cdda0d4a",
+          "editorShape": "Polygon"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                -7.345497,
+                57.577681
+              ],
+              [
+                -7.282029,
+                57.702598
+              ],
+              [
+                -7.222327,
+                57.831869
+              ],
+              [
+                -7.327876,
+                57.918073
+              ],
+              [
+                -7.937901,
+                57.918073
+              ],
+              [
+                -7.968323,
+                57.855322
+              ],
+              [
+                -7.968323,
+                57.787789
+              ],
+              [
+                -7.514629,
+                57.546939
+              ],
+              [
+                -7.345497,
+                57.577681
+              ]
+            ]
+          ]
+        }
+      },
+      "properties": {
+        "tideLocationRef": "/resources/locations/04af8b5c-ac18-4df0-b2a2-5ed3cdda0d4a",
+        "provenance": {
+          "reviewStatus": "imported",
+          "warning": "Machine-generated Voronoi-style boundary; review and edit before operational use.",
+          "sources": [
+            {
+              "provider": "AJRM Marine Location Editor area generator",
+              "sourceId": "generated-tidal-area:04af8b5c-ac18-4df0-b2a2-5ed3cdda0d4a",
+              "url": "https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "50f57abf-0157-432a-9881-c85e6130e67b",
+      "name": "Balivanich tidal area",
+      "description": "Machine-generated non-overlapping first-review tidal area. Adjust its polygon in Location Editor to match local tidal geography.",
+      "types": [
+        "tidalRegion"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "generated-tidal-area:394c7651-19a6-4151-9118-24aabd51e456",
+          "editorShape": "Polygon"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                -7.158134,
+                57.469677
+              ],
+              [
+                -7.345497,
+                57.577681
+              ],
+              [
+                -7.514629,
+                57.546939
+              ],
+              [
+                -7.613969,
+                57.361471
+              ],
+              [
+                -7.158134,
+                57.469677
+              ]
+            ]
+          ]
+        }
+      },
+      "properties": {
+        "tideLocationRef": "/resources/locations/394c7651-19a6-4151-9118-24aabd51e456",
+        "provenance": {
+          "reviewStatus": "imported",
+          "warning": "Machine-generated Voronoi-style boundary; review and edit before operational use.",
+          "sources": [
+            {
+              "provider": "AJRM Marine Location Editor area generator",
+              "sourceId": "generated-tidal-area:394c7651-19a6-4151-9118-24aabd51e456",
+              "url": "https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "70f3c3b5-4839-4b57-acd2-3ab7a5611158",
+      "name": "Flannan Isles tidal area",
+      "description": "Machine-generated non-overlapping first-review tidal area. Adjust its polygon in Location Editor to match local tidal geography.",
+      "types": [
+        "tidalRegion"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "generated-tidal-area:550c626f-3339-4bc5-8ae7-1dac13ad4118",
+          "editorShape": "Polygon"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                -8.031338,
+                58.01856
+              ],
+              [
+                -7.329281,
+                58.01856
+              ],
+              [
+                -7.25224,
+                58.066735
+              ],
+              [
+                -7.20236,
+                58.557546
+              ],
+              [
+                -8.072697,
+                58.557546
+              ],
+              [
+                -8.072697,
+                58.045245
+              ],
+              [
+                -8.031338,
+                58.01856
+              ]
+            ]
+          ]
+        }
+      },
+      "properties": {
+        "tideLocationRef": "/resources/locations/550c626f-3339-4bc5-8ae7-1dac13ad4118",
+        "provenance": {
+          "reviewStatus": "imported",
+          "warning": "Machine-generated Voronoi-style boundary; review and edit before operational use.",
+          "sources": [
+            {
+              "provider": "AJRM Marine Location Editor area generator",
+              "sourceId": "generated-tidal-area:550c626f-3339-4bc5-8ae7-1dac13ad4118",
+              "url": "https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "c7f17b17-030b-4dd8-91a3-6e2d00a8232f",
+      "name": "Village Bay (St Kilda) tidal area",
+      "description": "Machine-generated non-overlapping first-review tidal area. Adjust its polygon in Location Editor to match local tidal geography.",
+      "types": [
+        "tidalRegion"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "generated-tidal-area:bb4bda1f-09b3-4896-a5c2-860fa4e883de",
+          "editorShape": "Polygon"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                -9.052933,
+                57.543507
+              ],
+              [
+                -8.264793,
+                57.543507
+              ],
+              [
+                -8.089067,
+                57.711222
+              ],
+              [
+                -8.089067,
+                58.055808
+              ],
+              [
+                -8.130426,
+                58.082493
+              ],
+              [
+                -9.052933,
+                58.082493
+              ],
+              [
+                -9.052933,
+                57.543507
+              ]
+            ]
+          ]
+        }
+      },
+      "properties": {
+        "tideLocationRef": "/resources/locations/bb4bda1f-09b3-4896-a5c2-860fa4e883de",
+        "provenance": {
+          "reviewStatus": "imported",
+          "warning": "Machine-generated Voronoi-style boundary; review and edit before operational use.",
+          "sources": [
+            {
+              "provider": "AJRM Marine Location Editor area generator",
+              "sourceId": "generated-tidal-area:bb4bda1f-09b3-4896-a5c2-860fa4e883de",
+              "url": "https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "713e5296-60a8-49f7-8495-8b349e4437d7",
+      "name": "Rockall tidal area",
+      "description": "Machine-generated non-overlapping first-review tidal area. Adjust its polygon in Location Editor to match local tidal geography.",
+      "types": [
+        "tidalRegion"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "generated-tidal-area:cc360cde-7f5c-4aed-b1f9-a9f0d7955ca7",
+          "editorShape": "Polygon"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                -14.16917,
+                57.326783
+              ],
+              [
+                -13.205304,
+                57.326783
+              ],
+              [
+                -13.205304,
+                57.86577
+              ],
+              [
+                -14.16917,
+                57.86577
+              ],
+              [
+                -14.16917,
+                57.326783
+              ]
+            ]
+          ]
+        }
+      },
+      "properties": {
+        "tideLocationRef": "/resources/locations/cc360cde-7f5c-4aed-b1f9-a9f0d7955ca7",
+        "provenance": {
+          "reviewStatus": "imported",
+          "warning": "Machine-generated Voronoi-style boundary; review and edit before operational use.",
+          "sources": [
+            {
+              "provider": "AJRM Marine Location Editor area generator",
+              "sourceId": "generated-tidal-area:cc360cde-7f5c-4aed-b1f9-a9f0d7955ca7",
+              "url": "https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "c0aca872-dffe-43bb-92c8-8028d33cd28f",
+      "name": "Shillay (Monach Islands) tidal area",
+      "description": "Machine-generated non-overlapping first-review tidal area. Adjust its polygon in Location Editor to match local tidal geography.",
+      "types": [
+        "tidalRegion"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "generated-tidal-area:8282c620-42dd-4781-94ed-d59698a81992",
+          "editorShape": "Polygon"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                -8.176613,
+                57.256397
+              ],
+              [
+                -7.747507,
+                57.256397
+              ],
+              [
+                -7.735585,
+                57.264258
+              ],
+              [
+                -7.613969,
+                57.361471
+              ],
+              [
+                -7.514629,
+                57.546939
+              ],
+              [
+                -7.982629,
+                57.795383
+              ],
+              [
+                -8.000887,
+                57.795383
+              ],
+              [
+                -8.176613,
+                57.627668
+              ],
+              [
+                -8.176613,
+                57.256397
+              ]
+            ]
+          ]
+        }
+      },
+      "properties": {
+        "tideLocationRef": "/resources/locations/8282c620-42dd-4781-94ed-d59698a81992",
+        "provenance": {
+          "reviewStatus": "imported",
+          "warning": "Machine-generated Voronoi-style boundary; review and edit before operational use.",
+          "sources": [
+            {
+              "provider": "AJRM Marine Location Editor area generator",
+              "sourceId": "generated-tidal-area:8282c620-42dd-4781-94ed-d59698a81992",
+              "url": "https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "1eca39c3-fd7b-49c6-86ee-b38b4fc07f1c",
+      "name": "Loch Shell tidal area",
+      "description": "Machine-generated non-overlapping first-review tidal area. Adjust its polygon in Location Editor to match local tidal geography.",
+      "types": [
+        "tidalRegion"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "generated-tidal-area:5f7fd250-0df5-4473-861e-76148b5f89b6",
+          "editorShape": "Polygon"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                -6.139766,
+                57.829072
+              ],
+              [
+                -6.119268,
+                57.836702
+              ],
+              [
+                -6.115682,
+                57.839692
+              ],
+              [
+                -6.0014,
+                58.032876
+              ],
+              [
+                -6.0014,
+                58.034662
+              ],
+              [
+                -6.642785,
+                58.144058
+              ],
+              [
+                -6.732165,
+                58.114107
+              ],
+              [
+                -6.788338,
+                58.086702
+              ],
+              [
+                -6.741486,
+                58.043055
+              ],
+              [
+                -6.561078,
+                57.889934
+              ],
+              [
+                -6.454483,
+                57.801363
+              ],
+              [
+                -6.139766,
+                57.829072
+              ]
+            ]
+          ]
+        }
+      },
+      "properties": {
+        "tideLocationRef": "/resources/locations/5f7fd250-0df5-4473-861e-76148b5f89b6",
+        "provenance": {
+          "reviewStatus": "imported",
+          "warning": "Machine-generated Voronoi-style boundary; review and edit before operational use.",
+          "sources": [
+            {
+              "provider": "AJRM Marine Location Editor area generator",
+              "sourceId": "generated-tidal-area:5f7fd250-0df5-4473-861e-76148b5f89b6",
+              "url": "https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "de6b62f9-1ee3-4fc2-8ba9-1d296d9adf36",
+      "name": "East Loch Tarbert (Harris) tidal area",
+      "description": "Machine-generated non-overlapping first-review tidal area. Adjust its polygon in Location Editor to match local tidal geography.",
+      "types": [
+        "tidalRegion"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "generated-tidal-area:5305ceb6-79bf-4dbb-9d33-e8eb965d4104",
+          "editorShape": "Polygon"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                -6.800432,
+                57.684445
+              ],
+              [
+                -6.689246,
+                57.696555
+              ],
+              [
+                -6.454483,
+                57.801363
+              ],
+              [
+                -6.561078,
+                57.889934
+              ],
+              [
+                -6.811843,
+                57.899118
+              ],
+              [
+                -6.953719,
+                57.740809
+              ],
+              [
+                -6.800432,
+                57.684445
+              ]
+            ]
+          ]
+        }
+      },
+      "properties": {
+        "tideLocationRef": "/resources/locations/5305ceb6-79bf-4dbb-9d33-e8eb965d4104",
+        "provenance": {
+          "reviewStatus": "imported",
+          "warning": "Machine-generated Voronoi-style boundary; review and edit before operational use.",
+          "sources": [
+            {
+              "provider": "AJRM Marine Location Editor area generator",
+              "sourceId": "generated-tidal-area:5305ceb6-79bf-4dbb-9d33-e8eb965d4104",
+              "url": "https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "ed0891cb-65df-4556-b8fc-ad3395847f9d",
+      "name": "Loch Carnan tidal area",
+      "description": "Machine-generated non-overlapping first-review tidal area. Adjust its polygon in Location Editor to match local tidal geography.",
+      "types": [
+        "tidalRegion"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "generated-tidal-area:510fa5a1-6a76-4de6-bd77-599b22dfd896",
+          "editorShape": "Polygon"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                -6.984451,
+                57.432565
+              ],
+              [
+                -7.158134,
+                57.469677
+              ],
+              [
+                -7.613969,
+                57.361471
+              ],
+              [
+                -7.735585,
+                57.264258
+              ],
+              [
+                -6.975706,
+                57.41658
+              ],
+              [
+                -6.984451,
+                57.432565
+              ]
+            ]
+          ]
+        }
+      },
+      "properties": {
+        "tideLocationRef": "/resources/locations/510fa5a1-6a76-4de6-bd77-599b22dfd896",
+        "provenance": {
+          "reviewStatus": "imported",
+          "warning": "Machine-generated Voronoi-style boundary; review and edit before operational use.",
+          "sources": [
+            {
+              "provider": "AJRM Marine Location Editor area generator",
+              "sourceId": "generated-tidal-area:510fa5a1-6a76-4de6-bd77-599b22dfd896",
+              "url": "https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "21d63cdc-4976-4b1c-967f-66bc7c7dc74d",
+      "name": "Loch Skipport tidal area",
+      "description": "Machine-generated non-overlapping first-review tidal area. Adjust its polygon in Location Editor to match local tidal geography.",
+      "types": [
+        "tidalRegion"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "generated-tidal-area:5b12b1ca-4233-4e5a-8919-5f38da9d686d",
+          "editorShape": "Polygon"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                -7.735585,
+                57.264258
+              ],
+              [
+                -7.753321,
+                57.252563
+              ],
+              [
+                -6.840874,
+                57.226677
+              ],
+              [
+                -6.841618,
+                57.250702
+              ],
+              [
+                -6.975706,
+                57.41658
+              ],
+              [
+                -7.735585,
+                57.264258
+              ]
+            ]
+          ]
+        }
+      },
+      "properties": {
+        "tideLocationRef": "/resources/locations/5b12b1ca-4233-4e5a-8919-5f38da9d686d",
+        "provenance": {
+          "reviewStatus": "imported",
+          "warning": "Machine-generated Voronoi-style boundary; review and edit before operational use.",
+          "sources": [
+            {
+              "provider": "AJRM Marine Location Editor area generator",
+              "sourceId": "generated-tidal-area:5b12b1ca-4233-4e5a-8919-5f38da9d686d",
+              "url": "https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "bbf1fcf7-db76-4ec4-8c00-fc4129cf8d75",
+      "name": "Barra (North Bay) tidal area",
+      "description": "Machine-generated non-overlapping first-review tidal area. Adjust its polygon in Location Editor to match local tidal geography.",
+      "types": [
+        "tidalRegion"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "generated-tidal-area:7b33e04b-755e-4f11-bc86-2a77193c6238",
+          "editorShape": "Polygon"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                -6.961845,
+                56.894561
+              ],
+              [
+                -6.961845,
+                56.94014
+              ],
+              [
+                -7.802447,
+                57.236347
+              ],
+              [
+                -7.925711,
+                57.217268
+              ],
+              [
+                -7.925711,
+                57.088491
+              ],
+              [
+                -7.428734,
+                56.978257
+              ],
+              [
+                -6.961845,
+                56.894561
+              ]
+            ]
+          ]
+        }
+      },
+      "properties": {
+        "tideLocationRef": "/resources/locations/7b33e04b-755e-4f11-bc86-2a77193c6238",
+        "provenance": {
+          "reviewStatus": "imported",
+          "warning": "Machine-generated Voronoi-style boundary; review and edit before operational use.",
+          "sources": [
+            {
+              "provider": "AJRM Marine Location Editor area generator",
+              "sourceId": "generated-tidal-area:7b33e04b-755e-4f11-bc86-2a77193c6238",
+              "url": "https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "97988ce5-dae8-4a36-9c27-719773c23256",
+      "name": "Barra Head (Berneray) tidal area",
+      "description": "Machine-generated non-overlapping first-review tidal area. Adjust its polygon in Location Editor to match local tidal geography.",
+      "types": [
+        "tidalRegion"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "generated-tidal-area:5b394b58-36c1-424e-9b7e-0821de539f5b",
+          "editorShape": "Polygon"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                -8.116304,
+                56.508608
+              ],
+              [
+                -7.356243,
+                56.508608
+              ],
+              [
+                -7.152438,
+                56.712
+              ],
+              [
+                -7.152438,
+                56.752389
+              ],
+              [
+                -7.635193,
+                56.885025
+              ],
+              [
+                -8.116304,
+                57.008567
+              ],
+              [
+                -8.116304,
+                56.508608
+              ]
+            ]
+          ]
+        }
+      },
+      "properties": {
+        "tideLocationRef": "/resources/locations/5b394b58-36c1-424e-9b7e-0821de539f5b",
+        "provenance": {
+          "reviewStatus": "imported",
+          "warning": "Machine-generated Voronoi-style boundary; review and edit before operational use.",
+          "sources": [
+            {
+              "provider": "AJRM Marine Location Editor area generator",
+              "sourceId": "generated-tidal-area:5b394b58-36c1-424e-9b7e-0821de539f5b",
+              "url": "https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "559530e7-71a2-4d18-95f8-a4e30c0dbdea",
+      "name": "Carloway tidal area",
+      "description": "Machine-generated non-overlapping first-review tidal area. Adjust its polygon in Location Editor to match local tidal geography.",
+      "types": [
+        "tidalRegion"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "generated-tidal-area:f8798ae9-84a0-440c-b402-a61e8f27c0b2",
+          "editorShape": "Polygon"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                -6.732165,
+                58.114107
+              ],
+              [
+                -6.642785,
+                58.144058
+              ],
+              [
+                -6.362298,
+                58.552251
+              ],
+              [
+                -6.972278,
+                58.552251
+              ],
+              [
+                -6.732165,
+                58.114107
+              ]
+            ]
+          ]
+        }
+      },
+      "properties": {
+        "tideLocationRef": "/resources/locations/f8798ae9-84a0-440c-b402-a61e8f27c0b2",
+        "provenance": {
+          "reviewStatus": "imported",
+          "warning": "Machine-generated Voronoi-style boundary; review and edit before operational use.",
+          "sources": [
+            {
+              "provider": "AJRM Marine Location Editor area generator",
+              "sourceId": "generated-tidal-area:f8798ae9-84a0-440c-b402-a61e8f27c0b2",
+              "url": "https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "0463f17e-3b52-49a8-a459-2690ab316c26",
+      "name": "Little Bernera tidal area",
+      "description": "Machine-generated non-overlapping first-review tidal area. Adjust its polygon in Location Editor to match local tidal geography.",
+      "types": [
+        "tidalRegion"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "generated-tidal-area:b3456ce1-b573-4649-8dd9-2cb9a8030476",
+          "editorShape": "Polygon"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                -6.788338,
+                58.086702
+              ],
+              [
+                -6.732165,
+                58.114107
+              ],
+              [
+                -6.962646,
+                58.534675
+              ],
+              [
+                -7.204684,
+                58.534675
+              ],
+              [
+                -7.25224,
+                58.066735
+              ],
+              [
+                -6.788338,
+                58.086702
+              ]
+            ]
+          ]
+        }
+      },
+      "properties": {
+        "tideLocationRef": "/resources/locations/b3456ce1-b573-4649-8dd9-2cb9a8030476",
+        "provenance": {
+          "reviewStatus": "imported",
+          "warning": "Machine-generated Voronoi-style boundary; review and edit before operational use.",
+          "sources": [
+            {
+              "provider": "AJRM Marine Location Editor area generator",
+              "sourceId": "generated-tidal-area:b3456ce1-b573-4649-8dd9-2cb9a8030476",
+              "url": "https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "e59930a7-722b-408e-94af-d3c9d567b4a1",
+      "name": "West Loch Tarbert (Harris) tidal area",
+      "description": "Machine-generated non-overlapping first-review tidal area. Adjust its polygon in Location Editor to match local tidal geography.",
+      "types": [
+        "tidalRegion"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "generated-tidal-area:ec97022b-afa1-44c5-94c4-ea3e471381f3",
+          "editorShape": "Polygon"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                -7.25224,
+                58.066735
+              ],
+              [
+                -7.30317,
+                58.034887
+              ],
+              [
+                -7.30317,
+                57.897895
+              ],
+              [
+                -7.222327,
+                57.831869
+              ],
+              [
+                -6.953719,
+                57.740809
+              ],
+              [
+                -6.811843,
+                57.899118
+              ],
+              [
+                -6.741486,
+                58.043055
+              ],
+              [
+                -6.788338,
+                58.086702
+              ],
+              [
+                -7.25224,
+                58.066735
+              ]
+            ]
+          ]
+        }
+      },
+      "properties": {
+        "tideLocationRef": "/resources/locations/ec97022b-afa1-44c5-94c4-ea3e471381f3",
+        "provenance": {
+          "reviewStatus": "imported",
+          "warning": "Machine-generated Voronoi-style boundary; review and edit before operational use.",
+          "sources": [
+            {
+              "provider": "AJRM Marine Location Editor area generator",
+              "sourceId": "generated-tidal-area:ec97022b-afa1-44c5-94c4-ea3e471381f3",
+              "url": "https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "b91184c6-6a88-4669-a16a-2ea2844b1e68",
+      "name": "Warrenpoint (Admiralty API) tidal area",
+      "description": "Machine-generated non-overlapping first-review tidal area. Adjust its polygon in Location Editor to match local tidal geography.",
+      "types": [
+        "tidalRegion"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "generated-tidal-area:7fe57a83-1868-4c69-b4a6-c8bcaad43c85",
+          "editorShape": "Polygon"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                -6.731933,
+                53.830507
+              ],
+              [
+                -6.26327,
+                53.830507
+              ],
+              [
+                -6.069646,
+                54.153416
+              ],
+              [
+                -6.258104,
+                54.369493
+              ],
+              [
+                -6.731933,
+                54.369493
+              ],
+              [
+                -6.731933,
+                53.830507
+              ]
+            ]
+          ]
+        }
+      },
+      "properties": {
+        "tideLocationRef": "/resources/locations/7fe57a83-1868-4c69-b4a6-c8bcaad43c85",
+        "provenance": {
+          "reviewStatus": "imported",
+          "warning": "Machine-generated Voronoi-style boundary; review and edit before operational use.",
+          "sources": [
+            {
+              "provider": "AJRM Marine Location Editor area generator",
+              "sourceId": "generated-tidal-area:7fe57a83-1868-4c69-b4a6-c8bcaad43c85",
+              "url": "https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "4af97250-8b92-4bc9-95af-5a6d731e35b8",
+      "name": "Kilkeel (Admiralty API) tidal area",
+      "description": "Machine-generated non-overlapping first-review tidal area. Adjust its polygon in Location Editor to match local tidal geography.",
+      "types": [
+        "tidalRegion"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "generated-tidal-area:2429f5e1-e52c-4fba-9609-362ecb283834",
+          "editorShape": "Polygon"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                -6.293251,
+                53.780507
+              ],
+              [
+                -5.5014,
+                53.780507
+              ],
+              [
+                -5.5014,
+                53.997748
+              ],
+              [
+                -5.609326,
+                54.057456
+              ],
+              [
+                -6.069646,
+                54.153416
+              ],
+              [
+                -6.293251,
+                53.780507
+              ]
+            ]
+          ]
+        }
+      },
+      "properties": {
+        "tideLocationRef": "/resources/locations/2429f5e1-e52c-4fba-9609-362ecb283834",
+        "provenance": {
+          "reviewStatus": "imported",
+          "warning": "Machine-generated Voronoi-style boundary; review and edit before operational use.",
+          "sources": [
+            {
+              "provider": "AJRM Marine Location Editor area generator",
+              "sourceId": "generated-tidal-area:2429f5e1-e52c-4fba-9609-362ecb283834",
+              "url": "https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "32146fc4-ec1b-46aa-a54b-8b00cf0531fe",
+      "name": "Newcastle (Admiralty API) tidal area",
+      "description": "Machine-generated non-overlapping first-review tidal area. Adjust its polygon in Location Editor to match local tidal geography.",
+      "types": [
+        "tidalRegion"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "generated-tidal-area:d7c83c59-9d7b-4d4f-b146-a4824e6606fd",
+          "editorShape": "Polygon"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                -6.276162,
+                54.390198
+              ],
+              [
+                -6.069646,
+                54.153416
+              ],
+              [
+                -5.609326,
+                54.057456
+              ],
+              [
+                -5.801352,
+                54.312654
+              ],
+              [
+                -6.031395,
+                54.396576
+              ],
+              [
+                -6.276162,
+                54.390198
+              ]
+            ]
+          ]
+        }
+      },
+      "properties": {
+        "tideLocationRef": "/resources/locations/d7c83c59-9d7b-4d4f-b146-a4824e6606fd",
+        "provenance": {
+          "reviewStatus": "imported",
+          "warning": "Machine-generated Voronoi-style boundary; review and edit before operational use.",
+          "sources": [
+            {
+              "provider": "AJRM Marine Location Editor area generator",
+              "sourceId": "generated-tidal-area:d7c83c59-9d7b-4d4f-b146-a4824e6606fd",
+              "url": "https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "0f60ee91-dad4-45e5-b596-d3e1f0f2994f",
+      "name": "Ardglass (Admiralty API) tidal area",
+      "description": "Machine-generated non-overlapping first-review tidal area. Adjust its polygon in Location Editor to match local tidal geography.",
+      "types": [
+        "tidalRegion"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "generated-tidal-area:e0fb7860-081f-44b4-899e-13f1e81b197c",
+          "editorShape": "Polygon"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                -5.50036,
+                53.997173
+              ],
+              [
+                -5.118067,
+                53.997173
+              ],
+              [
+                -5.118067,
+                54.165535
+              ],
+              [
+                -5.409322,
+                54.290763
+              ],
+              [
+                -5.657344,
+                54.32954
+              ],
+              [
+                -5.801352,
+                54.312654
+              ],
+              [
+                -5.609326,
+                54.057456
+              ],
+              [
+                -5.50036,
+                53.997173
+              ]
+            ]
+          ]
+        }
+      },
+      "properties": {
+        "tideLocationRef": "/resources/locations/e0fb7860-081f-44b4-899e-13f1e81b197c",
+        "provenance": {
+          "reviewStatus": "imported",
+          "warning": "Machine-generated Voronoi-style boundary; review and edit before operational use.",
+          "sources": [
+            {
+              "provider": "AJRM Marine Location Editor area generator",
+              "sourceId": "generated-tidal-area:e0fb7860-081f-44b4-899e-13f1e81b197c",
+              "url": "https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "d5ce86a2-e8c1-4c23-bd69-5b38a086f823",
+      "name": "Strangford Bar (Admiralty API) tidal area",
+      "description": "Machine-generated non-overlapping first-review tidal area. Adjust its polygon in Location Editor to match local tidal geography.",
+      "types": [
+        "tidalRegion"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "generated-tidal-area:e1a684fd-275f-4dc0-97f2-915abd20c2c8",
+          "editorShape": "Polygon"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                -5.533333,
+                54.445871
+              ],
+              [
+                -5.657344,
+                54.32954
+              ],
+              [
+                -5.409322,
+                54.290763
+              ],
+              [
+                -5.533333,
+                54.445871
+              ]
+            ]
+          ]
+        }
+      },
+      "properties": {
+        "tideLocationRef": "/resources/locations/e1a684fd-275f-4dc0-97f2-915abd20c2c8",
+        "provenance": {
+          "reviewStatus": "imported",
+          "warning": "Machine-generated Voronoi-style boundary; review and edit before operational use.",
+          "sources": [
+            {
+              "provider": "AJRM Marine Location Editor area generator",
+              "sourceId": "generated-tidal-area:e1a684fd-275f-4dc0-97f2-915abd20c2c8",
+              "url": "https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "f2ab796c-a548-4490-8d75-c86922e10d74",
+      "name": "Killyleagh (Admiralty API) tidal area",
+      "description": "Machine-generated non-overlapping first-review tidal area. Adjust its polygon in Location Editor to match local tidal geography.",
+      "types": [
+        "tidalRegion"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "generated-tidal-area:b35a17ff-a8a0-47a7-a7e7-8d61bc877260",
+          "editorShape": "Polygon"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                -6.031395,
+                54.396576
+              ],
+              [
+                -5.801352,
+                54.312654
+              ],
+              [
+                -5.657344,
+                54.32954
+              ],
+              [
+                -5.533333,
+                54.445871
+              ],
+              [
+                -5.533333,
+                54.516488
+              ],
+              [
+                -5.6499,
+                54.533498
+              ],
+              [
+                -5.705599,
+                54.532409
+              ],
+              [
+                -6.031395,
+                54.396576
+              ]
+            ]
+          ]
+        }
+      },
+      "properties": {
+        "tideLocationRef": "/resources/locations/b35a17ff-a8a0-47a7-a7e7-8d61bc877260",
+        "provenance": {
+          "reviewStatus": "imported",
+          "warning": "Machine-generated Voronoi-style boundary; review and edit before operational use.",
+          "sources": [
+            {
+              "provider": "AJRM Marine Location Editor area generator",
+              "sourceId": "generated-tidal-area:b35a17ff-a8a0-47a7-a7e7-8d61bc877260",
+              "url": "https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "7d3df4de-12f9-42ee-9618-30e1f4b49923",
+      "name": "South Rock (Admiralty API) tidal area",
+      "description": "Machine-generated non-overlapping first-review tidal area. Adjust its polygon in Location Editor to match local tidal geography.",
+      "types": [
+        "tidalRegion"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "generated-tidal-area:de278673-36c8-4a81-9a2f-b589b5dab7d5",
+          "editorShape": "Polygon"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                -5.036597,
+                54.130507
+              ],
+              [
+                -4.934733,
+                54.130507
+              ],
+              [
+                -4.934733,
+                54.555804
+              ],
+              [
+                -5.070276,
+                54.58406
+              ],
+              [
+                -5.533333,
+                54.516488
+              ],
+              [
+                -5.533333,
+                54.445871
+              ],
+              [
+                -5.409322,
+                54.290763
+              ],
+              [
+                -5.036597,
+                54.130507
+              ]
+            ]
+          ]
+        }
+      },
+      "properties": {
+        "tideLocationRef": "/resources/locations/de278673-36c8-4a81-9a2f-b589b5dab7d5",
+        "provenance": {
+          "reviewStatus": "imported",
+          "warning": "Machine-generated Voronoi-style boundary; review and edit before operational use.",
+          "sources": [
+            {
+              "provider": "AJRM Marine Location Editor area generator",
+              "sourceId": "generated-tidal-area:de278673-36c8-4a81-9a2f-b589b5dab7d5",
+              "url": "https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "ad00f604-286b-4d6a-a5c8-9a3e803ad000",
+      "name": "Donaghadee (Admiralty API) tidal area",
+      "description": "Machine-generated non-overlapping first-review tidal area. Adjust its polygon in Location Editor to match local tidal geography.",
+      "types": [
+        "tidalRegion"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "generated-tidal-area:193431e5-ce89-448c-8f1b-3ae1b5041a3f",
+          "editorShape": "Polygon"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                -5.458333,
+                54.83686
+              ],
+              [
+                -5.542696,
+                54.801687
+              ],
+              [
+                -5.6499,
+                54.533498
+              ],
+              [
+                -5.533333,
+                54.516488
+              ],
+              [
+                -5.070276,
+                54.58406
+              ],
+              [
+                -5.458333,
+                54.83686
+              ]
+            ]
+          ]
+        }
+      },
+      "properties": {
+        "tideLocationRef": "/resources/locations/193431e5-ce89-448c-8f1b-3ae1b5041a3f",
+        "provenance": {
+          "reviewStatus": "imported",
+          "warning": "Machine-generated Voronoi-style boundary; review and edit before operational use.",
+          "sources": [
+            {
+              "provider": "AJRM Marine Location Editor area generator",
+              "sourceId": "generated-tidal-area:193431e5-ce89-448c-8f1b-3ae1b5041a3f",
+              "url": "https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "02635cb4-c540-4ba9-8263-2899dd62338a",
+      "name": "Bangor (Admiralty API) tidal area",
+      "description": "Machine-generated non-overlapping first-review tidal area. Adjust its polygon in Location Editor to match local tidal geography.",
+      "types": [
+        "tidalRegion"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "generated-tidal-area:28ab841a-613d-482f-9795-4a551e24fbc4",
+          "editorShape": "Polygon"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                -5.796496,
+                54.638997
+              ],
+              [
+                -5.705599,
+                54.532409
+              ],
+              [
+                -5.6499,
+                54.533498
+              ],
+              [
+                -5.542696,
+                54.801687
+              ],
+              [
+                -5.623402,
+                54.783333
+              ],
+              [
+                -5.796496,
+                54.638997
+              ]
+            ]
+          ]
+        }
+      },
+      "properties": {
+        "tideLocationRef": "/resources/locations/28ab841a-613d-482f-9795-4a551e24fbc4",
+        "provenance": {
+          "reviewStatus": "imported",
+          "warning": "Machine-generated Voronoi-style boundary; review and edit before operational use.",
+          "sources": [
+            {
+              "provider": "AJRM Marine Location Editor area generator",
+              "sourceId": "generated-tidal-area:28ab841a-613d-482f-9795-4a551e24fbc4",
+              "url": "https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "6e291240-1cfe-412b-9c38-273a7af72edd",
+      "name": "Belfast (Admiralty API) tidal area",
+      "description": "Machine-generated non-overlapping first-review tidal area. Adjust its polygon in Location Editor to match local tidal geography.",
+      "types": [
+        "tidalRegion"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "generated-tidal-area:46aacb48-9fb0-41d7-8cb7-e0a98994e8e0",
+          "editorShape": "Polygon"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                -6.398599,
+                54.796232
+              ],
+              [
+                -6.398599,
+                54.415722
+              ],
+              [
+                -6.276162,
+                54.390198
+              ],
+              [
+                -6.031395,
+                54.396576
+              ],
+              [
+                -5.705599,
+                54.532409
+              ],
+              [
+                -5.796496,
+                54.638997
+              ],
+              [
+                -6.258081,
+                54.783333
+              ],
+              [
+                -6.36627,
+                54.79912
+              ],
+              [
+                -6.398599,
+                54.796232
+              ]
+            ]
+          ]
+        }
+      },
+      "properties": {
+        "tideLocationRef": "/resources/locations/46aacb48-9fb0-41d7-8cb7-e0a98994e8e0",
+        "provenance": {
+          "reviewStatus": "imported",
+          "warning": "Machine-generated Voronoi-style boundary; review and edit before operational use.",
+          "sources": [
+            {
+              "provider": "AJRM Marine Location Editor area generator",
+              "sourceId": "generated-tidal-area:46aacb48-9fb0-41d7-8cb7-e0a98994e8e0",
+              "url": "https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "b4426caa-2caf-4c01-951d-5527268e7dbc",
+      "name": "Carrickfergus (Admiralty API) tidal area",
+      "description": "Machine-generated non-overlapping first-review tidal area. Adjust its polygon in Location Editor to match local tidal geography.",
+      "types": [
+        "tidalRegion"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "generated-tidal-area:c1cabf4a-90c3-42d6-9bc6-2fbfc2ed78d0",
+          "editorShape": "Polygon"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                -6.258081,
+                54.783333
+              ],
+              [
+                -5.796496,
+                54.638997
+              ],
+              [
+                -5.623402,
+                54.783333
+              ],
+              [
+                -6.258081,
+                54.783333
+              ]
+            ]
+          ]
+        }
+      },
+      "properties": {
+        "tideLocationRef": "/resources/locations/c1cabf4a-90c3-42d6-9bc6-2fbfc2ed78d0",
+        "provenance": {
+          "reviewStatus": "imported",
+          "warning": "Machine-generated Voronoi-style boundary; review and edit before operational use.",
+          "sources": [
+            {
+              "provider": "AJRM Marine Location Editor area generator",
+              "sourceId": "generated-tidal-area:c1cabf4a-90c3-42d6-9bc6-2fbfc2ed78d0",
+              "url": "https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "4d4470f5-7b91-40f0-8d69-789fd294d2ea",
+      "name": "Larne (Admiralty API) tidal area",
+      "description": "Machine-generated non-overlapping first-review tidal area. Adjust its polygon in Location Editor to match local tidal geography.",
+      "types": [
+        "tidalRegion"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "generated-tidal-area:b30864b9-f9c6-4d06-8893-c459fd184838",
+          "editorShape": "Polygon"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                -5.542696,
+                54.801687
+              ],
+              [
+                -5.458333,
+                54.83686
+              ],
+              [
+                -5.458333,
+                55.106662
+              ],
+              [
+                -5.50088,
+                55.111357
+              ],
+              [
+                -6.281933,
+                54.82955
+              ],
+              [
+                -6.281933,
+                54.786813
+              ],
+              [
+                -6.258081,
+                54.783333
+              ],
+              [
+                -5.623402,
+                54.783333
+              ],
+              [
+                -5.542696,
+                54.801687
+              ]
+            ]
+          ]
+        }
+      },
+      "properties": {
+        "tideLocationRef": "/resources/locations/b30864b9-f9c6-4d06-8893-c459fd184838",
+        "provenance": {
+          "reviewStatus": "imported",
+          "warning": "Machine-generated Voronoi-style boundary; review and edit before operational use.",
+          "sources": [
+            {
+              "provider": "AJRM Marine Location Editor area generator",
+              "sourceId": "generated-tidal-area:b30864b9-f9c6-4d06-8893-c459fd184838",
+              "url": "https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "784fb8c0-7ce2-4bdb-9f9f-ab05ce37d748",
+      "name": "Red Bay (Admiralty API) tidal area",
+      "description": "Machine-generated non-overlapping first-review tidal area. Adjust its polygon in Location Editor to match local tidal geography.",
+      "types": [
+        "tidalRegion"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "generated-tidal-area:6d1a5e7e-1fc3-4b2e-a28c-61b8b9bdec41",
+          "editorShape": "Polygon"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                -6.463029,
+                54.797173
+              ],
+              [
+                -6.388072,
+                54.797173
+              ],
+              [
+                -6.36627,
+                54.79912
+              ],
+              [
+                -5.568067,
+                55.087116
+              ],
+              [
+                -5.568067,
+                55.138369
+              ],
+              [
+                -5.702964,
+                55.192603
+              ],
+              [
+                -6.218195,
+                55.336002
+              ],
+              [
+                -6.335284,
+                55.166666
+              ],
+              [
+                -6.463029,
+                54.797173
+              ]
+            ]
+          ]
+        }
+      },
+      "properties": {
+        "tideLocationRef": "/resources/locations/6d1a5e7e-1fc3-4b2e-a28c-61b8b9bdec41",
+        "provenance": {
+          "reviewStatus": "imported",
+          "warning": "Machine-generated Voronoi-style boundary; review and edit before operational use.",
+          "sources": [
+            {
+              "provider": "AJRM Marine Location Editor area generator",
+              "sourceId": "generated-tidal-area:6d1a5e7e-1fc3-4b2e-a28c-61b8b9bdec41",
+              "url": "https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "21086710-5745-484e-9f21-c600a16f9849",
+      "name": "Portrush (Admiralty API) tidal area",
+      "description": "Machine-generated non-overlapping first-review tidal area. Adjust its polygon in Location Editor to match local tidal geography.",
+      "types": [
+        "tidalRegion"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "generated-tidal-area:aa98a044-0478-49f3-9599-a3f8d851ef3e",
+          "editorShape": "Polygon"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                -6.335284,
+                55.166667
+              ],
+              [
+                -6.218195,
+                55.336002
+              ],
+              [
+                -6.222717,
+                55.341916
+              ],
+              [
+                -6.45571,
+                55.423264
+              ],
+              [
+                -6.911167,
+                55.469493
+              ],
+              [
+                -7.148599,
+                55.469493
+              ],
+              [
+                -7.148599,
+                55.259485
+              ],
+              [
+                -7.057266,
+                55.166667
+              ],
+              [
+                -6.335284,
+                55.166667
+              ]
+            ]
+          ]
+        }
+      },
+      "properties": {
+        "tideLocationRef": "/resources/locations/aa98a044-0478-49f3-9599-a3f8d851ef3e",
+        "provenance": {
+          "reviewStatus": "imported",
+          "warning": "Machine-generated Voronoi-style boundary; review and edit before operational use.",
+          "sources": [
+            {
+              "provider": "AJRM Marine Location Editor area generator",
+              "sourceId": "generated-tidal-area:aa98a044-0478-49f3-9599-a3f8d851ef3e",
+              "url": "https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "4e9fd5db-1942-40a4-82b5-2c73f639465b",
+      "name": "Coleraine (Admiralty API) tidal area",
+      "description": "Machine-generated non-overlapping first-review tidal area. Adjust its polygon in Location Editor to match local tidal geography.",
+      "types": [
+        "tidalRegion"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "generated-tidal-area:84a74a23-5b7d-42ec-8891-2853ab049b7d",
+          "editorShape": "Polygon"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                -6.858612,
+                54.86384
+              ],
+              [
+                -6.439981,
+                54.86384
+              ],
+              [
+                -6.335284,
+                55.166667
+              ],
+              [
+                -7.057266,
+                55.166667
+              ],
+              [
+                -6.858612,
+                54.86384
+              ]
+            ]
+          ]
+        }
+      },
+      "properties": {
+        "tideLocationRef": "/resources/locations/84a74a23-5b7d-42ec-8891-2853ab049b7d",
+        "provenance": {
+          "reviewStatus": "imported",
+          "warning": "Machine-generated Voronoi-style boundary; review and edit before operational use.",
+          "sources": [
+            {
+              "provider": "AJRM Marine Location Editor area generator",
+              "sourceId": "generated-tidal-area:84a74a23-5b7d-42ec-8891-2853ab049b7d",
+              "url": "https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "a0397a65-908a-43b9-9a68-c00ff58e52e3",
+      "name": "Londonderry (Derry) (Admiralty API) tidal area",
+      "description": "Machine-generated non-overlapping first-review tidal area. Adjust its polygon in Location Editor to match local tidal geography.",
+      "types": [
+        "tidalRegion"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "generated-tidal-area:b4e17d3f-e95a-4dc7-bd87-bed3eb707d8f",
+          "editorShape": "Polygon"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                -7.798599,
+                54.730507
+              ],
+              [
+                -6.834733,
+                54.730507
+              ],
+              [
+                -6.834733,
+                54.827438
+              ],
+              [
+                -7.057266,
+                55.166666
+              ],
+              [
+                -7.158447,
+                55.269493
+              ],
+              [
+                -7.798599,
+                55.269493
+              ],
+              [
+                -7.798599,
+                54.730507
+              ]
+            ]
+          ]
+        }
+      },
+      "properties": {
+        "tideLocationRef": "/resources/locations/b4e17d3f-e95a-4dc7-bd87-bed3eb707d8f",
+        "provenance": {
+          "reviewStatus": "imported",
+          "warning": "Machine-generated Voronoi-style boundary; review and edit before operational use.",
+          "sources": [
+            {
+              "provider": "AJRM Marine Location Editor area generator",
+              "sourceId": "generated-tidal-area:b4e17d3f-e95a-4dc7-bd87-bed3eb707d8f",
+              "url": "https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "5d7dba6e-683f-4f57-8b0e-47af53421cc3",
+      "name": "Kirkcudbright Bay (Admiralty API) tidal area",
+      "description": "Machine-generated non-overlapping first-review tidal area. Adjust its polygon in Location Editor to match local tidal geography.",
+      "types": [
+        "tidalRegion"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "generated-tidal-area:e569f23f-a5f4-4f27-a240-1a605a302d5b",
+          "editorShape": "Polygon"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                -4.548599,
+                54.530507
+              ],
+              [
+                -3.584733,
+                54.530507
+              ],
+              [
+                -3.584733,
+                55.069493
+              ],
+              [
+                -4.386628,
+                55.069493
+              ],
+              [
+                -4.548599,
+                54.979453
+              ],
+              [
+                -4.548599,
+                54.530507
+              ]
+            ]
+          ]
+        }
+      },
+      "properties": {
+        "tideLocationRef": "/resources/locations/e569f23f-a5f4-4f27-a240-1a605a302d5b",
+        "provenance": {
+          "reviewStatus": "imported",
+          "warning": "Machine-generated Voronoi-style boundary; review and edit before operational use.",
+          "sources": [
+            {
+              "provider": "AJRM Marine Location Editor area generator",
+              "sourceId": "generated-tidal-area:e569f23f-a5f4-4f27-a240-1a605a302d5b",
+              "url": "https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "ff797c71-0cdc-4962-96e2-c86041543a8e",
+      "name": "Portpatrick (Admiralty API) tidal area",
+      "description": "Machine-generated non-overlapping first-review tidal area. Adjust its polygon in Location Editor to match local tidal geography.",
+      "types": [
+        "tidalRegion"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "generated-tidal-area:8acdbf5f-642a-4ca0-acb5-fe148293a062",
+          "editorShape": "Polygon"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                -5.053232,
+                54.580507
+              ],
+              [
+                -4.634733,
+                54.580507
+              ],
+              [
+                -4.634733,
+                54.980243
+              ],
+              [
+                -5.347248,
+                55.119493
+              ],
+              [
+                -5.410223,
+                55.119493
+              ],
+              [
+                -5.458333,
+                55.106662
+              ],
+              [
+                -5.458333,
+                54.83686
+              ],
+              [
+                -5.070276,
+                54.58406
+              ],
+              [
+                -5.053232,
+                54.580507
+              ]
+            ]
+          ]
+        }
+      },
+      "properties": {
+        "tideLocationRef": "/resources/locations/8acdbf5f-642a-4ca0-acb5-fe148293a062",
+        "provenance": {
+          "reviewStatus": "imported",
+          "warning": "Machine-generated Voronoi-style boundary; review and edit before operational use.",
+          "sources": [
+            {
+              "provider": "AJRM Marine Location Editor area generator",
+              "sourceId": "generated-tidal-area:8acdbf5f-642a-4ca0-acb5-fe148293a062",
+              "url": "https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "524c3d2a-c472-4ef9-874b-e360839d6991",
+      "name": "Girvan (Admiralty API) tidal area",
+      "description": "Machine-generated non-overlapping first-review tidal area. Adjust its polygon in Location Editor to match local tidal geography.",
+      "types": [
+        "tidalRegion"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "generated-tidal-area:81a974dc-8606-4385-8826-36c25028b100",
+          "editorShape": "Polygon"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                -4.636084,
+                54.980507
+              ],
+              [
+                -4.546704,
+                54.980507
+              ],
+              [
+                -4.384733,
+                55.070547
+              ],
+              [
+                -4.384733,
+                55.24151
+              ],
+              [
+                -4.969379,
+                55.424326
+              ],
+              [
+                -5.211158,
+                55.363844
+              ],
+              [
+                -5.348599,
+                55.174742
+              ],
+              [
+                -5.348599,
+                55.119757
+              ],
+              [
+                -4.636084,
+                54.980507
+              ]
+            ]
+          ]
+        }
+      },
+      "properties": {
+        "tideLocationRef": "/resources/locations/81a974dc-8606-4385-8826-36c25028b100",
+        "provenance": {
+          "reviewStatus": "imported",
+          "warning": "Machine-generated Voronoi-style boundary; review and edit before operational use.",
+          "sources": [
+            {
+              "provider": "AJRM Marine Location Editor area generator",
+              "sourceId": "generated-tidal-area:81a974dc-8606-4385-8826-36c25028b100",
+              "url": "https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "690cd280-be09-4f0e-9320-9bd972070b08",
+      "name": "Ayr (Admiralty API) tidal area",
+      "description": "Machine-generated non-overlapping first-review tidal area. Adjust its polygon in Location Editor to match local tidal geography.",
+      "types": [
+        "tidalRegion"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "generated-tidal-area:a3607c70-bfb8-4792-8b0e-3ecffd2f1826",
+          "editorShape": "Polygon"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                -4.242944,
+                55.197173
+              ],
+              [
+                -4.168067,
+                55.197173
+              ],
+              [
+                -4.168067,
+                55.567568
+              ],
+              [
+                -4.175213,
+                55.569802
+              ],
+              [
+                -4.929952,
+                55.475402
+              ],
+              [
+                -4.969379,
+                55.424326
+              ],
+              [
+                -4.242944,
+                55.197173
+              ]
+            ]
+          ]
+        }
+      },
+      "properties": {
+        "tideLocationRef": "/resources/locations/a3607c70-bfb8-4792-8b0e-3ecffd2f1826",
+        "provenance": {
+          "reviewStatus": "imported",
+          "warning": "Machine-generated Voronoi-style boundary; review and edit before operational use.",
+          "sources": [
+            {
+              "provider": "AJRM Marine Location Editor area generator",
+              "sourceId": "generated-tidal-area:a3607c70-bfb8-4792-8b0e-3ecffd2f1826",
+              "url": "https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "1b42de88-14aa-4480-8130-7c915b8c2c46",
+      "name": "Troon (Admiralty API) tidal area",
+      "description": "Machine-generated non-overlapping first-review tidal area. Adjust its polygon in Location Editor to match local tidal geography.",
+      "types": [
+        "tidalRegion"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "generated-tidal-area:6795d6f1-940e-424f-a37e-87c111dc010c",
+          "editorShape": "Polygon"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                -4.2014,
+                55.566527
+              ],
+              [
+                -4.2014,
+                55.581175
+              ],
+              [
+                -4.284825,
+                55.617407
+              ],
+              [
+                -4.807429,
+                55.562934
+              ],
+              [
+                -4.922903,
+                55.50516
+              ],
+              [
+                -4.929952,
+                55.475402
+              ],
+              [
+                -4.2014,
+                55.566527
+              ]
+            ]
+          ]
+        }
+      },
+      "properties": {
+        "tideLocationRef": "/resources/locations/6795d6f1-940e-424f-a37e-87c111dc010c",
+        "provenance": {
+          "reviewStatus": "imported",
+          "warning": "Machine-generated Voronoi-style boundary; review and edit before operational use.",
+          "sources": [
+            {
+              "provider": "AJRM Marine Location Editor area generator",
+              "sourceId": "generated-tidal-area:6795d6f1-940e-424f-a37e-87c111dc010c",
+              "url": "https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "f2bc21e2-d0fd-4b12-a42f-bb0fe8a7b3f5",
+      "name": "Irvine (Admiralty API) tidal area",
+      "description": "Machine-generated non-overlapping first-review tidal area. Adjust its polygon in Location Editor to match local tidal geography.",
+      "types": [
+        "tidalRegion"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "generated-tidal-area:7a6e5154-5e6d-487e-9f89-4cabc5a1f60a",
+          "editorShape": "Polygon"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                -4.591201,
+                55.783465
+              ],
+              [
+                -4.606775,
+                55.782538
+              ],
+              [
+                -4.807429,
+                55.562934
+              ],
+              [
+                -4.284825,
+                55.617407
+              ],
+              [
+                -4.591201,
+                55.783465
+              ]
+            ]
+          ]
+        }
+      },
+      "properties": {
+        "tideLocationRef": "/resources/locations/7a6e5154-5e6d-487e-9f89-4cabc5a1f60a",
+        "provenance": {
+          "reviewStatus": "imported",
+          "warning": "Machine-generated Voronoi-style boundary; review and edit before operational use.",
+          "sources": [
+            {
+              "provider": "AJRM Marine Location Editor area generator",
+              "sourceId": "generated-tidal-area:7a6e5154-5e6d-487e-9f89-4cabc5a1f60a",
+              "url": "https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "1feec752-3da6-44de-bdb5-074f78d28532",
+      "name": "Ardrossan (Admiralty API) tidal area",
+      "description": "Machine-generated non-overlapping first-review tidal area. Adjust its polygon in Location Editor to match local tidal geography.",
+      "types": [
+        "tidalRegion"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "generated-tidal-area:035ec744-8e5d-4c47-acea-22ffc3263371",
+          "editorShape": "Polygon"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                -4.922903,
+                55.50516
+              ],
+              [
+                -4.807429,
+                55.562934
+              ],
+              [
+                -4.606775,
+                55.782538
+              ],
+              [
+                -4.775607,
+                55.790874
+              ],
+              [
+                -5.021818,
+                55.701053
+              ],
+              [
+                -4.922903,
+                55.50516
+              ]
+            ]
+          ]
+        }
+      },
+      "properties": {
+        "tideLocationRef": "/resources/locations/035ec744-8e5d-4c47-acea-22ffc3263371",
+        "provenance": {
+          "reviewStatus": "imported",
+          "warning": "Machine-generated Voronoi-style boundary; review and edit before operational use.",
+          "sources": [
+            {
+              "provider": "AJRM Marine Location Editor area generator",
+              "sourceId": "generated-tidal-area:035ec744-8e5d-4c47-acea-22ffc3263371",
+              "url": "https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "855338bb-b6ee-4f6c-9f79-102c7fb39709",
+      "name": "Rothesay (Isle of Bute) (Admiralty API) tidal area",
+      "description": "Machine-generated non-overlapping first-review tidal area. Adjust its polygon in Location Editor to match local tidal geography.",
+      "types": [
+        "tidalRegion"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "generated-tidal-area:be827e89-1128-42c3-9e1e-e89018d2d550",
+          "editorShape": "Polygon"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                -5.439603,
+                55.844012
+              ],
+              [
+                -5.358634,
+                55.73616
+              ],
+              [
+                -5.021818,
+                55.701053
+              ],
+              [
+                -4.775607,
+                55.790874
+              ],
+              [
+                -5.169713,
+                56.09016
+              ],
+              [
+                -5.439603,
+                55.844012
+              ]
+            ]
+          ]
+        }
+      },
+      "properties": {
+        "tideLocationRef": "/resources/locations/be827e89-1128-42c3-9e1e-e89018d2d550",
+        "provenance": {
+          "reviewStatus": "imported",
+          "warning": "Machine-generated Voronoi-style boundary; review and edit before operational use.",
+          "sources": [
+            {
+              "provider": "AJRM Marine Location Editor area generator",
+              "sourceId": "generated-tidal-area:be827e89-1128-42c3-9e1e-e89018d2d550",
+              "url": "https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "229f475b-a09d-4bbd-a091-5fa9048b35c1",
+      "name": "Greenock (Admiralty API) tidal area",
+      "description": "Machine-generated non-overlapping first-review tidal area. Adjust its polygon in Location Editor to match local tidal geography.",
+      "types": [
+        "tidalRegion"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "generated-tidal-area:29910eb5-6c47-4796-8af7-592742737562",
+          "editorShape": "Polygon"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                -4.312319,
+                56.219493
+              ],
+              [
+                -5.023418,
+                56.219493
+              ],
+              [
+                -5.167912,
+                56.096017
+              ],
+              [
+                -5.169713,
+                56.09016
+              ],
+              [
+                -4.775607,
+                55.790874
+              ],
+              [
+                -4.606775,
+                55.782538
+              ],
+              [
+                -4.591201,
+                55.783465
+              ],
+              [
+                -4.312319,
+                56.219493
+              ]
+            ]
+          ]
+        }
+      },
+      "properties": {
+        "tideLocationRef": "/resources/locations/29910eb5-6c47-4796-8af7-592742737562",
+        "provenance": {
+          "reviewStatus": "imported",
+          "warning": "Machine-generated Voronoi-style boundary; review and edit before operational use.",
+          "sources": [
+            {
+              "provider": "AJRM Marine Location Editor area generator",
+              "sourceId": "generated-tidal-area:29910eb5-6c47-4796-8af7-592742737562",
+              "url": "https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "73a91f56-ed18-4584-8cb6-fce2568d76a8",
+      "name": "Glasgow (Admiralty API) tidal area",
+      "description": "Machine-generated non-overlapping first-review tidal area. Adjust its polygon in Location Editor to match local tidal geography.",
+      "types": [
+        "tidalRegion"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "generated-tidal-area:5e7b1024-0046-4e98-ae78-246d7ba82188",
+          "editorShape": "Polygon"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                -4.19986,
+                55.580507
+              ],
+              [
+                -3.784733,
+                55.580507
+              ],
+              [
+                -3.784733,
+                56.119493
+              ],
+              [
+                -4.376279,
+                56.119493
+              ],
+              [
+                -4.591201,
+                55.783465
+              ],
+              [
+                -4.284825,
+                55.617407
+              ],
+              [
+                -4.19986,
+                55.580507
+              ]
+            ]
+          ]
+        }
+      },
+      "properties": {
+        "tideLocationRef": "/resources/locations/5e7b1024-0046-4e98-ae78-246d7ba82188",
+        "provenance": {
+          "reviewStatus": "imported",
+          "warning": "Machine-generated Voronoi-style boundary; review and edit before operational use.",
+          "sources": [
+            {
+              "provider": "AJRM Marine Location Editor area generator",
+              "sourceId": "generated-tidal-area:5e7b1024-0046-4e98-ae78-246d7ba82188",
+              "url": "https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "a8a26ba2-2cac-4b9e-aa8b-0fc70ddc61b1",
+      "name": "Brodick (Isle of Arran) (Admiralty API) tidal area",
+      "description": "Machine-generated non-overlapping first-review tidal area. Adjust its polygon in Location Editor to match local tidal geography.",
+      "types": [
+        "tidalRegion"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "generated-tidal-area:05c0964f-dccf-4310-af6d-399786441461",
+          "editorShape": "Polygon"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                -5.358634,
+                55.73616
+              ],
+              [
+                -5.449186,
+                55.572249
+              ],
+              [
+                -5.211158,
+                55.363844
+              ],
+              [
+                -4.969379,
+                55.424326
+              ],
+              [
+                -4.929952,
+                55.475402
+              ],
+              [
+                -4.922903,
+                55.50516
+              ],
+              [
+                -5.021818,
+                55.701053
+              ],
+              [
+                -5.358634,
+                55.73616
+              ]
+            ]
+          ]
+        }
+      },
+      "properties": {
+        "tideLocationRef": "/resources/locations/05c0964f-dccf-4310-af6d-399786441461",
+        "provenance": {
+          "reviewStatus": "imported",
+          "warning": "Machine-generated Voronoi-style boundary; review and edit before operational use.",
+          "sources": [
+            {
+              "provider": "AJRM Marine Location Editor area generator",
+              "sourceId": "generated-tidal-area:05c0964f-dccf-4310-af6d-399786441461",
+              "url": "https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "68de0f9d-1c5f-44ed-b00a-54c69fa44da0",
+      "name": "Campbeltown (Admiralty API) tidal area",
+      "description": "Machine-generated non-overlapping first-review tidal area. Adjust its polygon in Location Editor to match local tidal geography.",
+      "types": [
+        "tidalRegion"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "generated-tidal-area:dcb3eba0-5097-4ea8-bba0-936969a5b567",
+          "editorShape": "Polygon"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                -5.589964,
+                55.147173
+              ],
+              [
+                -5.368637,
+                55.147173
+              ],
+              [
+                -5.211158,
+                55.363844
+              ],
+              [
+                -5.449186,
+                55.572249
+              ],
+              [
+                -5.645394,
+                55.549313
+              ],
+              [
+                -5.702964,
+                55.192603
+              ],
+              [
+                -5.589964,
+                55.147173
+              ]
+            ]
+          ]
+        }
+      },
+      "properties": {
+        "tideLocationRef": "/resources/locations/dcb3eba0-5097-4ea8-bba0-936969a5b567",
+        "provenance": {
+          "reviewStatus": "imported",
+          "warning": "Machine-generated Voronoi-style boundary; review and edit before operational use.",
+          "sources": [
+            {
+              "provider": "AJRM Marine Location Editor area generator",
+              "sourceId": "generated-tidal-area:dcb3eba0-5097-4ea8-bba0-936969a5b567",
+              "url": "https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "94aca3cc-f145-4e46-99b5-c7b7d19bae36",
+      "name": "Port Ellen (Islay) (Admiralty API) tidal area",
+      "description": "Machine-generated non-overlapping first-review tidal area. Adjust its polygon in Location Editor to match local tidal geography.",
+      "types": [
+        "tidalRegion"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "generated-tidal-area:f9532193-12f6-4734-a1e8-f0368882321d",
+          "editorShape": "Polygon"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                -6.159536,
+                55.742584
+              ],
+              [
+                -6.165972,
+                55.743203
+              ],
+              [
+                -6.326331,
+                55.675462
+              ],
+              [
+                -5.929598,
+                55.547363
+              ],
+              [
+                -5.910541,
+                55.560157
+              ],
+              [
+                -5.951868,
+                55.691453
+              ],
+              [
+                -6.061368,
+                55.7314
+              ],
+              [
+                -6.159536,
+                55.742584
+              ]
+            ]
+          ]
+        }
+      },
+      "properties": {
+        "tideLocationRef": "/resources/locations/f9532193-12f6-4734-a1e8-f0368882321d",
+        "provenance": {
+          "reviewStatus": "imported",
+          "warning": "Machine-generated Voronoi-style boundary; review and edit before operational use.",
+          "sources": [
+            {
+              "provider": "AJRM Marine Location Editor area generator",
+              "sourceId": "generated-tidal-area:f9532193-12f6-4734-a1e8-f0368882321d",
+              "url": "https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "385d1a86-6b90-4fa5-8fe0-2ae2a45eb5b6",
+      "name": "Craighouse (Jura) (Admiralty API) tidal area",
+      "description": "Machine-generated non-overlapping first-review tidal area. Adjust its polygon in Location Editor to match local tidal geography.",
+      "types": [
+        "tidalRegion"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "generated-tidal-area:9b95ee38-19ca-49e8-abb8-b63c4041bcaf",
+          "editorShape": "Polygon"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                -5.798954,
+                55.770305
+              ],
+              [
+                -6.020306,
+                55.864079
+              ],
+              [
+                -6.061368,
+                55.7314
+              ],
+              [
+                -5.951868,
+                55.691453
+              ],
+              [
+                -5.798954,
+                55.770305
+              ]
+            ]
+          ]
+        }
+      },
+      "properties": {
+        "tideLocationRef": "/resources/locations/9b95ee38-19ca-49e8-abb8-b63c4041bcaf",
+        "provenance": {
+          "reviewStatus": "imported",
+          "warning": "Machine-generated Voronoi-style boundary; review and edit before operational use.",
+          "sources": [
+            {
+              "provider": "AJRM Marine Location Editor area generator",
+              "sourceId": "generated-tidal-area:9b95ee38-19ca-49e8-abb8-b63c4041bcaf",
+              "url": "https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "fce8d0a9-9264-4aae-8a6a-42f707c2e755",
+      "name": "Port Askaig (Islay) (Admiralty API) tidal area",
+      "description": "Machine-generated non-overlapping first-review tidal area. Adjust its polygon in Location Editor to match local tidal geography.",
+      "types": [
+        "tidalRegion"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "generated-tidal-area:2a4c4964-a33d-4bf9-92ae-52f7a71860b8",
+          "editorShape": "Polygon"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                -6.020306,
+                55.864079
+              ],
+              [
+                -6.010439,
+                55.899158
+              ],
+              [
+                -6.090389,
+                55.893908
+              ],
+              [
+                -6.159536,
+                55.742584
+              ],
+              [
+                -6.061368,
+                55.7314
+              ],
+              [
+                -6.020306,
+                55.864079
+              ]
+            ]
+          ]
+        }
+      },
+      "properties": {
+        "tideLocationRef": "/resources/locations/2a4c4964-a33d-4bf9-92ae-52f7a71860b8",
+        "provenance": {
+          "reviewStatus": "imported",
+          "warning": "Machine-generated Voronoi-style boundary; review and edit before operational use.",
+          "sources": [
+            {
+              "provider": "AJRM Marine Location Editor area generator",
+              "sourceId": "generated-tidal-area:2a4c4964-a33d-4bf9-92ae-52f7a71860b8",
+              "url": "https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "539ffa00-8c4f-465a-a4eb-d1c8d452b2df",
+      "name": "Carsaig Bay / Crinan (Admiralty API) tidal area",
+      "description": "Machine-generated non-overlapping first-review tidal area. Adjust its polygon in Location Editor to match local tidal geography.",
+      "types": [
+        "tidalRegion"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "generated-tidal-area:0fe40e8a-7ab4-4ef8-88f3-0ac3ba191e15",
+          "editorShape": "Polygon"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                -5.167912,
+                56.096017
+              ],
+              [
+                -5.602387,
+                56.138426
+              ],
+              [
+                -5.871779,
+                55.974365
+              ],
+              [
+                -5.871492,
+                55.973911
+              ],
+              [
+                -5.631916,
+                55.855191
+              ],
+              [
+                -5.439603,
+                55.844012
+              ],
+              [
+                -5.169713,
+                56.09016
+              ],
+              [
+                -5.167912,
+                56.096017
+              ]
+            ]
+          ]
+        }
+      },
+      "properties": {
+        "tideLocationRef": "/resources/locations/0fe40e8a-7ab4-4ef8-88f3-0ac3ba191e15",
+        "provenance": {
+          "reviewStatus": "imported",
+          "warning": "Machine-generated Voronoi-style boundary; review and edit before operational use.",
+          "sources": [
+            {
+              "provider": "AJRM Marine Location Editor area generator",
+              "sourceId": "generated-tidal-area:0fe40e8a-7ab4-4ef8-88f3-0ac3ba191e15",
+              "url": "https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "534d5498-1110-4e56-9fb1-9f51adba0a06",
+      "name": "Dunstaffnage (Admiralty API) tidal area",
+      "description": "Machine-generated non-overlapping first-review tidal area. Adjust its polygon in Location Editor to match local tidal geography.",
+      "types": [
+        "tidalRegion"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "generated-tidal-area:db2501af-50b5-47ae-bc66-476e6a20d88d",
+          "editorShape": "Polygon"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                -4.9514,
+                56.26292
+              ],
+              [
+                -4.9514,
+                56.569892
+              ],
+              [
+                -5.440631,
+                56.691003
+              ],
+              [
+                -5.546343,
+                56.55878
+              ],
+              [
+                -5.567978,
+                56.469253
+              ],
+              [
+                -4.9514,
+                56.26292
+              ]
+            ]
+          ]
+        }
+      },
+      "properties": {
+        "tideLocationRef": "/resources/locations/db2501af-50b5-47ae-bc66-476e6a20d88d",
+        "provenance": {
+          "reviewStatus": "imported",
+          "warning": "Machine-generated Voronoi-style boundary; review and edit before operational use.",
+          "sources": [
+            {
+              "provider": "AJRM Marine Location Editor area generator",
+              "sourceId": "generated-tidal-area:db2501af-50b5-47ae-bc66-476e6a20d88d",
+              "url": "https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "0be2823b-854f-4602-a04b-b750afd44e80",
+      "name": "Lochaline (Admiralty API) tidal area",
+      "description": "Machine-generated non-overlapping first-review tidal area. Adjust its polygon in Location Editor to match local tidal geography.",
+      "types": [
+        "tidalRegion"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "generated-tidal-area:0b1155f1-da85-4463-8afd-ffe3f6259ccb",
+          "editorShape": "Polygon"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                -5.738085,
+                56.769432
+              ],
+              [
+                -5.881015,
+                56.615132
+              ],
+              [
+                -6.069655,
+                56.402777
+              ],
+              [
+                -5.546343,
+                56.55878
+              ],
+              [
+                -5.440631,
+                56.691003
+              ],
+              [
+                -5.574229,
+                56.776752
+              ],
+              [
+                -5.738085,
+                56.769432
+              ]
+            ]
+          ]
+        }
+      },
+      "properties": {
+        "tideLocationRef": "/resources/locations/0b1155f1-da85-4463-8afd-ffe3f6259ccb",
+        "provenance": {
+          "reviewStatus": "imported",
+          "warning": "Machine-generated Voronoi-style boundary; review and edit before operational use.",
+          "sources": [
+            {
+              "provider": "AJRM Marine Location Editor area generator",
+              "sourceId": "generated-tidal-area:0b1155f1-da85-4463-8afd-ffe3f6259ccb",
+              "url": "https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "b451041f-ce20-46aa-ac77-bbaabc05362c",
+      "name": "Tobermory (Isle of Mull) (Admiralty API) tidal area",
+      "description": "Machine-generated non-overlapping first-review tidal area. Adjust its polygon in Location Editor to match local tidal geography.",
+      "types": [
+        "tidalRegion"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "generated-tidal-area:ac1c6581-7c04-4d70-b75c-2877ca47aff9",
+          "editorShape": "Polygon"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                -6.194787,
+                56.347173
+              ],
+              [
+                -6.141822,
+                56.347173
+              ],
+              [
+                -6.069655,
+                56.402777
+              ],
+              [
+                -5.881015,
+                56.615132
+              ],
+              [
+                -6.291666,
+                56.622406
+              ],
+              [
+                -6.291666,
+                56.35383
+              ],
+              [
+                -6.194787,
+                56.347173
+              ]
+            ]
+          ]
+        }
+      },
+      "properties": {
+        "tideLocationRef": "/resources/locations/ac1c6581-7c04-4d70-b75c-2877ca47aff9",
+        "provenance": {
+          "reviewStatus": "imported",
+          "warning": "Machine-generated Voronoi-style boundary; review and edit before operational use.",
+          "sources": [
+            {
+              "provider": "AJRM Marine Location Editor area generator",
+              "sourceId": "generated-tidal-area:ac1c6581-7c04-4d70-b75c-2877ca47aff9",
+              "url": "https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "dd4c8dc1-08be-4947-97a9-a4f577f91c7f",
+      "name": "Coll (Arinagour) (Admiralty API) tidal area",
+      "description": "Machine-generated non-overlapping first-review tidal area. Adjust its polygon in Location Editor to match local tidal geography.",
+      "types": [
+        "tidalRegion"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "generated-tidal-area:d25f0fbe-c2b3-4a5b-a65e-a00e7db70487",
+          "editorShape": "Polygon"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                -6.410591,
+                56.347173
+              ],
+              [
+                -6.327096,
+                56.347173
+              ],
+              [
+                -6.291666,
+                56.35383
+              ],
+              [
+                -6.291666,
+                56.622406
+              ],
+              [
+                -6.297903,
+                56.872843
+              ],
+              [
+                -6.373978,
+                56.886159
+              ],
+              [
+                -6.885397,
+                56.886159
+              ],
+              [
+                -6.89129,
+                56.881913
+              ],
+              [
+                -6.952007,
+                56.826854
+              ],
+              [
+                -6.410591,
+                56.347173
+              ]
+            ]
+          ]
+        }
+      },
+      "properties": {
+        "tideLocationRef": "/resources/locations/d25f0fbe-c2b3-4a5b-a65e-a00e7db70487",
+        "provenance": {
+          "reviewStatus": "imported",
+          "warning": "Machine-generated Voronoi-style boundary; review and edit before operational use.",
+          "sources": [
+            {
+              "provider": "AJRM Marine Location Editor area generator",
+              "sourceId": "generated-tidal-area:d25f0fbe-c2b3-4a5b-a65e-a00e7db70487",
+              "url": "https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "fa244d75-fc1f-43de-a210-0c23d4d3613a",
+      "name": "Tiree (Scarinish) (Admiralty API) tidal area",
+      "description": "Machine-generated non-overlapping first-review tidal area. Adjust its polygon in Location Editor to match local tidal geography.",
+      "types": [
+        "tidalRegion"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "generated-tidal-area:6284abd7-b3f1-4abc-992d-3ae4178dea94",
+          "editorShape": "Polygon"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                -7.281933,
+                56.247173
+              ],
+              [
+                -6.599646,
+                56.247173
+              ],
+              [
+                -6.395981,
+                56.334228
+              ],
+              [
+                -6.906075,
+                56.786159
+              ],
+              [
+                -7.034535,
+                56.786159
+              ],
+              [
+                -7.120704,
+                56.74367
+              ],
+              [
+                -7.281933,
+                56.582768
+              ],
+              [
+                -7.281933,
+                56.247173
+              ]
+            ]
+          ]
+        }
+      },
+      "properties": {
+        "tideLocationRef": "/resources/locations/6284abd7-b3f1-4abc-992d-3ae4178dea94",
+        "provenance": {
+          "reviewStatus": "imported",
+          "warning": "Machine-generated Voronoi-style boundary; review and edit before operational use.",
+          "sources": [
+            {
+              "provider": "AJRM Marine Location Editor area generator",
+              "sourceId": "generated-tidal-area:6284abd7-b3f1-4abc-992d-3ae4178dea94",
+              "url": "https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "f5bca4c9-939e-44d4-922d-c4a55424638b",
+      "name": "Corpach / Fort William (Admiralty API) tidal area",
+      "description": "Machine-generated non-overlapping first-review tidal area. Adjust its polygon in Location Editor to match local tidal geography.",
+      "types": [
+        "tidalRegion"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "generated-tidal-area:bfaf0c0d-5d8a-461d-b6f0-13d33815131b",
+          "editorShape": "Polygon"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                -4.994277,
+                56.580507
+              ],
+              [
+                -4.634733,
+                56.580507
+              ],
+              [
+                -4.634733,
+                57.119493
+              ],
+              [
+                -5.294654,
+                57.119493
+              ],
+              [
+                -5.365285,
+                57.088913
+              ],
+              [
+                -5.574229,
+                56.776752
+              ],
+              [
+                -5.440631,
+                56.691003
+              ],
+              [
+                -4.994277,
+                56.580507
+              ]
+            ]
+          ]
+        }
+      },
+      "properties": {
+        "tideLocationRef": "/resources/locations/bfaf0c0d-5d8a-461d-b6f0-13d33815131b",
+        "provenance": {
+          "reviewStatus": "imported",
+          "warning": "Machine-generated Voronoi-style boundary; review and edit before operational use.",
+          "sources": [
+            {
+              "provider": "AJRM Marine Location Editor area generator",
+              "sourceId": "generated-tidal-area:bfaf0c0d-5d8a-461d-b6f0-13d33815131b",
+              "url": "https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "feac5e79-79cd-441d-b290-560b3f17e475",
+      "name": "Mallaig (Admiralty API) tidal area",
+      "description": "Machine-generated non-overlapping first-review tidal area. Adjust its polygon in Location Editor to match local tidal geography.",
+      "types": [
+        "tidalRegion"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "generated-tidal-area:e13058fd-e1b6-476f-b2cb-e1b6852c4fbb",
+          "editorShape": "Polygon"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                -5.918096,
+                57.160091
+              ],
+              [
+                -6.283487,
+                56.874111
+              ],
+              [
+                -5.738085,
+                56.769432
+              ],
+              [
+                -5.574229,
+                56.776752
+              ],
+              [
+                -5.365285,
+                57.088913
+              ],
+              [
+                -5.918096,
+                57.160091
+              ]
+            ]
+          ]
+        }
+      },
+      "properties": {
+        "tideLocationRef": "/resources/locations/e13058fd-e1b6-476f-b2cb-e1b6852c4fbb",
+        "provenance": {
+          "reviewStatus": "imported",
+          "warning": "Machine-generated Voronoi-style boundary; review and edit before operational use.",
+          "sources": [
+            {
+              "provider": "AJRM Marine Location Editor area generator",
+              "sourceId": "generated-tidal-area:e13058fd-e1b6-476f-b2cb-e1b6852c4fbb",
+              "url": "https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "9587b7f4-92ad-41a6-8ed7-84d50c36c2b9",
+      "name": "Kyle of Lochalsh (Admiralty API) tidal area",
+      "description": "Machine-generated non-overlapping first-review tidal area. Adjust its polygon in Location Editor to match local tidal geography.",
+      "types": [
+        "tidalRegion"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "generated-tidal-area:22a0c155-39f1-49ca-b517-ce8637e6abd0",
+          "editorShape": "Polygon"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                -5.365285,
+                57.088913
+              ],
+              [
+                -5.236028,
+                57.144877
+              ],
+              [
+                -5.908448,
+                57.393638
+              ],
+              [
+                -6.008489,
+                57.268509
+              ],
+              [
+                -5.918096,
+                57.160091
+              ],
+              [
+                -5.365285,
+                57.088913
+              ]
+            ]
+          ]
+        }
+      },
+      "properties": {
+        "tideLocationRef": "/resources/locations/22a0c155-39f1-49ca-b517-ce8637e6abd0",
+        "provenance": {
+          "reviewStatus": "imported",
+          "warning": "Machine-generated Voronoi-style boundary; review and edit before operational use.",
+          "sources": [
+            {
+              "provider": "AJRM Marine Location Editor area generator",
+              "sourceId": "generated-tidal-area:22a0c155-39f1-49ca-b517-ce8637e6abd0",
+              "url": "https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "753d4eb6-586f-421d-88c5-ddf416f6ae86",
+      "name": "Portree (Skye) (Admiralty API) tidal area",
+      "description": "Machine-generated non-overlapping first-review tidal area. Adjust its polygon in Location Editor to match local tidal geography.",
+      "types": [
+        "tidalRegion"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "generated-tidal-area:242f35ec-cbba-4262-a9d6-acdb661d6dfa",
+          "editorShape": "Polygon"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                -5.908448,
+                57.393638
+              ],
+              [
+                -5.89775,
+                57.422351
+              ],
+              [
+                -5.963016,
+                57.447425
+              ],
+              [
+                -6.307942,
+                57.383063
+              ],
+              [
+                -6.21434,
+                57.27713
+              ],
+              [
+                -6.008489,
+                57.268509
+              ],
+              [
+                -5.908448,
+                57.393638
+              ]
+            ]
+          ]
+        }
+      },
+      "properties": {
+        "tideLocationRef": "/resources/locations/242f35ec-cbba-4262-a9d6-acdb661d6dfa",
+        "provenance": {
+          "reviewStatus": "imported",
+          "warning": "Machine-generated Voronoi-style boundary; review and edit before operational use.",
+          "sources": [
+            {
+              "provider": "AJRM Marine Location Editor area generator",
+              "sourceId": "generated-tidal-area:242f35ec-cbba-4262-a9d6-acdb661d6dfa",
+              "url": "https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "163cdaed-2940-42cb-aacd-b3c846347b87",
+      "name": "Gairloch (Admiralty API) tidal area",
+      "description": "Machine-generated non-overlapping first-review tidal area. Adjust its polygon in Location Editor to match local tidal geography.",
+      "types": [
+        "tidalRegion"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "generated-tidal-area:8efd6901-e6b9-4886-84e8-62b45be6aaa3",
+          "editorShape": "Polygon"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                -5.320278,
+                57.720653
+              ],
+              [
+                -5.356845,
+                57.753916
+              ],
+              [
+                -6.115682,
+                57.839692
+              ],
+              [
+                -6.119268,
+                57.836702
+              ],
+              [
+                -5.919474,
+                57.709438
+              ],
+              [
+                -5.320278,
+                57.720653
+              ]
+            ]
+          ]
+        }
+      },
+      "properties": {
+        "tideLocationRef": "/resources/locations/8efd6901-e6b9-4886-84e8-62b45be6aaa3",
+        "provenance": {
+          "reviewStatus": "imported",
+          "warning": "Machine-generated Voronoi-style boundary; review and edit before operational use.",
+          "sources": [
+            {
+              "provider": "AJRM Marine Location Editor area generator",
+              "sourceId": "generated-tidal-area:8efd6901-e6b9-4886-84e8-62b45be6aaa3",
+              "url": "https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "662ea888-2ca4-4a8d-a542-7d83dd0f0d74",
+      "name": "Lochinver (Admiralty API) tidal area",
+      "description": "Machine-generated non-overlapping first-review tidal area. Adjust its polygon in Location Editor to match local tidal geography.",
+      "types": [
+        "tidalRegion"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "generated-tidal-area:530764db-1055-439e-87b9-7da04fff02af",
+          "editorShape": "Polygon"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                -5.503178,
+                58.316268
+              ],
+              [
+                -5.781933,
+                58.396735
+              ],
+              [
+                -5.781933,
+                58.183294
+              ],
+              [
+                -5.25809,
+                58.056389
+              ],
+              [
+                -5.278151,
+                58.212301
+              ],
+              [
+                -5.503178,
+                58.316268
+              ]
+            ]
+          ]
+        }
+      },
+      "properties": {
+        "tideLocationRef": "/resources/locations/530764db-1055-439e-87b9-7da04fff02af",
+        "provenance": {
+          "reviewStatus": "imported",
+          "warning": "Machine-generated Voronoi-style boundary; review and edit before operational use.",
+          "sources": [
+            {
+              "provider": "AJRM Marine Location Editor area generator",
+              "sourceId": "generated-tidal-area:530764db-1055-439e-87b9-7da04fff02af",
+              "url": "https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "b6e8fbc4-4a06-4436-8f4b-fcaf745e44be",
+      "name": "Kinlochbervie (Admiralty API) tidal area",
+      "description": "Machine-generated non-overlapping first-review tidal area. Adjust its polygon in Location Editor to match local tidal geography.",
+      "types": [
+        "tidalRegion"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "generated-tidal-area:97cef556-cef3-4b14-bb50-6108720b9ae5",
+          "editorShape": "Polygon"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                -4.568067,
+                58.355517
+              ],
+              [
+                -4.568067,
+                58.491672
+              ],
+              [
+                -5.192595,
+                58.442211
+              ],
+              [
+                -4.568067,
+                58.355517
+              ]
+            ]
+          ]
+        }
+      },
+      "properties": {
+        "tideLocationRef": "/resources/locations/97cef556-cef3-4b14-bb50-6108720b9ae5",
+        "provenance": {
+          "reviewStatus": "imported",
+          "warning": "Machine-generated Voronoi-style boundary; review and edit before operational use.",
+          "sources": [
+            {
+              "provider": "AJRM Marine Location Editor area generator",
+              "sourceId": "generated-tidal-area:97cef556-cef3-4b14-bb50-6108720b9ae5",
+              "url": "https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "5a0a50bc-d35c-4f0b-ab71-1588a2ab9a87",
+      "name": "Castlebay (Barra) (Admiralty API) tidal area",
+      "description": "Machine-generated non-overlapping first-review tidal area. Adjust its polygon in Location Editor to match local tidal geography.",
+      "types": [
+        "tidalRegion"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "generated-tidal-area:bd222f14-4196-4022-befc-6e5ef51a2416",
+          "editorShape": "Polygon"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                -7.0014,
+                56.802498
+              ],
+              [
+                -7.0014,
+                56.901651
+              ],
+              [
+                -7.428734,
+                56.978257
+              ],
+              [
+                -7.635193,
+                56.885025
+              ],
+              [
+                -7.120704,
+                56.74367
+              ],
+              [
+                -7.0014,
+                56.802498
+              ]
+            ]
+          ]
+        }
+      },
+      "properties": {
+        "tideLocationRef": "/resources/locations/bd222f14-4196-4022-befc-6e5ef51a2416",
+        "provenance": {
+          "reviewStatus": "imported",
+          "warning": "Machine-generated Voronoi-style boundary; review and edit before operational use.",
+          "sources": [
+            {
+              "provider": "AJRM Marine Location Editor area generator",
+              "sourceId": "generated-tidal-area:bd222f14-4196-4022-befc-6e5ef51a2416",
+              "url": "https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "7ebb7014-56bc-43a8-9299-87e2e2eda37a",
+      "name": "Lochmaddy (North Uist) (Admiralty API) tidal area",
+      "description": "Machine-generated non-overlapping first-review tidal area. Adjust its polygon in Location Editor to match local tidal geography.",
+      "types": [
+        "tidalRegion"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "generated-tidal-area:b84bd3ef-afb0-431a-a981-b2551d9dac4d",
+          "editorShape": "Polygon"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                -7.222327,
+                57.831869
+              ],
+              [
+                -7.282029,
+                57.702598
+              ],
+              [
+                -6.972619,
+                57.449519
+              ],
+              [
+                -6.800432,
+                57.684445
+              ],
+              [
+                -6.953719,
+                57.740809
+              ],
+              [
+                -7.222327,
+                57.831869
+              ]
+            ]
+          ]
+        }
+      },
+      "properties": {
+        "tideLocationRef": "/resources/locations/b84bd3ef-afb0-431a-a981-b2551d9dac4d",
+        "provenance": {
+          "reviewStatus": "imported",
+          "warning": "Machine-generated Voronoi-style boundary; review and edit before operational use.",
+          "sources": [
+            {
+              "provider": "AJRM Marine Location Editor area generator",
+              "sourceId": "generated-tidal-area:b84bd3ef-afb0-431a-a981-b2551d9dac4d",
+              "url": "https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "814d0850-621d-494d-aec6-1e41d342f2d8",
+      "name": "Tarbert (Harris) (Admiralty API) tidal area",
+      "description": "Machine-generated non-overlapping first-review tidal area. Adjust its polygon in Location Editor to match local tidal geography.",
+      "types": [
+        "tidalRegion"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {
+          "ajrmMarine:sourceRef": "generated-tidal-area:1a1b77d7-a7eb-478f-abd3-ef3841f689cd",
+          "editorShape": "Polygon"
+        },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                -6.811843,
+                57.899118
+              ],
+              [
+                -6.561078,
+                57.889934
+              ],
+              [
+                -6.741486,
+                58.043055
+              ],
+              [
+                -6.811843,
+                57.899118
+              ]
+            ]
+          ]
+        }
+      },
+      "properties": {
+        "tideLocationRef": "/resources/locations/1a1b77d7-a7eb-478f-abd3-ef3841f689cd",
+        "provenance": {
+          "reviewStatus": "imported",
+          "warning": "Machine-generated Voronoi-style boundary; review and edit before operational use.",
+          "sources": [
+            {
+              "provider": "AJRM Marine Location Editor area generator",
+              "sourceId": "generated-tidal-area:1a1b77d7-a7eb-478f-abd3-ef3841f689cd",
+              "url": "https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor",
+              "retrievedAt": "2026-08-21T00:00:00.000Z"
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

@@ -26,6 +26,7 @@ function secondaryPort(name, longitude) {
 	const value = predictionPort(name, longitude);
 	value.types = ["tidalSecondaryPort"];
 	value.properties.tide = {
+		predictionSource: "enteredCorrections",
 		parentLocationRef: `${LOCATION_REF_PREFIX}${crypto.randomUUID()}`,
 		secondaryPortCorrections: { contract: "ajrm-secondary-port-corrections-v2" },
 	};

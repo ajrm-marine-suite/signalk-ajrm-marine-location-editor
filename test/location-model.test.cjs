@@ -85,6 +85,38 @@ test("validates complete secondary-port correction tables", () => {
 	}), /HW time correction point 1 offset must be a number between -1440 and 1440/);
 });
 
+test("secondary ports use one explicit entered-data or Admiralty API source", () => {
+	const api = location({
+		types: ["tidalSecondaryPort"],
+		properties: { tide: {
+			predictionSource: "ukhoTidalEvents",
+			providerId: "ukhoTidalEvents",
+			stationId: "0381",
+			stationName: "Port Ellen",
+		} },
+	});
+	assert.equal(api.properties.tide.predictionSource, "ukhoTidalEvents");
+	assert.throws(() => location({
+		types: ["tidalSecondaryPort"],
+		properties: { tide: { predictionSource: "ukhoTidalEvents", providerId: "ukhoTidalEvents" } },
+	}), /station identifier/);
+	assert.throws(() => location({
+		types: ["tidalSecondaryPort"],
+		properties: { tide: {
+			predictionSource: "enteredCorrections",
+			providerId: "ukhoTidalEvents",
+			stationId: "0381",
+			parentLocationRef: `/resources/locations/${crypto.randomUUID()}`,
+			secondaryPortCorrections: {
+				contract: "ajrm-secondary-port-corrections-v4", timeOffsetPeriodMinutes: 720,
+				highWaterTimeOffsets: [{ referenceTimeMinutes: 0, offsetMinutes: 0 }],
+				lowWaterTimeOffsets: [{ referenceTimeMinutes: 0, offsetMinutes: 0 }],
+				heightDifferencesM: { mhws: 0, mhwn: 0, mlwn: 0, mlws: 0 },
+			},
+		} },
+	}), /must not also select an API station/);
+});
+
 test("catalogues retain version metadata and create initial immutable history", () => {
 	const value = location();
 	const catalog = normalizeCatalog({ schema: CATALOG_SCHEMA, schemaVersion: 1, locations: [value] });

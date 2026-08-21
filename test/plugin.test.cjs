@@ -167,7 +167,7 @@ test("the exact incomplete bundled Port Ellen record is corrected on upgrade", a
 test("secondary-port migration enriches an edited matching location without moving it", async (t) => {
 	const directory = await fs.mkdtemp(path.join(os.tmpdir(), "ajrm-secondary-upgrade-"));
 	t.after(() => fs.rm(directory, { recursive: true, force: true }));
-	const id = "0b9ecfef-3260-4f1e-a41f-5f2fdf7dfbec";
+	const id = "15aef1aa-9b9c-4f1e-a41f-5f2fdf7dfbec";
 	const catalog = emptyCatalog();
 	catalog.locations[id] = normalizeLocation({
 		id, revision: 4, createdAt: "2026-08-13T10:00:00.000Z", updatedAt: "2026-08-17T10:00:00.000Z",
@@ -200,6 +200,10 @@ test("secondary-port migration enriches an edited matching location without movi
 	assert.deepEqual(res.body.feature.geometry.coordinates, [-5.63, 56.27]);
 	assert.ok(res.body.types.includes("tidalSecondaryPort"));
 	assert.equal(res.body.properties.tide.secondaryPortCorrections.legacyId, "cuan-sound");
+	const listed = response();
+	await routes.get("GET /locations")({ query: {}, body: {}, params: {} }, listed);
+	const tidalArea = listed.body.locations.find((location) => location.name === "Cuan Sound tidal area");
+	assert.equal(tidalArea.properties.tideLocationRef, `/resources/locations/${id}`);
 	await plugin.stop();
 });
 
@@ -251,7 +255,7 @@ test("lifecycle exposes the spatial service and retracts status on stop", async 
 	const tide = await app.ajrmMarineTides.status({ position: { latitude: 56.27224, longitude: -5.637656 } });
 	assert.equal(tide.contract, "ajrm-marine-tide-resolver-v1");
 	assert.equal(tide.valid, false);
-	assert.equal(tide.selectedPort.name, "Oban tidal prediction port");
+	assert.equal(tide.selectedPort.name, "Cuan Sound");
 	assert.equal(tide.selection.reason, "containingRegionAssignment");
 	await plugin.stop();
 	assert.equal(app.ajrmMarineLocations, undefined);
@@ -270,7 +274,7 @@ test("HTTP tide requests select a port using explicit chart coordinates", async 
 		query: { latitude: "56.27224", longitude: "-5.637656" },
 	});
 	assert.equal(result.statusCode, 200);
-	assert.equal(result.body.selectedPort.name, "Oban tidal prediction port");
+	assert.equal(result.body.selectedPort.name, "Cuan Sound");
 	assert.equal(result.body.selection.reason, "containingRegionAssignment");
 	await plugin.stop();
 });

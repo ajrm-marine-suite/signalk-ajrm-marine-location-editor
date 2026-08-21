@@ -102,3 +102,35 @@ test("resolves an explicitly requested secondary port through its standard paren
 	assert.equal(result.source.secondaryPortCorrections.length, 1);
 	assert.deepEqual(result.referenceLevels, { mhws: 3, mhwn: 2.4, mlwn: 1.6, mlws: 0.7 });
 });
+
+test("resolves an Admiralty-backed secondary port directly without a parent", async (t) => {
+	const directory = await fs.mkdtemp(path.join(os.tmpdir(), "ajrm-tide-resolver-"));
+	t.after(() => fs.rm(directory, { recursive: true, force: true }));
+	const secondary = normalizeLocation({
+		id: crypto.randomUUID(), name: "Port Ellen (Admiralty API)", types: ["tidalSecondaryPort"],
+		feature: { type: "Feature", properties: {}, geometry: { type: "Point", coordinates: [-6.18, 55.63] } },
+		properties: { tide: {
+			predictionSource: "ukhoTidalEvents", providerId: "ukhoTidalEvents",
+			stationId: "0381", stationName: "Port Ellen", datum: "Chart Datum",
+		} },
+	});
+	const resolver = createTideResolver({
+		stateFile: path.join(directory, "selection.json"), listLocations: async () => [secondary],
+		provider: { get: async (selected) => {
+			assert.equal(selected.id, secondary.id);
+			return {
+				providerId: "ukhoTidalEvents", stationId: "0381", fetchedAt: "2026-08-18T01:00:00Z",
+				events: [
+					{ at: "2026-08-18T00:00:00Z", type: "low", heightM: 0.8 },
+					{ at: "2026-08-18T06:00:00Z", type: "high", heightM: 3.2 },
+				],
+			};
+		} },
+		staleAfterHours: 24, expiresAfterHours: 72,
+	});
+	const result = await resolver.resolve({ portId: secondary.id, now: "2026-08-18T03:00:00Z" });
+	assert.equal(result.valid, true);
+	assert.equal(result.selectedPort.id, secondary.id);
+	assert.equal(result.station.id, "0381");
+	assert.deepEqual(result.source.secondaryPortCorrections, []);
+});

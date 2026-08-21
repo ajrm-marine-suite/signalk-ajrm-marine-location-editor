@@ -1,5 +1,16 @@
 # AJRM Marine Location Editor
 
+Version `0.6.31` lets each secondary port use exactly one explicit prediction
+source: entered almanac corrections against a parent standard port, or direct
+Admiralty Tidal API events for a configured station. It also adds 47 verified
+API-backed ports from the requested Scotland/Northern Ireland workbook coverage
+and 100 editable, machine-generated tidal areas—one for every bundled standard
+or secondary port. Their interiors are topology-tested not to overlap; their
+geographic boundaries remain first-review suggestions for local correction.
+Fourteen workbook names were not linked because the supplied IDs identify a
+different API station or return 404; they are retained in the seed audit data
+rather than being silently connected to the wrong tide.
+
 Version `0.6.30` widens the responsive chart-cycle banner so long chart names
 remain readable. Version `0.6.29` makes the basemap-only chart-cycle step actually remove the
 automatic chart and keeps Save Location visibly depressed until saving
@@ -143,13 +154,14 @@ the suite's only location catalogue and stores:
   channels;
 - hierarchical links between tidal regions and prediction ports.
 
-For a `tidalSecondaryPort`, select its immediate parent tidal port and enter
-the almanac's printed HW and LW reference times, their time differences, the
-four height differences and source notes. Do not copy the parent's mean levels:
-they belong to the parent standard-port record. Marine Planning reads fully
-corrected events from Location Editor; it no longer maintains or applies a
-second copy. The parent must be a standard port; the editor and backend reject
-a secondary-port parent. Almanac clock times are stored as explicit UT
+For a `tidalSecondaryPort`, first select its prediction source. **Entered time
+and height differences** requires an immediate parent standard port plus the
+almanac's printed HW/LW reference times, time differences and four height
+differences. **Admiralty Tidal API station** instead requires the verified UKHO
+station identifier and fetches that secondary station directly; it has no
+parent or correction table. The model rejects records that combine both modes.
+Marine Planning reads fully resolved events from Location Editor and never
+maintains a second copy. Almanac clock times are stored as explicit UT
 minute-of-day values and resolved events remain canonical UTC instants.
 
 The calculation follows the structure of the published secondary-port table:
@@ -237,8 +249,13 @@ retains the automatic port and reason so the override remains auditable. A
 missing/deleted pin is reported and does not suppress a valid automatic
 selection.
 
+API high/low-water events and labels its present-height estimate as
 Prediction ports need an explicit provider identifier and station identifier;
-the resolver never guesses either from a name. Version 0.4 supports UKHO Tidal
+the resolver never guesses either from a name. This is particularly important
+for the supplied EasyTide workbook: its numeric IDs did not agree with the live
+UKHO Tidal API catalogue, so v0.6.31 matched names to the authoritative station
+list and stores only confirmed mappings. The resolver supports UKHO Tidal API
+high/low-water events and labels its present-height estimate as
 API high/low-water events and labels its present-height estimate as
 `cosine-between-extremes-v1`. The projection includes the selected station,
 datum, next high and low waters, trend, curve, fetch source, cache mode and
@@ -346,7 +363,7 @@ before a large import or merge.
 
 ```bash
 cd ~/.signalk
-npm install git+https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor.git#v0.6.30 --omit=dev --no-package-lock
+npm install git+https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor.git#v0.6.31 --omit=dev --no-package-lock
 sudo systemctl restart signalk
 ```
 

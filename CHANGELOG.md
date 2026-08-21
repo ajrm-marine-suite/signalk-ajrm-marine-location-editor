@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.6.38 — 2026-08-21
+
+- Restore the canonical identifiers of nine existing tidal locations so the
+  spatial catalogue and Tidal Database retain exact referential integrity.
+
 ## 0.6.37 — 2026-08-21
 
 - Renames the internal bulk-add operation as bundled seeding and removes stale

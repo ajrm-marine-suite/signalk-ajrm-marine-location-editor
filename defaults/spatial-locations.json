@@ -406,7 +406,7 @@
       }
     },
     {
-      "id": "bd73410e-54ac-4f4c-a5ae-8700a6fe3a7a",
+      "id": "57801294-1ad7-4c7d-adc8-d968b9e1547c",
       "name": "Cala Loch Baghasdail",
       "description": "OpenStreetMap/OpenSeaMap records this as a marina.",
       "types": [
@@ -543,7 +543,7 @@
       }
     },
     {
-      "id": "431ca630-05a7-40df-990f-88dee6c4e902",
+      "id": "76032286-71e1-4e42-b1d4-1f97011e8226",
       "name": "Castlebay",
       "description": "OpenStreetMap/OpenSeaMap records this as a marina.",
       "types": [
@@ -642,7 +642,7 @@
       }
     },
     {
-      "id": "d451e2d0-2402-4d9a-98b5-bf5e27722cd3",
+      "id": "28f26d07-cb45-4eec-bbaa-c461ddeae08f",
       "name": "Craighouse moorings",
       "description": "OpenStreetMap/OpenSeaMap records this as a mooring.",
       "types": [
@@ -904,7 +904,7 @@
       }
     },
     {
-      "id": "ca205cec-6a47-497b-aa44-2637b9a6be0d",
+      "id": "6cfbe8d1-5c20-44af-abd8-c0a6e3e925ca",
       "name": "Gairloch Harbour",
       "description": "OpenStreetMap/OpenSeaMap records this as a marina.",
       "types": [
@@ -1903,7 +1903,7 @@
       }
     },
     {
-      "id": "1aba3e08-af55-4ae4-8751-de3da98501d6",
+      "id": "417dd82b-3565-40ef-930b-9eae61e9d2ef",
       "name": "Lochmaddy",
       "description": "OpenStreetMap/OpenSeaMap records this as a marina.",
       "types": [
@@ -2536,7 +2536,7 @@
       }
     },
     {
-      "id": "d8398a12-ada8-4c05-b2f6-30082a9b5743",
+      "id": "36916d83-6d21-4e4a-8fb9-177e2a5d07e5",
       "name": "Portree Harbour",
       "description": "OpenStreetMap/OpenSeaMap records this as a marina.",
       "types": [
@@ -2672,7 +2672,7 @@
       }
     },
     {
-      "id": "b3012c64-b3e1-4ecd-996a-100650300093",
+      "id": "e86661bf-475b-4855-9fc2-a072af016ddf",
       "name": "Scalasaig",
       "description": "OpenStreetMap/OpenSeaMap records this as a harbour.",
       "types": [
@@ -3346,7 +3346,7 @@
       }
     },
     {
-      "id": "2e0eb500-8f1f-4c5c-85ab-391b0b7945d0",
+      "id": "d35da7fe-dddb-405e-9c7b-99b27d426c04",
       "name": "Tobermory",
       "description": "OpenStreetMap/OpenSeaMap records this as a marina.",
       "types": [
@@ -8050,7 +8050,7 @@
       "feature": {
         "type": "Feature",
         "properties": {
-          "ajrmMarine:sourceRef": "generated-tidal-area:bd73410e-54ac-4f4c-a5ae-8700a6fe3a7a",
+          "ajrmMarine:sourceRef": "generated-tidal-area:57801294-1ad7-4c7d-adc8-d968b9e1547c",
           "editorShape": "Polygon"
         },
         "geometry": {
@@ -8100,7 +8100,7 @@
           "sources": [
             {
               "provider": "AJRM Marine Location Editor area generator",
-              "sourceId": "generated-tidal-area:bd73410e-54ac-4f4c-a5ae-8700a6fe3a7a",
+              "sourceId": "generated-tidal-area:57801294-1ad7-4c7d-adc8-d968b9e1547c",
               "url": "https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor",
               "retrievedAt": "2026-08-21T00:00:00.000Z"
             }
@@ -8118,7 +8118,7 @@
       "feature": {
         "type": "Feature",
         "properties": {
-          "ajrmMarine:sourceRef": "generated-tidal-area:431ca630-05a7-40df-990f-88dee6c4e902",
+          "ajrmMarine:sourceRef": "generated-tidal-area:76032286-71e1-4e42-b1d4-1f97011e8226",
           "editorShape": "Polygon"
         },
         "geometry": {
@@ -8156,7 +8156,7 @@
           "sources": [
             {
               "provider": "AJRM Marine Location Editor area generator",
-              "sourceId": "generated-tidal-area:431ca630-05a7-40df-990f-88dee6c4e902",
+              "sourceId": "generated-tidal-area:76032286-71e1-4e42-b1d4-1f97011e8226",
               "url": "https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor",
               "retrievedAt": "2026-08-21T00:00:00.000Z"
             }
@@ -8174,7 +8174,7 @@
       "feature": {
         "type": "Feature",
         "properties": {
-          "ajrmMarine:sourceRef": "generated-tidal-area:d451e2d0-2402-4d9a-98b5-bf5e27722cd3",
+          "ajrmMarine:sourceRef": "generated-tidal-area:28f26d07-cb45-4eec-bbaa-c461ddeae08f",
           "editorShape": "Polygon"
         },
         "geometry": {
@@ -8216,7 +8216,7 @@
           "sources": [
             {
               "provider": "AJRM Marine Location Editor area generator",
-              "sourceId": "generated-tidal-area:d451e2d0-2402-4d9a-98b5-bf5e27722cd3",
+              "sourceId": "generated-tidal-area:28f26d07-cb45-4eec-bbaa-c461ddeae08f",
               "url": "https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor",
               "retrievedAt": "2026-08-21T00:00:00.000Z"
             }
@@ -8294,7 +8294,7 @@
       "feature": {
         "type": "Feature",
         "properties": {
-          "ajrmMarine:sourceRef": "generated-tidal-area:ca205cec-6a47-497b-aa44-2637b9a6be0d",
+          "ajrmMarine:sourceRef": "generated-tidal-area:6cfbe8d1-5c20-44af-abd8-c0a6e3e925ca",
           "editorShape": "Polygon"
         },
         "geometry": {
@@ -8332,7 +8332,7 @@
           "sources": [
             {
               "provider": "AJRM Marine Location Editor area generator",
-              "sourceId": "generated-tidal-area:ca205cec-6a47-497b-aa44-2637b9a6be0d",
+              "sourceId": "generated-tidal-area:6cfbe8d1-5c20-44af-abd8-c0a6e3e925ca",
               "url": "https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor",
               "retrievedAt": "2026-08-21T00:00:00.000Z"
             }
@@ -8350,7 +8350,7 @@
       "feature": {
         "type": "Feature",
         "properties": {
-          "ajrmMarine:sourceRef": "generated-tidal-area:1aba3e08-af55-4ae4-8751-de3da98501d6",
+          "ajrmMarine:sourceRef": "generated-tidal-area:417dd82b-3565-40ef-930b-9eae61e9d2ef",
           "editorShape": "Polygon"
         },
         "geometry": {
@@ -8392,7 +8392,7 @@
           "sources": [
             {
               "provider": "AJRM Marine Location Editor area generator",
-              "sourceId": "generated-tidal-area:1aba3e08-af55-4ae4-8751-de3da98501d6",
+              "sourceId": "generated-tidal-area:417dd82b-3565-40ef-930b-9eae61e9d2ef",
               "url": "https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor",
               "retrievedAt": "2026-08-21T00:00:00.000Z"
             }
@@ -8410,7 +8410,7 @@
       "feature": {
         "type": "Feature",
         "properties": {
-          "ajrmMarine:sourceRef": "generated-tidal-area:d8398a12-ada8-4c05-b2f6-30082a9b5743",
+          "ajrmMarine:sourceRef": "generated-tidal-area:36916d83-6d21-4e4a-8fb9-177e2a5d07e5",
           "editorShape": "Polygon"
         },
         "geometry": {
@@ -8448,7 +8448,7 @@
           "sources": [
             {
               "provider": "AJRM Marine Location Editor area generator",
-              "sourceId": "generated-tidal-area:d8398a12-ada8-4c05-b2f6-30082a9b5743",
+              "sourceId": "generated-tidal-area:36916d83-6d21-4e4a-8fb9-177e2a5d07e5",
               "url": "https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor",
               "retrievedAt": "2026-08-21T00:00:00.000Z"
             }
@@ -8466,7 +8466,7 @@
       "feature": {
         "type": "Feature",
         "properties": {
-          "ajrmMarine:sourceRef": "generated-tidal-area:b3012c64-b3e1-4ecd-996a-100650300093",
+          "ajrmMarine:sourceRef": "generated-tidal-area:e86661bf-475b-4855-9fc2-a072af016ddf",
           "editorShape": "Polygon"
         },
         "geometry": {
@@ -8524,7 +8524,7 @@
           "sources": [
             {
               "provider": "AJRM Marine Location Editor area generator",
-              "sourceId": "generated-tidal-area:b3012c64-b3e1-4ecd-996a-100650300093",
+              "sourceId": "generated-tidal-area:e86661bf-475b-4855-9fc2-a072af016ddf",
               "url": "https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor",
               "retrievedAt": "2026-08-21T00:00:00.000Z"
             }
@@ -8542,7 +8542,7 @@
       "feature": {
         "type": "Feature",
         "properties": {
-          "ajrmMarine:sourceRef": "generated-tidal-area:2e0eb500-8f1f-4c5c-85ab-391b0b7945d0",
+          "ajrmMarine:sourceRef": "generated-tidal-area:d35da7fe-dddb-405e-9c7b-99b27d426c04",
           "editorShape": "Polygon"
         },
         "geometry": {
@@ -8584,7 +8584,7 @@
           "sources": [
             {
               "provider": "AJRM Marine Location Editor area generator",
-              "sourceId": "generated-tidal-area:2e0eb500-8f1f-4c5c-85ab-391b0b7945d0",
+              "sourceId": "generated-tidal-area:d35da7fe-dddb-405e-9c7b-99b27d426c04",
               "url": "https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor",
               "retrievedAt": "2026-08-21T00:00:00.000Z"
             }
@@ -9301,7 +9301,7 @@
       }
     },
     {
-      "id": "9febffc5-2af1-4fb6-8be8-82b1937ff803",
+      "id": "39a76db5-3ffb-4c2f-8cf1-f9526d95aee8",
       "name": "Seil Sound tidal area",
       "description": "Machine-generated non-overlapping first-review tidal area. Adjust its polygon in Location Editor to match local tidal geography.",
       "types": [

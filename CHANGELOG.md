@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.6.34 — 2026-08-21
+
+- Draw a solid black ring around point-location markers and unsaved point previews so their category colours remain visible against detailed charts.
+
 ## 0.6.33 — 2026-08-21
 
 - Remove the temporary Open-Meteo service and cache; AJRM Marine Weather Database now owns providers, forecasts and offline weather storage.

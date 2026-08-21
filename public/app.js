@@ -466,7 +466,7 @@ function renderLocations() {
 		const interactive = chartLocationInteractive(location);
 		let layer;
 		if (geometry.type === "Point") {
-			layer = L.circleMarker([geometry.coordinates[1], geometry.coordinates[0]], { radius: selected ? 9 : 7, color, weight: selected ? 4 : 2, fillColor: color, fillOpacity: 0.72 });
+			layer = L.circleMarker([geometry.coordinates[1], geometry.coordinates[0]], { radius: selected ? 9 : 7, color: "#000000", weight: selected ? 4 : 2, fillColor: color, fillOpacity: 0.82 });
 		} else {
 			layer = L.polygon(geometry.coordinates[0].map(([lon, lat]) => [lat, lon]), { color, weight: selected ? 5 : 3, fillColor: color, fillOpacity: 0.16, interactive, dashArray: location.types.some((type) => hazardTypes.has(type)) ? "8 6" : null });
 		}
@@ -501,7 +501,7 @@ function renderPreview() {
 	try {
 		const geometry = geometryFromEditor();
 		if (geometry.type === "Point") {
-			L.circleMarker([geometry.coordinates[1], geometry.coordinates[0]], { radius: 9, color: unsavedGeometryColor, weight: 4, fillOpacity: 0.2 }).addTo(previewLayer);
+			L.circleMarker([geometry.coordinates[1], geometry.coordinates[0]], { radius: 9, color: "#000000", weight: 4, fillColor: unsavedGeometryColor, fillOpacity: 0.82 }).addTo(previewLayer);
 		} else {
 			const points = geometry.coordinates[0].slice(0, -1).map(([lon, lat]) => ({ lat, lon }));
 			const polygon = L.polygon(points.map(({ lat, lon }) => [lat, lon]), { color: unsavedGeometryColor, weight: 4, fillOpacity: 0.08 }).addTo(previewLayer);

@@ -76,7 +76,9 @@ test("map page uses the standard left-side controls with zoom first", () => {
 	assert.match(app, /geometryPreviewDirty = false;\s*previewLayer\?\.clearLayers\(\);\s*showStatus\(`Saved revision/);
 	assert.match(app, /previewLayer\.clearLayers\(\);\s*if \(!geometryPreviewDirty\) return;/);
 	assert.match(app, /const unsavedGeometryColor = "#ff2d2d"/);
-	assert.match(app, /L\.circleMarker\([\s\S]*color: unsavedGeometryColor/);
+	assert.match(app, /L\.circleMarker\([\s\S]*fillColor: unsavedGeometryColor/);
+	assert.match(app, /color: "#000000"[\s\S]*fillColor: color/);
+	assert.match(app, /color: "#000000"[\s\S]*fillColor: unsavedGeometryColor/);
 	assert.match(app, /L\.polygon\([\s\S]*color: unsavedGeometryColor/);
 	assert.doesNotMatch(app, /color: "#facc15"/);
   assert.doesNotMatch(html, /name="baseMap"/);

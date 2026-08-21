@@ -6,7 +6,7 @@
 		<title>AJRM Marine Location Editor</title>
 		<link rel="stylesheet" href="./leaflet.css">
 		<link rel="stylesheet" href="./ajrm-map-core.css?v=0.7.11">
-		<link rel="stylesheet" href="./styles.css?v=0.6.31">
+		<link rel="stylesheet" href="./styles.css?v=0.6.32">
 	</head>
 	<body>
 		<div id="map" class="map" aria-label="Marine location chart"></div>
@@ -105,92 +105,6 @@
 				<label>Notes <textarea id="anchorageNotes" rows="3"></textarea></label>
 			</section>
 
-			<section id="tideFields" class="conditional-section" hidden>
-				<h3>Tidal location details</h3>
-				<section id="tideRelationships" class="tide-relationship-fields" hidden>
-					<label id="tideAssignmentField" class="inline-select-row" hidden><span>Prediction port for this region</span><select id="tideLocationRef"><option value="">None assigned</option></select></label>
-					<label id="tideRegionField" class="inline-select-row"><span id="tideRegionLabel">Tidal region</span><select id="tideRegionRef"><option value="">None assigned</option></select></label>
-				</section>
-				<section id="standardPortFields" class="secondary-port-fields" hidden>
-					<h3>Standard-port prediction source</h3>
-					<label>Provider identifier
-						<select id="tideProviderId">
-							<option value="">Not a prediction source</option>
-							<option value="ukhoTidalEvents">UKHO Tidal API events</option>
-						</select>
-					</label>
-					<label>Provider label <input id="tideProvider" type="text" placeholder="UK Hydrographic Office"></label>
-					<label>Station identifier <input id="tideStationId" type="text"></label>
-					<label>Station name <input id="tideStationName" type="text"></label>
-					<label>Datum <input id="tideDatum" type="text" placeholder="Chart Datum"></label>
-					<div class="field-grid">
-						<label>MHWS (m) <input id="tideMhws" type="number" step="0.1"></label>
-						<label>MHWN (m) <input id="tideMhwn" type="number" step="0.1"></label>
-						<label>MLWN (m) <input id="tideMlwn" type="number" step="0.1"></label>
-						<label>MLWS (m) <input id="tideMlws" type="number" step="0.1"></label>
-					</div>
-				</section>
-				<section id="secondaryPortFields" class="secondary-port-fields" hidden>
-					<h3>Secondary-port prediction source</h3>
-					<label class="inline-select-row"><span>Source</span><select id="secondaryPredictionSource">
-						<option value="enteredCorrections">Entered time and height differences</option>
-						<option value="ukhoTidalEvents">Admiralty Tidal API station</option>
-					</select></label>
-					<section id="secondaryApiFields" class="source-specific-fields" hidden>
-						<p class="field-help">Use predictions returned directly for this secondary station by the configured Admiralty Tidal API subscription.</p>
-						<label>Admiralty station identifier <input id="secondaryApiStationId" type="text" required></label>
-						<label>Admiralty station name <input id="secondaryApiStationName" type="text"></label>
-						<label>Datum <input id="secondaryApiDatum" type="text" placeholder="Chart Datum"></label>
-					</section>
-					<section id="secondaryEnteredFields" class="source-specific-fields">
-						<label class="inline-select-row"><span>Parent standard port</span><select id="parentLocationRef"><option value="">Select a standard port</option></select></label>
-						<p class="field-help">Select the standard port whose entered differences are applied. A secondary port cannot be based on another secondary port.</p>
-						<p class="field-help">Copy the table as printed in Reeds. Each standard-port time is paired with the time 12 hours later and therefore has one shared difference. Enter time differences as signed HHMM, for example <strong>-0055</strong> or <strong>+0020</strong>.</p>
-						<input id="secondaryTimePeriod" type="hidden" value="720">
-						<p id="secondaryLegacyPattern" class="field-help warning" hidden>This imported record has a non-repeating 24-hour pattern, so all four legacy rows are retained.</p>
-						<div class="reeds-table-scroll"><table id="secondaryCorrectionTable" class="reeds-table reeds-secondary-table">
-						<thead>
-							<tr><th rowspan="2">Standard-port reference</th><th colspan="2">High Water</th><th colspan="2">Low Water</th><th colspan="4">Height differences (m)</th></tr>
-							<tr>
-								<th class="reeds-time-heading"><input id="secondaryHwTime1" type="time" aria-label="First HW standard-port reference time"><span id="secondaryHwPair1" class="paired-time"></span></th>
-								<th class="reeds-time-heading"><input id="secondaryHwTime2" type="time" aria-label="Second HW standard-port reference time"><span id="secondaryHwPair2" class="paired-time"></span></th>
-								<th class="reeds-time-heading"><input id="secondaryLwTime1" type="time" aria-label="First LW standard-port reference time"><span id="secondaryLwPair1" class="paired-time"></span></th>
-								<th class="reeds-time-heading"><input id="secondaryLwTime2" type="time" aria-label="Second LW standard-port reference time"><span id="secondaryLwPair2" class="paired-time"></span></th>
-								<th>MHWS</th><th>MHWN</th><th>MLWN</th><th>MLWS</th>
-							</tr>
-						</thead>
-						<tbody><tr id="secondaryDifferenceRow"><th>Difference</th><td><input id="secondaryHwOffset1" type="text" inputmode="numeric" placeholder="-0055"></td><td><input id="secondaryHwOffset2" type="text" inputmode="numeric" placeholder="-0025"></td><td><input id="secondaryLwOffset1" type="text" inputmode="numeric" placeholder="-0040"></td><td><input id="secondaryLwOffset2" type="text" inputmode="numeric" placeholder="-0035"></td><td><input id="secondaryDiffMhws" type="number" step="0.1"></td><td><input id="secondaryDiffMhwn" type="number" step="0.1"></td><td><input id="secondaryDiffMlwn" type="number" step="0.1"></td><td><input id="secondaryDiffMlws" type="number" step="0.1"></td></tr></tbody>
-						</table></div>
-						<div id="secondaryLegacyTable" class="reeds-table-scroll" hidden><table class="reeds-table reeds-legacy-table">
-						<thead><tr><th>Additional reference</th><th>HW time</th><th>HW difference</th><th>LW time</th><th>LW difference</th></tr></thead>
-						<tbody>
-							<tr><th>3</th><td><input id="secondaryHwTime3" type="time"></td><td><input id="secondaryHwOffset3" type="text" inputmode="numeric"></td><td><input id="secondaryLwTime3" type="time"></td><td><input id="secondaryLwOffset3" type="text" inputmode="numeric"></td></tr>
-							<tr><th>4</th><td><input id="secondaryHwTime4" type="time"></td><td><input id="secondaryHwOffset4" type="text" inputmode="numeric"></td><td><input id="secondaryLwTime4" type="time"></td><td><input id="secondaryLwOffset4" type="text" inputmode="numeric"></td></tr>
-						</tbody>
-						</table></div>
-					</section>
-				</section>
-				<section id="tidalGateFields" class="secondary-port-fields" hidden>
-					<h3>Tidal-gate constants</h3>
-					<p class="field-help">These are authoritative here; Gate Passage Planner uses them read-only.</p>
-					<label>Reference standard port <select id="gateStandardPortRef"><option value="">None</option></select></label>
-					<div class="secondary-correction-grid">
-						<label>Flood set <input id="gateFloodSet" type="text"></label><label>Ebb set <input id="gateEbbSet" type="text"></label>
-						<label>Spring peak (kn) <input id="gateSpringPeak" type="number" step="0.1"></label><label>Neap peak (kn) <input id="gateNeapPeak" type="number" step="0.1"></label>
-					</div>
-					<h4>Flood relative to reference-port HW (h:mm:ss)</h4>
-					<div class="secondary-correction-grid">
-						<label>Spring start <input id="gateFloodSpringAfter" type="text"></label><label>Neap start <input id="gateFloodNeapAfter" type="text"></label>
-						<label>Spring slack <input id="gateFloodSpringSlack" type="text"></label><label>Neap slack <input id="gateFloodNeapSlack" type="text"></label>
-					</div>
-					<h4>Ebb relative to reference-port HW (h:mm:ss)</h4>
-					<div class="secondary-correction-grid">
-						<label>Spring start <input id="gateEbbSpringAfter" type="text"></label><label>Neap start <input id="gateEbbNeapAfter" type="text"></label>
-						<label>Spring slack <input id="gateEbbSpringSlack" type="text"></label><label>Neap slack <input id="gateEbbNeapSlack" type="text"></label>
-					</div>
-					<label>Source and notes <textarea id="gateSource" rows="3"></textarea></label>
-				</section>
-			</section>
 
 			<section id="hazardFields" class="conditional-section" hidden>
 				<h3>Hazard and avoidance details</h3>
@@ -309,6 +223,6 @@
 		<div id="status" class="status" role="status"></div>
 		<script src="./leaflet.js"></script>
 		<script src="./protomaps-leaflet.js"></script>
-		<script type="module" src="./app.js?v=0.6.31"></script>
+		<script type="module" src="./app.js?v=0.6.32"></script>
 	</body>
 </html>

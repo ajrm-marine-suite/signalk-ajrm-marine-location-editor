@@ -1,6 +1,6 @@
 /**
  * Browser entry point for Location Editor; edits a versioned location catalogue
- * and renders workspace-filtered places, tidal references and safety areas.
+ * and renders workspace-filtered places and safety areas.
  */
 
 import * as MapCore from "./ajrm-map-core.mjs?v=0.7.9";
@@ -12,7 +12,6 @@ import { bindPressRepeat } from "./press-repeat.mjs?v=0.5.1";
 import { runWithPressedButton } from "./async-button-state.mjs?v=0.6.29";
 
 const apiBase = "/plugins/signalk-ajrm-marine-location-editor";
-const resourcePrefix = "/resources/locations/";
 const storagePrefix = "ajrmMarineLocationEditor";
 const chartLayerZIndex = 650;
 const seamarkLayerZIndex = 750;
@@ -34,12 +33,9 @@ const typeDefinitions = {
 	preferredChannel: ["Preferred channel", "hazards", "#2563eb"],
 	pointOfInterest: ["Point of interest", "places", "#64748b"],
 };
-const tideTypes = new Set(["tidalStandardPort", "tidalSecondaryPort", "tidalObservationStation", "tidalRegion", "tidalGate"]);
-const predictionPortTypes = new Set(["tidalStandardPort", "tidalSecondaryPort"]);
 const anchorageTypes = new Set(["anchorage", "mooring"]);
 const hazardTypes = new Set(["hazard", "avoidanceArea", "noAnchoringArea", "waitingArea", "preferredChannel"]);
 const hazardApplicationChoices = ["display", "routePlanning", "proximityWarning", "anchorPlanning"];
-const secondaryPointIndexes = [1, 2, 3, 4];
 
 const elements = Object.fromEntries([
 	"map", "selectorDrawer", "editorDrawer", "settingsDrawer", "geometryControls", "geometryControlsHandle",
@@ -49,17 +45,8 @@ const elements = Object.fromEntries([
 	"geometryType", "setPoint", "openGeometry", "pointEditor", "polygonEditor", "point",
 	"points", "shapeBuilder", "circleRadiusField", "rectangleWidthField", "rectangleHeightField",
 	"polygonPointCountField", "rectangleWidthNm", "rectangleHeightNm", "polygonPointCount", "makeShape", "vertexHelp",
-	"profileRegionField", "automaticProfileArea", "tideRelationships", "tideAssignmentField", "tideRegionField", "tideRegionLabel", "tideLocationRef", "tideRegionRef", "anchorageFields", "seabed", "chartedDepthM",
-	"detectionRadiusM", "trustedAutomation", "anchorageNotes", "tideFields", "standardPortFields", "tideProviderId", "tideProvider", "tideStationId", "tideStationName",
-	"parentLocationRef", "tideDatum", "tideMhws", "tideMhwn", "tideMlwn", "tideMlws", "secondaryPortFields",
-	"secondaryPredictionSource", "secondaryEnteredFields", "secondaryApiFields", "secondaryApiStationId", "secondaryApiStationName", "secondaryApiDatum",
-	"secondaryTimePeriod", "secondaryLegacyPattern", "secondaryLegacyTable", "secondaryHwPair1", "secondaryHwPair2", "secondaryLwPair1", "secondaryLwPair2",
-	...secondaryPointIndexes.flatMap((index) => [`secondaryHwTime${index}`, `secondaryHwOffset${index}`]),
-	...secondaryPointIndexes.flatMap((index) => [`secondaryLwTime${index}`, `secondaryLwOffset${index}`]),
-	"secondaryDiffMhws", "secondaryDiffMhwn", "secondaryDiffMlwn", "secondaryDiffMlws",
-	"tidalGateFields", "gateStandardPortRef", "gateFloodSet", "gateEbbSet", "gateSpringPeak", "gateNeapPeak",
-	"gateFloodSpringAfter", "gateFloodNeapAfter", "gateFloodSpringSlack", "gateFloodNeapSlack",
-	"gateEbbSpringAfter", "gateEbbNeapAfter", "gateEbbSpringSlack", "gateEbbNeapSlack", "gateSource",
+	"profileRegionField", "automaticProfileArea", "anchorageFields", "seabed", "chartedDepthM",
+	"detectionRadiusM", "trustedAutomation", "anchorageNotes",
 	"hazardFields", "hazardSeverity", "hazardReason",
 	"hazardClearanceM", "hazardApplications", "saveLocation", "undoLocation", "deleteLocation", "showHistory",
 	"locationId", "locationListTitle", "locationList", "historyDialog", "historySummary",
@@ -157,10 +144,6 @@ function typeLabel(type) {
 	return typeDefinitions[type]?.[0] || type;
 }
 
-function resourceId(reference) {
-	return String(reference || "").split("/").at(-1) || "";
-}
-
 function checkedTypes() {
 	return [...elements.typeChoices.querySelectorAll("input:checked")].map((input) => input.value);
 }
@@ -217,21 +200,9 @@ function updateConditionalFields() {
 	const types = checkedTypes();
 	const profileEligible = types.some((type) => ["harbour", "anchorage", "mooring", "marina"].includes(type));
 	const harbourProfileArea = profileEligible && elements.geometryType.value !== "Point";
-	const tidalRegion = types.includes("tidalRegion");
 	elements.profileRegionField.hidden = !harbourProfileArea;
 	if (!harbourProfileArea) elements.automaticProfileArea.checked = false;
-	elements.tideRelationships.hidden = !types.some((type) => tideTypes.has(type));
-	elements.tideAssignmentField.hidden = !tidalRegion;
-	elements.tideRegionLabel.textContent = tidalRegion ? "Parent tidal region" : "Tidal region";
 	elements.anchorageFields.hidden = !types.some((type) => anchorageTypes.has(type));
-	elements.tideFields.hidden = !types.some((type) => tideTypes.has(type));
-	elements.standardPortFields.hidden = !types.includes("tidalStandardPort");
-	elements.secondaryPortFields.hidden = !types.includes("tidalSecondaryPort");
-	const apiSecondary = elements.secondaryPredictionSource.value === "ukhoTidalEvents";
-	elements.secondaryEnteredFields.hidden = apiSecondary;
-	elements.secondaryApiFields.hidden = !apiSecondary;
-	elements.editorDrawer.classList.toggle("secondary-port-editor", types.includes("tidalSecondaryPort"));
-	elements.tidalGateFields.hidden = !types.includes("tidalGate");
 	elements.hazardFields.hidden = !types.some((type) => hazardTypes.has(type));
 	elements.pointEditor.hidden = elements.geometryType.value !== "Point";
 	const area = elements.geometryType.value !== "Point";
@@ -270,63 +241,6 @@ function formatPoints(points) {
 	return points.map(formatPoint).join("\n");
 }
 
-function formatClockMinutes(value) {
-	const minutes = Number(value);
-	if (!Number.isFinite(minutes)) return "";
-	return `${String(Math.floor(minutes / 60) % 24).padStart(2, "0")}:${String(minutes % 60).padStart(2, "0")}`;
-}
-
-function parseClockMinutes(value, label) {
-	const match = /^(\d{2}):(\d{2})$/.exec(String(value || ""));
-	if (!match) throw new Error(`${label} needs a reference time.`);
-	const minutes = Number(match[1]) * 60 + Number(match[2]);
-	if (minutes < 0 || minutes > 1439) throw new Error(`${label} reference time is invalid.`);
-	return minutes;
-}
-
-function formatOffsetHHMM(value) {
-	const minutes = Number(value);
-	if (!Number.isFinite(minutes)) return "";
-	const absolute = Math.abs(Math.round(minutes));
-	return `${minutes < 0 ? "-" : "+"}${String(Math.floor(absolute / 60)).padStart(2, "0")}${String(absolute % 60).padStart(2, "0")}`;
-}
-
-function parseOffsetHHMM(value, label) {
-	const match = /^([+-])(\d{2})([0-5]\d)$/.exec(String(value || "").trim());
-	if (!match) throw new Error(`${label} must be signed HHMM, for example -0055 or +0020.`);
-	const minutes = Number(match[2]) * 60 + Number(match[3]);
-	return match[1] === "-" ? -minutes : minutes;
-}
-
-function activeSecondaryPointIndexes() {
-	return Number(elements.secondaryTimePeriod.value) === 1440 ? secondaryPointIndexes : [1, 2];
-}
-
-function updateSecondaryTimeLayout(periodMinutes = Number(elements.secondaryTimePeriod.value || 720)) {
-	elements.secondaryTimePeriod.value = String(periodMinutes === 1440 ? 1440 : 720);
-	const legacy = periodMinutes === 1440;
-	elements.secondaryLegacyPattern.hidden = !legacy;
-	elements.secondaryLegacyTable.hidden = !legacy;
-	for (const prefix of ["Hw", "Lw"]) {
-		for (const index of [1, 2]) {
-			const value = elements[`secondary${prefix}Time${index}`].value;
-			elements[`secondary${prefix}Pair${index}`].textContent = value
-				? formatClockMinutes((parseClockMinutes(value, "Reference time") + 720) % 1440)
-				: "";
-		}
-	}
-}
-
-function correctionPoints(prefix) {
-	return activeSecondaryPointIndexes().map((index) => {
-		const time = elements[`secondary${prefix}Time${index}`].value;
-		const offset = elements[`secondary${prefix}Offset${index}`].value;
-		if (!time && offset === "") return null;
-		if (!time || offset === "") throw new Error(`Complete both time and offset for ${prefix.toUpperCase()} correction ${index}.`);
-		return { referenceTimeMinutes: parseClockMinutes(time, `${prefix.toUpperCase()} correction ${index}`), offsetMinutes: parseOffsetHHMM(offset, `${prefix.toUpperCase()} correction ${index}`) };
-	}).filter(Boolean);
-}
-
 function editorShapeForLocation(location) {
 	if (location.feature.geometry.type === "Point") return "Point";
 	const shape = location.feature?.properties?.editorShape;
@@ -350,16 +264,6 @@ function fillSelect(select, choices, selected, emptyLabel) {
 	select.value = selected || "";
 }
 
-function refreshReferences(location = selectedLocation()) {
-	const tidal = locations.filter((entry) => entry.types.some((type) => predictionPortTypes.has(type)) && entry.id !== location?.id);
-	fillSelect(elements.tideLocationRef, tidal.map((entry) => ({ value: entry.id, label: entry.name })), resourceId(location?.properties?.tideLocationRef), "None assigned");
-	const regions = locations.filter((entry) => entry.types.includes("tidalRegion") && entry.id !== location?.id);
-	fillSelect(elements.tideRegionRef, regions.map((entry) => ({ value: entry.id, label: entry.name })), resourceId(location?.properties?.tideRegionRef), "None assigned");
-	const standardPorts = locations.filter((entry) => entry.types.includes("tidalStandardPort") && entry.id !== location?.id);
-	fillSelect(elements.parentLocationRef, standardPorts.map((entry) => ({ value: entry.id, label: entry.name })), resourceId(location?.properties?.tide?.parentLocationRef), "Select a standard port");
-	fillSelect(elements.gateStandardPortRef, standardPorts.map((entry) => ({ value: entry.id, label: entry.name })), resourceId(location?.properties?.tidalGate?.standardPortRef), "None");
-}
-
 function resetEditor() {
 	selectedId = null;
 	geometryPreviewDirty = true;
@@ -371,18 +275,14 @@ function resetEditor() {
 	const center = map?.getCenter() || { lat: 55.8, lng: -5.2 };
 	elements.point.value = `${center.lat.toFixed(6)}, ${(center.lng ?? center.lon).toFixed(6)}`;
 	elements.points.value = "";
-	for (const id of ["seabed", "chartedDepthM", "detectionRadiusM", "anchorageNotes", "tideProviderId", "tideProvider", "tideStationId", "tideStationName", "tideDatum", "tideMhws", "tideMhwn", "tideMlwn", "tideMlws", "secondaryApiStationId", "secondaryApiStationName", "secondaryApiDatum", ...secondaryPointIndexes.flatMap((index) => [`secondaryHwTime${index}`, `secondaryHwOffset${index}`, `secondaryLwTime${index}`, `secondaryLwOffset${index}`]), "secondaryDiffMhws", "secondaryDiffMhwn", "secondaryDiffMlwn", "secondaryDiffMlws", "hazardReason", "hazardClearanceM"]) elements[id].value = "";
-	elements.secondaryPredictionSource.value = "enteredCorrections";
-	for (const id of ["gateFloodSet", "gateEbbSet", "gateSpringPeak", "gateNeapPeak", "gateFloodSpringAfter", "gateFloodNeapAfter", "gateFloodSpringSlack", "gateFloodNeapSlack", "gateEbbSpringAfter", "gateEbbNeapAfter", "gateEbbSpringSlack", "gateEbbNeapSlack", "gateSource"]) elements[id].value = "";
+	for (const id of ["seabed", "chartedDepthM", "detectionRadiusM", "anchorageNotes", "hazardReason", "hazardClearanceM"]) elements[id].value = "";
 	elements.trustedAutomation.checked = false;
-	updateSecondaryTimeLayout(720);
 	elements.hazardSeverity.value = "advisory";
 	elements.automaticProfileArea.checked = false;
 	elements.hazardApplications.querySelectorAll("input").forEach((input) => { input.checked = false; });
 	elements.selectedSummary.textContent = "New location";
 	elements.deleteLocation.disabled = true;
 	elements.showHistory.disabled = true;
-	refreshReferences(null);
 	updateConditionalFields();
 	renderLocations();
 }
@@ -414,36 +314,6 @@ function selectLocation(id, fit = false, revealEditor = false) {
 	elements.detectionRadiusM.value = properties.anchorage?.detectionRadiusM ?? "";
 	elements.trustedAutomation.checked = properties.anchorage?.trustedAutomation === true;
 	elements.anchorageNotes.value = properties.anchorage?.notes || "";
-	elements.tideProviderId.value = properties.tide?.providerId || "";
-	elements.tideProvider.value = properties.tide?.provider || "";
-	elements.tideStationId.value = properties.tide?.stationId || "";
-	elements.tideStationName.value = properties.tide?.stationName || "";
-	elements.tideDatum.value = properties.tide?.datum || "";
-	elements.tideMhws.value = properties.tide?.referenceLevels?.mhws ?? "";
-	elements.tideMhwn.value = properties.tide?.referenceLevels?.mhwn ?? "";
-	elements.tideMlwn.value = properties.tide?.referenceLevels?.mlwn ?? "";
-	elements.tideMlws.value = properties.tide?.referenceLevels?.mlws ?? "";
-	elements.secondaryPredictionSource.value = properties.tide?.predictionSource ||
-		(properties.tide?.providerId === "ukhoTidalEvents" && properties.tide?.stationId ? "ukhoTidalEvents" : "enteredCorrections");
-	elements.secondaryApiStationId.value = elements.secondaryPredictionSource.value === "ukhoTidalEvents" ? properties.tide?.stationId || "" : "";
-	elements.secondaryApiStationName.value = elements.secondaryPredictionSource.value === "ukhoTidalEvents" ? properties.tide?.stationName || "" : "";
-	elements.secondaryApiDatum.value = elements.secondaryPredictionSource.value === "ukhoTidalEvents" ? properties.tide?.datum || "" : "";
-	const corrections = properties.tide?.secondaryPortCorrections || {};
-	updateSecondaryTimeLayout(Number(corrections.timeOffsetPeriodMinutes || 720));
-	for (const [prefix, points] of [["Hw", corrections.highWaterTimeOffsets], ["Lw", corrections.lowWaterTimeOffsets]]) {
-		secondaryPointIndexes.forEach((index, pointIndex) => {
-			const point = points?.[pointIndex];
-			elements[`secondary${prefix}Time${index}`].value = formatClockMinutes(point?.referenceTimeMinutes);
-			elements[`secondary${prefix}Offset${index}`].value = point ? formatOffsetHHMM(point.offsetMinutes) : "";
-		});
-	}
-	updateSecondaryTimeLayout();
-	for (const [id, group, key] of [
-		["secondaryDiffMhws", "heightDifferencesM", "mhws"], ["secondaryDiffMhwn", "heightDifferencesM", "mhwn"],
-		["secondaryDiffMlwn", "heightDifferencesM", "mlwn"], ["secondaryDiffMlws", "heightDifferencesM", "mlws"],
-	]) elements[id].value = corrections[group]?.[key] ?? "";
-	const gate = properties.tidalGate || {};
-	for (const [id, key] of [["gateFloodSet", "floodSet"], ["gateEbbSet", "ebbSet"], ["gateSpringPeak", "springPeakFlowKnots"], ["gateNeapPeak", "neapPeakFlowKnots"], ["gateFloodSpringAfter", "floodSpringAfter"], ["gateFloodNeapAfter", "floodNeapAfter"], ["gateFloodSpringSlack", "floodSpringSlack"], ["gateFloodNeapSlack", "floodNeapSlack"], ["gateEbbSpringAfter", "ebbSpringAfter"], ["gateEbbNeapAfter", "ebbNeapAfter"], ["gateEbbSpringSlack", "ebbSpringSlack"], ["gateEbbNeapSlack", "ebbNeapSlack"], ["gateSource", "source"]]) elements[id].value = gate[key] ?? "";
 	elements.hazardSeverity.value = properties.hazard?.severity || "advisory";
 	elements.hazardReason.value = properties.hazard?.reason || "";
 	elements.hazardClearanceM.value = properties.hazard?.clearanceM ?? "";
@@ -451,7 +321,6 @@ function selectLocation(id, fit = false, revealEditor = false) {
 	elements.selectedSummary.textContent = `${location.name} · revision ${location.revision}`;
 	elements.deleteLocation.disabled = false;
 	elements.showHistory.disabled = false;
-	refreshReferences(location);
 	updateConditionalFields();
 	renderLocations();
 	if (fit && map) {
@@ -471,12 +340,14 @@ function buildLocation() {
 	if (!name) throw new Error("Enter a location name.");
 	if (!types.length) throw new Error("Select at least one location type.");
 	const current = selectedLocation();
-	const properties = current?.properties?.provenance
-		? { provenance: structuredClone(current.properties.provenance) }
-		: {};
+	// Preserve extension properties owned by other services without interpreting
+	// them. This allows a staged migration while this editor changes only the
+	// spatial and location-specific fields it owns.
+	const properties = structuredClone(current?.properties || {});
+	delete properties.automaticProfileArea;
+	delete properties.anchorage;
+	delete properties.hazard;
 	if (elements.automaticProfileArea.checked) properties.automaticProfileArea = true;
-	if (types.includes("tidalRegion") && elements.tideLocationRef.value) properties.tideLocationRef = `${resourcePrefix}${elements.tideLocationRef.value}`;
-	if (types.some((type) => tideTypes.has(type)) && elements.tideRegionRef.value) properties.tideRegionRef = `${resourcePrefix}${elements.tideRegionRef.value}`;
 	if (types.some((type) => anchorageTypes.has(type))) {
 		properties.anchorage = {
 			seabed: elements.seabed.value.trim() || undefined,
@@ -484,71 +355,6 @@ function buildLocation() {
 			detectionRadiusM: elements.detectionRadiusM.value === "" ? undefined : Number(elements.detectionRadiusM.value),
 			trustedAutomation: elements.trustedAutomation.checked || undefined,
 			notes: elements.anchorageNotes.value.trim() || undefined,
-		};
-	}
-	if (types.some((type) => tideTypes.has(type))) {
-		properties.tide = {};
-		if (types.includes("tidalStandardPort")) {
-			const referenceLevels = Object.fromEntries([
-				["mhws", elements.tideMhws], ["mhwn", elements.tideMhwn],
-				["mlwn", elements.tideMlwn], ["mlws", elements.tideMlws],
-			].filter(([, input]) => input.value !== "").map(([key, input]) => [key, Number(input.value)]));
-			Object.assign(properties.tide, {
-				providerId: elements.tideProviderId.value || undefined,
-				provider: elements.tideProvider.value.trim() || undefined,
-				stationId: elements.tideStationId.value.trim() || undefined,
-				stationName: elements.tideStationName.value.trim() || undefined,
-				datum: elements.tideDatum.value.trim() || undefined,
-				referenceLevels: Object.keys(referenceLevels).length ? referenceLevels : undefined,
-			});
-		}
-		if (types.includes("tidalSecondaryPort")) {
-			properties.tide.predictionSource = elements.secondaryPredictionSource.value;
-			if (elements.secondaryPredictionSource.value === "ukhoTidalEvents") {
-				if (!elements.secondaryApiStationId.value.trim()) throw new Error("Enter the Admiralty station identifier for this secondary port.");
-				Object.assign(properties.tide, {
-					providerId: "ukhoTidalEvents",
-					provider: "UK Hydrographic Office",
-					stationId: elements.secondaryApiStationId.value.trim(),
-					stationName: elements.secondaryApiStationName.value.trim() || name,
-					datum: elements.secondaryApiDatum.value.trim() || "Chart Datum",
-				});
-			} else {
-				if (!elements.parentLocationRef.value) throw new Error("Select the parent standard port for this secondary port.");
-				properties.tide.parentLocationRef = `${resourcePrefix}${elements.parentLocationRef.value}`;
-				const numericGroup = (entries) => Object.fromEntries(entries.map(([key, id]) => {
-					if (elements[id].value === "") throw new Error("Complete every secondary-port correction field; use zero where there is no correction.");
-					return [key, Number(elements[id].value)];
-				}));
-				const highWaterTimeOffsets = correctionPoints("Hw");
-				const lowWaterTimeOffsets = correctionPoints("Lw");
-				if (!highWaterTimeOffsets.length || !lowWaterTimeOffsets.length) throw new Error("Enter at least one HW and one LW correction point.");
-				properties.tide.secondaryPortCorrections = {
-					contract: "ajrm-secondary-port-corrections-v4",
-					timeOffsetPeriodMinutes: Number(elements.secondaryTimePeriod.value || 720),
-					legacyId: current?.properties?.tide?.secondaryPortCorrections?.legacyId,
-					standardPortName: current?.properties?.tide?.secondaryPortCorrections?.standardPortName,
-					highWaterTimeOffsets,
-					lowWaterTimeOffsets,
-					heightDifferencesM: numericGroup([["mhws", "secondaryDiffMhws"], ["mhwn", "secondaryDiffMhwn"], ["mlwn", "secondaryDiffMlwn"], ["mlws", "secondaryDiffMlws"]]),
-					notes: current?.properties?.tide?.secondaryPortCorrections?.notes,
-				};
-			}
-		}
-	}
-	if (types.includes("tidalGate")) {
-		const text = (id) => elements[id].value.trim();
-		const numeric = (id) => elements[id].value === "" ? null : Number(elements[id].value);
-		properties.tidalGate = {
-			contract: "ajrm-tidal-gate-constants-v1",
-			standardPortRef: elements.gateStandardPortRef.value ? `${resourcePrefix}${elements.gateStandardPortRef.value}` : undefined,
-			floodSet: text("gateFloodSet"), ebbSet: text("gateEbbSet"),
-			springPeakFlowKnots: numeric("gateSpringPeak"), neapPeakFlowKnots: numeric("gateNeapPeak"),
-			floodSpringAfter: text("gateFloodSpringAfter"), floodNeapAfter: text("gateFloodNeapAfter"),
-			floodSpringSlack: text("gateFloodSpringSlack"), floodNeapSlack: text("gateFloodNeapSlack"),
-			ebbSpringAfter: text("gateEbbSpringAfter"), ebbNeapAfter: text("gateEbbNeapAfter"),
-			ebbSpringSlack: text("gateEbbSpringSlack"), ebbNeapSlack: text("gateEbbNeapSlack"),
-			source: text("gateSource"),
 		};
 	}
 	if (types.some((type) => hazardTypes.has(type))) {
@@ -584,7 +390,6 @@ async function loadLocations(preferredId = selectedId) {
 	]);
 	locations = data.locations || [];
 	tombstones = deletedData.tombstones || [];
-	refreshReferences(selectedLocation());
 	renderLocations();
 	renderDeleted();
 	if (preferredId && locations.some((location) => location.id === preferredId)) selectLocation(preferredId);
@@ -997,10 +802,6 @@ function makeSelectedShape() {
 }
 
 function bindEvents() {
-	for (const prefix of ["Hw", "Lw"]) {
-		for (const index of [1, 2]) elements[`secondary${prefix}Time${index}`].addEventListener("input", () => updateSecondaryTimeLayout());
-	}
-	elements.secondaryPredictionSource.addEventListener("change", updateConditionalFields);
 	elements.typeChoices.addEventListener("change", (event) => {
 		if (event.target.matches('input[value="tidalStandardPort"]:checked')) {
 			elements.typeChoices.querySelector('input[value="tidalSecondaryPort"]').checked = false;
@@ -1009,9 +810,6 @@ function bindEvents() {
 			elements.typeChoices.querySelector('input[value="tidalStandardPort"]').checked = false;
 		}
 		updateConditionalFields();
-		if (event.target.matches('input[value="tidalSecondaryPort"]:checked')) {
-			setTimeout(() => elements.secondaryPortFields.scrollIntoView({ behavior: "smooth", block: "start" }), 50);
-		}
 	});
 	elements.geometryType.addEventListener("change", () => { geometryPreviewDirty = true; updateConditionalFields(); });
 	elements.point.addEventListener("input", () => { geometryPreviewDirty = true; renderPreview(); });

@@ -1,7 +1,7 @@
 # Data licences and attribution
 
 The software in this repository is licensed separately under AGPL-3.0-or-later.
-The generated records in `defaults/west-scotland-locations.json` retain source
+The generated spatial records in `defaults/spatial-locations.json` retain source
 and licence metadata per record.
 
 ## OpenStreetMap and OpenSeaMap-derived records
@@ -20,7 +20,7 @@ real-time data API (Beta).”
 
 ## ADMIRALTY Tidal API station records
 
-`defaults/admiralty-api-ports.json` contains selected UK Hydrographic Office
+Some records in `defaults/spatial-locations.json` contain positions sourced from UK Hydrographic Office
 station identifiers, names and positions checked against the ADMIRALTY Tidal
 API catalogue. Tidal predictions fetched at runtime remain subject to the
 user's ADMIRALTY subscription and terms. The generated tidal-area polygons are

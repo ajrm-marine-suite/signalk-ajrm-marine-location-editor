@@ -47,8 +47,8 @@ test("map page uses the standard left-side controls with zoom first", () => {
   const app = fs.readFileSync(path.join(root, "public/app.js"), "utf8");
   const css = fs.readFileSync(path.join(root, "public/styles.css"), "utf8");
 	assert.match(html, /ajrm-map-core\.css\?v=0\.7\.11/);
-	assert.match(html, /type="module" src="\.\/app\.js\?v=0\.6\.31"/);
-	assert.match(html, /styles\.css\?v=0\.6\.31/);
+	assert.match(html, /type="module" src="\.\/app\.js\?v=0\.6\.32"/);
+	assert.match(html, /styles\.css\?v=0\.6\.32/);
 	assert.match(html, /id="chartCycleStatus" class="ajrm-map-chart-cycle-status"[^>]+hidden/);
   assert.match(app, /zoomControl:\s*true/);
   assert.match(app, /MapCore\.createChartSelectorControl/);
@@ -117,55 +117,16 @@ test("location selection and editing use separate focused drawers", () => {
 	assert.match(app, /marker\.on\("drag"/);
 	assert.match(app, /editorShape:/);
 	assert.match(editor, /id="anchorageFields"/);
-	assert.match(editor, /id="tideFields"/);
+	assert.doesNotMatch(editor, /id="tideFields"|UKHO|secondary-port correction/);
 	assert.match(editor, /id="hazardFields"/);
 });
 
-test("tidal location fields are separated by port class", () => {
+test("tidal classifications remain spatial while provider and correction controls are absent", () => {
 	const root = path.resolve(__dirname, "..");
 	const html = fs.readFileSync(path.join(root, "public/index.html"), "utf8");
 	const app = fs.readFileSync(path.join(root, "public/app.js"), "utf8");
-	const css = fs.readFileSync(path.join(root, "public/styles.css"), "utf8");
-	const standard = html.match(/<section id="standardPortFields"[\s\S]*?<\/section>/)?.[0] || "";
-	const secondary = html.match(/<section id="secondaryPortFields"[\s\S]*?<\/section>/)?.[0] || "";
-	const corrections = html.match(/<table id="secondaryCorrectionTable"[\s\S]*?<\/table>/)?.[0] || "";
-	const differenceRow = corrections.match(/<tr id="secondaryDifferenceRow"[\s\S]*?<\/tr>/)?.[0] || "";
-	assert.match(standard, /id="tideProviderId"/);
-	assert.match(standard, /id="tideStationId"/);
-	assert.doesNotMatch(standard, /id="parentLocationRef"/);
-	assert.match(html, /id="secondaryPredictionSource"/);
-	assert.match(html, /id="secondaryApiStationId"/);
-	assert.match(html, /id="parentLocationRef"/);
-	assert.match(html, /Parent standard port/);
-	assert.match(html, /cannot be based on another secondary port/);
-	assert.match(html, /id="secondaryDiffMhws"/);
-	for (const id of ["secondaryHwOffset1", "secondaryHwOffset2", "secondaryLwOffset1", "secondaryLwOffset2", "secondaryDiffMhws", "secondaryDiffMhwn", "secondaryDiffMlwn", "secondaryDiffMlws"]) {
-		assert.match(differenceRow, new RegExp(`id="${id}"`));
-	}
-	assert.doesNotMatch(differenceRow, /id="secondary(?:Hw|Lw)Time/);
-	assert.match(html, /id="secondaryLegacyTable"[^>]*hidden/);
-	assert.doesNotMatch(secondary, /Correction notes|id="secondaryPortNotes"/);
-	assert.doesNotMatch(html, /Sources and review|id="provenanceFields"/);
-	assert.doesNotMatch(secondary, /id="secondaryStandardMhws"|Parent port \(m\)/);
-	assert.doesNotMatch(secondary, /id="tideProviderId"/);
-	assert.doesNotMatch(html, /<details id="tideRelationships"|<summary>Tide relationships<\/summary>/);
-	assert.match(html, /id="tideRelationships" class="tide-relationship-fields" hidden/);
-	assert.match(html, /id="tideAssignmentField" class="inline-select-row" hidden><span>Prediction port for this region/);
-	assert.match(html, /id="tideRegionLabel">Tidal region/);
-	assert.match(html, /class="inline-select-row"><span>Parent standard port<\/span><select id="parentLocationRef"/);
-	assert.doesNotMatch(html, /Tidal location used here/);
-	assert.match(app, /tideFields\.hidden = !types\.some\(\(type\) => tideTypes\.has\(type\)\)/);
-	assert.match(app, /standardPortFields\.hidden = !types\.includes\("tidalStandardPort"\)/);
-	assert.match(app, /harbourProfileArea = profileEligible && elements\.geometryType\.value !== "Point"/);
-	assert.match(app, /if \(types\.includes\("tidalStandardPort"\)\)[\s\S]*Object\.assign\(properties\.tide/);
-	assert.match(app, /elements\.secondaryLegacyTable\.hidden = !legacy/);
-	assert.match(app, /standardPorts\.map\(\(entry\) => \(\{ value: entry\.id, label: entry\.name \}\)\).*parentLocationRef/s);
-	assert.match(app, /tidalSecondaryPort[\s\S]+checked[\s\S]+setTimeout[\s\S]+secondaryPortFields\.scrollIntoView/);
-	assert.match(app, /tidalStandardPort[\s\S]+checked[\s\S]+tidalSecondaryPort[\s\S]+checked = false/);
-	assert.match(app, /tidalSecondaryPort[\s\S]+checked[\s\S]+tidalStandardPort[\s\S]+checked = false/);
-	assert.match(app, /Select the parent standard port for this secondary port/);
-	assert.match(css, /\.reeds-table input\s*\{[^}]*min-width:\s*76px/s);
-	assert.match(css, /\.reeds-secondary-table\s*\{[^}]*min-width:\s*1120px/s);
-	assert.match(css, /#editorDrawer\.secondary-port-editor\s*\{[^}]*width:\s*min\(1180px, calc\(100vw - 64px\)\)/s);
-	assert.match(css, /\.inline-select-row\s*\{[^}]*grid-template-columns:\s*minmax\(190px, auto\) minmax\(280px, 1fr\)/s);
+	assert.match(app, /tidalStandardPort: \["Tidal standard port"/);
+	assert.match(app, /tidalSecondaryPort: \["Tidal secondary port"/);
+	assert.doesNotMatch(html, /UKHO|Admiralty|secondaryCorrection|tideProviderId|parentLocationRef|tidalGateFields/);
+	assert.doesNotMatch(app, /ajrm-secondary-port|ukhoTidalEvents|heightDifferencesM|properties\.tidalGate/);
 });

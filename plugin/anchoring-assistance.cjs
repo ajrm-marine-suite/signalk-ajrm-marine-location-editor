@@ -4,7 +4,7 @@
  */
 
 const crypto = require("node:crypto");
-const { containsPosition } = require("./tide-selection.cjs");
+const { containsPosition } = require("./spatial-geometry.cjs");
 const { nearestLocations } = require("./location-model.cjs");
 
 const CONTRACT = "ajrm-marine-anchoring-assistance-v1";

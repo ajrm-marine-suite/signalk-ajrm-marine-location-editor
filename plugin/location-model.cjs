@@ -3,10 +3,6 @@
  */
 
 const crypto = require("node:crypto");
-const {
-	CONTRACT_V4: SECONDARY_PORT_CORRECTION_CONTRACT,
-	migrateSecondaryPortCorrections,
-} = require("./secondary-port-corrections.cjs");
 
 const CATALOG_SCHEMA = "org.ajrm.marine.locations";
 const CATALOG_SCHEMA_VERSION = 1;
@@ -59,11 +55,6 @@ const PROVENANCE_REVIEW_STATUSES = Object.freeze([
 	"onboardVerified",
 ]);
 
-const SECONDARY_PORT_PREDICTION_SOURCES = Object.freeze([
-	"enteredCorrections",
-	"ukhoTidalEvents",
-]);
-
 function isResourceId(value) {
 	return RESOURCE_ID_PATTERN.test(String(value || ""));
 }
@@ -76,15 +67,6 @@ function assertText(value, label, { required = false, max = 1000 } = {}) {
 	if (typeof value !== "string" || value.trim().length > max) {
 		throw new Error(`${label} must be text no longer than ${max} characters.`);
 	}
-}
-
-function assertReference(value, label) {
-	if (!value) return;
-	if (typeof value !== "string" || !/\/resources\/(?:locations|regions)\/[0-9a-f-]+$/i.test(value)) {
-		throw new Error(`${label} must reference a locations or regions resource.`);
-	}
-	const id = value.split("/").at(-1);
-	if (!isResourceId(id)) throw new Error(`${label} does not contain a valid UUID.`);
 }
 
 function validatePosition(position, label) {
@@ -187,131 +169,6 @@ function validateLocation(location) {
 		!location.types.some((type) => ["harbour", "anchorage", "mooring", "marina"].includes(type))
 	) {
 		throw new Error("Only a harbour, anchorage, mooring or marina can switch to the Harbour profile.");
-	}
-	assertReference(properties.tideLocationRef, "Tide location reference");
-	assertReference(properties.tideRegionRef, "Tidal region reference");
-	if (properties.tideLocationRef && !location.types.includes("tidalRegion")) {
-		throw new Error("Only a tidal region can assign a prediction port.");
-	}
-	if (properties.tideLocationRef?.endsWith(`/${location.id}`)) {
-		throw new Error("A location cannot use itself as its tidal location.");
-	}
-	if (properties.tideRegionRef?.endsWith(`/${location.id}`)) {
-		throw new Error("A location cannot assign itself as its tidal region.");
-	}
-	if (properties.tide != null) {
-		if (typeof properties.tide !== "object" || Array.isArray(properties.tide)) {
-			throw new Error("Tide details must be an object.");
-		}
-		assertText(properties.tide.provider, "Tide provider", { max: 100 });
-		assertText(properties.tide.providerId, "Tide provider identifier", { max: 100 });
-		assertText(properties.tide.stationId, "Tide station id", { max: 200 });
-		assertText(properties.tide.stationName, "Tide station name", { max: 200 });
-		if (
-			properties.tide.predictionSource != null &&
-			!SECONDARY_PORT_PREDICTION_SOURCES.includes(properties.tide.predictionSource)
-		) {
-			throw new Error("Secondary-port prediction source is invalid.");
-		}
-		assertReference(properties.tide.parentLocationRef, "Parent tidal location reference");
-		assertText(properties.tide.datum, "Tide datum", { max: 100 });
-		if (properties.tide.referenceLevels != null) {
-			if (typeof properties.tide.referenceLevels !== "object" || Array.isArray(properties.tide.referenceLevels)) {
-				throw new Error("Tide reference levels must be an object.");
-			}
-			for (const [key, label] of [["mhws", "MHWS"], ["mhwn", "MHWN"], ["mlwn", "MLWN"], ["mlws", "MLWS"]]) {
-				validateNumber(properties.tide.referenceLevels[key], `${label} reference level`, { minimum: -100, maximum: 100 });
-			}
-		}
-		if (properties.tide.secondaryPortCorrections != null) {
-			const corrections = properties.tide.secondaryPortCorrections;
-			if (typeof corrections !== "object" || Array.isArray(corrections)) {
-				throw new Error("Secondary-port corrections must be an object.");
-			}
-			if (corrections.contract !== SECONDARY_PORT_CORRECTION_CONTRACT) {
-				throw new Error("Secondary-port corrections use an unsupported contract.");
-			}
-			if (![720, 1440].includes(Number(corrections.timeOffsetPeriodMinutes))) {
-				throw new Error("Secondary-port correction period must be 720 or 1440 minutes.");
-			}
-			const periodMinutes = Number(corrections.timeOffsetPeriodMinutes);
-			for (const [groupKey, label] of [
-				["highWaterTimeOffsets", "HW time correction"],
-				["lowWaterTimeOffsets", "LW time correction"],
-			]) {
-				const group = corrections[groupKey];
-				if (!Array.isArray(group) || group.length < 1 || group.length > 12) {
-					throw new Error(`${label} needs between 1 and 12 explicit reference-time points.`);
-				}
-				const times = new Set();
-				for (const [index, point] of group.entries()) {
-					if (!point || typeof point !== "object" || Array.isArray(point)) throw new Error(`${label} point ${index + 1} is invalid.`);
-					validateNumber(point.referenceTimeMinutes, `${label} point ${index + 1} reference time`, { minimum: 0, maximum: 1439 });
-					validateNumber(point.offsetMinutes, `${label} point ${index + 1} offset`, { minimum: -1440, maximum: 1440 });
-					if (!Number.isInteger(Number(point.referenceTimeMinutes))) throw new Error(`${label} reference times must use whole minutes.`);
-					const cycleTime = Number(point.referenceTimeMinutes) % periodMinutes;
-					if (times.has(cycleTime)) throw new Error(`${label} reference times must be unique within their correction cycle.`);
-					times.add(cycleTime);
-				}
-			}
-			for (const [groupKey, label, keys, minimum, maximum] of [
-				["heightDifferencesM", "Height correction", ["mhws", "mhwn", "mlwn", "mlws"], -20, 20],
-			]) {
-				const group = corrections[groupKey];
-				if (!group || typeof group !== "object" || Array.isArray(group)) throw new Error(`${label} values are required.`);
-				for (const key of keys) {
-					if (group[key] == null || group[key] === "") throw new Error(`${label} ${key} is required; use zero where there is no correction.`);
-					validateNumber(group[key], `${label} ${key}`, { minimum, maximum });
-				}
-			}
-			assertText(corrections.notes, "Secondary-port correction notes", { max: 4000 });
-			assertText(corrections.legacyId, "Secondary-port legacy id", { max: 100 });
-			assertText(corrections.standardPortName, "Secondary-port standard port name", { max: 200 });
-			assertText(corrections.migratedFromContract, "Migrated correction contract", { max: 100 });
-		}
-	}
-	if (location.types.includes("tidalSecondaryPort")) {
-		const tide = properties.tide || {};
-		if (!SECONDARY_PORT_PREDICTION_SOURCES.includes(tide.predictionSource)) {
-			throw new Error("A secondary port needs an explicit prediction source.");
-		}
-		if (tide.predictionSource === "enteredCorrections") {
-			if (!tide.secondaryPortCorrections && tide.secondaryPortSourceData?.status !== "incomplete") {
-				throw new Error("Entered secondary-port data are required.");
-			}
-			if (!tide.parentLocationRef && !tide.secondaryPortCorrections?.standardPortName) {
-				throw new Error("A secondary port using entered data needs a parent standard port.");
-			}
-			if (tide.providerId || tide.stationId) {
-				throw new Error("An entered-data secondary port must not also select an API station.");
-			}
-		}
-		if (tide.predictionSource === "ukhoTidalEvents") {
-			if (tide.providerId !== "ukhoTidalEvents" || !tide.stationId) {
-				throw new Error("An Admiralty API secondary port needs a UKHO station identifier.");
-			}
-			if (tide.secondaryPortCorrections || tide.parentLocationRef) {
-				throw new Error("An Admiralty API secondary port must not also contain entered corrections.");
-			}
-		}
-	}
-	if (properties.tidalGate != null) {
-		const gate = properties.tidalGate;
-		if (!location.types.includes("tidalGate") || typeof gate !== "object" || Array.isArray(gate)) {
-			throw new Error("Tidal-gate constants require the tidalGate location type.");
-		}
-		if (gate.contract !== "ajrm-tidal-gate-constants-v1") throw new Error("Tidal-gate constants use an unsupported contract.");
-		assertReference(gate.standardPortRef, "Tidal-gate standard-port reference");
-		assertText(gate.floodSet, "Flood set", { max: 20 });
-		assertText(gate.ebbSet, "Ebb set", { max: 20 });
-		assertText(gate.source, "Tidal-gate source", { max: 4000 });
-		for (const [key, label] of [["springPeakFlowKnots", "Spring peak flow"], ["neapPeakFlowKnots", "Neap peak flow"]]) {
-			if (gate[key] != null) validateNumber(gate[key], label, { minimum: 0, maximum: 30 });
-		}
-		for (const key of ["floodSpringAfter", "floodNeapAfter", "floodSpringSlack", "floodNeapSlack", "ebbSpringAfter", "ebbNeapAfter", "ebbSpringSlack", "ebbNeapSlack"]) {
-			assertText(gate[key], key, { max: 20 });
-			if (gate[key] && !/^-?\d{1,3}:\d{2}:\d{2}$/.test(gate[key])) throw new Error(`${key} must use h:mm:ss.`);
-		}
 	}
 	if (properties.anchorage != null) {
 		if (typeof properties.anchorage !== "object" || Array.isArray(properties.anchorage)) {
@@ -417,21 +274,6 @@ function normalizeLocation(input, { preserveId = true } = {}) {
 		...(location.properties || {}),
 		schema: LOCATION_SCHEMA,
 	};
-	// Migrate old, structurally unambiguous secondary records onto the explicit
-	// source contract. Runtime selection never guesses between mechanisms.
-	if (location.types.includes("tidalSecondaryPort") && location.properties.tide) {
-		const tide = location.properties.tide;
-		if (!tide.predictionSource && (tide.secondaryPortCorrections || tide.secondaryPortSourceData)) tide.predictionSource = "enteredCorrections";
-		if (!tide.predictionSource && tide.providerId === "ukhoTidalEvents" && tide.stationId) tide.predictionSource = "ukhoTidalEvents";
-	}
-	// Upgrade the former Signal K-region publication flag into the Locations
-	// contract. Consumers use this explicit property directly; no region is
-	// created and no name-prefix compatibility is involved.
-	if (location.properties.tide?.secondaryPortCorrections) {
-		location.properties.tide.secondaryPortCorrections = migrateSecondaryPortCorrections(
-			location.properties.tide.secondaryPortCorrections,
-		);
-	}
 	validateLocation(location);
 	return location;
 }
@@ -630,7 +472,6 @@ module.exports = {
 	HAZARD_SEVERITIES,
 	LOCATION_SCHEMA,
 	LOCATION_TYPES,
-	SECONDARY_PORT_PREDICTION_SOURCES,
 	WORKSPACES,
 	emptyCatalog,
 	isResourceId,

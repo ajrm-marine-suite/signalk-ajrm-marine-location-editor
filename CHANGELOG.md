@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.6.32
+
+- Make Location Editor a spatial catalogue only.
+- Remove UKHO credentials, station mappings, secondary-port corrections, gate constants, tide prediction/cache code and tide HTTP/service contracts.
+- Replace the combined historical seed with a consolidated spatial-only catalogue.
+- Preserve opaque third-party extension properties during the staged migration without interpreting them.
+
 ## 0.6.31 - 2026-08-21
 
 - Give secondary ports an explicit, mutually exclusive prediction source:

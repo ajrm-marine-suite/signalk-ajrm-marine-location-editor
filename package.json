@@ -1,6 +1,6 @@
 {
   "name": "signalk-ajrm-marine-location-editor",
-  "version": "0.6.31",
+  "version": "0.6.32",
   "description": "Signal K editor and local catalogue for marine places, tidal locations, hazards and avoidance areas.",
   "keywords": [
     "signalk-node-server-plugin",
@@ -21,9 +21,7 @@
   },
   "icon": "./public/icon-120.png",
   "scripts": {
-    "test": "node --check plugin/index.cjs && node --check plugin/location-model.cjs && node --check plugin/location-store.cjs && node --check plugin/weather-service.cjs && node --check public/app.js && node --check tools/generate-west-scotland-seed.cjs && node --check tools/generate-admiralty-port-seed.cjs && node --test test/*.test.cjs",
-    "generate:west-scotland": "node tools/generate-west-scotland-seed.cjs",
-    "generate:admiralty-ports": "node tools/generate-admiralty-port-seed.cjs"
+    "test": "node --check plugin/index.cjs && node --check plugin/location-model.cjs && node --check plugin/location-store.cjs && node --check plugin/weather-service.cjs && node --check public/app.js && node --test test/*.test.cjs"
   },
   "signalk-plugin-enabled-by-default": true,
   "signalk": {
@@ -45,7 +43,6 @@
     "public",
     "icon-120.png",
     "defaults",
-    "tools",
     "DATA-LICENCE.md",
     "README.md",
     "CHANGELOG.md",

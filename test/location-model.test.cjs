@@ -54,67 +54,9 @@ test("validates source provenance and tidal observation stations", () => {
 	}), /review status/);
 });
 
-test("validates optional tidal reference levels", () => {
-	const port = location({
-		types: ["tidalStandardPort"],
-		properties: { tide: { referenceLevels: { mhws: 4, mhwn: 2.9, mlwn: 1.8, mlws: 0.7 } } },
-	});
-	assert.equal(port.properties.tide.referenceLevels.mlwn, 1.8);
-	assert.throws(() => location({
-		types: ["tidalStandardPort"], properties: { tide: { referenceLevels: { mhws: 101 } } },
-	}), /MHWS reference level must be a number between -100 and 100/);
-});
-
-test("validates complete secondary-port correction tables", () => {
-	const corrections = {
-		contract: "ajrm-secondary-port-corrections-v2",
-		standardPortName: "Oban",
-		highWaterTimeOffsets: [{ referenceTimeMinutes: 60, offsetMinutes: 20 }],
-		lowWaterTimeOffsets: [{ referenceTimeMinutes: 90, offsetMinutes: 20 }],
-		heightDifferencesM: { mhws: 0.5, mhwn: 0.6, mlwn: 0.1, mlws: 0.2 },
-	};
-	const parentLocationRef = `/resources/locations/${crypto.randomUUID()}`;
-	const secondary = location({ types: ["tidalSecondaryPort"], properties: { tide: { parentLocationRef, secondaryPortCorrections: corrections } } });
-	assert.equal(secondary.properties.tide.secondaryPortCorrections.contract, "ajrm-secondary-port-corrections-v4");
-	assert.equal(secondary.properties.tide.secondaryPortCorrections.parentReferenceLevels, undefined);
-	assert.equal(secondary.properties.tide.secondaryPortCorrections.timeOffsetPeriodMinutes, 720);
-	assert.equal(secondary.properties.tide.secondaryPortCorrections.heightDifferencesM.mhws, 0.5);
-	assert.throws(() => location({
-		types: ["tidalSecondaryPort"],
-		properties: { tide: { parentLocationRef, secondaryPortCorrections: { ...corrections, highWaterTimeOffsets: [{ referenceTimeMinutes: 60, offsetMinutes: 2000 }] } } },
-	}), /HW time correction point 1 offset must be a number between -1440 and 1440/);
-});
-
-test("secondary ports use one explicit entered-data or Admiralty API source", () => {
-	const api = location({
-		types: ["tidalSecondaryPort"],
-		properties: { tide: {
-			predictionSource: "ukhoTidalEvents",
-			providerId: "ukhoTidalEvents",
-			stationId: "0381",
-			stationName: "Port Ellen",
-		} },
-	});
-	assert.equal(api.properties.tide.predictionSource, "ukhoTidalEvents");
-	assert.throws(() => location({
-		types: ["tidalSecondaryPort"],
-		properties: { tide: { predictionSource: "ukhoTidalEvents", providerId: "ukhoTidalEvents" } },
-	}), /station identifier/);
-	assert.throws(() => location({
-		types: ["tidalSecondaryPort"],
-		properties: { tide: {
-			predictionSource: "enteredCorrections",
-			providerId: "ukhoTidalEvents",
-			stationId: "0381",
-			parentLocationRef: `/resources/locations/${crypto.randomUUID()}`,
-			secondaryPortCorrections: {
-				contract: "ajrm-secondary-port-corrections-v4", timeOffsetPeriodMinutes: 720,
-				highWaterTimeOffsets: [{ referenceTimeMinutes: 0, offsetMinutes: 0 }],
-				lowWaterTimeOffsets: [{ referenceTimeMinutes: 0, offsetMinutes: 0 }],
-				heightDifferencesM: { mhws: 0, mhwn: 0, mlwn: 0, mlws: 0 },
-			},
-		} },
-	}), /must not also select an API station/);
+test("preserves extension properties without interpreting their service contract", () => {
+	const value = location({ properties: { externalService: { contract: "example-v1", value: 101 } } });
+	assert.deepEqual(value.properties.externalService, { contract: "example-v1", value: 101 });
 });
 
 test("catalogues retain version metadata and create initial immutable history", () => {

@@ -41,6 +41,34 @@ export function displayTypesForWorkspace(typeDefinitions, workspace = "all") {
 		.map(([type]) => type));
 }
 
+/**
+ * At close chart scales, omit broad tidal ancestors when one of their more
+ * specific descendants is also visible. The selected location is retained so
+ * an operator can still inspect a deliberately selected parent region.
+ */
+export function declutterTidalRegions(locations, areas, options = {}) {
+	const zoom = Number(options.zoom);
+	if (!Number.isFinite(zoom) || zoom < (options.minimumZoom ?? 10)) return locations;
+	const visibleIds = new Set(locations
+		.filter((location) => location.types?.includes("tidalRegion"))
+		.map((location) => location.id));
+	const parentById = new Map((Array.isArray(areas) ? areas : [])
+		.map((area) => [area.locationId, area.parentAreaLocationId || null]));
+	const ancestorsWithVisibleDescendants = new Set();
+	for (const locationId of visibleIds) {
+		const visited = new Set([locationId]);
+		let parentId = parentById.get(locationId);
+		while (parentId && !visited.has(parentId)) {
+			visited.add(parentId);
+			if (visibleIds.has(parentId)) ancestorsWithVisibleDescendants.add(parentId);
+			parentId = parentById.get(parentId);
+		}
+	}
+	return locations.filter((location) => (
+		location.id === options.selectedId || !ancestorsWithVisibleDescendants.has(location.id)
+	));
+}
+
 /** Broad planning-region polygons must not mask the locations inside them. */
 export function chartLocationInteractive(location) {
 	return !location.types.includes("tidalRegion");

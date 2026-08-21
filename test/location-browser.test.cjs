@@ -50,3 +50,21 @@ test("broad tidal planning regions do not mask contained chart locations", async
 	assert.equal(chartLocationInteractive({ types: ["tidalSecondaryPort"] }), true);
 	assert.equal(chartLocationInteractive({ types: ["hazard"] }), true);
 });
+
+test("close chart scales retain the most specific visible tidal region", async () => {
+	const { declutterTidalRegions } = await import("../public/location-browser.mjs");
+	const locations = [
+		{ id:"west",types:["tidalRegion"] },
+		{ id:"oban",types:["tidalRegion"] },
+		{ id:"cuan",types:["tidalRegion"] },
+		{ id:"gate",types:["tidalGate"] },
+	];
+	const areas = [
+		{ locationId:"west",parentAreaLocationId:null },
+		{ locationId:"oban",parentAreaLocationId:"west" },
+		{ locationId:"cuan",parentAreaLocationId:"oban" },
+	];
+	assert.deepEqual(declutterTidalRegions(locations,areas,{ zoom:9 }).map(({ id }) => id),["west","oban","cuan","gate"]);
+	assert.deepEqual(declutterTidalRegions(locations,areas,{ zoom:12 }).map(({ id }) => id),["cuan","gate"]);
+	assert.deepEqual(declutterTidalRegions(locations,areas,{ zoom:12,selectedId:"oban" }).map(({ id }) => id),["oban","cuan","gate"]);
+});

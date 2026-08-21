@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.6.36 — 2026-08-21
+
+- At close chart scales, hide broad tidal ancestors when a visible, more-specific child region is available, while retaining a deliberately selected parent.
+- Increase selected polygon outlines from 5 px to 8 px so the active region is unambiguous over detailed charts.
+
 ## 0.6.35 — 2026-08-21
 
 - Show the serving tidal port and optional parent region when editing a tidal-region Location.

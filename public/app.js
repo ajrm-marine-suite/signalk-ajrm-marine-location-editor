@@ -4,7 +4,7 @@
  */
 
 import * as MapCore from "./ajrm-map-core.mjs?v=0.7.9";
-import { chartLocationInteractive, displayTypesForWorkspace, filterLocations, groupLocations } from "./location-browser.mjs?v=0.5.2";
+import { chartLocationInteractive, declutterTidalRegions, displayTypesForWorkspace, filterLocations, groupLocations } from "./location-browser.mjs?v=0.6.36";
 import { geometryNudgeNm, holdAcceleration } from "./geometry-motion.mjs?v=0.5.1";
 import { circlePoints, rectanglePoints, regularPolygonPoints } from "./geometry-shapes.mjs?v=0.6.29";
 import { createEditorNavigationState } from "./panel-navigation.mjs?v=0.1.0";
@@ -134,7 +134,11 @@ function browserCandidates() {
 }
 
 function visibleLocations() {
-	return filterLocations(browserCandidates(), { activeTypes: activeDisplayTypes });
+	const visible = filterLocations(browserCandidates(), { activeTypes: activeDisplayTypes });
+	return declutterTidalRegions(visible, tidalDefinitions?.areas, {
+		zoom: map?.getZoom?.(),
+		selectedId,
+	});
 }
 
 function locationColor(location) {
@@ -536,7 +540,7 @@ function renderLocations() {
 		if (geometry.type === "Point") {
 			layer = L.circleMarker([geometry.coordinates[1], geometry.coordinates[0]], { radius: selected ? 9 : 7, color: "#000000", weight: selected ? 4 : 2, fillColor: color, fillOpacity: 0.82 });
 		} else {
-			layer = L.polygon(geometry.coordinates[0].map(([lon, lat]) => [lat, lon]), { color, weight: selected ? 5 : 3, fillColor: color, fillOpacity: 0.16, interactive, dashArray: location.types.some((type) => hazardTypes.has(type)) ? "8 6" : null });
+			layer = L.polygon(geometry.coordinates[0].map(([lon, lat]) => [lat, lon]), { color, weight: selected ? 8 : 3, fillColor: color, fillOpacity: 0.16, interactive, dashArray: location.types.some((type) => hazardTypes.has(type)) ? "8 6" : null });
 		}
 		if (interactive) {
 			layer.bindTooltip(`${location.name} — ${location.types.map(typeLabel).join(", ")}`);
@@ -928,7 +932,9 @@ function bindEvents() {
 	bindPressRepeat(elements.nudgeSouth, (context) => nudgeGeometry(-1, 0, context));
 	bindPressRepeat(elements.nudgeWest, (context) => nudgeGeometry(0, -1, context));
 	bindPressRepeat(elements.nudgeEast, (context) => nudgeGeometry(0, 1, context));
-	map.on("moveend zoomend", () => { if (elements.mapAreaOnly.checked) renderLocations(); });
+	map.on("moveend zoomend", () => {
+		if (elements.mapAreaOnly.checked || activeDisplayTypes.has("tidalRegion")) renderLocations();
+	});
 }
 
 setupChoices();

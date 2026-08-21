@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.6.35 — 2026-08-21
+
+- Show the serving tidal port and optional parent region when editing a tidal-region Location.
+- Save that joined relationship through the lifecycle-safe Tidal Database service, retaining Tidal Database as the single source of tidal semantics.
+- Clearly report when Tidal Database is unavailable instead of silently losing or duplicating the relationship.
+
 ## 0.6.34 — 2026-08-21
 
 - Draw a solid black ring around point-location markers and unsaved point previews so their category colours remain visible against detailed charts.

@@ -2,7 +2,7 @@
 
 Signal K spatial catalogue and chart editor for marine places, operational areas and hazards.
 
-Version 0.6.32 completes the separation of spatial locations from tidal data. Location Editor owns stable location identifiers, names, classifications, coordinates, geometry, anchorage details, hazards, revision history and merge/import/export. It no longer owns tidal provider credentials, station mappings, secondary-port correction tables, gate constants, predictions or caches. Those belong to **AJRM Marine Tidal Database**.
+Version 0.6.35 retains the separation of spatial locations from tidal data while presenting a joined tidal-region editor. Location Editor owns stable location identifiers, names, classifications, coordinates, geometry, anchorage details, hazards, revision history and merge/import/export. For a tidal-region polygon it also shows the serving tidal port and optional parent region, while saving that relationship through **AJRM Marine Tidal Database**, its single owner.
 
 ## Location classes
 
@@ -20,7 +20,7 @@ The plugin exposes:
 - `app.ajrmMarineAnchoring`, which provides confirmation-first stationary-at-anchorage assistance;
 - spatial location and anchoring services consumed by the standalone Tidal and Weather Database apps.
 
-It deliberately does **not** expose a tide service. Install AJRM Marine Tidal Database for tidal selection, provider configuration, corrections, calculations and offline cache management.
+It deliberately does **not** expose a tide service or duplicate tidal relationships in its catalogue. Install AJRM Marine Tidal Database for tidal selection, region-to-port assignments, provider configuration, corrections, calculations and offline cache management.
 
 ## Safety
 
@@ -30,6 +30,6 @@ Saved locations supplement, and never replace, current official charts, publicat
 
 ```sh
 cd ~/.signalk
-npm install git+https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor.git#v0.6.32 --omit=dev --no-package-lock
+npm install git+https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor.git#v0.6.35 --omit=dev --no-package-lock
 sudo systemctl restart signalk
 ```

@@ -46,6 +46,7 @@ const elements = Object.fromEntries([
 	"points", "shapeBuilder", "circleRadiusField", "rectangleWidthField", "rectangleHeightField",
 	"polygonPointCountField", "rectangleWidthNm", "rectangleHeightNm", "polygonPointCount", "makeShape", "vertexHelp",
 	"profileRegionField", "automaticProfileArea", "anchorageFields", "seabed", "chartedDepthM",
+	"tidalRegionFields", "tidalRegionPort", "tidalParentRegion", "tidalRegionStatus",
 	"detectionRadiusM", "trustedAutomation", "anchorageNotes",
 	"hazardFields", "hazardSeverity", "hazardReason",
 	"hazardClearanceM", "hazardApplications", "saveLocation", "undoLocation", "deleteLocation", "showHistory",
@@ -75,6 +76,8 @@ let saveLocationPromise = null;
 let toolbar;
 let baseLayers = {};
 let currentBaseLayer;
+let tidalDefinitions = null;
+let tidalDefinitionsError = "";
 
 function showStatus(message, isError = false) {
 	elements.status.textContent = message;
@@ -202,6 +205,9 @@ function updateConditionalFields() {
 	const harbourProfileArea = profileEligible && elements.geometryType.value !== "Point";
 	elements.profileRegionField.hidden = !harbourProfileArea;
 	if (!harbourProfileArea) elements.automaticProfileArea.checked = false;
+	const tidalRegion = types.includes("tidalRegion");
+	elements.tidalRegionFields.hidden = !tidalRegion;
+	if (tidalRegion) renderTidalRegionChoices();
 	elements.anchorageFields.hidden = !types.some((type) => anchorageTypes.has(type));
 	elements.hazardFields.hidden = !types.some((type) => hazardTypes.has(type));
 	elements.pointEditor.hidden = elements.geometryType.value !== "Point";
@@ -217,6 +223,28 @@ function updateConditionalFields() {
 	elements.decreaseRadius.disabled = elements.geometryType.value !== "Circle";
 	elements.increaseRadius.disabled = elements.geometryType.value !== "Circle";
 	renderPreview();
+}
+
+function currentTidalArea(locationId = selectedId) {
+	return tidalDefinitions?.areas?.find((area) => area.locationId === locationId) || null;
+}
+
+function renderTidalRegionChoices() {
+	const selectedArea = currentTidalArea();
+	const selectedPort = elements.tidalRegionPort.value || selectedArea?.portLocationId || "";
+	const selectedParent = elements.tidalParentRegion.value || selectedArea?.parentAreaLocationId || "";
+	const ports = [...(tidalDefinitions?.ports || [])].sort((a, b) => a.name.localeCompare(b.name));
+	const assignedRegionIds = new Set((tidalDefinitions?.areas || []).map((area) => area.locationId));
+	const regions = locations
+		.filter((location) => location.id !== selectedId && location.types.includes("tidalRegion") && assignedRegionIds.has(location.id))
+		.sort((a, b) => a.name.localeCompare(b.name));
+	fillSelect(elements.tidalRegionPort, ports.map((port) => ({ value:port.locationId,label:`${port.name} (${port.kind})` })), selectedPort, "No tidal port assigned");
+	fillSelect(elements.tidalParentRegion, regions.map((region) => ({ value:region.id,label:region.name })), selectedParent, "No parent region");
+	elements.tidalRegionPort.disabled = !tidalDefinitions;
+	elements.tidalParentRegion.disabled = !tidalDefinitions;
+	elements.tidalRegionStatus.textContent = tidalDefinitionsError || (selectedArea
+		? "This relationship is stored in Tidal Database."
+		: "No serving tidal port is currently assigned.");
 }
 
 function parsePoint(value = elements.point.value) {
@@ -279,6 +307,8 @@ function resetEditor() {
 	elements.trustedAutomation.checked = false;
 	elements.hazardSeverity.value = "advisory";
 	elements.automaticProfileArea.checked = false;
+	elements.tidalRegionPort.value = "";
+	elements.tidalParentRegion.value = "";
 	elements.hazardApplications.querySelectorAll("input").forEach((input) => { input.checked = false; });
 	elements.selectedSummary.textContent = "New location";
 	elements.deleteLocation.disabled = true;
@@ -309,6 +339,9 @@ function selectLocation(id, fit = false, revealEditor = false) {
 	}
 	const properties = location.properties || {};
 	elements.automaticProfileArea.checked = properties.automaticProfileArea === true;
+	const tidalArea = currentTidalArea(id);
+	elements.tidalRegionPort.value = tidalArea?.portLocationId || "";
+	elements.tidalParentRegion.value = tidalArea?.parentAreaLocationId || "";
 	elements.seabed.value = properties.anchorage?.seabed || "";
 	elements.chartedDepthM.value = properties.anchorage?.chartedDepthM ?? "";
 	elements.detectionRadiusM.value = properties.anchorage?.detectionRadiusM ?? "";
@@ -390,16 +423,50 @@ async function loadLocations(preferredId = selectedId) {
 	]);
 	locations = data.locations || [];
 	tombstones = deletedData.tombstones || [];
+	await loadTidalDefinitions();
 	renderLocations();
 	renderDeleted();
 	if (preferredId && locations.some((location) => location.id === preferredId)) selectLocation(preferredId);
+}
+
+async function loadTidalDefinitions() {
+	try {
+		const data = await requestJson(`${apiBase}/tidal-regions/definitions`);
+		tidalDefinitions = { ports:data.ports || [], areas:data.areas || [] };
+		tidalDefinitionsError = "";
+	} catch (error) {
+		tidalDefinitions = null;
+		tidalDefinitionsError = error.message;
+	}
+}
+
+async function saveTidalRegionAssignment(id, name, types) {
+	const existing = currentTidalArea(id);
+	if (!types.includes("tidalRegion")) {
+		if (existing) await requestJson(`${apiBase}/tidal-regions/${id}`, { method:"DELETE" });
+		return;
+	}
+	if (!tidalDefinitions) throw new Error(tidalDefinitionsError || "Tidal Database is unavailable.");
+	const portLocationId = elements.tidalRegionPort.value;
+	if (!portLocationId) {
+		if (existing) await requestJson(`${apiBase}/tidal-regions/${id}`, { method:"DELETE" });
+		return;
+	}
+	await requestJson(`${apiBase}/tidal-regions/${id}`, {
+		method:"PUT",
+		body:JSON.stringify({ name,portLocationId,parentAreaLocationId:elements.tidalParentRegion.value || null }),
+	});
 }
 
 async function saveLocation() {
 	const previous = selectedLocation();
 	const id = selectedId || crypto.randomUUID();
 	const body = { ...buildLocation(), expectedRevision: previous?.revision || 0 };
+	if (body.types.includes("tidalRegion") && !tidalDefinitions) {
+		throw new Error(tidalDefinitionsError || "Tidal Database is unavailable; the tidal-region relationship cannot be saved.");
+	}
 	const result = await requestJson(`${apiBase}/locations/${id}`, { method: "PUT", body: JSON.stringify(body) });
+	await saveTidalRegionAssignment(id, body.name, body.types);
 	await loadLocations(id);
 	geometryPreviewDirty = false;
 	previewLayer?.clearLayers();
@@ -428,6 +495,7 @@ function undoChanges() {
 async function deleteLocation() {
 	const location = selectedLocation();
 	if (!location || !confirm(`Delete ${location.name}? Its history will remain restorable.`)) return;
+	if (currentTidalArea(location.id)) await requestJson(`${apiBase}/tidal-regions/${location.id}`, { method:"DELETE" });
 	await requestJson(`${apiBase}/locations/${location.id}?expectedRevision=${location.revision}`, { method: "DELETE" });
 	await loadLocations(null);
 	resetEditor();

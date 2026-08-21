@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "AJRM Marine Location Editor API",
-    "version": "0.6.34",
+    "version": "0.6.35",
     "description": "Versioned spatial marine locations, assisted anchoring, import/export and nearest-location lookup."
   },
   "paths": {
@@ -17,6 +17,11 @@
     "/locations/{id}/history": { "get": { "parameters": [{ "$ref": "#/components/parameters/Id" }], "responses": { "200": { "description": "Immutable revision history" } } } },
     "/locations/{id}/restore": { "post": { "parameters": [{ "$ref": "#/components/parameters/Id" }], "responses": { "200": { "description": "Older snapshot restored as a new revision" } } } },
     "/nearest": { "get": { "responses": { "200": { "description": "Nearest matching locations" } } } },
+    "/tidal-regions/definitions": { "get": { "responses": { "200": { "description": "Joined tidal ports and region assignments owned by Tidal Database" } } } },
+    "/tidal-regions/{id}": {
+      "put": { "parameters": [{ "$ref": "#/components/parameters/Id" }], "responses": { "200": { "description": "Serving-port and parent-region assignment saved in Tidal Database" } } },
+      "delete": { "parameters": [{ "$ref": "#/components/parameters/Id" }], "responses": { "200": { "description": "Tidal-region assignment removed from Tidal Database" } } }
+    },
     "/anchoring/status": { "get": { "responses": { "200": { "description": "Stationary-at-location evidence and current anchoring suggestion/action state" } } } },
     "/anchoring/confirm": { "post": { "responses": { "200": { "description": "Confirm the current suggestion and select Anchored" } } } },
     "/anchoring/dismiss": { "post": { "responses": { "200": { "description": "Dismiss the current suggestion until the vessel leaves or moves" } } } },

@@ -27,6 +27,7 @@ async function fixture(t, options = {}) {
 		setPluginStatus() {},
 		setPluginError() {},
 		handleMessage(_id, delta) { messages.push(delta); },
+		ajrmMarineTidalDatabase: options.tidalService,
 	};
 	const routes = new Map();
 	const router = {};
@@ -44,6 +45,36 @@ async function fixture(t, options = {}) {
 	}
 	return { app, call, messages, plugin };
 }
+
+test("tidal-region routes present and update relationships owned by Tidal Database", async (t) => {
+	const saved = [];
+	const removed = [];
+	const portId = crypto.randomUUID();
+	const tidalService = {
+		contract:"ajrm-marine-tidal-database-service-v1",
+		listPorts:() => [{ locationId:portId,name:"Test standard port",kind:"standard" }],
+		listAreas:() => [],
+		setArea:async (id,value) => { const area={ locationId:id,...value }; saved.push(area); return area; },
+		removeArea:async (id) => { removed.push(id); },
+	};
+	const { call,plugin } = await fixture(t,{ tidalService });
+	const regionId = crypto.randomUUID();
+	let result = await call("PUT","/locations/:id",{ params:{ id:regionId },body:{
+		expectedRevision:0,name:"Test tidal region",types:["tidalRegion"],
+		feature:{ type:"Feature",properties:{},geometry:{ type:"Polygon",coordinates:[[[-5.2,55.8],[-5.1,55.8],[-5.1,55.9],[-5.2,55.8]]] } },properties:{},
+	} });
+	assert.equal(result.statusCode,200);
+	result = await call("GET","/tidal-regions/definitions");
+	assert.equal(result.body.ports[0].locationId,portId);
+	result = await call("PUT","/tidal-regions/:id",{ params:{ id:regionId },body:{ portLocationId:portId } });
+	assert.equal(result.body.ok,true);
+	assert.equal(saved[0].name,"Test tidal region");
+	assert.equal(saved[0].portLocationId,portId);
+	result = await call("DELETE","/tidal-regions/:id",{ params:{ id:regionId } });
+	assert.equal(result.body.ok,true);
+	assert.deepEqual(removed,[regionId]);
+	await plugin.stop();
+});
 
 test("a fresh catalogue receives the spatial seed without tidal provider data", async (t) => {
 	const { call, plugin } = await fixture(t);

@@ -27,6 +27,7 @@ const SERVICE_REGISTRIES = Object.freeze({
 	ajrmMarineAnchoring: Symbol.for("mcdonaldajr.ajrmMarineAnchoring"),
 	ajrmMarineLocationDiagnostics: Symbol.for("mcdonaldajr.ajrmMarineLocationDiagnostics"),
 });
+const TIDAL_DATABASE_REGISTRY = Symbol.for("mcdonaldajr.ajrmMarineTidalDatabase");
 const STATUS_PATH = "plugins.ajrmMarineLocationEditor";
 const ANCHORING_PATH = "plugins.ajrmMarineLocations.anchoring";
 const MAX_IMPORT_LOCATIONS = 10000;
@@ -254,6 +255,47 @@ module.exports = function ajrmMarineLocationEditor(app) {
 			}
 		});
 
+		router.get("/tidal-regions/definitions", async (_req, res) => {
+			try {
+				const service = requireTidalDatabase();
+				res.json({
+					contract: "ajrm-marine-location-tidal-region-editor-v1",
+					ports: service.listPorts(),
+					areas: service.listAreas(),
+				});
+			} catch (error) {
+				res.status(503).json({ error: error.message });
+			}
+		});
+
+		router.put("/tidal-regions/:id", write(async (req, res) => {
+			try {
+				assertRunning();
+				await initializationPromise;
+				if (!isResourceId(req.params.id)) throw new Error("Tidal region id must be a UUIDv4.");
+				const location = await store.get(req.params.id);
+				if (!location?.types.includes("tidalRegion")) throw new Error("The selected Location is not classified as a tidal region.");
+				const area = await requireTidalDatabase().setArea(req.params.id, {
+					name: location.name,
+					portLocationId: req.body?.portLocationId,
+					parentAreaLocationId: req.body?.parentAreaLocationId || null,
+				});
+				res.json({ ok:true,area });
+			} catch (error) {
+				res.status(400).json({ error:error.message });
+			}
+		}));
+
+		router.delete("/tidal-regions/:id", write(async (req, res) => {
+			try {
+				assertRunning();
+				await requireTidalDatabase().removeArea(req.params.id);
+				res.json({ ok:true });
+			} catch (error) {
+				res.status(400).json({ error:error.message });
+			}
+		}));
+
 		router.get("/locations/:id", async (req, res) => {
 			try {
 				assertRunning();
@@ -461,6 +503,17 @@ module.exports = function ajrmMarineLocationEditor(app) {
 		// prediction relationships belong to Tidal Database and are not interpreted here.
 		void location;
 		void catalogLocations;
+	}
+
+	function requireTidalDatabase() {
+		const service = app.ajrmMarineTidalDatabase || globalThis[TIDAL_DATABASE_REGISTRY];
+		if (
+			service?.contract !== "ajrm-marine-tidal-database-service-v1" ||
+			!["listPorts", "listAreas", "setArea", "removeArea"].every((method) => typeof service[method] === "function")
+		) {
+			throw new Error("AJRM Marine Tidal Database is unavailable or does not support tidal-region editing.");
+		}
+		return service;
 	}
 
 	async function assertUniqueLocationName(location, catalogLocations = null) {

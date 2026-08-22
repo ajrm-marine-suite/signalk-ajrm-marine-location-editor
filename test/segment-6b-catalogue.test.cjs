@@ -57,7 +57,7 @@ test("Segment 6B appends identities without altering any prior Cuan or Grey Dogs
 	assert.equal(digest(priorLocations),"9499bf7d266b33726cec35fd61541f6cae0fa070a61be6cf79b0b07f7ddf7fd7");
 	assert.equal(digest(priorLocations.find((entry) => entry.id === LEGACY_CUAN)),"28bfbf59be6faecd8fc8472917e59086e9283428c9b19964c877a044bee2588d");
 	assert.equal(digest(priorLocations.find((entry) => entry.id === LEGACY_GREY_DOGS)),"61c09c853f83b789094e3413c270bdaf51b1089653404623553acbf5e86ff214");
-	assert.equal(seed.locations.length,308);
-	assert.equal(new Set(seed.locations.map((entry) => entry.id)).size,308);
-	assert.equal(new Set(seed.locations.map((entry) => entry.name.trim().toLowerCase())).size,308);
+	assert.equal(seed.locations.length,309);
+	assert.equal(new Set(seed.locations.map((entry) => entry.id)).size,309);
+	assert.equal(new Set(seed.locations.map((entry) => entry.name.trim().toLowerCase())).size,309);
 });

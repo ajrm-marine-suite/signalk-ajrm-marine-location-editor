@@ -1,7 +1,7 @@
 {
   "schema": "org.ajrm.marine.location-seed/v1",
   "version": 1,
-  "generatedAt": "2026-08-22T17:35:34.000Z",
+  "generatedAt": "2026-08-22T18:17:10.000Z",
   "locations": [
     {
       "id": "9077fa0a-658e-49f7-b006-86767a605d86",
@@ -14810,6 +14810,41 @@
               "sourceId": "SNH Commissioned Report 374; Bealach a' Choin Ghlais / Grey Dogs name corroboration only",
               "url": "https://www.nature.scot/sites/default/files/2017-07/Publication%202010%20-%20SNH%20Commissioned%20Report%20374%20-%20The%20Special%20Qualities%20of%20the%20National%20Scenic%20Areas.pdf",
               "retrievedAt": "2026-08-22T17:35:34.000Z"
+            }
+          ]
+        },
+        "schema": "org.ajrm.marine.location/v1"
+      }
+    },
+    {
+      "id": "2bb1ebac-58eb-41d1-8b78-ef6e4494baf4",
+      "name": "Gulf of Corryvreckan (named-sea representative)",
+      "description": "Approximate representative tidal-gate marker for the OS-named Gulf of Corryvreckan sea feature. It encodes no surveyed gate line, fairway, safe-water position, route, waypoint, exact stream observation, turn, slack, rate, overfall or whirlpool locus.",
+      "types": [
+        "tidalGate"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {},
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -5.72536661,
+            56.14941904
+          ]
+        }
+      },
+      "properties": {
+        "provenance": {
+          "reviewStatus": "sourceChecked",
+          "warning": "OS Open Names supplies a representative point for the broad Gulf of Corryvreckan Sea feature, not a surveyed gate line, fairway, deepest-water line, safe-water position, route, waypoint or exact stream, turn, slack, rate, overfall or whirlpool locus. Its source extent is roughly 4.02 kilometres by 2.76 kilometres; consult current official charts and publications before passage planning.",
+          "sources": [
+            {
+              "provider": "Ordnance Survey OS Open Names 2026-07",
+              "sourceId": "osgb4000000074789965; Gulf of Corryvreckan; hydrography/Sea; BNG 168706,701445 transformed EPSG:27700 to EPSG:4326; source extent 166772,700072 to 170789,702833",
+              "license": "Open Government Licence 3.0 (OS OpenData)",
+              "url": "https://www.ordnancesurvey.co.uk/products/os-open-names",
+              "retrievedAt": "2026-08-22T18:17:10.000Z"
             }
           ]
         },

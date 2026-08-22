@@ -23,7 +23,7 @@ real-time data API (Beta).”
 The Sound of Iona, Gunna Sound, Northwest Mull (Caliach Point), Loch Sunart,
 Rubha an Ridire, Calve Island, Corran Narrows, Caolas Mhic Phadruig, Caolas nan
 Con, Lynn of Morvern, Loch Feochan, Firth of Lorn, Cuan Sound and Bealach a'
-Choin Ghlais representative points
+Choin Ghlais, and Gulf of Corryvreckan representative points
 contain OS Open Names data made available under the
 [Open Government Licence 3.0 (OS OpenData)](https://os.uk/opendata/licence).
 Required attribution: “Contains OS data © Crown Copyright and database rights
@@ -44,6 +44,10 @@ Bealach a' Choin Ghlais points are OS naming/locating points for `Channel`
 features, not the narrows, surveyed gate lines, fairways, safe-water positions,
 islet-clearance lines, routes or exact stream timing/rate/slack loci; they are
 also distinct from the preserved older Cuan and Grey Dogs records.
+The new Gulf of Corryvreckan record is an OS `Sea` representative with a broad
+source extent, not a surveyed gate, fairway, route, safe-water position or
+exact stream, turn, slack, rate, overfall or whirlpool locus; it remains
+distinct from the preserved OSM/NatureScot legacy record.
 
 ## ADMIRALTY Tidal API station records
 

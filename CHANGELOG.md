@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.6.48 — 2026-08-22
+
+- Add a distinct OS Open Names `Sea` representative for the Gulf of
+  Corryvreckan and retain the legacy OSM/NatureScot Location byte-for-byte.
+- State explicitly that the broad name point is not a surveyed gate, fairway,
+  safe-water position, route or exact stream, turn, slack, rate, overfall or
+  whirlpool locus.
+- Keep timing, hazards and operational readiness out of the spatial catalogue,
+  with focused provenance, uniqueness and prior-record digest tests.
+
 ## 0.6.47 — 2026-08-22
 
 - Add distinct OS Open Names `Channel` representative points for Cuan Sound

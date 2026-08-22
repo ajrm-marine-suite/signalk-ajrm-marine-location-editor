@@ -1,7 +1,7 @@
 {
   "schema": "org.ajrm.marine.location-seed/v1",
   "version": 1,
-  "generatedAt": "2026-08-21T11:56:08.691Z",
+  "generatedAt": "2026-08-22T14:06:04.000Z",
   "locations": [
     {
       "id": "9077fa0a-658e-49f7-b006-86767a605d86",
@@ -14305,6 +14305,76 @@
       "types": ["weatherForecastLocation"],
       "feature": { "type": "Feature", "properties": {}, "geometry": { "type": "Point", "coordinates": [-6.0978156, 55.8526035] } },
       "properties": {}
+    },
+    {
+      "id": "1957fe61-93dd-4eb2-a27b-e8f7fa958270",
+      "name": "Sound of Iona",
+      "description": "Approximate representative tidal-gate marker for the named channel. It encodes no stream timing, rate, fairway or safe-water position.",
+      "types": [
+        "tidalGate"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {},
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -6.38885173,
+            56.31595326
+          ]
+        }
+      },
+      "properties": {
+        "provenance": {
+          "reviewStatus": "sourceChecked",
+          "warning": "OS Open Names supplies a representative named-channel point, not a surveyed navigation point or gate line. Its source bounding box spans several kilometres; consult current official charts and publications before passage planning.",
+          "sources": [
+            {
+              "provider": "Ordnance Survey OS Open Names 2026-07",
+              "sourceId": "osgb4000000074789951; BNG 128705,722387 transformed EPSG:27700 to EPSG:4326",
+              "license": "OS OpenData Licence",
+              "url": "https://www.ordnancesurvey.co.uk/products/os-open-names",
+              "retrievedAt": "2026-08-22T14:06:04.000Z"
+            }
+          ]
+        },
+        "schema": "org.ajrm.marine.location/v1"
+      }
+    },
+    {
+      "id": "6211fb34-5f92-4ea9-887c-201ddb550792",
+      "name": "Gunna Sound",
+      "description": "Approximate representative tidal-gate marker for the named sound. It encodes no stream timing, rate, fairway or safe-water position.",
+      "types": [
+        "tidalGate"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {},
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -6.73575454,
+            56.55274988
+          ]
+        }
+      },
+      "properties": {
+        "provenance": {
+          "reviewStatus": "sourceChecked",
+          "warning": "OS Open Names supplies a representative named-sea point, not a surveyed navigation point or gate line. Its source bounding box spans more than two kilometres; consult current official charts and publications before passage planning.",
+          "sources": [
+            {
+              "provider": "Ordnance Survey OS Open Names 2026-07",
+              "sourceId": "osgb4000000074784701; BNG 109089,750133 transformed EPSG:27700 to EPSG:4326",
+              "license": "OS OpenData Licence",
+              "url": "https://www.ordnancesurvey.co.uk/products/os-open-names",
+              "retrievedAt": "2026-08-22T14:06:04.000Z"
+            }
+          ]
+        },
+        "schema": "org.ajrm.marine.location/v1"
+      }
     }
   ]
 }

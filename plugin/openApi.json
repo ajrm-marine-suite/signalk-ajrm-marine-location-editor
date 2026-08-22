@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "AJRM Marine Location Editor API",
-    "version": "0.6.40",
+    "version": "0.6.41",
     "description": "Versioned spatial marine locations, assisted anchoring, import/export and nearest-location lookup."
   },
   "paths": {

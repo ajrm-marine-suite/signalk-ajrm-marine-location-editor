@@ -18,6 +18,14 @@ Contains Environment Agency tide-gauge metadata made available under the
 Required attribution: “This uses Environment Agency tide gauge data from the
 real-time data API (Beta).”
 
+## Ordnance Survey OS Open Names records
+
+The Sound of Iona and Gunna Sound representative points contain OS Open Names
+data made available under the [OS OpenData Licence](https://os.uk/opendata/licence).
+Required attribution: “Contains OS data © Crown copyright and database rights
+2026.” These are place-name representative points, not surveyed fairway,
+safe-water or tidal-gate positions; each record preserves that uncertainty.
+
 ## ADMIRALTY Tidal API station records
 
 Some records in `defaults/spatial-locations.json` contain positions sourced from UK Hydrographic Office

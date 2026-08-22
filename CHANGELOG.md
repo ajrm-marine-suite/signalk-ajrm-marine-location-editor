@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.6.41 — 2026-08-22
+
+- Add stable Sound of Iona and Gunna Sound tidal-gate Locations using current
+  OS Open Names representative points, with explicit multi-kilometre spatial
+  uncertainty and no timing or rate data.
+- Add focused catalogue and OS OpenData attribution coverage.
+
 ## 0.6.40 — 2026-08-22
 
 - Add canonical spatial records for Portsmouth standard port and Bucklers Hard

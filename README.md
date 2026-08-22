@@ -14,7 +14,11 @@ selected parent remains visible with a strong outline.
 
 The bundled catalogue includes canonical Portsmouth and Bucklers Hard spatial
 records so Tidal Database can attach the corrected standard/secondary
-relationship without embedding coordinates in the tidal service.
+relationship without embedding coordinates in the tidal service. It also has
+source-checked, explicitly approximate Ordnance Survey representative points
+for Sound of Iona and Gunna Sound so reviewed, display-only tidal evidence can
+join by stable Location ID without treating either point as a surveyed route or
+gate line.
 
 ## Location classes
 
@@ -43,6 +47,6 @@ Saved locations supplement, and never replace, current official charts, publicat
 
 ```sh
 cd ~/.signalk
-npm install git+https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor.git#v0.6.40 --omit=dev --no-package-lock
+npm install git+https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor.git#v0.6.41 --omit=dev --no-package-lock
 sudo systemctl restart signalk
 ```

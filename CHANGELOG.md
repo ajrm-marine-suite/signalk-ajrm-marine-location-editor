@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.6.45 — 2026-08-22
+
+- Add distinct Caolas nan Con and Lynn of Morvern tidal-gate Locations using
+  licensed OS Open Names representative points.
+- Keep Caolas nan Con separate from the existing Loch Leven Narrows identity,
+  and label the Lynn point as a broad named-sea marker rather than an entrance,
+  fairway, route, safe-water position or surveyed gate.
+- Preserve every prior spatial record byte-for-byte with focused append,
+  provenance, distinct-identity and uniqueness tests.
+
 ## 0.6.44 — 2026-08-22
 
 - Add distinct Corran Narrows and Loch Leven Narrows tidal-gate Locations

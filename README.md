@@ -22,10 +22,14 @@ stable Location ID without treating a named-feature point as a surveyed route,
 fairway or gate line. Corran Narrows and the Loch Leven narrows now have
 separate named-channel representative points; the latter uses Caolas Mhic
 Phadruig at the officially documented Ballachulish Bridge locus. Neither is a
-surveyed passage waypoint or ferry track. The southeast-entrance record is anchored to Rubha an
-Ridire; the separate Calve record is anchored to the island and explicitly is
-not the source's offshore timing waypoint. The vague south-end Tiree timing
-locus remains withheld because no defensible gate point was established.
+surveyed passage waypoint or ferry track. Caolas nan Con has its own named
+channel point rather than being aliased to those Loch Leven narrows. Lynn of
+Morvern uses a broad named-sea point which is explicitly not an entrance line,
+route, fairway, safe-water point or locator for its local streams. The
+southeast-entrance record is anchored to Rubha an Ridire; the separate Calve
+record is anchored to the island and explicitly is not the source's offshore
+timing waypoint. The vague south-end Tiree timing locus remains withheld
+because no defensible gate point was established.
 
 ## Location classes
 
@@ -54,6 +58,6 @@ Saved locations supplement, and never replace, current official charts, publicat
 
 ```sh
 cd ~/.signalk
-npm install git+https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor.git#v0.6.44 --omit=dev --no-package-lock
+npm install git+https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor.git#v0.6.45 --omit=dev --no-package-lock
 sudo systemctl restart signalk
 ```

@@ -21,8 +21,8 @@ real-time data API (Beta).”
 ## Ordnance Survey OS Open Names records
 
 The Sound of Iona, Gunna Sound, Northwest Mull (Caliach Point), Loch Sunart,
-Rubha an Ridire, Calve Island, Corran Narrows and Caolas Mhic Phadruig
-representative points contain OS Open Names data made available under the
+Rubha an Ridire, Calve Island, Corran Narrows, Caolas Mhic Phadruig, Caolas nan
+Con and Lynn of Morvern representative points contain OS Open Names data made available under the
 [OS OpenData Licence](https://os.uk/opendata/licence). Required attribution:
 “Contains OS data © Crown copyright and database rights 2026.” These are
 place-name representative points, including headland and island points on land,
@@ -30,7 +30,10 @@ broad tidal-water points and named-channel points, not surveyed fairway,
 safe-water or tidal-gate positions; each record preserves that uncertainty. The
 Calve Island marker is explicitly not the source locus stated as three miles
 southeast of the island. The Caolas Mhic Phadruig point is not a surveyed
-Ballachulish Bridge clearance or passage waypoint.
+Ballachulish Bridge clearance or passage waypoint. The Caolas nan Con point is
+separate from the Loch Leven Narrows record and does not locate an exact timing
+observation. The broad Lynn of Morvern name point does not define its entrance
+or localize any of its separately described streams.
 
 ## ADMIRALTY Tidal API station records
 

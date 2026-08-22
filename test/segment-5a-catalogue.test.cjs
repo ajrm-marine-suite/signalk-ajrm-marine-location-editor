@@ -44,6 +44,6 @@ test("Segment 5A appends identities without altering the existing spatial catalo
 	const priorLocations = seed.locations.slice(0,300);
 	const digest = crypto.createHash("sha256").update(JSON.stringify(priorLocations)).digest("hex");
 	assert.equal(digest,"1ba52bf1105d11eeaafad353d40dfcfecdf2990178ea0d264b1aec9ebf545333");
-	assert.equal(seed.locations.length,302);
-	assert.equal(new Set(seed.locations.map((entry) => entry.id)).size,302);
+	assert.equal(seed.locations.length,304);
+	assert.equal(new Set(seed.locations.map((entry) => entry.id)).size,304);
 });

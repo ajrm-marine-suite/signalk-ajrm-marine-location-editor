@@ -1,7 +1,7 @@
 {
   "schema": "org.ajrm.marine.location-seed/v1",
   "version": 1,
-  "generatedAt": "2026-08-22T15:48:00.000Z",
+  "generatedAt": "2026-08-22T16:22:30.000Z",
   "locations": [
     {
       "id": "9077fa0a-658e-49f7-b006-86767a605d86",
@@ -14594,6 +14594,76 @@
               "license": "Open Government Licence 3.0",
               "url": "https://marine.gov.scot/sites/default/files/rod.pdf",
               "retrievedAt": "2026-08-22T15:48:00.000Z"
+            }
+          ]
+        },
+        "schema": "org.ajrm.marine.location/v1"
+      }
+    },
+    {
+      "id": "fbd3ab30-6bf6-4e70-bf91-f7141d9586fc",
+      "name": "Caolas nan Con",
+      "description": "Approximate representative tidal-gate marker for the named Caolas nan Con channel within Loch Leven. It encodes no stream timing, rate, surveyed gate line, fairway or safe-water position.",
+      "types": [
+        "tidalGate"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {},
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -5.04740364,
+            56.70546277
+          ]
+        }
+      },
+      "properties": {
+        "provenance": {
+          "reviewStatus": "sourceChecked",
+          "warning": "OS Open Names supplies a representative named-channel point, not a surveyed gate line, fairway or safe-water position. Its roughly 0.5 kilometre by 0.5 kilometre source extent cannot identify an exact timing observation or passage waypoint; consult current official charts and publications before passage planning.",
+          "sources": [
+            {
+              "provider": "Ordnance Survey OS Open Names 2026-07",
+              "sourceId": "osgb4000000074786201; Caolas nan Con; BNG 213544,761235 transformed EPSG:27700 to EPSG:4326; source extent 213292,760986 to 213792,761486",
+              "license": "OS OpenData Licence",
+              "url": "https://www.ordnancesurvey.co.uk/products/os-open-names",
+              "retrievedAt": "2026-08-22T16:22:30.000Z"
+            }
+          ]
+        },
+        "schema": "org.ajrm.marine.location/v1"
+      }
+    },
+    {
+      "id": "dd2f8629-e052-42ac-84b3-07e49390c7b1",
+      "name": "Lynn of Morvern",
+      "description": "Approximate representative tidal-gate marker for the broad named Lynn of Morvern sea area. It encodes no stream timing, rate, entrance line, surveyed gate, fairway, route or safe-water position.",
+      "types": [
+        "tidalGate"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {},
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -5.57166124,
+            56.51808317
+          ]
+        }
+      },
+      "properties": {
+        "provenance": {
+          "reviewStatus": "sourceChecked",
+          "warning": "OS Open Names supplies a representative point for the broad Lynn of Morvern sea feature, not the entrance line between Lismore and Morvern, a surveyed gate, fairway, route or safe-water position. Its source extent is roughly 18.3 kilometres by 14.5 kilometres and does not localize the separately described streams; consult current official charts and publications before passage planning.",
+          "sources": [
+            {
+              "provider": "Ordnance Survey OS Open Names 2026-07",
+              "sourceId": "osgb4000000074348786; Lynn of Morvern; BNG 180379,741944 transformed EPSG:27700 to EPSG:4326; source extent 171123,734511 to 189393,748993",
+              "license": "OS OpenData Licence",
+              "url": "https://www.ordnancesurvey.co.uk/products/os-open-names",
+              "retrievedAt": "2026-08-22T16:22:30.000Z"
             }
           ]
         },

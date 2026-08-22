@@ -164,6 +164,76 @@
       }
     },
     {
+      "id": "3df939c1-6949-4d51-960d-b489951e5aa9",
+      "name": "Portsmouth tidal prediction port",
+      "description": "UKHO standard prediction port used as the parent for Bucklers Hard.",
+      "types": [
+        "tidalStandardPort"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {},
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -1.1166667,
+            50.8
+          ]
+        }
+      },
+      "properties": {
+        "provenance": {
+          "reviewStatus": "sourceChecked",
+          "warning": "Official predictions remain subject to UKHO service terms and should be checked for operational use.",
+          "sources": [
+            {
+              "provider": "ADMIRALTY UK Tidal API and official secondary-port table 5600",
+              "sourceId": "0065",
+              "license": "UKHO service terms apply",
+              "url": "https://www.admiralty.co.uk/access-data/tidal-data",
+              "retrievedAt": "2026-08-22T00:00:00.000Z"
+            }
+          ]
+        },
+        "schema": "org.ajrm.marine.location/v1"
+      }
+    },
+    {
+      "id": "29bdf6ae-922e-486a-b9b3-8c1ca88a7624",
+      "name": "Bucklers Hard",
+      "description": "Secondary tidal port on the Beaulieu River, with corrections relative to Portsmouth.",
+      "types": [
+        "tidalSecondaryPort"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {},
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -1.4166667,
+            50.8
+          ]
+        }
+      },
+      "properties": {
+        "provenance": {
+          "reviewStatus": "sourceChecked",
+          "warning": "Secondary-port predictions are calculated from Portsmouth events and the published corrections; verify against current official data before navigation.",
+          "sources": [
+            {
+              "provider": "ADMIRALTY Tide Tables Volume 1 (NP201), Table 5600",
+              "sourceId": "Bucklers Hard",
+              "license": "UKHO service terms apply",
+              "url": "https://www.admiralty.co.uk/access-data/tidal-data",
+              "retrievedAt": "2026-08-22T00:00:00.000Z"
+            }
+          ]
+        },
+        "schema": "org.ajrm.marine.location/v1"
+      }
+    },
+    {
       "id": "5e63de0d-8963-4f8e-8448-b6e162367377",
       "name": "Acarseid Mhor",
       "description": "OpenStreetMap/OpenSeaMap records this as a anchorage.",

@@ -22,10 +22,12 @@ real-time data API (Beta).”
 
 The Sound of Iona, Gunna Sound, Northwest Mull (Caliach Point), Loch Sunart,
 Rubha an Ridire, Calve Island, Corran Narrows, Caolas Mhic Phadruig, Caolas nan
-Con, Lynn of Morvern, Loch Feochan and Firth of Lorn representative points
+Con, Lynn of Morvern, Loch Feochan, Firth of Lorn, Cuan Sound and Bealach a'
+Choin Ghlais representative points
 contain OS Open Names data made available under the
-[OS OpenData Licence](https://os.uk/opendata/licence). Required attribution:
-“Contains OS data © Crown copyright and database rights 2026.” These are
+[Open Government Licence 3.0 (OS OpenData)](https://os.uk/opendata/licence).
+Required attribution: “Contains OS data © Crown Copyright and database rights
+2026.” These are
 place-name representative points, including headland and island points on land,
 broad tidal-water points and named-channel points, not surveyed fairway,
 safe-water or tidal-gate positions; each record preserves that uncertainty. The
@@ -37,7 +39,11 @@ observation. The broad Lynn of Morvern name point does not define its entrance
 or localize any of its separately described streams. The Loch Feochan point is
 not its shoal entrance or buoyed channel. The new broad Firth of Lorn name point
 is distinct from the imported legacy marker and does not define the source
-fairway or any of its separately described local streams.
+fairway or any of its separately described local streams. The new Cuan and
+Bealach a' Choin Ghlais points are OS naming/locating points for `Channel`
+features, not the narrows, surveyed gate lines, fairways, safe-water positions,
+islet-clearance lines, routes or exact stream timing/rate/slack loci; they are
+also distinct from the preserved older Cuan and Grey Dogs records.
 
 ## ADMIRALTY Tidal API station records
 

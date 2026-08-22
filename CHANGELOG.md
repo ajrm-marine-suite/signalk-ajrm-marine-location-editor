@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.6.47 — 2026-08-22
+
+- Add distinct OS Open Names `Channel` representative points for Cuan Sound
+  and Grey Dogs / Bealach a' Choin Ghlais under the Open Government Licence.
+- State that both are naming/locating points only, not surveyed gates,
+  fairways, routes, safe-water positions or exact stream-observation loci.
+- Preserve all 306 prior records, including the legacy Cuan and Grey Dogs
+  identities, byte-for-byte; add no aliases and join the new records only by
+  their unique native-v2 Location IDs.
+
 ## 0.6.46 — 2026-08-22
 
 - Add source-checked Loch Feochan tidal-water and Firth of Lorn named-sea

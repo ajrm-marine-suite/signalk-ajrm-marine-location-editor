@@ -1,7 +1,7 @@
 {
   "schema": "org.ajrm.marine.location-seed/v1",
   "version": 1,
-  "generatedAt": "2026-08-22T16:59:44.000Z",
+  "generatedAt": "2026-08-22T17:35:34.000Z",
   "locations": [
     {
       "id": "9077fa0a-658e-49f7-b006-86767a605d86",
@@ -14734,6 +14734,82 @@
               "license": "OS OpenData Licence",
               "url": "https://www.ordnancesurvey.co.uk/products/os-open-names",
               "retrievedAt": "2026-08-22T16:59:44.000Z"
+            }
+          ]
+        },
+        "schema": "org.ajrm.marine.location/v1"
+      }
+    },
+    {
+      "id": "5270b58c-5b74-4a30-92ea-e8de3050f024",
+      "name": "Cuan Sound (named-channel representative)",
+      "description": "Approximate representative tidal-gate marker for the OS-named Cuan Sound channel. It encodes no narrows, stream timing, rate, surveyed gate line, fairway, safe-water position, ferry or cable locus, route or waypoint.",
+      "types": [
+        "tidalGate"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {},
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -5.63148652,
+            56.26765562
+          ]
+        }
+      },
+      "properties": {
+        "provenance": {
+          "reviewStatus": "sourceChecked",
+          "warning": "OS Open Names supplies a naming and locating point for the Cuan Sound Channel feature, not the narrows, a surveyed gate line, fairway, deepest water, safe-water position, stream observation, ferry or cable locus, route or waypoint. Its source extent is roughly 0.95 kilometres by 1.17 kilometres and cannot localize the western-part rate statement; consult current official charts and publications before passage planning.",
+          "sources": [
+            {
+              "provider": "Ordnance Survey OS Open Names 2026-07",
+              "sourceId": "osgb4000000074798949; Cuan Sound; hydrography/Channel; BNG 175228,714284 transformed EPSG:27700 to EPSG:4326; source extent 174767,713703 to 175721,714868",
+              "license": "Open Government Licence 3.0 (OS OpenData)",
+              "url": "https://www.ordnancesurvey.co.uk/products/os-open-names",
+              "retrievedAt": "2026-08-22T17:35:34.000Z"
+            }
+          ]
+        },
+        "schema": "org.ajrm.marine.location/v1"
+      }
+    },
+    {
+      "id": "a3df95d7-a216-476b-a10f-1d8909810c47",
+      "name": "Grey Dogs / Bealach a' Choin Ghlais (named-channel representative)",
+      "description": "Approximate representative tidal-gate marker for the OS-named Bealach a' Choin Ghlais channel, publicly corroborated as Grey Dogs. It encodes no narrowest point, stream timing, rate, turn, slack, surveyed gate line, fairway, safe-water position, islet-clearance line, route or waypoint.",
+      "types": [
+        "tidalGate"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {},
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -5.69277502,
+            56.20067008
+          ]
+        }
+      },
+      "properties": {
+        "provenance": {
+          "reviewStatus": "sourceChecked",
+          "warning": "OS Open Names supplies a naming and locating point for the Bealach a' Choin Ghlais Channel feature, not its narrowest part, a surveyed gate line, fairway, safe-water position, islet-clearance line, exact turn, slack or rate locus, route or waypoint. Its source extent is roughly 0.61 kilometres by 0.67 kilometres; consult current official charts and publications before passage planning.",
+          "sources": [
+            {
+              "provider": "Ordnance Survey OS Open Names 2026-07",
+              "sourceId": "osgb4000000074786354; Bealach a' Choin Ghlais; hydrography/Channel; BNG 171035,707036 transformed EPSG:27700 to EPSG:4326; source extent 170730,706633 to 171340,707307",
+              "license": "Open Government Licence 3.0 (OS OpenData)",
+              "url": "https://www.ordnancesurvey.co.uk/products/os-open-names",
+              "retrievedAt": "2026-08-22T17:35:34.000Z"
+            },
+            {
+              "provider": "NatureScot",
+              "sourceId": "SNH Commissioned Report 374; Bealach a' Choin Ghlais / Grey Dogs name corroboration only",
+              "url": "https://www.nature.scot/sites/default/files/2017-07/Publication%202010%20-%20SNH%20Commissioned%20Report%20374%20-%20The%20Special%20Qualities%20of%20the%20National%20Scenic%20Areas.pdf",
+              "retrievedAt": "2026-08-22T17:35:34.000Z"
             }
           ]
         },

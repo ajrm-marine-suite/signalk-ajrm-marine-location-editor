@@ -29,7 +29,10 @@ route, fairway, safe-water point or locator for its local streams. The
 Loch Feochan record is a named tidal-water point, not its shoal entrance or
 buoyed channel. A fresh Firth of Lorn named-sea representative remains distinct
 from the imported legacy marker and is explicitly not the source fairway or a
-local-stream position. The
+local-stream position. Cuan Sound and Grey Dogs / Bealach a' Choin Ghlais now
+also have fresh OS Open Names `Channel` representatives for native-v2 joins;
+they remain distinct from the older Cuan and Grey Dogs records and encode no
+narrows, fairway, safe-water line, stream observation, route or waypoint. The
 southeast-entrance record is anchored to Rubha an Ridire; the separate Calve
 record is anchored to the island and explicitly is not the source's offshore
 timing waypoint. The vague south-end Tiree timing locus remains withheld
@@ -62,6 +65,6 @@ Saved locations supplement, and never replace, current official charts, publicat
 
 ```sh
 cd ~/.signalk
-npm install git+https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor.git#v0.6.46 --omit=dev --no-package-lock
+npm install git+https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor.git#v0.6.47 --omit=dev --no-package-lock
 sudo systemctl restart signalk
 ```

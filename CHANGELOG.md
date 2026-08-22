@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.6.46 — 2026-08-22
+
+- Add source-checked Loch Feochan tidal-water and Firth of Lorn named-sea
+  representative points from licensed OS Open Names records.
+- Keep the reviewed Firth point distinct from the imported legacy identity,
+  and state that neither new marker is the source entrance/fairway, surveyed
+  gate, route or safe-water position.
+- Preserve all 304 prior spatial records and the legacy Firth record
+  byte-for-byte with focused provenance, distinct-identity and uniqueness tests.
+
 ## 0.6.45 — 2026-08-22
 
 - Add distinct Caolas nan Con and Lynn of Morvern tidal-gate Locations using

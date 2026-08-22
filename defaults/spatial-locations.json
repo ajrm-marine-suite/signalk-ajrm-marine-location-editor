@@ -1,7 +1,7 @@
 {
   "schema": "org.ajrm.marine.location-seed/v1",
   "version": 1,
-  "generatedAt": "2026-08-22T15:13:09.000Z",
+  "generatedAt": "2026-08-22T15:48:00.000Z",
   "locations": [
     {
       "id": "9077fa0a-658e-49f7-b006-86767a605d86",
@@ -14517,6 +14517,83 @@
               "license": "OS OpenData Licence",
               "url": "https://www.ordnancesurvey.co.uk/products/os-open-names",
               "retrievedAt": "2026-08-22T15:13:09.000Z"
+            }
+          ]
+        },
+        "schema": "org.ajrm.marine.location/v1"
+      }
+    },
+    {
+      "id": "55187907-2b6d-4c9b-9073-3848e2679a07",
+      "name": "Corran Narrows",
+      "description": "Approximate representative tidal-gate marker for the named Corran Narrows channel. It encodes no stream timing, rate, surveyed gate line, fairway, safe-water position or ferry route/track.",
+      "types": [
+        "tidalGate"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {},
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -5.24089661,
+            56.719579
+          ]
+        }
+      },
+      "properties": {
+        "provenance": {
+          "reviewStatus": "sourceChecked",
+          "warning": "OS Open Names supplies a representative named-channel point, not a surveyed gate line, fairway or safe-water position, and it does not define the Corran Ferry route or track. Its source extent is roughly 0.6 kilometres by 0.6 kilometres; consult current official charts and publications before passage planning.",
+          "sources": [
+            {
+              "provider": "Ordnance Survey OS Open Names 2026-07",
+              "sourceId": "osgb4000000074786431; Corran Narrows; BNG 201778,763349 transformed EPSG:27700 to EPSG:4326; source extent 201474,763057 to 202082,763653",
+              "license": "OS OpenData Licence",
+              "url": "https://www.ordnancesurvey.co.uk/products/os-open-names",
+              "retrievedAt": "2026-08-22T15:48:00.000Z"
+            }
+          ]
+        },
+        "schema": "org.ajrm.marine.location/v1"
+      }
+    },
+    {
+      "id": "47683dc5-1b7e-477c-95fb-4e7a54244995",
+      "name": "Loch Leven Narrows (Caolas Mhic Phadruig)",
+      "description": "Approximate representative tidal-gate marker for the Loch Leven narrows crossed by Ballachulish Bridge, using the named Caolas Mhic Phadruig channel point. It encodes no stream timing, rate, surveyed gate line, bridge-clearance point, fairway or safe-water position.",
+      "types": [
+        "tidalGate"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {},
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -5.18642537,
+            56.68946917
+          ]
+        }
+      },
+      "properties": {
+        "provenance": {
+          "reviewStatus": "sourceChecked",
+          "warning": "OS Open Names supplies a representative point for the named Caolas Mhic Phadruig channel whose source extent contains the officially documented Ballachulish Bridge position. The point is not a surveyed gate line, bridge-clearance point, fairway or safe-water position; consult current official charts and publications before passage planning.",
+          "sources": [
+            {
+              "provider": "Ordnance Survey OS Open Names 2026-07",
+              "sourceId": "osgb4000000074784648; Caolas Mhic Phadruig; BNG 204954,759843 transformed EPSG:27700 to EPSG:4326; source extent 204673,759576 to 205502,760109",
+              "license": "OS OpenData Licence",
+              "url": "https://www.ordnancesurvey.co.uk/products/os-open-names",
+              "retrievedAt": "2026-08-22T15:48:00.000Z"
+            },
+            {
+              "provider": "Transport Scotland",
+              "sourceId": "A82 870 Ballachulish Bridge; NN 05195 59797",
+              "license": "Open Government Licence 3.0",
+              "url": "https://marine.gov.scot/sites/default/files/rod.pdf",
+              "retrievedAt": "2026-08-22T15:48:00.000Z"
             }
           ]
         },

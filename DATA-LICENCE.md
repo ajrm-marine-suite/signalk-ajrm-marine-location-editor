@@ -21,14 +21,16 @@ real-time data API (Beta).”
 ## Ordnance Survey OS Open Names records
 
 The Sound of Iona, Gunna Sound, Northwest Mull (Caliach Point), Loch Sunart,
-Rubha an Ridire and Calve Island representative points contain OS Open Names
-data made available under the
+Rubha an Ridire, Calve Island, Corran Narrows and Caolas Mhic Phadruig
+representative points contain OS Open Names data made available under the
 [OS OpenData Licence](https://os.uk/opendata/licence). Required attribution:
 “Contains OS data © Crown copyright and database rights 2026.” These are
-place-name representative points, including headland and island points on land
-and broad tidal-water points, not surveyed fairway, safe-water or tidal-gate
-positions; each record preserves that uncertainty. The Calve Island marker is
-explicitly not the source locus stated as three miles southeast of the island.
+place-name representative points, including headland and island points on land,
+broad tidal-water points and named-channel points, not surveyed fairway,
+safe-water or tidal-gate positions; each record preserves that uncertainty. The
+Calve Island marker is explicitly not the source locus stated as three miles
+southeast of the island. The Caolas Mhic Phadruig point is not a surveyed
+Ballachulish Bridge clearance or passage waypoint.
 
 ## ADMIRALTY Tidal API station records
 
@@ -38,6 +40,15 @@ API catalogue. Tidal predictions fetched at runtime remain subject to the
 user's ADMIRALTY subscription and terms. The generated tidal-area polygons are
 AJRM review aids derived from those positions; they are not UKHO tidal-area
 boundaries and must be checked locally before use.
+
+## Transport Scotland bridge corroboration
+
+The Loch Leven Narrows record uses the Transport Scotland A82 870 Ballachulish
+Bridge grid reference only to corroborate that the OS Open Names channel extent
+contains the road bridge described by the reviewed source. Transport Scotland
+website information is available under the
+[Open Government Licence](https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/).
+The stored channel point is not a bridge-clearance or passage waypoint.
 
 ## Editorial corroboration links
 

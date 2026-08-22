@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.6.44 — 2026-08-22
+
+- Add distinct Corran Narrows and Loch Leven Narrows tidal-gate Locations
+  using licensed OS Open Names representative channel points.
+- Tie the Loch Leven identity to Caolas Mhic Phadruig, whose source extent
+  contains the officially documented Ballachulish Bridge position.
+- State explicitly that neither point is a surveyed gate line, fairway,
+  bridge-clearance point or safe-water waypoint, and preserve the prior
+  spatial catalogue with focused digest and uniqueness tests.
+
 ## 0.6.43 — 2026-08-22
 
 - Add separate Sound of Mull southeast-entrance and Calve Island tidal-gate

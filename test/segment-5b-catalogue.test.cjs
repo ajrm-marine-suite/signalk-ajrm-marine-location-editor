@@ -45,6 +45,6 @@ test("Segment 5B appends identities without altering any prior Location byte", (
 	const priorLocations = seed.locations.slice(0,302);
 	const digest = crypto.createHash("sha256").update(JSON.stringify(priorLocations)).digest("hex");
 	assert.equal(digest,"1a84f6a5d959075e6e40acfa7335b9c1c6132cf8d271eeec9a9b395056b6b60b");
-	assert.equal(seed.locations.length,309);
-	assert.equal(new Set(seed.locations.map((entry) => entry.id)).size,309);
+	assert.equal(seed.locations.length,311);
+	assert.equal(new Set(seed.locations.map((entry) => entry.id)).size,311);
 });

@@ -48,6 +48,6 @@ test("Segment 6A appends identities without altering any prior or legacy Firth b
 	const priorLocations = seed.locations.slice(0,304);
 	assert.equal(digest(priorLocations),"54e414cc06e7aea2e7d3671f3e387140682f74ae57f76836b75859378b178871");
 	assert.equal(digest(priorLocations.find((entry) => entry.id === LEGACY_FIRTH_OF_LORN)),"b8cbf2dfc809d6a85f074bfc9dfd201e596960ed57e75aaf26c7d0f8401940d5");
-	assert.equal(seed.locations.length,309);
-	assert.equal(new Set(seed.locations.map((entry) => entry.id)).size,309);
+	assert.equal(seed.locations.length,311);
+	assert.equal(new Set(seed.locations.map((entry) => entry.id)).size,311);
 });

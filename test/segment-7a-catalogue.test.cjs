@@ -39,7 +39,7 @@ test("Segment 7A preserves the complete prior catalogue and legacy Corryvreckan 
 	assert.equal(legacy.properties.aliases,undefined);
 	assert.equal(new Set([LEGACY_CORRYVRECKAN,NATIVE_CORRYVRECKAN]).size,2);
 	assert.equal(seed.locations.filter((entry) => /Gulf of Corryvreckan/i.test(entry.name)).length,2);
-	assert.equal(seed.locations.length,309);
-	assert.equal(new Set(seed.locations.map((entry) => entry.id)).size,309);
-	assert.equal(new Set(seed.locations.map((entry) => entry.name.trim().toLowerCase())).size,309);
+	assert.equal(seed.locations.length,311);
+	assert.equal(new Set(seed.locations.map((entry) => entry.id)).size,311);
+	assert.equal(new Set(seed.locations.map((entry) => entry.name.trim().toLowerCase())).size,311);
 });

@@ -1,7 +1,7 @@
 {
   "schema": "org.ajrm.marine.location-seed/v1",
   "version": 1,
-  "generatedAt": "2026-08-22T18:17:10.000Z",
+  "generatedAt": "2026-08-22T18:56:19.000Z",
   "locations": [
     {
       "id": "9077fa0a-658e-49f7-b006-86767a605d86",
@@ -14845,6 +14845,76 @@
               "license": "Open Government Licence 3.0 (OS OpenData)",
               "url": "https://www.ordnancesurvey.co.uk/products/os-open-names",
               "retrievedAt": "2026-08-22T18:17:10.000Z"
+            }
+          ]
+        },
+        "schema": "org.ajrm.marine.location/v1"
+      }
+    },
+    {
+      "id": "53ae1e7e-ec00-40f7-ab23-784644740f0b",
+      "name": "Sound of Luing (named-sea representative)",
+      "description": "Approximate representative tidal-gate marker for the OS-named Sound of Luing sea feature. It encodes no surveyed gate line, fairway, safe-water position, route, waypoint, exact stream observation, turn, slack, rate, eddy or tidal-race locus.",
+      "types": [
+        "tidalGate"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {},
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -5.66924669,
+            56.22179984
+          ]
+        }
+      },
+      "properties": {
+        "provenance": {
+          "reviewStatus": "sourceChecked",
+          "warning": "OS Open Names supplies a representative point for the broad Sound of Luing Sea feature, not a surveyed gate line, fairway, safe-water position, route, waypoint or exact stream, turn, slack, rate, eddy or tidal-race locus. Its source extent is roughly 3.24 kilometres by 9.50 kilometres and cannot localize the separately described Ardluing, Fladda, Rubha Fiola or Rubha na Lic conditions; consult current official charts and publications before passage planning.",
+          "sources": [
+            {
+              "provider": "Ordnance Survey OS Open Names 2026-07",
+              "sourceId": "osgb4000000074799327; Sound of Luing; hydrography/Sea; BNG 172619,709308 transformed EPSG:27700 to EPSG:4326; source extent 170980,704511 to 174219,714013",
+              "license": "Open Government Licence 3.0 (OS OpenData)",
+              "url": "https://www.ordnancesurvey.co.uk/products/os-open-names",
+              "retrievedAt": "2026-08-22T18:56:19.000Z"
+            }
+          ]
+        },
+        "schema": "org.ajrm.marine.location/v1"
+      }
+    },
+    {
+      "id": "83192cc1-65da-4abc-b4ae-51c6c4ab54ad",
+      "name": "Dorus Mòr (named-channel representative)",
+      "description": "Approximate representative tidal-gate marker for the OS-named Dorus Mòr channel. It encodes no surveyed gate line, fairway, safe-water position, route, waypoint or exact stream, turn, slack, rate, eddy, race or overfall locus.",
+      "types": [
+        "tidalGate"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {},
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -5.60992799,
+            56.12718962
+          ]
+        }
+      },
+      "properties": {
+        "provenance": {
+          "reviewStatus": "sourceChecked",
+          "warning": "OS Open Names supplies a naming and locating point for the Dorus Mòr Channel feature, not a surveyed gate line, fairway, middle-of-channel line, safe-water position, route, waypoint or exact stream, turn, slack, rate, eddy, race or overfall locus. Its source extent is roughly 1.26 kilometres by 1.05 kilometres and does not localize the source's separately described streams and hazards; consult current official charts and publications before passage planning.",
+          "sources": [
+            {
+              "provider": "Ordnance Survey OS Open Names 2026-07",
+              "sourceId": "osgb4000000074785740; Dorus Mòr; hydrography/Channel; BNG 175743,698591 transformed EPSG:27700 to EPSG:4326; source extent 175071,698066 to 176334,699116",
+              "license": "Open Government Licence 3.0 (OS OpenData)",
+              "url": "https://www.ordnancesurvey.co.uk/products/os-open-names",
+              "retrievedAt": "2026-08-22T18:56:19.000Z"
             }
           ]
         },

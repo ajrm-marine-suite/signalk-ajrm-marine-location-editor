@@ -37,7 +37,12 @@ Gulf of Corryvreckan also has a fresh, distinct OS Open Names `Sea`
 representative for its native-v2 join. Its roughly 4.02 by 2.76 kilometre
 source extent makes it a broad name point only, not a surveyed gate, fairway,
 route, safe-water position or exact turn, slack, rate, overfall or whirlpool
-locus. The southeast-entrance record is anchored to Rubha an Ridire; the
+locus. Sound of Luing and Dorus Mòr likewise have fresh, distinct OS
+representatives for their native-v2 joins: a broad `Sea` name point and a
+named `Channel` point respectively. Neither is an exact gate line, fairway,
+safe-water position, route, stream observation, turn, slack, rate, eddy, race
+or overfall locus, and both legacy Locations remain unchanged. The
+southeast-entrance record is anchored to Rubha an Ridire; the
 separate Calve
 record is anchored to the island and explicitly is not the source's offshore
 timing waypoint. The vague south-end Tiree timing locus remains withheld
@@ -70,6 +75,6 @@ Saved locations supplement, and never replace, current official charts, publicat
 
 ```sh
 cd ~/.signalk
-npm install git+https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor.git#v0.6.48 --omit=dev --no-package-lock
+npm install git+https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor.git#v0.6.49 --omit=dev --no-package-lock
 sudo systemctl restart signalk
 ```

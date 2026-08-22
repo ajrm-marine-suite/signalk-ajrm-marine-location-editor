@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.6.49 — 2026-08-22
+
+- Add distinct OS Open Names representatives for the broad Sound of Luing
+  `Sea` feature and the Dorus Mòr `Channel` feature for Segment 7B native-v2
+  joins.
+- State explicitly that neither representative is a surveyed gate, fairway,
+  safe-water point, route or exact stream, turn, slack, rate or hazard locus.
+- Preserve all 309 prior records, including both legacy candidate Locations,
+  byte-for-byte with focused UUID, provenance and digest tests.
+
 ## 0.6.48 — 2026-08-22
 
 - Add a distinct OS Open Names `Sea` representative for the Gulf of

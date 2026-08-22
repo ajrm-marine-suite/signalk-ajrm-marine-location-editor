@@ -75,6 +75,6 @@ Saved locations supplement, and never replace, current official charts, publicat
 
 ```sh
 cd ~/.signalk
-npm install git+https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor.git#v0.6.49 --omit=dev --no-package-lock
+npm install git+https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor.git#v0.6.50 --omit=dev --no-package-lock
 sudo systemctl restart signalk
 ```

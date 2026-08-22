@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.6.50 — 2026-08-22
+
+- Add seven distinct source-checked representatives for Sound of Jura, the
+  passage west of Islay, Sound of Islay, West Loch Tarbert on Jura, Sound of
+  Gigha, Sanda Sound and the close-west Mull of Kintyre stream.
+- Keep all markers explicitly approximate: OS name points and the NLB
+  lighthouse position are not surveyed gates, fairways, routes, stream
+  stations, safe-water positions or passage waypoints.
+- Preserve the prior catalogue and legacy Mull of Kintyre and Sound of Islay
+  candidates unchanged while providing one-to-one native-v2 join identities.
+
 ## 0.6.49 — 2026-08-22
 
 - Add distinct OS Open Names representatives for the broad Sound of Luing

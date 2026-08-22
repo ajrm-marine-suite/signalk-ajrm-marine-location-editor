@@ -14920,6 +14920,111 @@
         },
         "schema": "org.ajrm.marine.location/v1"
       }
+    },
+    {
+      "id": "513807ca-dafc-48fd-a81a-76961c645e23",
+      "name": "Sound of Jura (named-sea representative)",
+      "description": "Approximate representative tidal-gate marker for the broad OS-named Sound of Jura sea feature. It encodes no surveyed gate line, fairway, safe-water position, route, waypoint or exact stream, turn, slack, rate, reef, eddy or overfall locus.",
+      "types": ["tidalGate"],
+      "feature": {"type":"Feature","properties":{},"geometry":{"type":"Point","coordinates":[-5.76111683,55.89652713]}},
+      "properties": {
+        "provenance": {
+          "reviewStatus": "sourceChecked",
+          "warning": "OS Open Names supplies a representative point for the broad Sound of Jura Sea feature, not a surveyed gate, fairway, safe-water position or exact timing/rate locality. Its source extent is roughly 26.7 by 43.6 kilometres and cannot localize the separately described greater-sound, Skervuile or Ruadh Sgeir conditions; consult current official charts and publications before passage planning.",
+          "sources": [{"provider":"Ordnance Survey OS Open Names 2026-07","sourceId":"osgb4000000074799402; Sound of Jura; hydrography/Sea; BNG 164953,673441 transformed EPSG:27700 to EPSG:4326; source extent 151562,657854 to 178296,701460","license":"Open Government Licence 3.0 (OS OpenData)","url":"https://www.ordnancesurvey.co.uk/products/os-open-names","retrievedAt":"2026-08-22T20:30:58.000Z"}]
+        },
+        "schema": "org.ajrm.marine.location/v1"
+      }
+    },
+    {
+      "id": "81ce9a21-efb6-4d14-ab26-280c8bfd4035",
+      "name": "West of Islay (Rinns of Islay representative)",
+      "description": "Approximate representative tidal-gate marker for the broad passage west of Islay, anchored to the OS-named Rinns of Islay coastal headland. It encodes no offshore route, safe-water position, surveyed gate, stream station, bank, overfall or clearance locus.",
+      "types": ["tidalGate"],
+      "feature": {"type":"Feature","properties":{},"geometry":{"type":"Point","coordinates":[-6.42316674,55.78236098]}},
+      "properties": {
+        "provenance": {
+          "reviewStatus": "sourceChecked",
+          "warning": "OS Open Names supplies a representative land point for the broad Rinns of Islay headland, not the offshore passage, Orsay rate locality, West Bank, a surveyed gate, fairway, route or safe-water position. Its source extent is roughly 14.2 by 24.0 kilometres; consult current official charts and publications before passage planning.",
+          "sources": [{"provider":"Ordnance Survey OS Open Names 2026-07","sourceId":"osgb4000000074586884; Rinns of Islay; landform/Coastal Headland; BNG 122777,663199 transformed EPSG:27700 to EPSG:4326; source extent 115667,651044 to 129886,675043","license":"Open Government Licence 3.0 (OS OpenData)","url":"https://www.ordnancesurvey.co.uk/products/os-open-names","retrievedAt":"2026-08-22T20:30:58.000Z"}]
+        },
+        "schema": "org.ajrm.marine.location/v1"
+      }
+    },
+    {
+      "id": "f9c17ddc-8fcc-49bd-8000-422f715d5697",
+      "name": "Sound of Islay (named-sea representative)",
+      "description": "Approximate representative tidal-gate marker for the OS-named Sound of Islay sea feature. It encodes no narrows, surveyed gate line, fairway, ferry route, safe-water position or exact stream, turn, rate or eddy locus.",
+      "types": ["tidalGate"],
+      "feature": {"type":"Feature","properties":{},"geometry":{"type":"Point","coordinates":[-6.04244567,55.78356651]}},
+      "properties": {
+        "provenance": {
+          "reviewStatus": "sourceChecked",
+          "warning": "OS Open Names supplies a broad named-sea representative, not the narrows, a surveyed gate line, fairway, ferry track, safe-water position or exact timing/rate observation. Its source extent is roughly 9.8 by 20.4 kilometres; consult current official charts and publications before passage planning.",
+          "sources": [{"provider":"Ordnance Survey OS Open Names 2026-07","sourceId":"osgb4000000074798363; Sound of Islay; hydrography/Sea; BNG 146640,661873 transformed EPSG:27700 to EPSG:4326; source extent 141738,659674 to 151567,680052","license":"Open Government Licence 3.0 (OS OpenData)","url":"https://www.ordnancesurvey.co.uk/products/os-open-names","retrievedAt":"2026-08-22T20:30:58.000Z"},{"provider":"Scottish Government","sourceId":"Sound of Islay site naming and approximate location corroboration only","license":"Open Government Licence 3.0","url":"https://www.gov.scot/publications/use-acoustic-devices-warn-marine-mammals-tidal-stream-energy-devices/pages/3/","retrievedAt":"2026-08-22T20:30:58.000Z"}]
+        },
+        "schema": "org.ajrm.marine.location/v1"
+      }
+    },
+    {
+      "id": "f8a16397-5b14-46be-b769-555b3300af72",
+      "name": "West Loch Tarbert, Jura (named-tidal-water representative)",
+      "description": "Approximate representative tidal-gate marker for the OS-named West Loch Tarbert tidal water on Jura. It encodes no entrance, beacon-clearance line, surveyed gate, fairway, route, safe-water position or exact stream-turn locus.",
+      "types": ["tidalGate"],
+      "feature": {"type":"Feature","properties":{},"geometry":{"type":"Point","coordinates":[-5.49765371,55.80607794]}},
+      "properties": {
+        "provenance": {
+          "reviewStatus": "sourceChecked",
+          "warning": "OS Open Names supplies a representative point for the broad West Loch Tarbert Tidal Water feature on Jura, not its entrance, a beacon-clearance line, surveyed gate, fairway, route or safe-water position. Its source extent is roughly 11.3 by 11.7 kilometres; consult current official charts and publications before passage planning.",
+          "sources": [{"provider":"Ordnance Survey OS Open Names 2026-07","sourceId":"osgb4000000074784594; West Loch Tarbert; hydrography/Tidal Water; BNG 180908,662516 transformed EPSG:27700 to EPSG:4326; source extent 173790,656669 to 185063,668363","license":"Open Government Licence 3.0 (OS OpenData)","url":"https://www.ordnancesurvey.co.uk/products/os-open-names","retrievedAt":"2026-08-22T20:30:58.000Z"}]
+        },
+        "schema": "org.ajrm.marine.location/v1"
+      }
+    },
+    {
+      "id": "7c0e9a0d-4e6f-46e7-ac72-1b355f7a7e5d",
+      "name": "Sound of Gigha (named-sea representative)",
+      "description": "Approximate representative tidal-gate marker for the broad OS-named Sound of Gigha sea feature. It encodes no surveyed gate line, fairway, route, safe-water position, entrance rock clearance or exact stream-turn locus.",
+      "types": ["tidalGate"],
+      "feature": {"type":"Feature","properties":{},"geometry":{"type":"Point","coordinates":[-5.6941615,55.66872071]}},
+      "properties": {
+        "provenance": {
+          "reviewStatus": "sourceChecked",
+          "warning": "OS Open Names supplies a representative point for the broad Sound of Gigha Sea feature, not a surveyed gate, fairway, route, safe-water position, Sgeir an Truidh clearance or exact timing observation. Its source extent is roughly 8.7 by 12.3 kilometres; consult current official charts and publications before passage planning.",
+          "sources": [{"provider":"Ordnance Survey OS Open Names 2026-07","sourceId":"osgb4000000074799401; Sound of Gigha; hydrography/Sea; BNG 167784,647880 transformed EPSG:27700 to EPSG:4326; source extent 163436,641849 to 172117,654130","license":"Open Government Licence 3.0 (OS OpenData)","url":"https://www.ordnancesurvey.co.uk/products/os-open-names","retrievedAt":"2026-08-22T20:30:58.000Z"}]
+        },
+        "schema": "org.ajrm.marine.location/v1"
+      }
+    },
+    {
+      "id": "b1b21e35-0cb5-4ab9-b8ac-1bb3795f2e17",
+      "name": "Sanda Sound (Sanda Roads named-channel representative)",
+      "description": "Approximate representative tidal-gate marker for the source's Sanda Sound mid-channel stream, anchored to the OS-named Sanda Roads channel. It encodes no surveyed mid-channel point, gate line, fairway, route, safe-water position, race boundary or exact stream station.",
+      "types": ["tidalGate"],
+      "feature": {"type":"Feature","properties":{},"geometry":{"type":"Point","coordinates":[-5.57602842,55.28851863]}},
+      "properties": {
+        "provenance": {
+          "reviewStatus": "sourceChecked",
+          "warning": "The publication calls the timing locality Sanda Sound (mid-channel), while OS Open Names supplies Sanda Roads as the nearby named Channel feature. The OS point is not a surveyed mid-channel observation, gate, fairway, route, safe-water position or race boundary; its source extent is roughly 1.4 by 1.1 kilometres. Consult current official charts and publications before passage planning.",
+          "sources": [{"provider":"Ordnance Survey OS Open Names 2026-07","sourceId":"osgb4000000074785426; Sanda Roads; hydrography/Channel; BNG 173032,605206 transformed EPSG:27700 to EPSG:4326; source extent 172329,604670 to 173764,605742","license":"Open Government Licence 3.0 (OS OpenData)","url":"https://www.ordnancesurvey.co.uk/products/os-open-names","retrievedAt":"2026-08-22T20:30:58.000Z"}]
+        },
+        "schema": "org.ajrm.marine.location/v1"
+      }
+    },
+    {
+      "id": "9221ab63-c01f-4461-bf49-b7f566941013",
+      "name": "Mull of Kintyre, close west (lighthouse representative)",
+      "description": "Approximate tidal-gate marker for the source's close-west-of-Mull stream, anchored to the officially published Mull of Kintyre Lighthouse position on land. It encodes no offshore observation, surveyed gate, fairway, route, safe-water position, race or overfall locus.",
+      "types": ["tidalGate"],
+      "feature": {"type":"Feature","properties":{},"geometry":{"type":"Point","coordinates":[-5.80346667,55.31043333]}},
+      "properties": {
+        "provenance": {
+          "reviewStatus": "sourceChecked",
+          "warning": "The Northern Lighthouse Board position identifies the lighthouse on land, not the source's close-west stream observation, a surveyed gate, fairway, route, safe-water position, race or overfall locus. The marker must not be treated as a passage waypoint; consult current official charts and publications before passage planning.",
+          "sources": [{"provider":"Northern Lighthouse Board","sourceId":"Mull of Kintyre Lighthouse; 55°18.626'N 005°48.208'W converted to decimal degrees","url":"https://www.nlb.org.uk/lighthouses/mull-of-kintyre/","retrievedAt":"2026-08-22T20:30:58.000Z"}]
+        },
+        "schema": "org.ajrm.marine.location/v1"
+      }
     }
   ]
 }

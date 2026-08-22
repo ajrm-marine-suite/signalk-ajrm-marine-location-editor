@@ -68,7 +68,7 @@ test("Segment 7B appends identities without altering either legacy candidate or 
 	assert.equal(new Set([LEGACY_LUING,NATIVE_LUING,LEGACY_DORUS,NATIVE_DORUS]).size,4);
 	assert.equal(seed.locations.filter((entry) => /Sound of Luing/i.test(entry.name)).length,2);
 	assert.equal(seed.locations.filter((entry) => /Dorus Mòr/i.test(entry.name)).length,2);
-	assert.equal(seed.locations.length,311);
-	assert.equal(new Set(seed.locations.map((entry) => entry.id)).size,311);
-	assert.equal(new Set(seed.locations.map((entry) => entry.name.trim().toLowerCase())).size,311);
+	assert.equal(seed.locations.length,318);
+	assert.equal(new Set(seed.locations.map((entry) => entry.id)).size,318);
+	assert.equal(new Set(seed.locations.map((entry) => entry.name.trim().toLowerCase())).size,318);
 });

@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.6.42 — 2026-08-22
+
+- Add stable Northwest Mull and Loch Sunart tidal-gate Locations using current
+  OS Open Names representative points, with explicit headland/whole-loch
+  spatial uncertainty and no timing or rate data.
+- Keep the vague south-end Tiree timing locus out of the spatial catalogue.
+- Extend focused catalogue and OS OpenData attribution coverage.
+
 ## 0.6.41 — 2026-08-22
 
 - Add stable Sound of Iona and Gunna Sound tidal-gate Locations using current

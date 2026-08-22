@@ -20,11 +20,13 @@ real-time data API (Beta).”
 
 ## Ordnance Survey OS Open Names records
 
-The Sound of Iona and Gunna Sound representative points contain OS Open Names
-data made available under the [OS OpenData Licence](https://os.uk/opendata/licence).
-Required attribution: “Contains OS data © Crown copyright and database rights
-2026.” These are place-name representative points, not surveyed fairway,
-safe-water or tidal-gate positions; each record preserves that uncertainty.
+The Sound of Iona, Gunna Sound, Northwest Mull (Caliach Point) and Loch Sunart
+representative points contain OS Open Names data made available under the
+[OS OpenData Licence](https://os.uk/opendata/licence). Required attribution:
+“Contains OS data © Crown copyright and database rights 2026.” These are
+place-name representative points, including a headland point on land and a
+broad tidal-water point, not surveyed fairway, safe-water or tidal-gate
+positions; each record preserves that uncertainty.
 
 ## ADMIRALTY Tidal API station records
 

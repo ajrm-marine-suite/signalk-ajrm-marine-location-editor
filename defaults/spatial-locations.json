@@ -1,7 +1,7 @@
 {
   "schema": "org.ajrm.marine.location-seed/v1",
   "version": 1,
-  "generatedAt": "2026-08-22T14:06:04.000Z",
+  "generatedAt": "2026-08-22T14:42:36.000Z",
   "locations": [
     {
       "id": "9077fa0a-658e-49f7-b006-86767a605d86",
@@ -14370,6 +14370,83 @@
               "license": "OS OpenData Licence",
               "url": "https://www.ordnancesurvey.co.uk/products/os-open-names",
               "retrievedAt": "2026-08-22T14:06:04.000Z"
+            }
+          ]
+        },
+        "schema": "org.ajrm.marine.location/v1"
+      }
+    },
+    {
+      "id": "b4ff0772-bcba-4392-90e0-2f6d955a46f3",
+      "name": "Northwest Mull (Caliach Point)",
+      "description": "Approximate representative tidal-gate marker for the broad Northwest Mull source section, anchored to the named Caliach Point headland. It encodes no stream timing, rate, fairway or safe-water position.",
+      "types": [
+        "tidalGate"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {},
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -6.32013312,
+            56.60340058
+          ]
+        }
+      },
+      "properties": {
+        "provenance": {
+          "reviewStatus": "sourceChecked",
+          "warning": "OS Open Names supplies a named headland point on land, not a surveyed fairway, safe-water position or gate line. The timing evidence is stated under the broader Northwest Mull heading, while its numeric rate is limited to Caliach Point and Rubh' a' Chaoil; consult current official charts and publications before passage planning.",
+          "sources": [
+            {
+              "provider": "Ordnance Survey OS Open Names 2026-07",
+              "sourceId": "osgb4000000074750402; Caliach Point; BNG 134964,754078 transformed EPSG:27700 to EPSG:4326",
+              "license": "OS OpenData Licence",
+              "url": "https://www.ordnancesurvey.co.uk/products/os-open-names",
+              "retrievedAt": "2026-08-22T14:42:36.000Z"
+            },
+            {
+              "provider": "Ordnance Survey OS Open Names 2026-07",
+              "sourceId": "osgb4000000074750153; Rubh' a' Chaoil; BNG 133281,746814",
+              "license": "OS OpenData Licence",
+              "url": "https://www.ordnancesurvey.co.uk/products/os-open-names",
+              "retrievedAt": "2026-08-22T14:42:36.000Z"
+            }
+          ]
+        },
+        "schema": "org.ajrm.marine.location/v1"
+      }
+    },
+    {
+      "id": "511edf0a-5ecc-419c-8f81-9a4553e559bf",
+      "name": "Loch Sunart",
+      "description": "Approximate representative tidal-gate marker for the named tidal water. It encodes no stream timing, rate, fairway, entrance, narrows or safe-water position.",
+      "types": [
+        "tidalGate"
+      ],
+      "feature": {
+        "type": "Feature",
+        "properties": {},
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -6.00738658,
+            56.67836957
+          ]
+        }
+      },
+      "properties": {
+        "provenance": {
+          "reviewStatus": "sourceChecked",
+          "warning": "OS Open Names supplies a representative named tidal-water point, not a surveyed fairway, entrance, narrows or gate line. Its source bounding box spans about 30 kilometres along the loch; consult current official charts and publications before passage planning.",
+          "sources": [
+            {
+              "provider": "Ordnance Survey OS Open Names 2026-07",
+              "sourceId": "osgb4000000074799406; BNG 154633,761249 transformed EPSG:27700 to EPSG:4326; source extent 153257,757856 to 183578,764605",
+              "license": "OS OpenData Licence",
+              "url": "https://www.ordnancesurvey.co.uk/products/os-open-names",
+              "retrievedAt": "2026-08-22T14:42:36.000Z"
             }
           ]
         },

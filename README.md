@@ -16,11 +16,13 @@ The bundled catalogue includes canonical Portsmouth and Bucklers Hard spatial
 records so Tidal Database can attach the corrected standard/secondary
 relationship without embedding coordinates in the tidal service. It also has
 source-checked, explicitly approximate Ordnance Survey representative points
-for Sound of Iona, Gunna Sound, Northwest Mull and Loch Sunart so reviewed,
-display-only tidal evidence can join by stable Location ID without treating a
-named-feature point as a surveyed route, fairway or gate line. The vague
-south-end Tiree timing locus remains withheld because no defensible gate point
-was established.
+for Sound of Iona, Gunna Sound, Northwest Mull, Loch Sunart and two distinct
+Sound of Mull timing loci so reviewed, display-only tidal evidence can join by
+stable Location ID without treating a named-feature point as a surveyed route,
+fairway or gate line. The southeast-entrance record is anchored to Rubha an
+Ridire; the separate Calve record is anchored to the island and explicitly is
+not the source's offshore timing waypoint. The vague south-end Tiree timing
+locus remains withheld because no defensible gate point was established.
 
 ## Location classes
 
@@ -49,6 +51,6 @@ Saved locations supplement, and never replace, current official charts, publicat
 
 ```sh
 cd ~/.signalk
-npm install git+https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor.git#v0.6.42 --omit=dev --no-package-lock
+npm install git+https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor.git#v0.6.43 --omit=dev --no-package-lock
 sudo systemctl restart signalk
 ```

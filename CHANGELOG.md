@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.6.43 — 2026-08-22
+
+- Add separate Sound of Mull southeast-entrance and Calve Island tidal-gate
+  spatial identities without reusing the conflicting legacy Duart Point or
+  generic Sound of Mull records.
+- Anchor the southeast entrance to the source-named Rubha an Ridire headland
+  and the Calve locus to the named island, with explicit warnings that the land
+  points are not surveyed gate lines, safe water or offshore timing waypoints.
+- Extend focused catalogue and OS OpenData attribution coverage.
+
 ## 0.6.42 — 2026-08-22
 
 - Add stable Northwest Mull and Loch Sunart tidal-gate Locations using current

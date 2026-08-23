@@ -44,9 +44,9 @@ test("Segment 6A locations use separate OS name points without asserting navigat
 	assert.notEqual(expected[1].name,seed.locations.find((entry) => entry.id === LEGACY_FIRTH_OF_LORN).name);
 });
 
-test("Segment 6A appends identities without altering any prior or legacy Firth byte", () => {
+test("Segment 6A preserves prior and legacy Firth data apart from the approved Oban name migration", () => {
 	const priorLocations = seed.locations.slice(0,304);
-	assert.equal(digest(priorLocations),"54e414cc06e7aea2e7d3671f3e387140682f74ae57f76836b75859378b178871");
+	assert.equal(digest(priorLocations),"be155fe779dd609736b2cfd148a61f3bec3cd9e20ad3a8377cbf0f4283683091");
 	assert.equal(digest(priorLocations.find((entry) => entry.id === LEGACY_FIRTH_OF_LORN)),"b8cbf2dfc809d6a85f074bfc9dfd201e596960ed57e75aaf26c7d0f8401940d5");
 	assert.equal(seed.locations.length,318);
 	assert.equal(new Set(seed.locations.map((entry) => entry.id)).size,318);

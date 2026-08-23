@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "AJRM Marine Location Editor API",
-    "version": "0.7.0",
+    "version": "0.7.1",
     "description": "Versioned spatial marine locations, assisted anchoring, import/export and nearest-location lookup. The additive shared service supports optimistic removal of one Location classification without changing the public HTTP routes."
   },
   "x-ajrm-shared-service": {

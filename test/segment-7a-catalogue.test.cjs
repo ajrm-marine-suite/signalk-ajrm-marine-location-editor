@@ -29,9 +29,9 @@ test("Segment 7A adds only a broad OS named-sea representative", () => {
 	assert.equal(location.properties.tidalGate,undefined);
 });
 
-test("Segment 7A preserves the complete prior catalogue and legacy Corryvreckan object", () => {
+test("Segment 7A preserves the prior catalogue except the approved Oban rename and retains legacy Corryvreckan", () => {
 	const priorLocations = seed.locations.slice(0,308);
-	assert.equal(digest(priorLocations),"6f8ebe0f8b29a74d142d470782d12e40913d5fdeb374ddc2b7bf1ea05035c89b");
+	assert.equal(digest(priorLocations),"8327e7b4cae8261b2fbb2fade6e51fdada1e2863dce801f244e7b2564853eb87");
 	const legacy = priorLocations.find((entry) => entry.id === LEGACY_CORRYVRECKAN);
 	assert.equal(digest(legacy),"0b65b199ca424eaed587bbabaa76eb44f7d8db9e67843234261df7f888ebaff3");
 	assert.equal(legacy.name,"Gulf of Corryvreckan");

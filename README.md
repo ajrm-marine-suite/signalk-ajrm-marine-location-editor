@@ -75,7 +75,7 @@ its final classification. The result identifies `type-removed` or
 tombstone, including the next revision, so a coordinating app can verify the
 write exactly.
 
-When Marine Planning v0.7.0 is running, public Location create/update/delete,
+When Marine Planning v0.10.0 is running, public Location create/update/delete,
 restore, replacement import and merge operations join Planning's mutation
 coordinator. A candidate catalogue cannot remove the `tidalGate`
 classification or Location for a live Planning definition; use Planning's
@@ -93,6 +93,6 @@ Saved locations supplement, and never replace, current official charts, publicat
 
 ```sh
 cd ~/.signalk
-npm install git+https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor.git#v0.7.0 --omit=dev --no-package-lock
+npm install git+https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor.git#v0.7.1 --omit=dev --no-package-lock
 sudo systemctl restart signalk
 ```

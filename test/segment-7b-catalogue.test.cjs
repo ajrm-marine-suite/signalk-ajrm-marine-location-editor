@@ -52,9 +52,9 @@ test("Segment 7B adds only defensible OS named-water representatives", () => {
 	}
 });
 
-test("Segment 7B appends identities without altering either legacy candidate or any prior record", () => {
+test("Segment 7B preserves legacy candidates and prior data apart from the approved Oban name migration", () => {
 	const priorLocations = seed.locations.slice(0,309);
-	assert.equal(digest(priorLocations),"108da13ca8ac25d8ceebeb0313631211aa82f4288d87502b9464d47fce068192");
+	assert.equal(digest(priorLocations),"96483696b71d7f9d730e48adf839e3c8f01616190fd9fa7455a791fde5e3df9d");
 	const legacyLuing = priorLocations.find((entry) => entry.id === LEGACY_LUING);
 	const legacyDorus = priorLocations.find((entry) => entry.id === LEGACY_DORUS);
 	assert.equal(digest(legacyLuing),"ecc634f6af7b604518085cb4787232eb45a093ce5e4d3c8dd8b2f4f643f5ef5c");

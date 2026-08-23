@@ -32,6 +32,18 @@ const PLANNING_REGISTRY = Symbol.for("mcdonaldajr.ajrmMarinePlanning");
 const STATUS_PATH = "plugins.ajrmMarineLocationEditor";
 const ANCHORING_PATH = "plugins.ajrmMarineLocations.anchoring";
 const MAX_IMPORT_LOCATIONS = 10000;
+const BUNDLED_LOCATION_NAME_RENAMES = Object.freeze([
+	Object.freeze({
+		id: "e0e5661f-1675-4dbb-8fa0-ea8566c62ef4",
+		from: "Oban tidal prediction port",
+		to: "Oban port",
+	}),
+	Object.freeze({
+		id: "f297596a-4959-47ff-b665-18ac2cb74924",
+		from: "Oban tidal prediction port tidal area",
+		to: "Oban port tidal area",
+	}),
+]);
 
 const packageJson = JSON.parse(
 	fs.readFileSync(path.join(__dirname, "..", "package.json"), "utf8"),
@@ -565,9 +577,31 @@ module.exports = function ajrmMarineLocationEditor(app) {
 	}
 
 	async function initializeCatalogue() {
+		const renamed = await renameBundledLocations();
 		const seeded = await addBundledLocations();
+		app.debug?.(`[${plugin.id}] Renamed ${renamed} exact bundled location(s).`);
 		app.debug?.(`[${plugin.id}] Added ${seeded.length} bundled location(s).`);
-		return { seeded: seeded.length };
+		return { renamed, seeded: seeded.length };
+	}
+
+	async function renameBundledLocations() {
+		const current = await store.list();
+		const occupiedNames = new Map(current.map((location) => [normalizedLocationName(location.name), location.id]));
+		let renamed = 0;
+		for (const rename of BUNDLED_LOCATION_NAME_RENAMES) {
+			const location = current.find((entry) => entry.id === rename.id);
+			if (!location || location.name !== rename.from) continue;
+			const occupiedId = occupiedNames.get(normalizedLocationName(rename.to));
+			if (occupiedId && occupiedId !== location.id) continue;
+			await store.set(location.id, { ...location, name: rename.to }, {
+				expectedRevision: location.revision,
+				editedBy: "Bundled Oban location-name migration",
+			});
+			occupiedNames.delete(normalizedLocationName(rename.from));
+			occupiedNames.set(normalizedLocationName(rename.to), location.id);
+			renamed += 1;
+		}
+		return renamed;
 	}
 
 	async function addBundledLocations() {

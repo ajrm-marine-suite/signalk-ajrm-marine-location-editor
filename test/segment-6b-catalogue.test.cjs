@@ -52,9 +52,9 @@ test("Segment 6B locations use distinct OS channel name points without navigatio
 	assert.equal(new Set([...expected.map((entry) => entry.id),LEGACY_CUAN,LEGACY_GREY_DOGS]).size,4);
 });
 
-test("Segment 6B appends identities without altering any prior Cuan or Grey Dogs byte", () => {
+test("Segment 6B preserves prior Cuan and Grey Dogs data apart from the approved Oban name migration", () => {
 	const priorLocations = seed.locations.slice(0,306);
-	assert.equal(digest(priorLocations),"9499bf7d266b33726cec35fd61541f6cae0fa070a61be6cf79b0b07f7ddf7fd7");
+	assert.equal(digest(priorLocations),"68be73f5316b2118b982e512dcf7eccc4b62bce7adf192b8bce9b6b7d1745cc6");
 	assert.equal(digest(priorLocations.find((entry) => entry.id === LEGACY_CUAN)),"28bfbf59be6faecd8fc8472917e59086e9283428c9b19964c877a044bee2588d");
 	assert.equal(digest(priorLocations.find((entry) => entry.id === LEGACY_GREY_DOGS)),"61c09c853f83b789094e3413c270bdaf51b1089653404623553acbf5e86ff214");
 	assert.equal(seed.locations.length,318);

@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.7.1 — 2026-08-23
+
+- Rename the bundled Oban standard prediction-port Location to `Oban port` and
+  its bundled tidal region to `Oban port tidal area`, preserving both stable
+  Location UUIDs.
+- Upgrade only records that still have the exact prior bundled names, leaving
+  user-customised names unchanged.
+
 ## 0.7.0 — 2026-08-23
 
 - Add a backward-compatible shared-service operation for coordinated removal

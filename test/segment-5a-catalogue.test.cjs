@@ -40,10 +40,10 @@ test("Segment 5A locations use separate named-channel points without asserting n
 	assert.notEqual(expected[0].id,expected[1].id);
 });
 
-test("Segment 5A appends identities without altering the existing spatial catalogue", () => {
+test("Segment 5A preserves its prior catalogue apart from the approved Oban name migration", () => {
 	const priorLocations = seed.locations.slice(0,300);
 	const digest = crypto.createHash("sha256").update(JSON.stringify(priorLocations)).digest("hex");
-	assert.equal(digest,"1ba52bf1105d11eeaafad353d40dfcfecdf2990178ea0d264b1aec9ebf545333");
+	assert.equal(digest,"943104aa14a9a837eb61767c8bb1beac0ecb81414239a7690ffcbec9f1269106");
 	assert.equal(seed.locations.length,318);
 	assert.equal(new Set(seed.locations.map((entry) => entry.id)).size,318);
 });

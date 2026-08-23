@@ -41,10 +41,10 @@ test("Segment 5B locations use separate OS name points without asserting navigat
 	assert.equal(new Set([...expected.map((entry) => entry.id),LOCH_LEVEN_NARROWS]).size,3);
 });
 
-test("Segment 5B appends identities without altering any prior Location byte", () => {
+test("Segment 5B preserves prior Locations apart from the approved Oban name migration", () => {
 	const priorLocations = seed.locations.slice(0,302);
 	const digest = crypto.createHash("sha256").update(JSON.stringify(priorLocations)).digest("hex");
-	assert.equal(digest,"1a84f6a5d959075e6e40acfa7335b9c1c6132cf8d271eeec9a9b395056b6b60b");
+	assert.equal(digest,"b82ce67b4585b242d97d5f1fb5750b5644f223728973298877094805a716a6cd");
 	assert.equal(seed.locations.length,318);
 	assert.equal(new Set(seed.locations.map((entry) => entry.id)).size,318);
 });

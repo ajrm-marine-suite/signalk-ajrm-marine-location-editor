@@ -60,7 +60,7 @@
     },
     {
       "id": "e0e5661f-1675-4dbb-8fa0-ea8566c62ef4",
-      "name": "Oban tidal prediction port",
+      "name": "Oban port",
       "description": "UKHO prediction station used as the reference port for West Scotland tidal planning. Confirm the station identifier against the current UKHO service before relying on predictions.",
       "types": [
         "tidalStandardPort"
@@ -7912,7 +7912,7 @@
     },
     {
       "id": "f297596a-4959-47ff-b665-18ac2cb74924",
-      "name": "Oban tidal prediction port tidal area",
+      "name": "Oban port tidal area",
       "description": "Machine-generated non-overlapping first-review tidal area. Adjust its polygon in Location Editor to match local tidal geography.",
       "types": [
         "tidalRegion"

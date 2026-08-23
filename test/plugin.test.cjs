@@ -9,6 +9,10 @@ const path = require("node:path");
 const crypto = require("node:crypto");
 const test = require("node:test");
 const createPlugin = require("../plugin/index.cjs");
+const { createLocationStore } = require("../plugin/location-store.cjs");
+
+const OBAN_PORT_ID = "e0e5661f-1675-4dbb-8fa0-ea8566c62ef4";
+const OBAN_AREA_ID = "f297596a-4959-47ff-b665-18ac2cb74924";
 
 function response() {
 	return {
@@ -83,6 +87,65 @@ test("a fresh catalogue receives the spatial seed without tidal provider data", 
 	assert.equal(result.body.locations.length >= 280, true);
 	assert.equal(result.body.locations.some((location) => location.properties.tide || location.properties.tidalGate || location.properties.tideLocationRef), false);
 	assert.ok(result.body.locations.find((location) => location.name === "Cuan Sound")?.types.includes("tidalGate"));
+	assert.equal(result.body.locations.find((location) => location.id === OBAN_PORT_ID)?.name, "Oban port");
+	assert.equal(result.body.locations.find((location) => location.id === OBAN_AREA_ID)?.name, "Oban port tidal area");
+	await plugin.stop();
+});
+
+test("startup renames only the exact prior bundled Oban names without changing their Location ids", async (t) => {
+	const directory = await fs.mkdtemp(path.join(os.tmpdir(), "ajrm-location-oban-rename-"));
+	t.after(() => fs.rm(directory, { recursive: true, force: true }));
+	const store = createLocationStore(path.join(directory, "locations.json"));
+	await store.set(OBAN_PORT_ID, {
+		name: "Oban tidal prediction port",
+		types: ["tidalStandardPort"],
+		feature: { type: "Feature", properties: {}, geometry: { type: "Point", coordinates: [-5.474, 56.412] } },
+		properties: {},
+	}, { expectedRevision: 0, editedBy: "Prior bundled seed" });
+	await store.set(OBAN_AREA_ID, {
+		name: "Oban tidal prediction port tidal area",
+		types: ["tidalRegion"],
+		feature: { type: "Feature", properties: {}, geometry: { type: "Polygon", coordinates: [[[-5.6, 56.3], [-5.3, 56.3], [-5.3, 56.5], [-5.6, 56.3]]] } },
+		properties: {},
+	}, { expectedRevision: 0, editedBy: "Prior bundled seed" });
+
+	const { call, plugin } = await fixture(t, { directory });
+	const result = await call("GET", "/locations", { query: { workspace: "all" } });
+	const port = result.body.locations.find((location) => location.id === OBAN_PORT_ID);
+	const area = result.body.locations.find((location) => location.id === OBAN_AREA_ID);
+	assert.equal(port.name, "Oban port");
+	assert.equal(area.name, "Oban port tidal area");
+	assert.equal(port.revision, 2);
+	assert.equal(area.revision, 2);
+	assert.equal((await store.history(OBAN_PORT_ID)).at(-1).editedBy, "Bundled Oban location-name migration");
+	await plugin.stop();
+});
+
+test("startup preserves customised names on the bundled Oban Location ids", async (t) => {
+	const directory = await fs.mkdtemp(path.join(os.tmpdir(), "ajrm-location-oban-custom-name-"));
+	t.after(() => fs.rm(directory, { recursive: true, force: true }));
+	const store = createLocationStore(path.join(directory, "locations.json"));
+	await store.set(OBAN_PORT_ID, {
+		name: "My Oban standard port",
+		types: ["tidalStandardPort"],
+		feature: { type: "Feature", properties: {}, geometry: { type: "Point", coordinates: [-5.474, 56.412] } },
+		properties: {},
+	}, { expectedRevision: 0, editedBy: "User" });
+	await store.set(OBAN_AREA_ID, {
+		name: "My Oban tidal area",
+		types: ["tidalRegion"],
+		feature: { type: "Feature", properties: {}, geometry: { type: "Polygon", coordinates: [[[-5.6, 56.3], [-5.3, 56.3], [-5.3, 56.5], [-5.6, 56.3]]] } },
+		properties: {},
+	}, { expectedRevision: 0, editedBy: "User" });
+
+	const { call, plugin } = await fixture(t, { directory });
+	const result = await call("GET", "/locations", { query: { workspace: "all" } });
+	const port = result.body.locations.find((location) => location.id === OBAN_PORT_ID);
+	const area = result.body.locations.find((location) => location.id === OBAN_AREA_ID);
+	assert.equal(port.name, "My Oban standard port");
+	assert.equal(area.name, "My Oban tidal area");
+	assert.equal(port.revision, 1);
+	assert.equal(area.revision, 1);
 	await plugin.stop();
 });
 

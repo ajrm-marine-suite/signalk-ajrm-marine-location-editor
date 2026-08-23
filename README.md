@@ -55,6 +55,10 @@ because no defensible gate point was established.
 - weather forecast locations, which provide named forecast coordinates to Weather Database without storing provider data;
 - hazards, avoidance/no-anchoring areas, waiting areas and preferred channels.
 
+A Location may have several compatible roles, but `tidalStandardPort` and
+`tidalSecondaryPort` are mutually exclusive. Tidal Database independently
+checks the same boundary before using a joined definition.
+
 Points, circles, rectangles and true polygons can be created and edited on the chart. Changes are revisioned and can be restored. Import replaces the catalogue; merge compares stable IDs and edit timestamps; purge permanently removes deleted tombstones after confirmation.
 
 ## Shared services
@@ -75,24 +79,41 @@ its final classification. The result identifies `type-removed` or
 tombstone, including the next revision, so a coordinating app can verify the
 write exactly.
 
-When Marine Planning v0.10.0 is running, public Location create/update/delete,
+When Marine Planning v0.10.2 or later is running, public Location create/update/delete,
 restore, replacement import and merge operations join Planning's mutation
 coordinator. A candidate catalogue cannot remove the `tidalGate`
-classification or Location for a live Planning definition; use Planning's
-Tidal Gate Data delete workflow, which tombstones constants first. The shared
-`removeType` operation performs its revision-and-edit-identity check and its
-branch/write inside one atomic Location catalogue mutation.
+classification or Location for a live Planning row, or remove the
+`tidalStandardPort` classification or Location selected by a live row. The
+shared `removeType` operation joins the same coordinator and performs its
+revision-and-edit-identity check and branch/write inside one atomic Location
+catalogue mutation. Change or delete the Planning row first, then edit,
+reclassify or delete the Location as a separate operation. With an older
+Planning guard that cannot identify live reference ports, destructive
+standard-port mutations fail closed.
 
 It deliberately does **not** expose a tide service or duplicate tidal relationships in its catalogue. Install AJRM Marine Tidal Database for tidal selection, region-to-port assignments, provider configuration, corrections, calculations and offline cache management.
+Tidal-region editing requires asynchronous
+`ajrm-marine-tidal-database-service-v2`, contract version 2; Location supplies
+only the region Location ID plus its serving-port and parent-region IDs, and
+Tidal Database derives the current Location-owned name.
+
+Read routes register with Signal K's read-only access boundary. Every Location,
+anchoring, tidal-region or catalogue mutation also registers as `readwrite` and
+retains a handler-level `readwrite` or `admin` permission check.
 
 ## Safety
 
 Saved locations supplement, and never replace, current official charts, publications, a proper lookout and the skipper’s judgement. User-created geometry may be incomplete or inaccurate.
 
+This software is Alpha Release and has not been tested in live environments and must not be relied upon for navigation or safety. The Authors do not accept any responsibility for loss or damage as a result of using this software.
+
 ## Install
 
 ```sh
 cd ~/.signalk
-npm install git+https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor.git#v0.7.1 --omit=dev --no-package-lock
+npm install git+https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor.git#v0.7.2 --omit=dev --no-package-lock
 sudo systemctl restart signalk
 ```
+
+For the coordinated Planning/Tidal contracts described above, use Marine
+Planning v0.10.2 and Marine Tidal Database v0.8.0 with this v0.7.2 release.

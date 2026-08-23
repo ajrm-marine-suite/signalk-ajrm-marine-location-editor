@@ -1,5 +1,22 @@
 # Changelog
 
+## 0.7.2 — 2026-08-23
+
+- Protect every `tidalStandardPort` Location selected by a live Planning row
+  across ordinary edits, deletes, restores, catalogue replacement and merge.
+- Make the shared `removeType` operation join the same Planning mutation
+  coordinator, while failing closed for standard-port removal when an older
+  Planning guard cannot prove that reference ports are unused.
+- Consume asynchronous Tidal Database service contract v2 projections for
+  region editing and send only Location IDs in assignment writes.
+- Reject the contradictory combination of `tidalStandardPort` and
+  `tidalSecondaryPort` on one Location while retaining other valid multi-role
+  classifications.
+- Complete OpenAPI method/path and Signal K access parity, including read-only
+  registration for reads plus read/write registration, handler guards and 403
+  contracts for every mutation; refresh public help and install guidance; and
+  release browser/server version 0.7.2.
+
 ## 0.7.1 — 2026-08-23
 
 - Rename the bundled Oban standard prediction-port Location to `Oban port` and

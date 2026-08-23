@@ -148,6 +148,9 @@ function validateLocation(location) {
 	for (const type of location.types) {
 		if (!LOCATION_TYPES.includes(type)) throw new Error(`Unknown location type: ${type}.`);
 	}
+	if (location.types.includes("tidalStandardPort") && location.types.includes("tidalSecondaryPort")) {
+		throw new Error("A Location must not have both tidalStandardPort and tidalSecondaryPort classifications.");
+	}
 	if (location.feature?.type !== "Feature") throw new Error("Location feature must be GeoJSON Feature.");
 	validateGeometry(location.feature.geometry);
 	if (location.types.includes("tidalRegion") && location.feature.geometry.type !== "Polygon") {

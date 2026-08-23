@@ -216,8 +216,10 @@ module.exports = function ajrmMarineLocationEditor(app) {
 
 	plugin.registerWithRouter = (router) => {
 		const write = requireWriteAccess;
+		const readRouter = typeof router.access === "function" ? router.access("readonly") : router;
+		const writeRouter = typeof router.access === "function" ? router.access("readwrite") : router;
 
-		router.get("/status", async (_req, res) => {
+		readRouter.get("/status", async (_req, res) => {
 			try {
 				res.json(await buildStatus());
 			} catch (error) {
@@ -225,7 +227,7 @@ module.exports = function ajrmMarineLocationEditor(app) {
 			}
 		});
 
-		router.get("/anchoring/status", async (_req, res) => {
+		readRouter.get("/anchoring/status", async (_req, res) => {
 			try {
 				assertRunning();
 				await initializationPromise;
@@ -235,7 +237,7 @@ module.exports = function ajrmMarineLocationEditor(app) {
 			}
 		});
 
-		router.post("/anchoring/confirm", write(async (req, res) => {
+		writeRouter.post("/anchoring/confirm", write(async (req, res) => {
 			try {
 				assertRunning();
 				await initializationPromise;
@@ -245,7 +247,7 @@ module.exports = function ajrmMarineLocationEditor(app) {
 			}
 		}));
 
-		router.post("/anchoring/dismiss", write(async (req, res) => {
+		writeRouter.post("/anchoring/dismiss", write(async (req, res) => {
 			try {
 				assertRunning();
 				await initializationPromise;
@@ -255,7 +257,7 @@ module.exports = function ajrmMarineLocationEditor(app) {
 			}
 		}));
 
-		router.get("/locations", async (req, res) => {
+		readRouter.get("/locations", async (req, res) => {
 			try {
 				assertRunning();
 				await initializationPromise;
@@ -270,20 +272,20 @@ module.exports = function ajrmMarineLocationEditor(app) {
 			}
 		});
 
-		router.get("/tidal-regions/definitions", async (_req, res) => {
+		readRouter.get("/tidal-regions/definitions", async (_req, res) => {
 			try {
 				const service = requireTidalDatabase();
 				res.json({
 					contract: "ajrm-marine-location-tidal-region-editor-v1",
-					ports: service.listPorts(),
-					areas: service.listAreas(),
+					ports: await Promise.resolve(service.listPorts()),
+					areas: await Promise.resolve(service.listAreas()),
 				});
 			} catch (error) {
 				res.status(503).json({ error: error.message });
 			}
 		});
 
-		router.put("/tidal-regions/:id", write(async (req, res) => {
+		writeRouter.put("/tidal-regions/:id", write(async (req, res) => {
 			try {
 				assertRunning();
 				await initializationPromise;
@@ -291,27 +293,26 @@ module.exports = function ajrmMarineLocationEditor(app) {
 				const location = await store.get(req.params.id);
 				if (!location?.types.includes("tidalRegion")) throw new Error("The selected Location is not classified as a tidal region.");
 				const area = await requireTidalDatabase().setArea(req.params.id, {
-					name: location.name,
 					portLocationId: req.body?.portLocationId,
 					parentAreaLocationId: req.body?.parentAreaLocationId || null,
 				});
-				res.json({ ok:true,area });
+				res.json({ ok: true, area });
 			} catch (error) {
-				res.status(400).json({ error:error.message });
+				res.status(400).json({ error: error.message });
 			}
 		}));
 
-		router.delete("/tidal-regions/:id", write(async (req, res) => {
+		writeRouter.delete("/tidal-regions/:id", write(async (req, res) => {
 			try {
 				assertRunning();
 				await requireTidalDatabase().removeArea(req.params.id);
-				res.json({ ok:true });
+				res.json({ ok: true });
 			} catch (error) {
-				res.status(400).json({ error:error.message });
+				res.status(400).json({ error: error.message });
 			}
 		}));
 
-		router.get("/locations/:id", async (req, res) => {
+		readRouter.get("/locations/:id", async (req, res) => {
 			try {
 				assertRunning();
 				await initializationPromise;
@@ -324,7 +325,7 @@ module.exports = function ajrmMarineLocationEditor(app) {
 			}
 		});
 
-		router.get("/deleted", async (_req, res) => {
+		readRouter.get("/deleted", async (_req, res) => {
 			try {
 				assertRunning();
 				await initializationPromise;
@@ -337,7 +338,7 @@ module.exports = function ajrmMarineLocationEditor(app) {
 			}
 		});
 
-			router.put("/locations/:id", write(async (req, res) => {
+		writeRouter.put("/locations/:id", write(async (req, res) => {
 			try {
 				assertRunning();
 				await initializationPromise;
@@ -345,9 +346,10 @@ module.exports = function ajrmMarineLocationEditor(app) {
 				const saved = await withPlanningLocationMutation(async (guard) => {
 					const { expectedRevision, ...body } = req.body || {};
 					const location = normalizeLocation({ ...body, id: req.params.id });
+					const previous = await store.get(req.params.id);
 					await assertReferencesExist(location);
 					await assertUniqueLocationName(location);
-					assertPlanningGateLocation(location, guard);
+					assertPlanningLocationTransition(previous, location, guard);
 					return store.set(req.params.id, location, {
 						expectedRevision,
 						editedBy: requestActor(req),
@@ -360,14 +362,15 @@ module.exports = function ajrmMarineLocationEditor(app) {
 			}
 		}));
 
-			router.delete("/locations/:id", write(async (req, res) => {
+		writeRouter.delete("/locations/:id", write(async (req, res) => {
 			try {
 				assertRunning();
 				await initializationPromise;
 				if (!isResourceId(req.params.id)) throw new Error("Location id must be a UUIDv4.");
 				const removed = await withPlanningLocationMutation(async (guard) => {
+					const previous = await store.get(req.params.id);
 					await assertNotReferenced(req.params.id);
-					assertPlanningGateRemoval(req.params.id, guard);
+					assertPlanningLocationTransition(previous, null, guard);
 					return store.remove(req.params.id, {
 						expectedRevision: req.body?.expectedRevision ?? req.query?.expectedRevision,
 						editedBy: requestActor(req),
@@ -381,7 +384,7 @@ module.exports = function ajrmMarineLocationEditor(app) {
 			}
 		}));
 
-		router.get("/locations/:id/history", async (req, res) => {
+		readRouter.get("/locations/:id/history", async (req, res) => {
 			try {
 				assertRunning();
 				await initializationPromise;
@@ -394,22 +397,25 @@ module.exports = function ajrmMarineLocationEditor(app) {
 			}
 		});
 
-			router.post("/locations/:id/restore", write(async (req, res) => {
+		writeRouter.post("/locations/:id/restore", write(async (req, res) => {
 			try {
 				assertRunning();
 				await initializationPromise;
 				if (!isResourceId(req.params.id)) throw new Error("Location id must be a UUIDv4.");
 				if (!isResourceId(req.body?.editId)) throw new Error("Select a valid history revision to restore.");
-				const location = await withPlanningLocationMutation((guard) => store.restore(req.params.id, req.body.editId, {
-					expectedRevision: req.body.expectedRevision,
-					editedBy: requestActor(req),
-					validate: async (restored, catalog) => {
-						const locations = new Map(Object.entries(catalog.locations));
-						await assertReferencesExist(restored, locations);
-						await assertUniqueLocationName(restored, locations);
-						assertPlanningGateLocation(restored, guard);
-					},
-				}));
+				const location = await withPlanningLocationMutation(async (guard) => {
+					const previous = await store.get(req.params.id);
+					return store.restore(req.params.id, req.body.editId, {
+						expectedRevision: req.body.expectedRevision,
+						editedBy: requestActor(req),
+						validate: async (restored, catalog) => {
+							const locations = new Map(Object.entries(catalog.locations));
+							await assertReferencesExist(restored, locations);
+							await assertUniqueLocationName(restored, locations);
+							assertPlanningLocationTransition(previous, restored, guard);
+						},
+					});
+				});
 				await refreshStatus();
 				res.json({ ok: true, location });
 			} catch (error) {
@@ -417,7 +423,7 @@ module.exports = function ajrmMarineLocationEditor(app) {
 			}
 		}));
 
-		router.get("/nearest", async (req, res) => {
+		readRouter.get("/nearest", async (req, res) => {
 			try {
 				assertRunning();
 				await initializationPromise;
@@ -436,7 +442,7 @@ module.exports = function ajrmMarineLocationEditor(app) {
 			}
 		});
 
-		router.get("/local/export", async (_req, res) => {
+		readRouter.get("/local/export", async (_req, res) => {
 			try {
 				const catalog = await store.read();
 				res.json({ ...catalog, exportedAt: new Date().toISOString(), count: Object.keys(catalog.locations).length });
@@ -445,7 +451,7 @@ module.exports = function ajrmMarineLocationEditor(app) {
 			}
 		});
 
-		router.post("/local/purge-deleted", write(async (req, res) => {
+		writeRouter.post("/local/purge-deleted", write(async (req, res) => {
 			try {
 				assertRunning();
 				await initializationPromise;
@@ -458,7 +464,7 @@ module.exports = function ajrmMarineLocationEditor(app) {
 			}
 		}));
 
-		router.post("/local/import", write(async (req, res) => {
+		writeRouter.post("/local/import", write(async (req, res) => {
 			try {
 				assertRunning();
 				await initializationPromise;
@@ -471,8 +477,9 @@ module.exports = function ajrmMarineLocationEditor(app) {
 				}
 				const previous = (await store.list()).length;
 				await withPlanningLocationMutation(async (guard) => {
+					const current = await store.read();
 					await validateCatalogReferences(incoming);
-					assertPlanningGateCatalogue(incoming, guard);
+					assertPlanningLocationCatalogue(current, incoming, guard);
 					await store.replace(incoming, { tombstoneMissing: true, editedBy: "Catalogue replacement" });
 				});
 				await refreshStatus();
@@ -491,7 +498,7 @@ module.exports = function ajrmMarineLocationEditor(app) {
 			}
 		}));
 
-		router.post("/local/merge", write(async (req, res) => {
+		writeRouter.post("/local/merge", write(async (req, res) => {
 			try {
 				assertRunning();
 				await initializationPromise;
@@ -501,12 +508,15 @@ module.exports = function ajrmMarineLocationEditor(app) {
 				if (Object.keys(incoming.locations).length > MAX_IMPORT_LOCATIONS) {
 					throw new Error(`Merge contains more than ${MAX_IMPORT_LOCATIONS} locations.`);
 				}
-				const result = await withPlanningLocationMutation((guard) => store.merge(incoming, {
-					validate: async (candidate) => {
-						await validateCatalogReferences(candidate);
-						assertPlanningGateCatalogue(candidate, guard);
-					},
-				}));
+				const result = await withPlanningLocationMutation(async (guard) => {
+					const current = await store.read();
+					return store.merge(incoming, {
+						validate: async (candidate) => {
+							await validateCatalogReferences(candidate);
+							assertPlanningLocationCatalogue(current, candidate, guard);
+						},
+					});
+				});
 				await refreshStatus();
 				res.json({
 					ok: result.conflicts.length === 0,
@@ -548,7 +558,14 @@ module.exports = function ajrmMarineLocationEditor(app) {
 		const expectedLastEditId = String(mutationOptions?.expectedLastEditId || "");
 		if (!isResourceId(expectedLastEditId)) throw new Error("expectedLastEditId must be a UUIDv4.");
 		const editedBy = String(mutationOptions?.editedBy || "shared location service").slice(0, 200);
-		const result = await store.removeType(id, type, { expectedRevision, expectedLastEditId, editedBy });
+		const result = await withPlanningLocationMutation(async (guard) => {
+			const previous = await store.get(id);
+			if (!previous) throw new Error("Location was not found.");
+			const remainingTypes = previous.types.filter((entry) => entry !== type);
+			const candidate = remainingTypes.length ? { ...previous, types: remainingTypes } : null;
+			assertPlanningLocationTransition(previous, candidate, guard);
+			return store.removeType(id, type, { expectedRevision, expectedLastEditId, editedBy });
+		});
 		await refreshStatus();
 		return result;
 	}
@@ -556,7 +573,8 @@ module.exports = function ajrmMarineLocationEditor(app) {
 	function requireTidalDatabase() {
 		const service = app.ajrmMarineTidalDatabase || globalThis[TIDAL_DATABASE_REGISTRY];
 		if (
-			service?.contract !== "ajrm-marine-tidal-database-service-v1" ||
+			service?.contract !== "ajrm-marine-tidal-database-service-v2" ||
+			service?.contractVersion !== 2 ||
 			!["listPorts", "listAreas", "setArea", "removeArea"].every((method) => typeof service[method] === "function")
 		) {
 			throw new Error("AJRM Marine Tidal Database is unavailable or does not support tidal-region editing.");
@@ -656,31 +674,66 @@ module.exports = function ajrmMarineLocationEditor(app) {
 		return change(null);
 	}
 
-	function planningGateIds(guard) {
-		return guard?.contract === "ajrm-marine-planning-location-mutation-guard-v1"
+	function planningProtection(guard) {
+		if (guard == null) return { coordinated: false, referenceProtectionKnown: true, gateIds: new Set(), referencePortIds: new Set() };
+		if (
+			guard.contract === "ajrm-marine-planning-location-mutation-guard-v1"
+			&& (guard.contractVersion == null || guard.contractVersion === 1)
 			&& Array.isArray(guard.liveGateLocationIds)
-			? new Set(guard.liveGateLocationIds)
-			: new Set();
+			&& guard.liveGateLocationIds.every(isResourceId)
+			&& (
+				!Object.hasOwn(guard, "liveReferencePortLocationIds")
+				|| (Array.isArray(guard.liveReferencePortLocationIds) && guard.liveReferencePortLocationIds.every(isResourceId))
+			)
+		) {
+			return {
+				coordinated: true,
+				referenceProtectionKnown: Array.isArray(guard.liveReferencePortLocationIds),
+				gateIds: new Set(guard.liveGateLocationIds),
+				referencePortIds: new Set(Array.isArray(guard.liveReferencePortLocationIds) ? guard.liveReferencePortLocationIds : []),
+			};
+		}
+		throw new Error("Marine Planning returned an unsupported Location mutation guard.");
 	}
 
-	function assertPlanningGateLocation(location, guard) {
-		if (planningGateIds(guard).has(location.id) && !location.types.includes("tidalGate")) {
-			throw new Error("This Location has live Marine Planning constants. Delete the gate through Planning's Tidal Gate Data workflow.");
+	function assertPlanningLocationTransition(previous, candidate, guard) {
+		const protection = planningProtection(guard);
+		const locationId = candidate?.id || previous?.id;
+		if (!locationId) return;
+		if (protection.gateIds.has(locationId) && !candidate?.types?.includes("tidalGate")) {
+			throw new Error("This Location has live Marine Planning constants. Delete its Planning row first, then edit or delete the Location here.");
+		}
+		if (protection.referencePortIds.has(locationId) && !candidate?.types?.includes("tidalStandardPort")) {
+			throw new Error("This Location is the reference port for live Marine Planning constants. Change those Planning rows before removing its tidalStandardPort classification or deleting it.");
+		}
+		if (
+			protection.coordinated
+			&& !protection.referenceProtectionKnown
+			&& previous?.types?.includes("tidalStandardPort")
+			&& !candidate?.types?.includes("tidalStandardPort")
+		) {
+			throw new Error("Marine Planning's legacy mutation guard cannot prove that this tidalStandardPort is unused. Update Marine Planning before removing its classification or deleting it.");
 		}
 	}
 
-	function assertPlanningGateRemoval(locationId, guard) {
-		if (planningGateIds(guard).has(locationId)) {
-			throw new Error("This Location has live Marine Planning constants. Delete the gate through Planning's Tidal Gate Data workflow.");
+	function assertPlanningLocationCatalogue(current, candidate, guard) {
+		const protection = planningProtection(guard);
+		const locations = candidate?.locations || {};
+		for (const locationId of protection.gateIds) {
+			if (!locations[locationId]?.types?.includes("tidalGate")) {
+				throw new Error(`Location import would orphan live Marine Planning constants for ${locationId}. Delete its Planning row first.`);
+			}
 		}
-	}
-
-	function assertPlanningGateCatalogue(catalog, guard) {
-		const locations = catalog?.locations || {};
-		for (const locationId of planningGateIds(guard)) {
-			const location = locations[locationId];
-			if (!location?.types?.includes("tidalGate")) {
-				throw new Error(`Location import would orphan live Marine Planning constants for ${locationId}. Delete that gate through Planning first.`);
+		for (const locationId of protection.referencePortIds) {
+			if (!locations[locationId]?.types?.includes("tidalStandardPort")) {
+				throw new Error(`Location import would remove reference port ${locationId} from live Marine Planning constants. Change those Planning rows first.`);
+			}
+		}
+		if (protection.coordinated && !protection.referenceProtectionKnown) {
+			for (const location of Object.values(current?.locations || {})) {
+				if (location.types?.includes("tidalStandardPort") && !locations[location.id]?.types?.includes("tidalStandardPort")) {
+					throw new Error(`Marine Planning's legacy mutation guard cannot prove that tidalStandardPort ${location.id} is unused. Update Marine Planning before replacing or merging this catalogue.`);
+				}
 			}
 		}
 	}

@@ -6,7 +6,7 @@
 		<title>AJRM Marine Location Editor</title>
 		<link rel="stylesheet" href="./leaflet.css">
 		<link rel="stylesheet" href="./ajrm-map-core.css?v=0.7.13">
-		<link rel="stylesheet" href="./styles.css?v=0.7.1">
+		<link rel="stylesheet" href="./styles.css?v=0.7.2">
 	</head>
 	<body>
 		<div id="map" class="map" aria-label="Marine location chart"></div>
@@ -85,7 +85,7 @@
 
 			<fieldset>
 				<legend>Classify this location</legend>
-				<p class="field-help">These choices describe the selected record. Press Save Location to apply them.</p>
+				<p class="field-help">These choices describe the selected record. Press Save Location to apply them. A live Planning gate or its selected standard reference port cannot be removed or reclassified here; change or delete the Planning row first.</p>
 				<div id="typeChoices" class="choice-grid"></div>
 			</fieldset>
 
@@ -211,7 +211,7 @@
 			</div>
 			<div class="drawer-section sync-panel">
 				<h3>Backup and transfer</h3>
-				<p>Export downloads the complete versioned catalogue. Merge retains unrelated locations. Replace Catalogue removes locations absent from the file. Both actions accept Location Editor catalogues.</p>
+				<p>Export downloads the complete versioned catalogue. Merge retains unrelated locations. Replace Catalogue removes locations absent from the file. Both actions accept Location Editor catalogues and preserve Locations required by live Planning rows.</p>
 				<div class="action-row">
 					<button id="mergeLocations" type="button">Merge</button>
 					<button id="importLocations" type="button">Replace Catalogue</button>
@@ -235,6 +235,6 @@
 		<div id="status" class="status" role="status"></div>
 		<script src="./leaflet.js"></script>
 		<script src="./protomaps-leaflet.js"></script>
-		<script type="module" src="./app.js?v=0.7.1"></script>
+		<script type="module" src="./app.js?v=0.7.2"></script>
 	</body>
 </html>

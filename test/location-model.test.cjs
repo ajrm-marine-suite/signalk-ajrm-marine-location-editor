@@ -52,6 +52,21 @@ test("rejects unknown types and unclosed areas", () => {
 	}), /must be closed/);
 });
 
+test("requires exactly one tidal-port classification while preserving other multi-role Locations", () => {
+	assert.throws(() => location({
+		types: ["tidalStandardPort", "tidalSecondaryPort"],
+	}), /must not have both tidalStandardPort and tidalSecondaryPort/);
+	assert.deepEqual(location({
+		types: ["tidalStandardPort", "pointOfInterest"],
+	}).types, ["tidalStandardPort", "pointOfInterest"]);
+	assert.deepEqual(location({
+		types: ["tidalGate", "tidalSecondaryPort"],
+	}).types, ["tidalGate", "tidalSecondaryPort"]);
+	assert.deepEqual(location({
+		types: ["anchorage", "pointOfInterest"],
+	}).types, ["anchorage", "pointOfInterest"]);
+});
+
 test("validates source provenance and tidal observation stations", () => {
 	const sourced = location({
 		types: ["tidalObservationStation"],

@@ -2,45 +2,650 @@
   "openapi": "3.0.3",
   "info": {
     "title": "AJRM Marine Location Editor API",
-    "version": "0.7.1",
-    "description": "Versioned spatial marine locations, assisted anchoring, import/export and nearest-location lookup. The additive shared service supports optimistic removal of one Location classification without changing the public HTTP routes."
+    "version": "0.7.2",
+    "description": "Versioned spatial marine locations, assisted anchoring, import/export and nearest-location lookup. Location Editor owns Location IDs, names, classifications and geometry; tidal relationships remain owned by Tidal Database."
   },
   "x-ajrm-shared-service": {
     "contract": "ajrm-marine-locations-service-v1",
     "removeType": {
       "summary": "Remove one classification while preserving a multi-role Location, or tombstone a Location whose final type is removed.",
       "arguments": ["id", "type", "expectedRevision", "expectedLastEditId", "editedBy"],
-      "result": ["action", "locationId", "location", "tombstone"]
+      "result": ["action", "locationId", "location", "tombstone"],
+      "planningCoordination": "The operation participates in Planning's Location mutation guard before its optimistic check and catalogue write."
     }
   },
+  "x-ajrm-planning-location-mutation-guard": {
+    "contract": "ajrm-marine-planning-location-mutation-guard-v1",
+    "contractVersion": 1,
+    "fields": ["liveGateLocationIds", "liveReferencePortLocationIds"],
+    "legacyBehaviour": "A guard-v1 response without liveReferencePortLocationIds retains gate protection and fails closed before a destructive tidalStandardPort mutation."
+  },
+  "x-ajrm-tidal-database-service": {
+    "contract": "ajrm-marine-tidal-database-service-v2",
+    "contractVersion": 2,
+    "listMethods": "asynchronous"
+  },
   "paths": {
-    "/status": { "get": { "responses": { "200": { "description": "Plugin status" } } } },
-    "/locations": { "get": { "responses": { "200": { "description": "Locations filtered by workspace" } } } },
-    "/deleted": { "get": { "responses": { "200": { "description": "Deletion tombstones available for history and restore" } } } },
+    "/status": {
+      "get": {
+        "summary": "Read Location Editor status",
+        "responses": {
+          "200": { "description": "Current plugin and catalogue status", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/LocationStatus" } } } },
+          "500": { "$ref": "#/components/responses/Error" }
+        }
+      }
+    },
+    "/locations": {
+      "get": {
+        "summary": "List live Locations for one workspace",
+        "parameters": [
+          { "name": "workspace", "in": "query", "schema": { "type": "string", "enum": ["places", "tides", "weather", "hazards", "all"], "default": "all" } }
+        ],
+        "responses": {
+          "200": { "description": "Filtered live Locations", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/LocationList" } } } },
+          "400": { "$ref": "#/components/responses/Error" }
+        }
+      }
+    },
+    "/deleted": {
+      "get": {
+        "summary": "List deletion tombstones",
+        "responses": {
+          "200": { "description": "Deletion tombstones available for history and restore", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/DeletedList" } } } },
+          "400": { "$ref": "#/components/responses/Error" }
+        }
+      }
+    },
     "/locations/{id}": {
-      "get": { "parameters": [{ "$ref": "#/components/parameters/Id" }], "responses": { "200": { "description": "Location" } } },
-      "put": { "parameters": [{ "$ref": "#/components/parameters/Id" }], "responses": { "200": { "description": "Saved" } } },
-      "delete": { "parameters": [{ "$ref": "#/components/parameters/Id" }], "responses": { "200": { "description": "Deleted" } } }
+      "get": {
+        "summary": "Read one live Location",
+        "parameters": [{ "$ref": "#/components/parameters/Id" }],
+        "responses": {
+          "200": { "description": "Location", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Location" } } } },
+          "404": { "$ref": "#/components/responses/Error" }
+        }
+      },
+      "put": {
+        "summary": "Create or update one Location",
+        "description": "When Planning is available, the candidate cannot remove a live gate or selected reference-port classification.",
+        "security": [{ "signalk": [] }],
+        "x-signalk-access": "readwrite",
+        "parameters": [{ "$ref": "#/components/parameters/Id" }],
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/LocationWrite" } } } },
+        "responses": {
+          "200": { "description": "Persisted Location", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/LocationWriteResult" } } } },
+          "400": { "$ref": "#/components/responses/Error" },
+          "403": { "$ref": "#/components/responses/Forbidden" }
+        }
+      },
+      "delete": {
+        "summary": "Tombstone one Location",
+        "description": "A live Planning gate or selected reference port cannot be deleted. Delete or change its Planning row first.",
+        "security": [{ "signalk": [] }],
+        "x-signalk-access": "readwrite",
+        "parameters": [
+          { "$ref": "#/components/parameters/Id" },
+          { "$ref": "#/components/parameters/ExpectedRevisionQuery" }
+        ],
+        "responses": {
+          "200": { "description": "Location tombstoned", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/OkResult" } } } },
+          "400": { "$ref": "#/components/responses/Error" },
+          "403": { "$ref": "#/components/responses/Forbidden" },
+          "404": { "$ref": "#/components/responses/Error" }
+        }
+      }
     },
-    "/locations/{id}/history": { "get": { "parameters": [{ "$ref": "#/components/parameters/Id" }], "responses": { "200": { "description": "Immutable revision history" } } } },
-    "/locations/{id}/restore": { "post": { "parameters": [{ "$ref": "#/components/parameters/Id" }], "responses": { "200": { "description": "Older snapshot restored as a new revision" } } } },
-    "/nearest": { "get": { "responses": { "200": { "description": "Nearest matching locations" } } } },
-    "/tidal-regions/definitions": { "get": { "responses": { "200": { "description": "Joined tidal ports and region assignments owned by Tidal Database" } } } },
+    "/locations/{id}/history": {
+      "get": {
+        "summary": "Read immutable revision history",
+        "parameters": [{ "$ref": "#/components/parameters/Id" }],
+        "responses": {
+          "200": { "description": "Location revision history", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/HistoryResponse" } } } },
+          "404": { "$ref": "#/components/responses/Error" }
+        }
+      }
+    },
+    "/locations/{id}/restore": {
+      "post": {
+        "summary": "Restore an older snapshot as a new revision",
+        "security": [{ "signalk": [] }],
+        "x-signalk-access": "readwrite",
+        "parameters": [{ "$ref": "#/components/parameters/Id" }],
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/RestoreRequest" } } } },
+        "responses": {
+          "200": { "description": "Restored Location", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/LocationRestoreResult" } } } },
+          "400": { "$ref": "#/components/responses/Error" },
+          "403": { "$ref": "#/components/responses/Forbidden" }
+        }
+      }
+    },
+    "/nearest": {
+      "get": {
+        "summary": "Find nearest matching Locations",
+        "parameters": [
+          { "name": "latitude", "in": "query", "required": true, "schema": { "type": "number", "minimum": -90, "maximum": 90 } },
+          { "name": "longitude", "in": "query", "required": true, "schema": { "type": "number", "minimum": -180, "maximum": 180 } },
+          { "name": "types", "in": "query", "description": "Comma-separated Location classifications", "schema": { "type": "string" } },
+          { "name": "limit", "in": "query", "schema": { "type": "integer", "minimum": 1 } },
+          { "name": "maxDistanceM", "in": "query", "schema": { "type": "number", "minimum": 0 } }
+        ],
+        "responses": {
+          "200": { "description": "Reference position and distance-sorted Locations", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/NearestResponse" } } } },
+          "400": { "$ref": "#/components/responses/Error" }
+        }
+      }
+    },
+    "/tidal-regions/definitions": {
+      "get": {
+        "summary": "Read Location-joined Tidal Database port and area projections",
+        "responses": {
+          "200": { "description": "Current asynchronous Tidal Database v2 projections", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/TidalRegionDefinitions" } } } },
+          "503": { "$ref": "#/components/responses/Error" }
+        }
+      }
+    },
     "/tidal-regions/{id}": {
-      "put": { "parameters": [{ "$ref": "#/components/parameters/Id" }], "responses": { "200": { "description": "Serving-port and parent-region assignment saved in Tidal Database" } } },
-      "delete": { "parameters": [{ "$ref": "#/components/parameters/Id" }], "responses": { "200": { "description": "Tidal-region assignment removed from Tidal Database" } } }
+      "put": {
+        "summary": "Save a region's serving-port and parent-region IDs in Tidal Database",
+        "description": "The request deliberately omits a name; Tidal Database derives the authoritative name from the tidalRegion Location.",
+        "security": [{ "signalk": [] }],
+        "x-signalk-access": "readwrite",
+        "parameters": [{ "$ref": "#/components/parameters/Id" }],
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/TidalAreaWrite" } } } },
+        "responses": {
+          "200": { "description": "Saved joined area projection", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/TidalAreaWriteResult" } } } },
+          "400": { "$ref": "#/components/responses/Error" },
+          "403": { "$ref": "#/components/responses/Forbidden" }
+        }
+      },
+      "delete": {
+        "summary": "Remove a region assignment from Tidal Database",
+        "security": [{ "signalk": [] }],
+        "x-signalk-access": "readwrite",
+        "parameters": [{ "$ref": "#/components/parameters/Id" }],
+        "responses": {
+          "200": { "description": "Assignment removed", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/OkResult" } } } },
+          "400": { "$ref": "#/components/responses/Error" },
+          "403": { "$ref": "#/components/responses/Forbidden" }
+        }
+      }
     },
-    "/anchoring/status": { "get": { "responses": { "200": { "description": "Stationary-at-location evidence and current anchoring suggestion/action state" } } } },
-    "/anchoring/confirm": { "post": { "responses": { "200": { "description": "Confirm the current suggestion and select Anchored" } } } },
-    "/anchoring/dismiss": { "post": { "responses": { "200": { "description": "Dismiss the current suggestion until the vessel leaves or moves" } } } },
-    "/local/export": { "get": { "responses": { "200": { "description": "Complete location catalogue" } } } },
-    "/local/import": { "post": { "responses": { "200": { "description": "Location catalogue used to replace the current catalogue" } } } },
-    "/local/merge": { "post": { "responses": { "200": { "description": "Location catalogue merged per location by latest edit time" } } } },
-    "/local/purge-deleted": { "post": { "responses": { "200": { "description": "Confirmed permanent removal of all tombstones and their revision histories" } } } }
+    "/anchoring/status": {
+      "get": {
+        "summary": "Read stationary-at-location evidence and suggestion state",
+        "responses": {
+          "200": { "description": "Anchoring assistance status", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/AnchoringStatus" } } } },
+          "400": { "$ref": "#/components/responses/Error" }
+        }
+      }
+    },
+    "/anchoring/confirm": {
+      "post": {
+        "summary": "Confirm the current anchoring suggestion",
+        "security": [{ "signalk": [] }],
+        "x-signalk-access": "readwrite",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/SuggestionRequest" } } } },
+        "responses": {
+          "200": { "description": "Updated anchoring assistance status", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/AnchoringStatus" } } } },
+          "403": { "$ref": "#/components/responses/Forbidden" },
+          "409": { "$ref": "#/components/responses/Error" }
+        }
+      }
+    },
+    "/anchoring/dismiss": {
+      "post": {
+        "summary": "Dismiss the current anchoring suggestion",
+        "security": [{ "signalk": [] }],
+        "x-signalk-access": "readwrite",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/SuggestionRequest" } } } },
+        "responses": {
+          "200": { "description": "Updated anchoring assistance status", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/AnchoringStatus" } } } },
+          "403": { "$ref": "#/components/responses/Forbidden" },
+          "409": { "$ref": "#/components/responses/Error" }
+        }
+      }
+    },
+    "/local/export": {
+      "get": {
+        "summary": "Export the complete versioned Location catalogue",
+        "responses": {
+          "200": { "description": "Location catalogue with export metadata", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/LocationCatalogueExport" } } } },
+          "400": { "$ref": "#/components/responses/Error" }
+        }
+      }
+    },
+    "/local/import": {
+      "post": {
+        "summary": "Replace the current Location catalogue",
+        "description": "The confirmed candidate is validated and cannot orphan a live Planning gate or reference port.",
+        "security": [{ "signalk": [] }],
+        "x-signalk-access": "readwrite",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/CatalogueTransferRequest" } } } },
+        "responses": {
+          "200": { "description": "Catalogue replacement result", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/CatalogueImportResult" } } } },
+          "400": { "$ref": "#/components/responses/Error" },
+          "403": { "$ref": "#/components/responses/Forbidden" }
+        }
+      }
+    },
+    "/local/merge": {
+      "post": {
+        "summary": "Merge a Location catalogue by stable ID and edit time",
+        "description": "The complete candidate is validated and cannot orphan a live Planning gate or reference port.",
+        "security": [{ "signalk": [] }],
+        "x-signalk-access": "readwrite",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/CatalogueTransferRequest" } } } },
+        "responses": {
+          "200": { "description": "Catalogue merge result", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/CatalogueMergeResult" } } } },
+          "400": { "$ref": "#/components/responses/Error" },
+          "403": { "$ref": "#/components/responses/Forbidden" }
+        }
+      }
+    },
+    "/local/purge-deleted": {
+      "post": {
+        "summary": "Permanently purge every tombstone and its history",
+        "security": [{ "signalk": [] }],
+        "x-signalk-access": "readwrite",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "additionalProperties": false, "required": ["confirm"], "properties": { "confirm": { "type": "boolean", "enum": [true] } } } } } },
+        "responses": {
+          "200": { "description": "Purge result", "content": { "application/json": { "schema": { "type": "object", "required": ["ok", "purged"], "properties": { "ok": { "type": "boolean", "enum": [true] }, "purged": { "type": "integer", "minimum": 0 } } } } } },
+          "400": { "$ref": "#/components/responses/Error" },
+          "403": { "$ref": "#/components/responses/Forbidden" }
+        }
+      }
+    }
   },
   "components": {
+    "securitySchemes": {
+      "signalk": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "Signal K bearer token or authenticated browser session. Mutations require read/write or administrator permission."
+      }
+    },
     "parameters": {
-      "Id": { "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+      "Id": { "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } },
+      "ExpectedRevisionQuery": { "name": "expectedRevision", "in": "query", "schema": { "type": "integer", "minimum": 1 } }
+    },
+    "responses": {
+      "Error": {
+        "description": "Request failed",
+        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } }
+      },
+      "Forbidden": {
+        "description": "Signal K read/write or administrator access is required",
+        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } }
+      }
+    },
+    "schemas": {
+      "Error": {
+        "type": "object",
+        "required": ["error"],
+        "properties": { "error": { "type": "string" } }
+      },
+      "OkResult": {
+        "type": "object",
+        "required": ["ok"],
+        "properties": { "ok": { "type": "boolean", "enum": [true] } }
+      },
+      "LocationType": {
+        "type": "string",
+        "enum": ["harbour", "anchorage", "mooring", "marina", "tidalStandardPort", "tidalSecondaryPort", "tidalObservationStation", "tidalRegion", "tidalGate", "weatherForecastLocation", "hazard", "avoidanceArea", "noAnchoringArea", "waitingArea", "preferredChannel", "pointOfInterest"]
+      },
+      "Position": {
+        "type": "array",
+        "minItems": 2,
+        "maxItems": 2,
+        "items": { "type": "number" },
+        "description": "GeoJSON longitude, latitude"
+      },
+      "PointGeometry": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["type", "coordinates"],
+        "properties": {
+          "type": { "type": "string", "enum": ["Point"] },
+          "coordinates": { "$ref": "#/components/schemas/Position" }
+        }
+      },
+      "PolygonGeometry": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["type", "coordinates"],
+        "properties": {
+          "type": { "type": "string", "enum": ["Polygon"] },
+          "coordinates": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 1,
+            "items": { "type": "array", "minItems": 4, "items": { "$ref": "#/components/schemas/Position" } }
+          }
+        }
+      },
+      "Feature": {
+        "type": "object",
+        "required": ["type", "properties", "geometry"],
+        "properties": {
+          "type": { "type": "string", "enum": ["Feature"] },
+          "properties": { "type": "object" },
+          "geometry": {
+            "oneOf": [
+              { "$ref": "#/components/schemas/PointGeometry" },
+              { "$ref": "#/components/schemas/PolygonGeometry" }
+            ]
+          }
+        }
+      },
+      "LocationProperties": {
+        "type": "object",
+        "properties": {
+          "schema": { "type": "string", "enum": ["org.ajrm.marine.location/v1"], "readOnly": true },
+          "automaticProfileArea": { "type": "boolean" },
+          "anchorage": { "type": "object" },
+          "hazard": { "type": "object" },
+          "provenance": { "type": "object" }
+        },
+        "additionalProperties": true
+      },
+      "LocationBase": {
+        "type": "object",
+        "required": ["name", "description", "types", "feature", "properties"],
+        "properties": {
+          "name": { "type": "string", "maxLength": 200 },
+          "description": { "type": "string", "maxLength": 4000 },
+          "types": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "$ref": "#/components/schemas/LocationType" } },
+          "feature": { "$ref": "#/components/schemas/Feature" },
+          "properties": { "$ref": "#/components/schemas/LocationProperties" }
+        }
+      },
+      "Location": {
+        "allOf": [
+          { "$ref": "#/components/schemas/LocationBase" },
+          {
+            "type": "object",
+            "required": ["id", "revision", "createdAt", "updatedAt", "lastEditId"],
+            "properties": {
+              "id": { "type": "string", "format": "uuid" },
+              "revision": { "type": "integer", "minimum": 1 },
+              "createdAt": { "type": "string", "format": "date-time" },
+              "updatedAt": { "type": "string", "format": "date-time" },
+              "lastEditId": { "type": "string", "format": "uuid" }
+            }
+          }
+        ]
+      },
+      "LocationWrite": {
+        "allOf": [
+          { "$ref": "#/components/schemas/LocationBase" },
+          {
+            "type": "object",
+            "properties": { "expectedRevision": { "type": "integer", "minimum": 0 } }
+          }
+        ]
+      },
+      "LocationList": {
+        "type": "object",
+        "required": ["schema", "schemaVersion", "locations"],
+        "properties": {
+          "schema": { "type": "string", "enum": ["org.ajrm.marine.locations"] },
+          "schemaVersion": { "type": "integer", "enum": [1] },
+          "locations": { "type": "array", "items": { "$ref": "#/components/schemas/Location" } }
+        }
+      },
+      "LocationWriteResult": {
+        "type": "object",
+        "required": ["ok", "id", "location"],
+        "properties": {
+          "ok": { "type": "boolean", "enum": [true] },
+          "id": { "type": "string", "format": "uuid" },
+          "location": { "$ref": "#/components/schemas/Location" }
+        }
+      },
+      "Tombstone": {
+        "type": "object",
+        "required": ["id", "name", "types", "revision", "updatedAt", "lastEditId"],
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "name": { "type": "string" },
+          "types": { "type": "array", "items": { "$ref": "#/components/schemas/LocationType" } },
+          "revision": { "type": "integer", "minimum": 1 },
+          "updatedAt": { "type": "string", "format": "date-time" },
+          "lastEditId": { "type": "string", "format": "uuid" }
+        }
+      },
+      "DeletedList": {
+        "type": "object",
+        "required": ["schema", "schemaVersion", "tombstones"],
+        "properties": {
+          "schema": { "type": "string", "enum": ["org.ajrm.marine.locations"] },
+          "schemaVersion": { "type": "integer", "enum": [1] },
+          "tombstones": { "type": "array", "items": { "$ref": "#/components/schemas/Tombstone" } }
+        }
+      },
+      "HistoryEntry": {
+        "type": "object",
+        "required": ["editId", "revision", "editedAt", "editedBy", "action"],
+        "properties": {
+          "editId": { "type": "string", "format": "uuid" },
+          "revision": { "type": "integer", "minimum": 1 },
+          "editedAt": { "type": "string", "format": "date-time" },
+          "editedBy": { "type": "string" },
+          "action": { "type": "string", "enum": ["create", "update", "delete", "restore", "merge"] },
+          "sourceCatalogId": { "type": "string", "format": "uuid" },
+          "snapshot": { "nullable": true, "allOf": [{ "$ref": "#/components/schemas/Location" }] }
+        }
+      },
+      "HistoryResponse": {
+        "type": "object",
+        "required": ["id", "history"],
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "history": { "type": "array", "items": { "$ref": "#/components/schemas/HistoryEntry" } }
+        }
+      },
+      "RestoreRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["editId", "expectedRevision"],
+        "properties": {
+          "editId": { "type": "string", "format": "uuid" },
+          "expectedRevision": { "type": "integer", "minimum": 1 }
+        }
+      },
+      "LocationRestoreResult": {
+        "type": "object",
+        "required": ["ok", "location"],
+        "properties": {
+          "ok": { "type": "boolean", "enum": [true] },
+          "location": { "$ref": "#/components/schemas/Location" }
+        }
+      },
+      "NearestLocation": {
+        "allOf": [
+          { "$ref": "#/components/schemas/Location" },
+          {
+            "type": "object",
+            "required": ["distanceM"],
+            "properties": { "distanceM": { "type": "number", "minimum": 0 } }
+          }
+        ]
+      },
+      "NearestResponse": {
+        "type": "object",
+        "required": ["position", "locations"],
+        "properties": {
+          "position": {
+            "type": "object",
+            "required": ["latitude", "longitude"],
+            "properties": {
+              "latitude": { "type": "number" },
+              "longitude": { "type": "number" }
+            }
+          },
+          "locations": { "type": "array", "items": { "$ref": "#/components/schemas/NearestLocation" } }
+        }
+      },
+      "TidalPortProjection": {
+        "type": "object",
+        "required": ["locationId", "name", "nameSource", "kind"],
+        "properties": {
+          "locationId": { "type": "string", "format": "uuid" },
+          "name": { "type": "string", "readOnly": true },
+          "nameSource": { "type": "string", "enum": ["location", "cached"], "readOnly": true },
+          "kind": { "type": "string", "enum": ["standard", "secondary"] },
+          "datum": { "type": "string", "nullable": true },
+          "referenceLevels": { "nullable": true, "allOf": [{ "$ref": "#/components/schemas/TidalReferenceLevels" }] },
+          "automaticPreferredPortLocationId": { "type": "string", "format": "uuid", "nullable": true },
+          "advisory": { "type": "object", "nullable": true },
+          "prediction": { "type": "object", "nullable": true }
+        },
+        "additionalProperties": true
+      },
+      "TidalReferenceLevels": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["mhws", "mhwn", "mlwn", "mlws"],
+        "properties": {
+          "mhws": { "type": "number" },
+          "mhwn": { "type": "number" },
+          "mlwn": { "type": "number" },
+          "mlws": { "type": "number" }
+        }
+      },
+      "TidalAreaProjection": {
+        "type": "object",
+        "required": ["locationId", "name", "nameSource", "portLocationId", "parentAreaLocationId"],
+        "properties": {
+          "locationId": { "type": "string", "format": "uuid" },
+          "name": { "type": "string", "readOnly": true },
+          "nameSource": { "type": "string", "enum": ["location", "cached"], "readOnly": true },
+          "portLocationId": { "type": "string", "format": "uuid" },
+          "parentAreaLocationId": { "type": "string", "format": "uuid", "nullable": true }
+        }
+      },
+      "TidalRegionDefinitions": {
+        "type": "object",
+        "required": ["contract", "ports", "areas"],
+        "properties": {
+          "contract": { "type": "string", "enum": ["ajrm-marine-location-tidal-region-editor-v1"] },
+          "ports": { "type": "array", "items": { "$ref": "#/components/schemas/TidalPortProjection" } },
+          "areas": { "type": "array", "items": { "$ref": "#/components/schemas/TidalAreaProjection" } }
+        }
+      },
+      "TidalAreaWrite": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["portLocationId"],
+        "properties": {
+          "portLocationId": { "type": "string", "format": "uuid" },
+          "parentAreaLocationId": { "type": "string", "format": "uuid", "nullable": true }
+        }
+      },
+      "TidalAreaWriteResult": {
+        "type": "object",
+        "required": ["ok", "area"],
+        "properties": {
+          "ok": { "type": "boolean", "enum": [true] },
+          "area": { "$ref": "#/components/schemas/TidalAreaProjection" }
+        }
+      },
+      "AnchoringStatus": {
+        "type": "object",
+        "required": ["contract"],
+        "properties": {
+          "contract": { "type": "string", "enum": ["ajrm-marine-anchoring-assistance-v1"] },
+          "contractVersion": { "type": "integer", "enum": [1] }
+        },
+        "additionalProperties": true
+      },
+      "SuggestionRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["suggestionId"],
+        "properties": { "suggestionId": { "type": "string" } }
+      },
+      "LocationStatus": {
+        "type": "object",
+        "required": ["contract", "contractVersion", "plugin", "version", "enabled", "locationCount", "typeCounts", "anchoringAssistance", "error", "updatedAt"],
+        "properties": {
+          "contract": { "type": "string", "enum": ["ajrm-marine-location-editor-status-v1"] },
+          "contractVersion": { "type": "integer", "enum": [1] },
+          "plugin": { "type": "string" },
+          "version": { "type": "string" },
+          "enabled": { "type": "boolean" },
+          "locationCount": { "type": "integer", "minimum": 0, "nullable": true },
+          "profileAreaCount": { "type": "integer", "minimum": 0 },
+          "typeCounts": { "type": "object", "additionalProperties": { "type": "integer", "minimum": 0 } },
+          "anchoringAssistance": { "$ref": "#/components/schemas/AnchoringStatus" },
+          "error": { "type": "string" },
+          "updatedAt": { "type": "string", "format": "date-time" }
+        }
+      },
+      "LocationCatalogue": {
+        "type": "object",
+        "required": ["schema", "schemaVersion", "catalogId", "updatedAt", "locations", "tombstones", "history", "purgedIds"],
+        "properties": {
+          "schema": { "type": "string", "enum": ["org.ajrm.marine.locations"] },
+          "schemaVersion": { "type": "integer", "enum": [1] },
+          "catalogId": { "type": "string", "format": "uuid" },
+          "updatedAt": { "type": "string", "format": "date-time" },
+          "locations": { "type": "object", "additionalProperties": { "$ref": "#/components/schemas/Location" } },
+          "tombstones": { "type": "object", "additionalProperties": { "$ref": "#/components/schemas/Tombstone" } },
+          "history": {
+            "type": "object",
+            "additionalProperties": { "type": "array", "items": { "$ref": "#/components/schemas/HistoryEntry" } }
+          },
+          "purgedIds": { "type": "array", "uniqueItems": true, "items": { "type": "string", "format": "uuid" } }
+        }
+      },
+      "LocationCatalogueExport": {
+        "allOf": [
+          { "$ref": "#/components/schemas/LocationCatalogue" },
+          {
+            "type": "object",
+            "required": ["exportedAt", "count"],
+            "properties": {
+              "exportedAt": { "type": "string", "format": "date-time" },
+              "count": { "type": "integer", "minimum": 0 }
+            }
+          }
+        ]
+      },
+      "CatalogueTransferRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["confirm", "payload"],
+        "properties": {
+          "confirm": { "type": "boolean", "enum": [true] },
+          "payload": { "$ref": "#/components/schemas/LocationCatalogue" }
+        }
+      },
+      "CatalogueImportResult": {
+        "type": "object",
+        "required": ["ok", "imported", "replaced", "format", "log"],
+        "properties": {
+          "ok": { "type": "boolean", "enum": [true] },
+          "imported": { "type": "integer", "minimum": 0 },
+          "replaced": { "type": "integer", "minimum": 0 },
+          "format": { "type": "string" },
+          "log": { "type": "array", "items": { "type": "string" } }
+        }
+      },
+      "CatalogueMergeResult": {
+        "type": "object",
+        "required": ["ok", "added", "updated", "keptLocal", "conflicts", "format", "log"],
+        "properties": {
+          "ok": { "type": "boolean" },
+          "added": { "type": "integer", "minimum": 0 },
+          "updated": { "type": "integer", "minimum": 0 },
+          "keptLocal": { "type": "integer", "minimum": 0 },
+          "conflicts": { "type": "array", "items": { "type": "object" } },
+          "format": { "type": "string" },
+          "log": { "type": "array", "items": { "type": "string" } }
+        }
+      }
     }
   }
 }

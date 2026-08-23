@@ -34,10 +34,19 @@ async function fixture(t, options = {}) {
 		ajrmMarineTidalDatabase: options.tidalService,
 	};
 	const routes = new Map();
-	const router = {};
-	for (const method of ["get", "put", "post", "delete"]) {
-		router[method] = (route, handler) => routes.set(`${method.toUpperCase()} ${route}`, handler);
+	const registrations = [];
+	function scopedRouter(level = null) {
+		const scoped = {};
+		for (const method of ["get", "put", "post", "delete"]) {
+			scoped[method] = (route, handler) => {
+				registrations.push({ method: method.toUpperCase(), route, level });
+				routes.set(`${method.toUpperCase()} ${route}`, handler);
+			};
+		}
+		return scoped;
 	}
+	const router = scopedRouter();
+	if (options.accessRouter) router.access = (level) => scopedRouter(level);
 	const plugin = createPlugin(app);
 	plugin.registerWithRouter(router);
 	plugin.start({});
@@ -47,7 +56,7 @@ async function fixture(t, options = {}) {
 		await routes.get(`${method} ${route}`)({ query: {}, body: {}, params: {}, ...req }, res);
 		return res;
 	}
-	return { app, call, messages, plugin };
+	return { app, call, messages, plugin, registrations, routes };
 }
 
 test("tidal-region routes present and update relationships owned by Tidal Database", async (t) => {
@@ -55,9 +64,10 @@ test("tidal-region routes present and update relationships owned by Tidal Databa
 	const removed = [];
 	const portId = crypto.randomUUID();
 	const tidalService = {
-		contract:"ajrm-marine-tidal-database-service-v1",
-		listPorts:() => [{ locationId:portId,name:"Test standard port",kind:"standard" }],
-		listAreas:() => [],
+		contract:"ajrm-marine-tidal-database-service-v2",
+		contractVersion:2,
+		listPorts:async () => [{ locationId:portId,name:"Test standard port",nameSource:"location",kind:"standard" }],
+		listAreas:async () => [],
 		setArea:async (id,value) => { const area={ locationId:id,...value }; saved.push(area); return area; },
 		removeArea:async (id) => { removed.push(id); },
 	};
@@ -72,7 +82,7 @@ test("tidal-region routes present and update relationships owned by Tidal Databa
 	assert.equal(result.body.ports[0].locationId,portId);
 	result = await call("PUT","/tidal-regions/:id",{ params:{ id:regionId },body:{ portLocationId:portId } });
 	assert.equal(result.body.ok,true);
-	assert.equal(saved[0].name,"Test tidal region");
+	assert.equal(saved[0].name,undefined);
 	assert.equal(saved[0].portLocationId,portId);
 	result = await call("DELETE","/tidal-regions/:id",{ params:{ id:regionId } });
 	assert.equal(result.body.ok,true);
@@ -208,6 +218,67 @@ test("lifecycle exposes the spatial service and retracts status on stop", async 
 	assert.equal(app.ajrmMarineLocationDiagnostics, undefined);
 	assert.equal(globalThis[Symbol.for("mcdonaldajr.ajrmMarineLocations")], undefined);
 	assert.equal(messages.at(-1).updates[0].values[0].value, null);
+});
+
+test("OpenAPI covers every registered HTTP method and path", async (t) => {
+	const { plugin, routes } = await fixture(t);
+	const openApi = plugin.getOpenApi();
+	const registered = [...routes.keys()].map((entry) => entry.replace(/:([^/]+)/g, "{$1}")).sort();
+	const documented = Object.entries(openApi.paths).flatMap(([route, methods]) => (
+		Object.keys(methods).filter((method) => ["get", "put", "post", "delete"].includes(method)).map((method) => `${method.toUpperCase()} ${route}`)
+	)).sort();
+	assert.deepEqual(documented, registered);
+	assert.equal(openApi.info.version, "0.7.2");
+	assert.equal(openApi["x-ajrm-tidal-database-service"].contract, "ajrm-marine-tidal-database-service-v2");
+	assert.deepEqual(openApi["x-ajrm-planning-location-mutation-guard"].fields, [
+		"liveGateLocationIds", "liveReferencePortLocationIds",
+	]);
+	assert.equal(openApi.components.securitySchemes.signalk.scheme, "bearer");
+	const mutations = Object.entries(openApi.paths).flatMap(([route, methods]) => (
+		Object.entries(methods)
+			.filter(([method]) => ["post", "put", "patch", "delete"].includes(method))
+			.map(([method, operation]) => ({ method, route, operation }))
+	));
+	assert.equal(mutations.length, 10);
+	for (const { method, route, operation } of mutations) {
+		assert.deepEqual(operation.security, [{ signalk: [] }], `${method.toUpperCase()} ${route} security`);
+		assert.equal(operation["x-signalk-access"], "readwrite", `${method.toUpperCase()} ${route} access`);
+		assert.ok(operation.responses?.["403"], `${method.toUpperCase()} ${route} 403 response`);
+	}
+	const references = [];
+	(function collectReferences(value) {
+		if (Array.isArray(value)) return value.forEach(collectReferences);
+		if (!value || typeof value !== "object") return;
+		if (typeof value.$ref === "string") references.push(value.$ref);
+		for (const child of Object.values(value)) collectReferences(child);
+	})(openApi);
+	for (const reference of references) {
+		assert.match(reference, /^#\//);
+		const target = reference.slice(2).split("/").reduce((value, key) => (
+			value?.[key.replace(/~1/g, "/").replace(/~0/g, "~")]
+		), openApi);
+		assert.notEqual(target, undefined, `missing OpenAPI reference ${reference}`);
+	}
+});
+
+test("Location Editor registers reads and mutations through Signal K access routers", async (t) => {
+	const { plugin, registrations } = await fixture(t, { accessRouter: true });
+	assert.equal(registrations.length, 19);
+	for (const registration of registrations) {
+		assert.equal(
+			registration.level,
+			registration.method === "GET" ? "readonly" : "readwrite",
+			`${registration.method} ${registration.route}`,
+		);
+	}
+	await plugin.stop();
+});
+
+test("Location Editor router registration falls back when access routers are unavailable", async (t) => {
+	const { plugin, registrations } = await fixture(t);
+	assert.equal(registrations.length, 19);
+	assert.ok(registrations.every((entry) => entry.level === null));
+	await plugin.stop();
 });
 
 test("shared removeType preserves a multi-role Location and returns its exact next revision", async (t) => {
@@ -363,6 +434,95 @@ test("generic Location writes cannot remove a tidalGate join with live Planning 
 	await plugin.stop();
 });
 
+test("all Location mutation surfaces preserve live Planning reference ports", async (t) => {
+	const { app, call, plugin } = await fixture(t);
+	const id = crypto.randomUUID();
+	const created = await call("PUT", "/locations/:id", {
+		params: { id },
+		body: gateBody("Planning reference port", ["tidalStandardPort", "pointOfInterest"]),
+	});
+	assert.equal(created.statusCode, 200);
+	let coordinatedCalls = 0;
+	app.ajrmMarinePlanning = {
+		coordinateLocationMutation(change) {
+			coordinatedCalls += 1;
+			return change({
+				contract: "ajrm-marine-planning-location-mutation-guard-v1",
+				contractVersion: 1,
+				liveGateLocationIds: [],
+				liveReferencePortLocationIds: [id],
+			});
+		},
+	};
+
+	let result = await call("PUT", "/locations/:id", {
+		params: { id },
+		body: { ...gateBody("Planning reference port", ["pointOfInterest"]), expectedRevision: 1 },
+	});
+	assert.equal(result.statusCode, 400);
+	assert.match(result.body.error, /reference port for live Marine Planning constants/);
+
+	result = await call("DELETE", "/locations/:id", { params: { id }, query: { expectedRevision: 1 } });
+	assert.equal(result.statusCode, 400);
+	assert.match(result.body.error, /reference port for live Marine Planning constants/);
+
+	const exported = (await call("GET", "/local/export")).body;
+	delete exported.locations[id];
+	result = await call("POST", "/local/import", { body: { confirm: true, payload: exported } });
+	assert.equal(result.statusCode, 400);
+	assert.match(result.body.error, /would remove reference port/);
+
+	const merge = (await call("GET", "/local/export")).body;
+	merge.locations[id] = {
+		...merge.locations[id],
+		types: ["pointOfInterest"],
+		revision: 2,
+		lastEditId: crypto.randomUUID(),
+		updatedAt: "2099-01-01T00:00:00.000Z",
+	};
+	result = await call("POST", "/local/merge", { body: { confirm: true, payload: merge } });
+	assert.equal(result.statusCode, 400);
+	assert.match(result.body.error, /would remove reference port/);
+
+	await assert.rejects(app.ajrmMarineLocations.removeType(id, "tidalStandardPort", {
+		expectedRevision: 1,
+		expectedLastEditId: created.body.location.lastEditId,
+	}), /reference port for live Marine Planning constants/);
+	assert.equal(coordinatedCalls >= 5, true);
+	assert.deepEqual((await app.ajrmMarineLocations.get(id)).types, ["tidalStandardPort", "pointOfInterest"]);
+	await plugin.stop();
+});
+
+test("legacy Planning guard-v1 fails closed before removing a tidalStandardPort", async (t) => {
+	const { app, call, plugin } = await fixture(t);
+	const id = crypto.randomUUID();
+	const created = await call("PUT", "/locations/:id", {
+		params: { id },
+		body: gateBody("Legacy guarded standard port", ["tidalStandardPort", "pointOfInterest"]),
+	});
+	app.ajrmMarinePlanning = {
+		coordinateLocationMutation: (change) => change({
+			contract: "ajrm-marine-planning-location-mutation-guard-v1",
+			liveGateLocationIds: [],
+		}),
+	};
+	await assert.rejects(app.ajrmMarineLocations.removeType(id, "tidalStandardPort", {
+		expectedRevision: 1,
+		expectedLastEditId: created.body.location.lastEditId,
+	}), /legacy mutation guard cannot prove/);
+	app.ajrmMarinePlanning.coordinateLocationMutation = (change) => change({
+		contract: "ajrm-marine-planning-location-mutation-guard-v1",
+		contractVersion: 1,
+		liveGateLocationIds: [],
+		liveReferencePortLocationIds: null,
+	});
+	await assert.rejects(app.ajrmMarineLocations.removeType(id, "tidalStandardPort", {
+		expectedRevision: 1,
+		expectedLastEditId: created.body.location.lastEditId,
+	}), /unsupported Location mutation guard/);
+	await plugin.stop();
+});
+
 test("routes save, version, inspect and restore a location", async (t) => {
 	const { call, plugin } = await fixture(t);
 	const id = crypto.randomUUID();
@@ -402,6 +562,13 @@ test("write routes enforce access and imports require the versioned schema", asy
 	const { call, plugin } = await fixture(t);
 	const id = crypto.randomUUID();
 	let result = await call("PUT", "/locations/:id", { params: { id }, body: body(), skIsAuthenticated: false });
+	assert.equal(result.statusCode, 403);
+	result = await call("PUT", "/locations/:id", {
+		params: { id },
+		body: body(),
+		skIsAuthenticated: true,
+		skPrincipal: { permissions: "readonly" },
+	});
 	assert.equal(result.statusCode, 403);
 	result = await call("POST", "/local/import", { body: { confirm: true, payload: { locations: [] } } });
 	assert.equal(result.statusCode, 400);

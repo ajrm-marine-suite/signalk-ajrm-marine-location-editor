@@ -106,6 +106,16 @@ function harbourBody(name = "Versioned Harbour") {
 	};
 }
 
+function gateBody(name, types = ["tidalGate"]) {
+	return {
+		expectedRevision: 0,
+		name,
+		types,
+		feature: { type: "Feature", properties: {}, geometry: { type: "Point", coordinates: [-5.2, 55.8] } },
+		properties: {},
+	};
+}
+
 test("lifecycle exposes the spatial service and retracts status on stop", async (t) => {
 	const { app, call, messages, plugin } = await fixture(t);
 	assert.equal(app.ajrmMarineLocations.contract, "ajrm-marine-locations-service-v1");
@@ -135,6 +145,159 @@ test("lifecycle exposes the spatial service and retracts status on stop", async 
 	assert.equal(app.ajrmMarineLocationDiagnostics, undefined);
 	assert.equal(globalThis[Symbol.for("mcdonaldajr.ajrmMarineLocations")], undefined);
 	assert.equal(messages.at(-1).updates[0].values[0].value, null);
+});
+
+test("shared removeType preserves a multi-role Location and returns its exact next revision", async (t) => {
+	const { app, call, plugin } = await fixture(t);
+	const id = crypto.randomUUID();
+	const created = await call("PUT", "/locations/:id", {
+		params: { id },
+		body: gateBody("Multi-role gate", ["tidalGate", "tidalSecondaryPort"]),
+	});
+	assert.equal(created.statusCode, 200);
+	const previousGateCount = app.ajrmMarineLocationEditorStatus.typeCounts.tidalGate;
+	const result = await app.ajrmMarineLocations.removeType(id, "tidalGate", {
+		expectedRevision: 1,
+		expectedLastEditId: created.body.location.lastEditId,
+		editedBy: "Marine Planning deletion",
+	});
+	assert.equal(result.action, "type-removed");
+	assert.equal(result.locationId, id);
+	assert.equal(result.tombstone, null);
+	assert.equal(result.location.id, id);
+	assert.equal(result.location.revision, 2);
+	assert.deepEqual(result.location.types, ["tidalSecondaryPort"]);
+	assert.deepEqual(await app.ajrmMarineLocations.get(id), result.location);
+	assert.equal(app.ajrmMarineLocationEditorStatus.typeCounts.tidalGate, previousGateCount - 1);
+	const history = await call("GET", "/locations/:id/history", { params: { id } });
+	assert.equal(history.body.history.at(-1).action, "update");
+	assert.equal(history.body.history.at(-1).editedBy, "Marine Planning deletion");
+	await plugin.stop();
+});
+
+test("shared removeType tombstones a single-role Location and returns the persisted tombstone", async (t) => {
+	const { app, call, plugin } = await fixture(t);
+	const id = crypto.randomUUID();
+	const created = await call("PUT", "/locations/:id", {
+		params: { id },
+		body: gateBody("Single-role gate"),
+	});
+	assert.equal(created.statusCode, 200);
+	const previousLocationCount = app.ajrmMarineLocationEditorStatus.locationCount;
+	const result = await app.ajrmMarineLocations.removeType(id, "tidalGate", {
+		expectedRevision: 1,
+		expectedLastEditId: created.body.location.lastEditId,
+		editedBy: "Marine Planning deletion",
+	});
+	assert.equal(result.action, "location-deleted");
+	assert.equal(result.locationId, id);
+	assert.equal(result.location, null);
+	assert.equal(result.tombstone.id, id);
+	assert.equal(result.tombstone.revision, 2);
+	assert.deepEqual(result.tombstone.types, ["tidalGate"]);
+	assert.equal(await app.ajrmMarineLocations.get(id), null);
+	assert.equal(app.ajrmMarineLocationEditorStatus.locationCount, previousLocationCount - 1);
+	const deleted = await call("GET", "/deleted");
+	assert.deepEqual(deleted.body.tombstones.find((entry) => entry.id === id), result.tombstone);
+	const history = await call("GET", "/locations/:id/history", { params: { id } });
+	assert.equal(history.body.history.at(-1).action, "delete");
+	assert.equal(history.body.history.at(-1).editedBy, "Marine Planning deletion");
+	await plugin.stop();
+});
+
+test("shared removeType rejects stale revisions and invalid mutation identities without changing the Location", async (t) => {
+	const { app, call, plugin } = await fixture(t);
+	const id = crypto.randomUUID();
+	const created = await call("PUT", "/locations/:id", {
+		params: { id },
+		body: gateBody("Guarded gate", ["tidalGate", "pointOfInterest"]),
+	});
+	await assert.rejects(
+		app.ajrmMarineLocations.removeType(id, "tidalGate", {
+			expectedRevision: 2,
+			expectedLastEditId: created.body.location.lastEditId,
+		}),
+		/changed after it was opened/,
+	);
+	await assert.rejects(
+		app.ajrmMarineLocations.removeType(id, "tidalGate", {
+			expectedRevision: 1,
+			expectedLastEditId: crypto.randomUUID(),
+		}),
+		/changed after it was opened/,
+	);
+	await assert.rejects(
+		app.ajrmMarineLocations.removeType(id, "tidalGate", {
+			expectedRevision: 0,
+			expectedLastEditId: created.body.location.lastEditId,
+		}),
+		/positive integer/,
+	);
+	await assert.rejects(
+		app.ajrmMarineLocations.removeType("not-a-uuid", "tidalGate", {
+			expectedRevision: 1,
+			expectedLastEditId: created.body.location.lastEditId,
+		}),
+		/UUIDv4/,
+	);
+	await assert.rejects(
+		app.ajrmMarineLocations.removeType(id, "not-a-location-type", {
+			expectedRevision: 1,
+			expectedLastEditId: created.body.location.lastEditId,
+		}),
+		/Location type must be one of/,
+	);
+	const unchanged = await app.ajrmMarineLocations.get(id);
+	assert.equal(unchanged.revision, 1);
+	assert.deepEqual(unchanged.types, ["tidalGate", "pointOfInterest"]);
+	await plugin.stop();
+});
+
+test("generic Location writes cannot remove a tidalGate join with live Planning constants", async (t) => {
+	const { app, call, plugin } = await fixture(t);
+	const id = crypto.randomUUID();
+	const created = await call("PUT", "/locations/:id", {
+		params: { id },
+		body: gateBody("Planning-joined gate", ["tidalGate", "pointOfInterest"]),
+	});
+	assert.equal(created.statusCode, 200);
+	let coordinatedCalls = 0;
+	app.ajrmMarinePlanning = {
+		coordinateLocationMutation(change) {
+			coordinatedCalls += 1;
+			return change({
+				contract: "ajrm-marine-planning-location-mutation-guard-v1",
+				liveGateLocationIds: [id],
+			});
+		},
+	};
+
+	let result = await call("PUT", "/locations/:id", {
+		params: { id },
+		body: { ...gateBody("Planning-joined gate", ["pointOfInterest"]), expectedRevision: 1 },
+	});
+	assert.equal(result.statusCode, 400);
+	assert.match(result.body.error, /live Marine Planning constants/);
+
+	result = await call("DELETE", "/locations/:id", {
+		params: { id },
+		query: { expectedRevision: 1 },
+	});
+	assert.equal(result.statusCode, 400);
+	assert.match(result.body.error, /live Marine Planning constants/);
+
+	const exported = (await call("GET", "/local/export")).body;
+	delete exported.locations[id];
+	result = await call("POST", "/local/import", {
+		body: { confirm: true, payload: exported },
+	});
+	assert.equal(result.statusCode, 400);
+	assert.match(result.body.error, /would orphan live Marine Planning constants/);
+	assert.ok(coordinatedCalls >= 3);
+	const unchanged = await app.ajrmMarineLocations.get(id);
+	assert.equal(unchanged.revision, 1);
+	assert.deepEqual(unchanged.types, ["tidalGate", "pointOfInterest"]);
+	await plugin.stop();
 });
 
 test("routes save, version, inspect and restore a location", async (t) => {

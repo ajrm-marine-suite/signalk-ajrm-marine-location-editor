@@ -28,6 +28,7 @@ const SERVICE_REGISTRIES = Object.freeze({
 	ajrmMarineLocationDiagnostics: Symbol.for("mcdonaldajr.ajrmMarineLocationDiagnostics"),
 });
 const TIDAL_DATABASE_REGISTRY = Symbol.for("mcdonaldajr.ajrmMarineTidalDatabase");
+const PLANNING_REGISTRY = Symbol.for("mcdonaldajr.ajrmMarinePlanning");
 const STATUS_PATH = "plugins.ajrmMarineLocationEditor";
 const ANCHORING_PATH = "plugins.ajrmMarineLocations.anchoring";
 const MAX_IMPORT_LOCATIONS = 10000;
@@ -132,6 +133,8 @@ module.exports = function ajrmMarineLocationEditor(app) {
 					: locations;
 			},
 			get: async (id) => { await initializationPromise; return store.get(id); },
+			removeType: (id, type, mutationOptions) =>
+				trackOperation(removeLocationType(id, type, mutationOptions)),
 			nearest: async (position, options) => {
 				await initializationPromise;
 				return nearestLocations(await store.list(), position, options);
@@ -327,13 +330,16 @@ module.exports = function ajrmMarineLocationEditor(app) {
 				assertRunning();
 				await initializationPromise;
 				if (!isResourceId(req.params.id)) throw new Error("Location id must be a UUIDv4.");
-				const { expectedRevision, ...body } = req.body || {};
-				const location = normalizeLocation({ ...body, id: req.params.id });
-				await assertReferencesExist(location);
-				await assertUniqueLocationName(location);
-				const saved = await store.set(req.params.id, location, {
-					expectedRevision,
-					editedBy: requestActor(req),
+				const saved = await withPlanningLocationMutation(async (guard) => {
+					const { expectedRevision, ...body } = req.body || {};
+					const location = normalizeLocation({ ...body, id: req.params.id });
+					await assertReferencesExist(location);
+					await assertUniqueLocationName(location);
+					assertPlanningGateLocation(location, guard);
+					return store.set(req.params.id, location, {
+						expectedRevision,
+						editedBy: requestActor(req),
+					});
 				});
 				await refreshStatus();
 				res.json({ ok: true, id: req.params.id, location: saved });
@@ -347,10 +353,13 @@ module.exports = function ajrmMarineLocationEditor(app) {
 				assertRunning();
 				await initializationPromise;
 				if (!isResourceId(req.params.id)) throw new Error("Location id must be a UUIDv4.");
-				await assertNotReferenced(req.params.id);
-				const removed = await store.remove(req.params.id, {
-					expectedRevision: req.body?.expectedRevision ?? req.query?.expectedRevision,
-					editedBy: requestActor(req),
+				const removed = await withPlanningLocationMutation(async (guard) => {
+					await assertNotReferenced(req.params.id);
+					assertPlanningGateRemoval(req.params.id, guard);
+					return store.remove(req.params.id, {
+						expectedRevision: req.body?.expectedRevision ?? req.query?.expectedRevision,
+						editedBy: requestActor(req),
+					});
 				});
 				if (!removed) return res.status(404).json({ error: "Location was not found." });
 				await refreshStatus();
@@ -379,15 +388,16 @@ module.exports = function ajrmMarineLocationEditor(app) {
 				await initializationPromise;
 				if (!isResourceId(req.params.id)) throw new Error("Location id must be a UUIDv4.");
 				if (!isResourceId(req.body?.editId)) throw new Error("Select a valid history revision to restore.");
-				const location = await store.restore(req.params.id, req.body.editId, {
+				const location = await withPlanningLocationMutation((guard) => store.restore(req.params.id, req.body.editId, {
 					expectedRevision: req.body.expectedRevision,
 					editedBy: requestActor(req),
 					validate: async (restored, catalog) => {
 						const locations = new Map(Object.entries(catalog.locations));
 						await assertReferencesExist(restored, locations);
 						await assertUniqueLocationName(restored, locations);
+						assertPlanningGateLocation(restored, guard);
 					},
-				});
+				}));
 				await refreshStatus();
 				res.json({ ok: true, location });
 			} catch (error) {
@@ -447,9 +457,12 @@ module.exports = function ajrmMarineLocationEditor(app) {
 				if (count > MAX_IMPORT_LOCATIONS) {
 					throw new Error(`Import contains more than ${MAX_IMPORT_LOCATIONS} locations.`);
 				}
-				await validateCatalogReferences(incoming);
 				const previous = (await store.list()).length;
-				await store.replace(incoming, { tombstoneMissing: true, editedBy: "Catalogue replacement" });
+				await withPlanningLocationMutation(async (guard) => {
+					await validateCatalogReferences(incoming);
+					assertPlanningGateCatalogue(incoming, guard);
+					await store.replace(incoming, { tombstoneMissing: true, editedBy: "Catalogue replacement" });
+				});
 				await refreshStatus();
 				res.json({
 					ok: true,
@@ -476,7 +489,12 @@ module.exports = function ajrmMarineLocationEditor(app) {
 				if (Object.keys(incoming.locations).length > MAX_IMPORT_LOCATIONS) {
 					throw new Error(`Merge contains more than ${MAX_IMPORT_LOCATIONS} locations.`);
 				}
-				const result = await store.merge(incoming, { validate: validateCatalogReferences });
+				const result = await withPlanningLocationMutation((guard) => store.merge(incoming, {
+					validate: async (candidate) => {
+						await validateCatalogReferences(candidate);
+						assertPlanningGateCatalogue(candidate, guard);
+					},
+				}));
 				await refreshStatus();
 				res.json({
 					ok: result.conflicts.length === 0,
@@ -503,6 +521,24 @@ module.exports = function ajrmMarineLocationEditor(app) {
 		// prediction relationships belong to Tidal Database and are not interpreted here.
 		void location;
 		void catalogLocations;
+	}
+
+	async function removeLocationType(id, type, mutationOptions = {}) {
+		await initializationPromise;
+		if (!isResourceId(id)) throw new Error("Location id must be a UUIDv4.");
+		if (typeof type !== "string" || !LOCATION_TYPES.includes(type)) {
+			throw new Error(`Location type must be one of: ${LOCATION_TYPES.join(", ")}.`);
+		}
+		const expectedRevision = Number(mutationOptions?.expectedRevision);
+		if (!Number.isInteger(expectedRevision) || expectedRevision < 1) {
+			throw new Error("expectedRevision must be a positive integer.");
+		}
+		const expectedLastEditId = String(mutationOptions?.expectedLastEditId || "");
+		if (!isResourceId(expectedLastEditId)) throw new Error("expectedLastEditId must be a UUIDv4.");
+		const editedBy = String(mutationOptions?.editedBy || "shared location service").slice(0, 200);
+		const result = await store.removeType(id, type, { expectedRevision, expectedLastEditId, editedBy });
+		await refreshStatus();
+		return result;
 	}
 
 	function requireTidalDatabase() {
@@ -575,6 +611,43 @@ module.exports = function ajrmMarineLocationEditor(app) {
 		for (const location of locations.values()) {
 			await assertReferencesExist(location, locations);
 			await assertUniqueLocationName(location, locations);
+		}
+	}
+
+	async function withPlanningLocationMutation(change) {
+		const planning = app.ajrmMarinePlanning || globalThis[PLANNING_REGISTRY];
+		if (typeof planning?.coordinateLocationMutation === "function") {
+			return planning.coordinateLocationMutation(change);
+		}
+		return change(null);
+	}
+
+	function planningGateIds(guard) {
+		return guard?.contract === "ajrm-marine-planning-location-mutation-guard-v1"
+			&& Array.isArray(guard.liveGateLocationIds)
+			? new Set(guard.liveGateLocationIds)
+			: new Set();
+	}
+
+	function assertPlanningGateLocation(location, guard) {
+		if (planningGateIds(guard).has(location.id) && !location.types.includes("tidalGate")) {
+			throw new Error("This Location has live Marine Planning constants. Delete the gate through Planning's Tidal Gate Data workflow.");
+		}
+	}
+
+	function assertPlanningGateRemoval(locationId, guard) {
+		if (planningGateIds(guard).has(locationId)) {
+			throw new Error("This Location has live Marine Planning constants. Delete the gate through Planning's Tidal Gate Data workflow.");
+		}
+	}
+
+	function assertPlanningGateCatalogue(catalog, guard) {
+		const locations = catalog?.locations || {};
+		for (const locationId of planningGateIds(guard)) {
+			const location = locations[locationId];
+			if (!location?.types?.includes("tidalGate")) {
+				throw new Error(`Location import would orphan live Marine Planning constants for ${locationId}. Delete that gate through Planning first.`);
+			}
 		}
 	}
 
@@ -710,7 +783,10 @@ module.exports = function ajrmMarineLocationEditor(app) {
 	function trackOperation(operation) {
 		const promise = Promise.resolve(operation);
 		pendingOperations.add(promise);
-		promise.finally(() => pendingOperations.delete(promise));
+		promise.then(
+			() => pendingOperations.delete(promise),
+			() => pendingOperations.delete(promise),
+		);
 		return promise;
 	}
 

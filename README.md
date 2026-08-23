@@ -65,6 +65,24 @@ The plugin exposes:
 - `app.ajrmMarineAnchoring`, which provides confirmation-first stationary-at-anchorage assistance;
 - spatial location and anchoring services consumed by the standalone Tidal and Weather Database apps.
 
+The locations service includes the backward-compatible additive
+`removeType(id, type, { expectedRevision, expectedLastEditId, editedBy })`
+operation. It requires the current positive revision and durable edit identity,
+and removes only the requested classification from
+a multi-role Location, and tombstones the complete Location only when that was
+its final classification. The result identifies `type-removed` or
+`location-deleted`, identifies the stable Location ID, and returns the resulting live Location or deletion
+tombstone, including the next revision, so a coordinating app can verify the
+write exactly.
+
+When Marine Planning v0.7.0 is running, public Location create/update/delete,
+restore, replacement import and merge operations join Planning's mutation
+coordinator. A candidate catalogue cannot remove the `tidalGate`
+classification or Location for a live Planning definition; use Planning's
+Tidal Gate Data delete workflow, which tombstones constants first. The shared
+`removeType` operation performs its revision-and-edit-identity check and its
+branch/write inside one atomic Location catalogue mutation.
+
 It deliberately does **not** expose a tide service or duplicate tidal relationships in its catalogue. Install AJRM Marine Tidal Database for tidal selection, region-to-port assignments, provider configuration, corrections, calculations and offline cache management.
 
 ## Safety
@@ -75,6 +93,6 @@ Saved locations supplement, and never replace, current official charts, publicat
 
 ```sh
 cd ~/.signalk
-npm install git+https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor.git#v0.6.50 --omit=dev --no-package-lock
+npm install git+https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor.git#v0.7.0 --omit=dev --no-package-lock
 sudo systemctl restart signalk
 ```

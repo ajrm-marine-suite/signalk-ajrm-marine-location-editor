@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.7.0 — 2026-08-23
+
+- Add a backward-compatible shared-service operation for coordinated removal
+  of one Location classification with required optimistic revision and edit-
+  identity checks inside one atomic catalogue mutation.
+- Preserve multi-role Locations by removing only the requested type, tombstone
+  single-role Locations when their final type is removed, refresh published
+  status, and return the exact resulting Location or tombstone for read-back
+  verification by Marine Planning.
+- Join public Location writes, restores, replacement imports and merges to
+  Planning's gate-mutation coordinator when available, rejecting any candidate
+  that would remove the spatial join for live gate constants.
+
 ## 0.6.50 — 2026-08-22
 
 - Add seven distinct source-checked representatives for Sound of Jura, the

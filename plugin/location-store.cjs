@@ -128,7 +128,7 @@ function createLocationStore(filePath) {
 				const revision = Number(previous.revision || 0) + 1;
 				const editId = crypto.randomUUID();
 				delete catalog.locations[id];
-				catalog.tombstones[id] = {
+				const tombstone = {
 					id,
 					name: previous.name,
 					types: previous.types,
@@ -136,6 +136,7 @@ function createLocationStore(filePath) {
 					updatedAt: editedAt,
 					lastEditId: editId,
 				};
+				catalog.tombstones[id] = tombstone;
 				catalog.history[id] = catalog.history[id] || [];
 				catalog.history[id].push({
 					editId,
@@ -147,7 +148,60 @@ function createLocationStore(filePath) {
 					snapshot: null,
 				});
 				await write(catalog);
-				return true;
+				return structuredClone(tombstone);
+			});
+		},
+		async removeType(id, type, options = {}) {
+			return mutate(async (catalog) => {
+				const previous = catalog.locations[id];
+				if (!previous) throw new Error("Location was not found.");
+				if (
+					Number(options.expectedRevision) !== Number(previous.revision) ||
+					String(options.expectedLastEditId || "") !== String(previous.lastEditId || "")
+				) {
+					throw new Error("Location changed after it was opened. Refresh it before removing its classification.");
+				}
+				if (!previous.types.includes(type)) throw new Error(`Location is not classified as ${type}.`);
+				const editedAt = new Date().toISOString();
+				const revision = Number(previous.revision) + 1;
+				const editId = crypto.randomUUID();
+				const editedBy = String(options.editedBy || "shared location service");
+				const remainingTypes = previous.types.filter((entry) => entry !== type);
+				catalog.history[id] = catalog.history[id] || [];
+				if (remainingTypes.length) {
+					const location = normalizeLocation({
+						...previous,
+						types: remainingTypes,
+						revision,
+						updatedAt: editedAt,
+						lastEditId: editId,
+					});
+					catalog.locations[id] = location;
+					catalog.history[id].push({
+						editId, revision, editedAt, editedBy, action: "update",
+						sourceCatalogId: catalog.catalogId,
+						snapshot: structuredClone(location),
+					});
+					await write(catalog);
+					return { action: "type-removed", locationId: id, location, tombstone: null };
+				}
+				delete catalog.locations[id];
+				const tombstone = {
+					id,
+					name: previous.name,
+					types: previous.types,
+					revision,
+					updatedAt: editedAt,
+					lastEditId: editId,
+				};
+				catalog.tombstones[id] = tombstone;
+				catalog.history[id].push({
+					editId, revision, editedAt, editedBy, action: "delete",
+					sourceCatalogId: catalog.catalogId,
+					snapshot: null,
+				});
+				await write(catalog);
+				return { action: "location-deleted", locationId: id, location: null, tombstone: structuredClone(tombstone) };
 			});
 		},
 		async history(id) {

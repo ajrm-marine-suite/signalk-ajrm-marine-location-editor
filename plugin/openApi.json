@@ -2,8 +2,16 @@
   "openapi": "3.0.3",
   "info": {
     "title": "AJRM Marine Location Editor API",
-    "version": "0.6.50",
-    "description": "Versioned spatial marine locations, assisted anchoring, import/export and nearest-location lookup."
+    "version": "0.7.0",
+    "description": "Versioned spatial marine locations, assisted anchoring, import/export and nearest-location lookup. The additive shared service supports optimistic removal of one Location classification without changing the public HTTP routes."
+  },
+  "x-ajrm-shared-service": {
+    "contract": "ajrm-marine-locations-service-v1",
+    "removeType": {
+      "summary": "Remove one classification while preserving a multi-role Location, or tombstone a Location whose final type is removed.",
+      "arguments": ["id", "type", "expectedRevision", "expectedLastEditId", "editedBy"],
+      "result": ["action", "locationId", "location", "tombstone"]
+    }
   },
   "paths": {
     "/status": { "get": { "responses": { "200": { "description": "Plugin status" } } } },

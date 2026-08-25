@@ -47,8 +47,8 @@ test("map page uses the standard left-side controls with zoom first", () => {
   const app = fs.readFileSync(path.join(root, "public/app.js"), "utf8");
   const css = fs.readFileSync(path.join(root, "public/styles.css"), "utf8");
 	assert.match(html, /ajrm-map-core\.css\?v=0\.7\.13/);
-	assert.match(html, /type="module" src="\.\/app\.js\?v=0\.7\.4"/);
-	assert.match(html, /styles\.css\?v=0\.7\.4/);
+	assert.match(html, /type="module" src="\.\/app\.js\?v=0\.7\.5"/);
+	assert.match(html, /styles\.css\?v=0\.7\.5/);
 	assert.match(app, /ajrm-map-core\.mjs\?v=0\.7\.13/);
 	assert.match(app, /location-browser\.mjs\?v=0\.7\.4/);
 	assert.match(html, /id="chartCycleStatus" class="ajrm-map-chart-cycle-status"[^>]+hidden/);
@@ -76,7 +76,7 @@ test("map page uses the standard left-side controls with zoom first", () => {
 	assert.match(app, /function undoChanges\(\)[\s\S]*selectLocation\(selectedId\)[\s\S]*resetEditor\(\)/);
 	assert.match(app, /bindPressRepeat\(elements\.nudgeNorth/);
 	assert.match(app, /geometryPreviewDirty = false;\s*previewLayer\?\.clearLayers\(\);\s*showStatus\(`Saved revision/);
-	assert.match(app, /previewLayer\.clearLayers\(\);\s*if \(!geometryPreviewDirty\) return;/);
+	assert.match(app, /previewLayer\.clearLayers\(\);\s*if \(!shouldRenderGeometryPreview\(\{/);
 	assert.match(app, /const unsavedGeometryColor = "#ff2d2d"/);
 	assert.match(app, /L\.circleMarker\([\s\S]*fillColor: unsavedGeometryColor/);
 	assert.match(app, /color: "#000000"[\s\S]*fillColor: color/);

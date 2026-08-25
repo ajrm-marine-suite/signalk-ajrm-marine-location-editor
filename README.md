@@ -111,9 +111,9 @@ This software is Alpha Release and has not been tested in live environments and 
 
 ```sh
 cd ~/.signalk
-npm install git+https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor.git#v0.7.4 --omit=dev --no-package-lock
+npm install git+https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor.git#v0.7.5 --omit=dev --no-package-lock
 sudo systemctl restart signalk
 ```
 
 For the coordinated Planning/Tidal contracts described above, use Marine
-Planning v0.11.0 and Marine Tidal Database v0.8.3 with this v0.7.4 release.
+Planning v0.11.0 and Marine Tidal Database v0.8.3 with this v0.7.5 release.

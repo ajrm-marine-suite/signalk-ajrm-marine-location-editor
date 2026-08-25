@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.7.5 - 2026-08-25
+
+- Do not draw the default new-Location map-centre point as an unsaved red
+  geometry preview.
+- Show unsaved geometry only while the Location Editor or Geometry Editor is
+  open, clearing the preview visually when editing is closed.
+
 ## 0.7.4 - 2026-08-25
 
 - Default newly selected Harbour and Marina classifications to a Circle centred

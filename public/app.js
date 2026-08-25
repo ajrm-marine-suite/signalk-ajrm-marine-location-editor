@@ -7,6 +7,7 @@ import * as MapCore from "./ajrm-map-core.mjs?v=0.7.13";
 import { defaultsForTypeSelection } from "./editor-defaults.mjs?v=0.7.4";
 import { chartLocationInteractive, declutterTidalRegions, displayTypesForWorkspace, filterLocations, groupLocations } from "./location-browser.mjs?v=0.7.4";
 import { geometryNudgeNm, holdAcceleration } from "./geometry-motion.mjs?v=0.5.1";
+import { shouldRenderGeometryPreview } from "./geometry-preview-state.mjs?v=0.7.5";
 import { circlePoints, rectanglePoints, regularPolygonPoints } from "./geometry-shapes.mjs?v=0.6.29";
 import { createEditorNavigationState, createGeometryNavigationState } from "./panel-navigation.mjs?v=0.7.4";
 import { bindPressRepeat } from "./press-repeat.mjs?v=0.5.1";
@@ -309,7 +310,7 @@ function fillSelect(select, choices, selected, emptyLabel) {
 
 function resetEditor() {
 	selectedId = null;
-	geometryPreviewDirty = true;
+	geometryPreviewDirty = false;
 	elements.locationId.value = "";
 	elements.locationName.value = "";
 	elements.description.value = "";
@@ -586,7 +587,11 @@ function renderLocations() {
 function renderPreview() {
 	if (!previewLayer) return;
 	previewLayer.clearLayers();
-	if (!geometryPreviewDirty) return;
+	if (!shouldRenderGeometryPreview({
+		dirty: geometryPreviewDirty,
+		editorOpen: elements.editorDrawer.classList.contains("open"),
+		geometryEditorOpen: elements.geometryControls.classList.contains("open"),
+	})) return;
 	try {
 		const geometry = geometryFromEditor();
 		if (geometry.type === "Point") {
@@ -772,7 +777,7 @@ async function loadChartResources() {
 function makeNaturalEarthLayer() {
 	return window.protomapsL?.leafletLayer ? window.protomapsL.leafletLayer({ url: "./ne_10m_land.pmtiles", flavor: "light", theme: "light", lang: "en", maxDataZoom: 5 }) : L.tileLayer("");
 }
-function syncPanels() { toolbar?.update(); setTimeout(() => map?.invalidateSize(), 180); }
+function syncPanels() { toolbar?.update(); renderPreview(); setTimeout(() => map?.invalidateSize(), 180); }
 function togglePanel(panel) { panel.classList.toggle("open"); syncPanels(); }
 function showLeftPanel(panel) {
 	for (const candidate of [elements.selectorDrawer, elements.editorDrawer]) candidate.classList.toggle("open", candidate === panel);

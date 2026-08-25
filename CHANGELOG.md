@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.7.4 - 2026-08-25
+
+- Default newly selected Harbour and Marina classifications to a Circle centred
+  on the current point and enable automatic Harbour-profile switching for that
+  area. Existing saved point Locations are not silently reshaped when opened.
+- Hide the Location Editor drawer while Edit Geometry is open, then restore it
+  when the geometry panel closes so the chart remains visible during editing.
+
 ## 0.7.3 - 2026-08-25
 
 - Preserve an existing point location as the centre when changing its geometry

@@ -240,7 +240,7 @@ test("OpenAPI covers every registered HTTP method and path", async (t) => {
 		Object.keys(methods).filter((method) => ["get", "put", "post", "delete"].includes(method)).map((method) => `${method.toUpperCase()} ${route}`)
 	)).sort();
 	assert.deepEqual(documented, registered);
-	assert.equal(openApi.info.version, "0.7.3");
+	assert.equal(openApi.info.version, "0.7.4");
 	assert.equal(openApi["x-ajrm-tidal-database-service"].contract, "ajrm-marine-tidal-database-service-v2");
 	assert.deepEqual(openApi["x-ajrm-planning-location-mutation-guard"].fields, [
 		"liveGateLocationIds", "liveReferencePortLocationIds",

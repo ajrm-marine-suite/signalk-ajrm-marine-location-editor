@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "AJRM Marine Location Editor API",
-    "version": "0.7.3",
+    "version": "0.7.4",
     "description": "Versioned spatial marine locations, assisted anchoring, import/export and nearest-location lookup. Location Editor owns Location IDs, names, classifications and geometry; tidal relationships remain owned by Tidal Database."
   },
   "x-ajrm-shared-service": {

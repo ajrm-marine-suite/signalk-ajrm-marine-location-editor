@@ -4,10 +4,11 @@
  */
 
 import * as MapCore from "./ajrm-map-core.mjs?v=0.7.13";
-import { chartLocationInteractive, declutterTidalRegions, displayTypesForWorkspace, filterLocations, groupLocations } from "./location-browser.mjs?v=0.7.3";
+import { defaultsForTypeSelection } from "./editor-defaults.mjs?v=0.7.4";
+import { chartLocationInteractive, declutterTidalRegions, displayTypesForWorkspace, filterLocations, groupLocations } from "./location-browser.mjs?v=0.7.4";
 import { geometryNudgeNm, holdAcceleration } from "./geometry-motion.mjs?v=0.5.1";
 import { circlePoints, rectanglePoints, regularPolygonPoints } from "./geometry-shapes.mjs?v=0.6.29";
-import { createEditorNavigationState } from "./panel-navigation.mjs?v=0.1.0";
+import { createEditorNavigationState, createGeometryNavigationState } from "./panel-navigation.mjs?v=0.7.4";
 import { bindPressRepeat } from "./press-repeat.mjs?v=0.5.1";
 import { runWithPressedButton } from "./async-button-state.mjs?v=0.6.29";
 
@@ -64,6 +65,7 @@ let selectedId = null;
 let activeDisplayTypes = loadDisplayTypes();
 let map;
 const editorNavigation = createEditorNavigationState();
+const geometryNavigation = createGeometryNavigationState();
 let locationLayer;
 let previewLayer;
 let geometryPreviewDirty = false;
@@ -790,6 +792,23 @@ function closeEditorPanel() {
 		syncPanels();
 	}
 }
+
+function openGeometryPanel() {
+	geometryNavigation.open({ editorOpen: elements.editorDrawer.classList.contains("open") });
+	elements.editorDrawer.classList.remove("open");
+	elements.geometryControls.classList.add("open");
+	if (elements.geometryType.value !== "Point") {
+		geometryPreviewDirty = true;
+		renderPreview();
+	}
+	syncPanels();
+}
+
+function closeGeometryPanel() {
+	elements.geometryControls.classList.remove("open");
+	if (geometryNavigation.close() === "editor") showLeftPanel(elements.editorDrawer);
+	else syncPanels();
+}
 function makeDraggable(panel, handle) {
 	let drag;
 	handle.addEventListener("pointerdown", (event) => { if (event.target.closest("button")) return; const rect = panel.getBoundingClientRect(); drag = { x: event.clientX - rect.left, y: event.clientY - rect.top }; handle.setPointerCapture(event.pointerId); });
@@ -904,6 +923,23 @@ function convertGeometryType(fromType, toType) {
 	geometryPreviewDirty = true;
 }
 
+function applyTypeSelectionDefaults(input) {
+	const defaults = defaultsForTypeSelection({
+		existingLocation: selectedId !== null,
+		type: input?.value,
+		checked: input?.checked === true,
+		geometryType: elements.geometryType.value,
+	});
+	if (!defaults) return;
+	if (defaults.geometryType !== elements.geometryType.value) {
+		const fromType = elements.geometryType.value;
+		elements.geometryType.value = defaults.geometryType;
+		convertGeometryType(fromType, defaults.geometryType);
+		previousGeometryType = defaults.geometryType;
+	}
+	elements.automaticProfileArea.checked = defaults.automaticProfileArea;
+}
+
 function bindEvents() {
 	elements.typeChoices.addEventListener("change", (event) => {
 		if (event.target.matches('input[value="tidalStandardPort"]:checked')) {
@@ -912,6 +948,7 @@ function bindEvents() {
 		if (event.target.matches('input[value="tidalSecondaryPort"]:checked')) {
 			elements.typeChoices.querySelector('input[value="tidalStandardPort"]').checked = false;
 		}
+		applyTypeSelectionDefaults(event.target);
 		updateConditionalFields();
 	});
 	elements.geometryType.addEventListener("change", () => {
@@ -937,15 +974,8 @@ function bindEvents() {
 	});
 	elements.refreshLocations.addEventListener("click", () => loadLocations().catch((error) => showStatus(error.message, true)));
 	elements.setPoint.addEventListener("click", () => { const center = map.getCenter(); geometryPreviewDirty = true; elements.geometryType.value = "Point"; previousGeometryType = "Point"; elements.point.value = `${center.lat.toFixed(6)}, ${center.lng.toFixed(6)}`; updateConditionalFields(); });
-	elements.openGeometry.addEventListener("click", () => {
-		const opening = !elements.geometryControls.classList.contains("open");
-		togglePanel(elements.geometryControls);
-		if (opening && elements.geometryType.value !== "Point") {
-			geometryPreviewDirty = true;
-			renderPreview();
-		}
-	});
-	elements.closeGeometry.addEventListener("click", () => { elements.geometryControls.classList.remove("open"); syncPanels(); });
+	elements.openGeometry.addEventListener("click", openGeometryPanel);
+	elements.closeGeometry.addEventListener("click", closeGeometryPanel);
 	elements.closeSelector.addEventListener("click", () => { elements.selectorDrawer.classList.remove("open"); syncPanels(); });
 	elements.closeEditor.addEventListener("click", closeEditorPanel);
 	elements.closeSettings.addEventListener("click", () => { elements.settingsDrawer.classList.remove("open"); syncPanels(); });

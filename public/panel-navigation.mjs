@@ -19,3 +19,21 @@ export function createEditorNavigationState() {
 		},
 	};
 }
+
+/** Tracks the drawer displaced while the floating geometry editor is open. */
+export function createGeometryNavigationState() {
+	let returnToEditor = false;
+	return {
+		open({ editorOpen = false } = {}) {
+			returnToEditor = editorOpen === true;
+		},
+		close() {
+			const destination = returnToEditor ? "editor" : null;
+			returnToEditor = false;
+			return destination;
+		},
+		clear() {
+			returnToEditor = false;
+		},
+	};
+}

@@ -4,7 +4,7 @@
  */
 
 import * as MapCore from "./ajrm-map-core.mjs?v=0.7.13";
-import { chartLocationInteractive, declutterTidalRegions, displayTypesForWorkspace, filterLocations, groupLocations } from "./location-browser.mjs?v=0.7.2";
+import { chartLocationInteractive, declutterTidalRegions, displayTypesForWorkspace, filterLocations, groupLocations } from "./location-browser.mjs?v=0.7.3";
 import { geometryNudgeNm, holdAcceleration } from "./geometry-motion.mjs?v=0.5.1";
 import { circlePoints, rectanglePoints, regularPolygonPoints } from "./geometry-shapes.mjs?v=0.6.29";
 import { createEditorNavigationState } from "./panel-navigation.mjs?v=0.1.0";
@@ -67,6 +67,7 @@ const editorNavigation = createEditorNavigationState();
 let locationLayer;
 let previewLayer;
 let geometryPreviewDirty = false;
+let previousGeometryType = "Point";
 let seamarkLayer;
 let autoChartGroup;
 let autoChartLayer;
@@ -266,6 +267,13 @@ function parsePoints() {
 	return points;
 }
 
+function centreOfPoints(points) {
+	return {
+		lat: points.reduce((sum, point) => sum + point.lat, 0) / points.length,
+		lon: points.reduce((sum, point) => sum + point.lon, 0) / points.length,
+	};
+}
+
 function formatPoint(point) {
 	return `${point.lat.toFixed(6)}, ${point.lon.toFixed(6)}`;
 }
@@ -310,6 +318,7 @@ function resetEditor() {
 		if (input) input.checked = true;
 	}
 	elements.geometryType.value = "Point";
+	previousGeometryType = "Point";
 	const center = map?.getCenter() || { lat: 55.8, lng: -5.2 };
 	elements.point.value = `${center.lat.toFixed(6)}, ${(center.lng ?? center.lon).toFixed(6)}`;
 	elements.points.value = "";
@@ -337,6 +346,7 @@ function selectLocation(id, fit = false, revealEditor = false) {
 	elements.description.value = location.description || "";
 	elements.typeChoices.querySelectorAll("input").forEach((input) => { input.checked = location.types.includes(input.value); });
 	elements.geometryType.value = editorShapeForLocation(location);
+	previousGeometryType = elements.geometryType.value;
 	if (location.feature.geometry.type === "Point") {
 		const [lon, lat] = location.feature.geometry.coordinates;
 		elements.point.value = formatPoint({ lat, lon });
@@ -824,7 +834,7 @@ function changeGeometry(deltaRadius = 0, northNm = 0, eastNm = 0) {
 		if (elements.geometryType.value === "Point") center = parsePoint();
 		else {
 			points = parsePoints();
-			center = { lat: points.reduce((sum, point) => sum + point.lat, 0) / points.length, lon: points.reduce((sum, point) => sum + point.lon, 0) / points.length };
+			center = centreOfPoints(points);
 		}
 	} catch { const mapCenter = map.getCenter(); center = { lat: mapCenter.lat, lon: mapCenter.lng }; }
 	center.lat += northNm / 60;
@@ -854,9 +864,9 @@ function nudgeGeometry(northDirection, eastDirection, context = {}) {
 	changeGeometry(0, northDirection * stepNm, eastDirection * stepNm);
 }
 
-function makeSelectedShape() {
+function makeSelectedShape(requestedOrigin = null) {
 	const center = map.getCenter();
-	const origin = { lat: center.lat, lon: center.lng };
+	const origin = requestedOrigin || { lat: center.lat, lon: center.lng };
 	let points;
 	if (elements.geometryType.value === "Circle") {
 		points = circlePoints(origin, Math.max(0.01, Number(elements.radiusNm.value || 0.2)));
@@ -878,6 +888,22 @@ function makeSelectedShape() {
 	renderPreview();
 }
 
+function convertGeometryType(fromType, toType) {
+	let origin;
+	try {
+		origin = fromType === "Point" ? parsePoint() : centreOfPoints(parsePoints());
+	} catch {
+		const center = map.getCenter();
+		origin = { lat:center.lat, lon:center.lng };
+	}
+	if (toType === "Point") {
+		elements.point.value = formatPoint(origin);
+	} else {
+		makeSelectedShape(origin);
+	}
+	geometryPreviewDirty = true;
+}
+
 function bindEvents() {
 	elements.typeChoices.addEventListener("change", (event) => {
 		if (event.target.matches('input[value="tidalStandardPort"]:checked')) {
@@ -888,7 +914,12 @@ function bindEvents() {
 		}
 		updateConditionalFields();
 	});
-	elements.geometryType.addEventListener("change", () => { geometryPreviewDirty = true; updateConditionalFields(); });
+	elements.geometryType.addEventListener("change", () => {
+		const nextGeometryType = elements.geometryType.value;
+		convertGeometryType(previousGeometryType, nextGeometryType);
+		previousGeometryType = nextGeometryType;
+		updateConditionalFields();
+	});
 	elements.point.addEventListener("input", () => { geometryPreviewDirty = true; renderPreview(); });
 	elements.points.addEventListener("input", () => { geometryPreviewDirty = true; renderPreview(); });
 	elements.workspace.addEventListener("change", () => {
@@ -905,7 +936,7 @@ function bindEvents() {
 		showLeftPanel(elements.editorDrawer);
 	});
 	elements.refreshLocations.addEventListener("click", () => loadLocations().catch((error) => showStatus(error.message, true)));
-	elements.setPoint.addEventListener("click", () => { const center = map.getCenter(); geometryPreviewDirty = true; elements.geometryType.value = "Point"; elements.point.value = `${center.lat.toFixed(6)}, ${center.lng.toFixed(6)}`; updateConditionalFields(); });
+	elements.setPoint.addEventListener("click", () => { const center = map.getCenter(); geometryPreviewDirty = true; elements.geometryType.value = "Point"; previousGeometryType = "Point"; elements.point.value = `${center.lat.toFixed(6)}, ${center.lng.toFixed(6)}`; updateConditionalFields(); });
 	elements.openGeometry.addEventListener("click", () => {
 		const opening = !elements.geometryControls.classList.contains("open");
 		togglePanel(elements.geometryControls);

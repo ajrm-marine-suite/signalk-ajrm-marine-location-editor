@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.7.3 - 2026-08-25
+
+- Preserve an existing point location as the centre when changing its geometry
+  to Circle, Rectangle or Polygon, so a marina point can be expanded with the
+  radius controls instead of starting with an empty area.
+- Confirm with explicit service coverage that marina polygons participate in
+  automatic Harbour-profile selection exactly like harbour polygons.
+- Confirm that moorings use the same geometry controls, detection radius,
+  anchoring details, stationary detection and Anchored-profile suggestion as
+  anchorages; only the displayed classification name differs.
+
 ## 0.7.2 — 2026-08-23
 
 - Protect every `tidalStandardPort` Location selected by a live Planning row

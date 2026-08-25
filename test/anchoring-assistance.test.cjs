@@ -7,22 +7,22 @@ const assert = require("node:assert/strict");
 const test = require("node:test");
 const { createAnchoringAssistant } = require("../plugin/anchoring-assistance.cjs");
 
-function anchorage(properties = {}) {
+function anchorage(properties = {}, type = "anchorage") {
 	return {
 		id: "11111111-1111-4111-8111-111111111111",
-		name: "Test Anchorage",
-		types: ["anchorage"],
+		name: type === "mooring" ? "Test Mooring" : "Test Anchorage",
+		types: [type],
 		feature: { type: "Feature", geometry: { type: "Point", coordinates: [-5.2, 55.8] } },
 		properties: { anchorage: properties },
 	};
 }
 
-function fixture({ trusted = false } = {}) {
+function fixture({ trusted = false, type = "anchorage" } = {}) {
 	let now = Date.parse("2026-08-18T10:00:00Z");
 	let profile = "coastal";
 	const selected = [];
 	const assistant = createAnchoringAssistant({
-		listLocations: async () => [anchorage({ trustedAutomation: trusted })],
+		listLocations: async () => [anchorage({ trustedAutomation: trusted }, type)],
 		getTrafficApi: () => ({
 			status: () => ({ profiles: { current: profile } }),
 			setProfile(value, context) { profile = value; selected.push({ value, context }); },
@@ -37,6 +37,15 @@ function fixture({ trusted = false } = {}) {
 		profile: () => profile,
 	};
 }
+
+test("a mooring uses the same stationary detection and anchoring suggestion as an anchorage", async () => {
+	const f = fixture({ type: "mooring" });
+	await f.assistant.observe({ position: f.position, sog: 0.05 });
+	f.advance(300);
+	const status = await f.assistant.observe({ position: f.position, sog: 0.05 });
+	assert.equal(status.state, "suggested");
+	assert.deepEqual(status.location.types, ["mooring"]);
+});
 
 test("stationary evidence creates a confirmation-first anchoring suggestion", async () => {
 	const f = fixture();

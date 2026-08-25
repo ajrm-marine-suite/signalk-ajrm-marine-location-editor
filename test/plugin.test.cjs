@@ -179,6 +179,12 @@ function harbourBody(name = "Versioned Harbour") {
 	};
 }
 
+function marinaBody(name = "Versioned Marina") {
+	const value = harbourBody(name);
+	value.types = ["marina"];
+	return value;
+}
+
 function gateBody(name, types = ["tidalGate"]) {
 	return {
 		expectedRevision: 0,
@@ -200,12 +206,18 @@ test("lifecycle exposes the spatial service and retracts status on stop", async 
 	assert.equal(app.ajrmMarineWeather, undefined);
 	assert.equal(app.ajrmMarineAnchoring.status().contract, "ajrm-marine-anchoring-assistance-v1");
 	const profileAreaId = crypto.randomUUID();
+	const marinaProfileAreaId = crypto.randomUUID();
 	await call("PUT", "/locations/:id", {
 		params: { id: profileAreaId },
 		body: harbourBody("Direct profile area"),
 	});
+	await call("PUT", "/locations/:id", {
+		params: { id: marinaProfileAreaId },
+		body: marinaBody("Direct marina profile area"),
+	});
 	const profileAreas = await app.ajrmMarineLocations.profileAreas();
 	assert.equal(profileAreas.some((location) => location.id === profileAreaId), true);
+	assert.equal(profileAreas.some((location) => location.id === marinaProfileAreaId), true);
 	const diagnostics = await app.ajrmMarineLocationDiagnostics.snapshot();
 	assert.equal(diagnostics.catalogue.count > 0, true);
 	assert.equal(diagnostics.catalogue.locations, undefined);
@@ -228,7 +240,7 @@ test("OpenAPI covers every registered HTTP method and path", async (t) => {
 		Object.keys(methods).filter((method) => ["get", "put", "post", "delete"].includes(method)).map((method) => `${method.toUpperCase()} ${route}`)
 	)).sort();
 	assert.deepEqual(documented, registered);
-	assert.equal(openApi.info.version, "0.7.2");
+	assert.equal(openApi.info.version, "0.7.3");
 	assert.equal(openApi["x-ajrm-tidal-database-service"].contract, "ajrm-marine-tidal-database-service-v2");
 	assert.deepEqual(openApi["x-ajrm-planning-location-mutation-guard"].fields, [
 		"liveGateLocationIds", "liveReferencePortLocationIds",

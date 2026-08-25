@@ -59,7 +59,7 @@ A Location may have several compatible roles, but `tidalStandardPort` and
 `tidalSecondaryPort` are mutually exclusive. Tidal Database independently
 checks the same boundary before using a joined definition.
 
-Points, circles, rectangles and true polygons can be created and edited on the chart. Changes are revisioned and can be restored. Import replaces the catalogue; merge compares stable IDs and edit timestamps; purge permanently removes deleted tombstones after confirmation.
+Points, circles, rectangles and true polygons can be created and edited on the chart. Changing an existing point to an area preserves the point as the new shape's centre. Marina and harbour polygons have the same geometry and optional automatic Harbour-profile behaviour; their classification changes only the displayed place type. Moorings likewise use the same geometry, detection radius, anchoring details and stationary anchoring assistance as anchorages. Changes are revisioned and can be restored. Import replaces the catalogue; merge compares stable IDs and edit timestamps; purge permanently removes deleted tombstones after confirmation.
 
 ## Shared services
 
@@ -111,9 +111,9 @@ This software is Alpha Release and has not been tested in live environments and 
 
 ```sh
 cd ~/.signalk
-npm install git+https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor.git#v0.7.2 --omit=dev --no-package-lock
+npm install git+https://github.com/ajrm-marine-suite/signalk-ajrm-marine-location-editor.git#v0.7.3 --omit=dev --no-package-lock
 sudo systemctl restart signalk
 ```
 
 For the coordinated Planning/Tidal contracts described above, use Marine
-Planning v0.10.2 and Marine Tidal Database v0.8.0 with this v0.7.2 release.
+Planning v0.11.0 and Marine Tidal Database v0.8.3 with this v0.7.3 release.
